@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["CCC", "CGC", "CCC"],
+  "key": {
+    "C": { "item": "minecraft:copper_block" },
+    "G": { "item": "minecraft:glass" }
+  },
+  "result": { "id": "ktfruaddon:hydrogen_burner", "count": 1 }
+}

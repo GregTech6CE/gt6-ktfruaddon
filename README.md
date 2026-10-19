@@ -1,0 +1,30 @@
+# kTFRUAddon
+
+GT6CE 的 NeoForge 1.21.1 附属，用来试现在的附属接口能接住多少。这是一条新写的探针，不是 [kuzuanpa/kTFRUAddon](https://github.com/kuzuanpa/kTFRUAddon) 1.7.10 源码的移植。那边是 AGPL-3.0，这里的代码是 LGPL-3.0-or-later。
+
+第一条竖切只有这些：
+
+- 材料 `MonocrystallineSilicon`，`dust()`，物品在 `gt6ce` 命名空间。
+- 基础机器拉晶炉：1 份硅粉，128 EU/t，200 tick，出 1 份单晶硅粉。
+- 氢燃烧器：三块储罐壁的多方块，烧 `gt6ce:hydrogen`，每 tick 输出 32 RU，排气是少量蒸汽。能量从正面背后 2 格送出。
+
+对照下来接不上的系统记在 [`GAP.md`](GAP.md)。
+
+## 开发
+
+需要 JDK 21。编译只依赖 GT6CE 的加载器 SDK `gt6ce-addon-sdk-1.21.1-neoforge-0.8.0.jar`。`runClient` 和 `runServer` 使用完整的 `gt6ce-1.21.1-neoforge.jar`。两个 jar 都不进 git，也不打进成品。
+
+依赖模组是 `gt6ce`，`versionRange="[0.8,)"`。当前钉住的 GT6CE 提交写在 `libs/gt6ce/build-commit.txt`。
+
+```powershell
+$env:JAVA_HOME = 'C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot'
+.\update-gt.ps1
+.\gradlew.bat build
+.\gradlew.bat runClient
+```
+
+`update-gt.ps1` 从 SaltNya/GregTech6 最近一次成功的 NeoForge 构建下载 SDK 和模组 jar，并核对校验和。CI 不下载产物，而是按 `build-commit.txt` 自己构建同一提交。
+
+## 许可
+
+GNU Lesser General Public License 第 3 版或（由你选择）任何更新版本。`LICENSE` 是 LGPL-3.0 原文，`COPYING` 是它引用的 GPL-3.0 原文。两份原文也随 jar 放在 `META-INF/licenses/`。
