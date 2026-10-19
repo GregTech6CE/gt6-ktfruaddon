@@ -1,13 +1,13 @@
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
-issueTrackerURL="https://github.com/lombinaxmasson/ktfruaddon/issues"
+issueTrackerURL="https://github.com/lombinaxmasson/gt6-ktfruaddon/issues"
 
 [[mods]]
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
-displayURL="https://github.com/lombinaxmasson/ktfruaddon"
+displayURL="https://github.com/lombinaxmasson/gt6-ktfruaddon"
 authors="lombinaxmasson"
 description='''
 API probe for GT6CE. One silicon material, a crystal puller, and a hydrogen burner. Not a content port of the 1.7.10 addon.
