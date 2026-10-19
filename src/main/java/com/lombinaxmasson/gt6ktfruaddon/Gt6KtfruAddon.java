@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import com.gregtech.gregtech.api.addon.GregTechAddon;
 import com.gregtech.gregtech.api.addon.GregTechAddons;
 import com.gregtech.gregtech.api.addon.GregTechMaterials;
+import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
 import com.mojang.logging.LogUtils;
@@ -42,9 +43,18 @@ public final class Gt6KtfruAddon {
                     .title(Component.translatable("itemGroup.gt6ktfruaddon"))
                     .withTabsBefore(CreativeModeTabs.FUNCTIONAL_BLOCKS)
                     .icon(() -> stack("crystal_puller"))
+                    .withSearchBar()
                     .displayItems((parameters, output) -> {
                         accept(output, "crystal_puller");
                         accept(output, "hydrogen_burner");
+                        for (MaterialDeclaration material : new Gt6KtfruMaterials().materials()) {
+                            if (material.dust() || material.metal())
+                                acceptStack(output, AddonItems.stack("dust", material.name(), 1));
+                            if (material.metal())
+                                acceptStack(output, AddonItems.stack("ingot", material.name(), 1));
+                            if (material.liquid() || material.gas())
+                                acceptFluid(output, material);
+                        }
                     })
                     .build());
 
@@ -65,6 +75,16 @@ public final class Gt6KtfruAddon {
                     throw new IllegalStateException("ammonium dichromate dust is missing");
                 if (!GregTechMaterials.find("Methanol").valid() || !GregTechMaterials.find("Acetylene").valid())
                     throw new IllegalStateException("surface fluid materials are missing");
+                FluidStack methanol = AddonFluids.still("GenLiquid_Methanol", 250);
+                if (methanol == null || methanol.isEmpty())
+                    throw new IllegalStateException("methanol fluid is missing");
+                FluidStack acetylene = AddonFluids.still("GenGas_Acetylene", 250);
+                if (acetylene == null || acetylene.isEmpty())
+                    throw new IllegalStateException("acetylene gas is missing");
+                if (fluidItem(methanol) == Items.AIR)
+                    throw new IllegalStateException("methanol fluid item is missing");
+                if (fluidItem(acetylene) == Items.AIR)
+                    throw new IllegalStateException("acetylene fluid item is missing");
                 FluidStack hydrogen = AddonFluids.still("Hydrogen", 250);
                 if (hydrogen == null || hydrogen.isEmpty())
                     throw new IllegalStateException("GT fluid field Hydrogen is missing");
@@ -72,9 +92,26 @@ public final class Gt6KtfruAddon {
         });
     }
 
+    private static void acceptFluid(CreativeModeTab.Output output, MaterialDeclaration material) {
+        String field = (material.gas() ? "GenGas_" : "GenLiquid_") + material.name();
+        FluidStack fluid = AddonFluids.still(field, 250);
+        Item item = fluidItem(fluid);
+        if (item != Items.AIR) output.accept(new ItemStack(item));
+    }
+
+    private static Item fluidItem(FluidStack fluid) {
+        if (fluid == null || fluid.isEmpty()) return Items.AIR;
+        var id = BuiltInRegistries.FLUID.getKey(fluid.getFluid());
+        if (id == null) return Items.AIR;
+        return BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("gt6ce", "fluid_item_" + id.getPath()));
+    }
+
+    private static void acceptStack(CreativeModeTab.Output output, ItemStack stack) {
+        if (stack != null && !stack.isEmpty()) output.accept(stack);
+    }
+
     private static void accept(CreativeModeTab.Output output, String path) {
-        ItemStack stack = stack(path);
-        if (!stack.isEmpty()) output.accept(stack);
+        acceptStack(output, stack(path));
     }
 
     private static ItemStack stack(String path) {

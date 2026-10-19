@@ -3,11 +3,13 @@ import json
 import re
 from pathlib import Path
 
-SRC = Path(r"D:\Baobao\projects\dev\java\cruciblecraft-template-1.21.1\ktfruaddon\kTFRUAddon\src\main\java\cn\kuzuanpa\ktfruaddon\api\material\materialPreInit.java")
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "kTFRUAddon/src/main/java/cn/kuzuanpa/ktfruaddon/api/material/materialPreInit.java"
 GT = Path(r"D:\Baobao\projects\dev\java\GregTech6CommunityEdition\GregTech6\core\src\main\java")
-OUT_JAVA = Path("src/main/java/com/lombinaxmasson/gt6ktfruaddon/Gt6KtfruMaterials.java")
-OUT_EN = Path("src/main/resources/assets/gt6ce/lang/en_us.json")
-OUT_ZH = Path("src/main/resources/assets/gt6ce/lang/zh_cn.json")
+OUT_JAVA = ROOT / "src/main/java/com/lombinaxmasson/gt6ktfruaddon/Gt6KtfruMaterials.java"
+OUT_EN = ROOT / "src/main/resources/assets/gt6ce/lang/en_us.json"
+OUT_ZH = ROOT / "src/main/resources/assets/gt6ce/lang/zh_cn.json"
+LANG_ZH = ROOT / "kTFRUAddon/src/main/resources/assets/ktfruaddon/lang/zh_CN.lang"
 SKIP = {"HenSoPretty"}
 SUB = "₀₁₂₃₄₅₆₇₈₉"
 
@@ -19,6 +21,26 @@ def gt_names():
         text = path.read_text(encoding="utf-8", errors="replace")
         names.update(pat.findall(text))
         names.update(pat2.findall(text))
+    return names
+
+def chinese_names():
+    names = {}
+    for line in LANG_ZH.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        if key.startswith("gt.material."):
+            names[key[len("gt.material."):]] = value
+    return names
+
+def comment_names(text):
+    names = {}
+    for match in re.finditer(r'//([^\n]+)\n\s*matList\.(\w+)\.', text):
+        comment = match.group(1).strip()
+        if not comment or "：" in comment or ":" in comment or len(comment) > 16:
+            continue
+        names[match.group(2)] = comment
     return names
 
 def formula(expr):
@@ -117,7 +139,9 @@ def java_string(value):
 
 def main():
     known = gt_names()
-    rows = parse(SRC.read_text(encoding="utf-8"))
+    source = SRC.read_text(encoding="utf-8")
+    rows = parse(source)
+    comments = comment_names(source)
     kept, skipped = [], []
     notes = []
     for row in rows:
@@ -147,9 +171,10 @@ def main():
         "import com.gregtech.gregtech.api.addon.MaterialFormRequest;",
         "",
         "/**",
-        " * Chemical materials from the GT6 surface list. Temperatures follow the source:",
-        " * Celsius entries are stored as Celsius plus 273. Density is 1 because that list",
-        " * does not carry one. New prefixes, ores and standalone foils are not declared.",
+        " * Chemical materials from kTFRUAddon materialPreInit at 6404ab69. Temperatures",
+        " * follow the source: Celsius entries are stored as Celsius plus 273. Density is 1",
+        " * because that list does not carry one. Plate, foil and ore requests stay empty:",
+        " * a form the material flags do not allow fails startup, and ore is not a generated prefix.",
         " */",
         "public final class Gt6KtfruMaterials implements AddonMaterialContributor {",
         "    @Override public String addonId() { return Gt6KtfruAddon.MODID; }",
@@ -187,9 +212,23 @@ def main():
     ]
     OUT_JAVA.write_text("\n".join(lines), encoding="utf-8", newline="\n")
     en = {f"material.gt6ce.{row['name'].lower()}": row["display"] for row in kept}
-    zh = dict(en)
+    zh_src = chinese_names()
+    folded = {key.lower(): value for key, value in zh_src.items()}
+    zh = {}
+    missing = []
+    for row in kept:
+        translated = zh_src.get(row["name"]) or folded.get(row["name"].lower()) or comments.get(row["field"])
+        key = f"material.gt6ce.{row['name'].lower()}"
+        if translated:
+            zh[key] = translated
+        else:
+            zh[key] = row["display"]
+            missing.append(row["name"])
     OUT_EN.write_text(json.dumps(en, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     OUT_ZH.write_text(json.dumps(zh, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+    print(f"zh translated {len(kept) - len(missing)} missing {len(missing)}")
+    for name in missing:
+        print(" untranslated", name)
     print(f"kept {len(kept)} skipped {len(skipped)}")
     for item in skipped:
         print(" skip", item)

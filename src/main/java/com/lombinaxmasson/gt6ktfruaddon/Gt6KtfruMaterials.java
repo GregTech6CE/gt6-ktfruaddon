@@ -7,9 +7,10 @@ import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.MaterialFormRequest;
 
 /**
- * Chemical materials from the GT6 surface list. Temperatures follow the source:
- * Celsius entries are stored as Celsius plus 273. Density is 1 because that list
- * does not carry one. New prefixes, ores and standalone foils are not declared.
+ * Chemical materials from kTFRUAddon materialPreInit at 6404ab69. Temperatures
+ * follow the source: Celsius entries are stored as Celsius plus 273. Density is 1
+ * because that list does not carry one. Plate, foil and ore requests stay empty:
+ * a form the material flags do not allow fails startup, and ore is not a generated prefix.
  */
 public final class Gt6KtfruMaterials implements AddonMaterialContributor {
     @Override public String addonId() { return Gt6KtfruAddon.MODID; }
@@ -144,7 +145,16 @@ public final class Gt6KtfruMaterials implements AddonMaterialContributor {
                 MaterialDeclaration.builder("Methylamine").displayName("Methylamine").color(0xFFFFFF).chemicalFormula("C₂H₇N").meltingPointKelvin(201).boilingPointKelvin(285).density(1F).dust().build(),
                 MaterialDeclaration.builder("Rhodiumoxide").displayName("Rhodiumoxide").color(0xDF9547).chemicalFormula("Rh₂O₃").meltingPointKelvin(1373).boilingPointKelvin(1423).density(1F).dust().build(),
                 MaterialDeclaration.builder("Iridiumoxide").displayName("Iridiumoxide").color(0x5B504A).chemicalFormula("IrO₂").meltingPointKelvin(1473).boilingPointKelvin(1973).density(1F).dust().build(),
-                MaterialDeclaration.builder("Palladiumoxide").displayName("Palladiumoxide").color(0x3B3734).chemicalFormula("PdO₄").meltingPointKelvin(1143).boilingPointKelvin(1873).density(1F).dust().build()
+                MaterialDeclaration.builder("Palladiumoxide").displayName("Palladiumoxide").color(0x3B3734).chemicalFormula("PdO₄").meltingPointKelvin(1143).boilingPointKelvin(1873).density(1F).dust().build(),
+                MaterialDeclaration.builder("MirrorGold").displayName("Mirror Gold").color(0xE6DC80).chemicalFormula("Mg").meltingPointKelvin(1337).boilingPointKelvin(3129).density(1F).metal().build(),
+                MaterialDeclaration.builder("QuantumGold").displayName("Quantum Gold").color(0xB460FF).chemicalFormula("Qg").meltingPointKelvin(1553).boilingPointKelvin(4369).density(1F).metal().build(),
+                MaterialDeclaration.builder("Fluorobenzene").displayName("Fluorobenzene").color(0xDCEBF5).chemicalFormula("C₆H₅F").meltingPointKelvin(232).boilingPointKelvin(358).density(1F).liquid().build(),
+                MaterialDeclaration.builder("Fluorotoluene").displayName("4-Fluorotoluene").color(0xE1F0F5).chemicalFormula("C₇H₇F").meltingPointKelvin(178).boilingPointKelvin(389).density(1F).liquid().build(),
+                MaterialDeclaration.builder("FluorobenzoicAcid").displayName("4-Fluorobenzoic Acid").color(0xF5F5F5).chemicalFormula("C₇H₅FO₂").meltingPointKelvin(456).boilingPointKelvin(526).density(1F).dust().build(),
+                MaterialDeclaration.builder("FluorobenzoylChloride").displayName("4-Fluorobenzoyl Chloride").color(0xEBF5D2).chemicalFormula("C₇H₄ClFO").meltingPointKelvin(263).boilingPointKelvin(467).density(1F).liquid().build(),
+                MaterialDeclaration.builder("Difluorobenzophenone").displayName("4,4'-Difluorobenzophenone").color(0xF0EBDC).chemicalFormula("C₁₃H₈F₂O").meltingPointKelvin(380).boilingPointKelvin(648).density(1F).dust().build(),
+                MaterialDeclaration.builder("Hydroquinone").displayName("Hydroquinone").color(0xF0F0F0).chemicalFormula("C₆H₆O₂").meltingPointKelvin(445).boilingPointKelvin(560).density(1F).dust().build(),
+                MaterialDeclaration.builder("PEEK").displayName("Polyether Ether Ketone").color(0xD2BEA0).chemicalFormula("(C₁₉H₁₂O₃)n").meltingPointKelvin(616).boilingPointKelvin(873).density(1F).dust().build()
         );
     }
 

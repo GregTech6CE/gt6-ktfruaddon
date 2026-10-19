@@ -127,5 +127,14 @@
   "material.gt6ce.methylamine": "Methylamine",
   "material.gt6ce.rhodiumoxide": "Rhodiumoxide",
   "material.gt6ce.iridiumoxide": "Iridiumoxide",
-  "material.gt6ce.palladiumoxide": "Palladiumoxide"
+  "material.gt6ce.palladiumoxide": "Palladiumoxide",
+  "material.gt6ce.mirrorgold": "Mirror Gold",
+  "material.gt6ce.quantumgold": "Quantum Gold",
+  "material.gt6ce.fluorobenzene": "Fluorobenzene",
+  "material.gt6ce.fluorotoluene": "4-Fluorotoluene",
+  "material.gt6ce.fluorobenzoicacid": "4-Fluorobenzoic Acid",
+  "material.gt6ce.fluorobenzoylchloride": "4-Fluorobenzoyl Chloride",
+  "material.gt6ce.difluorobenzophenone": "4,4'-Difluorobenzophenone",
+  "material.gt6ce.hydroquinone": "Hydroquinone",
+  "material.gt6ce.peek": "Polyether Ether Ketone"
 }
