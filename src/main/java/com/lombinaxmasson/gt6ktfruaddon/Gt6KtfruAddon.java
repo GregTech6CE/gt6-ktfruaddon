@@ -1,4 +1,4 @@
-package com.lombinaxmasson.ktfruaddon;
+package com.lombinaxmasson.gt6ktfruaddon;
 
 import org.slf4j.Logger;
 
@@ -7,7 +7,6 @@ import com.gregtech.gregtech.api.addon.GregTechAddons;
 import com.gregtech.gregtech.api.addon.GregTechMaterials;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
-import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -30,9 +29,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * Probe entry. Materials and machines arrive through ServiceLoader. Recipes are added once GT
  * calls {@code onRecipesReady}.
  */
-@Mod(KtfruAddon.MODID)
-public final class KtfruAddon {
-    public static final String MODID = "ktfruaddon";
+@Mod(Gt6KtfruAddon.MODID)
+public final class Gt6KtfruAddon {
+    public static final String MODID = "gt6ktfruaddon";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
@@ -40,7 +39,7 @@ public final class KtfruAddon {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB =
             CREATIVE_MODE_TABS.register("main", () -> CreativeModeTab.builder()
-                    .title(Component.translatable("itemGroup.ktfruaddon"))
+                    .title(Component.translatable("itemGroup.gt6ktfruaddon"))
                     .withTabsBefore(CreativeModeTabs.FUNCTIONAL_BLOCKS)
                     .icon(() -> stack("crystal_puller"))
                     .displayItems((parameters, output) -> {
@@ -49,7 +48,7 @@ public final class KtfruAddon {
                     })
                     .build());
 
-    public KtfruAddon(IEventBus modEventBus, ModContainer modContainer) {
+    public Gt6KtfruAddon(IEventBus modEventBus, ModContainer modContainer) {
         CREATIVE_MODE_TABS.register(modEventBus);
         GregTechAddons.register(new GregTechAddon() {
             @Override
@@ -59,28 +58,16 @@ public final class KtfruAddon {
 
             @Override
             public void onRecipesReady(Context context) {
-                LOGGER.info("ktfruaddon: ready on {} {} (GT6CE addon API {})",
+                LOGGER.info("gt6ktfruaddon: ready on {} {} (GT6CE addon API {})",
                         context.platform(), context.minecraftVersion(), context.apiVersion());
-                if (!GregTechMaterials.find("Silicon").valid())
-                    throw new IllegalStateException("built-in Silicon is missing");
-                ItemStack silicon = AddonItems.stack("dust", "Silicon", 1);
-                ItemStack pulled = AddonItems.stack("dust", "MonocrystallineSilicon", 1);
-                if (silicon.isEmpty() || pulled.isEmpty())
-                    throw new IllegalStateException("silicon dust or monocrystalline dust is missing");
+                if (!GregTechMaterials.find("AmmoniumDichromate").valid()
+                        || AddonItems.stack("dust", "AmmoniumDichromate", 1).isEmpty())
+                    throw new IllegalStateException("ammonium dichromate dust is missing");
+                if (!GregTechMaterials.find("Methanol").valid() || !GregTechMaterials.find("Acetylene").valid())
+                    throw new IllegalStateException("surface fluid materials are missing");
                 FluidStack hydrogen = AddonFluids.still("Hydrogen", 250);
                 if (hydrogen == null || hydrogen.isEmpty())
                     throw new IllegalStateException("GT fluid field Hydrogen is missing");
-                AddonRecipes.Line added = AddonRecipes.map("ktfruaddon.recipe.crystal_puller").add(
-                        new AddonRecipes.Line(
-                                new ItemStack[] { silicon },
-                                new ItemStack[] { pulled },
-                                new FluidStack[0],
-                                new FluidStack[0],
-                                200,
-                                128,
-                                0));
-                if (added == null)
-                    throw new IllegalStateException("crystal puller rejected the silicon row");
             }
         });
     }

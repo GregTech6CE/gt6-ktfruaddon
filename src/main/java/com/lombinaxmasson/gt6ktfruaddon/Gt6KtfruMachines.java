@@ -1,4 +1,4 @@
-package com.lombinaxmasson.ktfruaddon;
+package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.List;
 
@@ -13,18 +13,18 @@ import com.gregtech.gregtech.api.addon.StructureRole;
 /**
  * A basic crystal puller and a tank-wall hydrogen burner. Both use casings GregTech already has.
  */
-public final class KtfruMachines implements AddonMachineContributor {
+public final class Gt6KtfruMachines implements AddonMachineContributor {
     @Override
     public String addonId() {
-        return KtfruAddon.MODID;
+        return Gt6KtfruAddon.MODID;
     }
 
     @Override
     public List<RecipeMapDeclaration> recipeMaps() {
         return List.of(new RecipeMapDeclaration(
-                "ktfruaddon.recipe.crystal_puller",
+                "gt6ktfruaddon.recipe.crystal_puller",
                 "Crystal Puller",
-                "ktfruaddon:textures/gui/machines/puller",
+                "gt6ktfruaddon:textures/gui/machines/puller",
                 1, 1, 1,
                 0, 0, 0, 1,
                 true, false, false, false));
@@ -36,7 +36,7 @@ public final class KtfruMachines implements AddonMachineContributor {
                 .machineType("crystal_puller")
                 .energy("EU", 128)
                 .tier(1)
-                .recipeMap("ktfruaddon.recipe.crystal_puller")
+                .recipeMap("gt6ktfruaddon.recipe.crystal_puller")
                 .basic()
                 .build());
     }
@@ -52,9 +52,9 @@ public final class KtfruMachines implements AddonMachineContributor {
     @Override
     public List<FuelMapDeclaration> fuelMaps() {
         return List.of(new FuelMapDeclaration(
-                "ktfruaddon.fuel.hydrogen",
+                "gt6ktfruaddon.fuel.hydrogen",
                 "Hydrogen Burner",
-                "ktfruaddon:textures/gui/machines/burner",
+                "gt6ktfruaddon:textures/gui/machines/burner",
                 0, 0, 0,
                 1, 1, 1, 1,
                 false, false, false, false));
@@ -64,7 +64,7 @@ public final class KtfruMachines implements AddonMachineContributor {
     public List<FuelGeneratorDeclaration> fuelGenerators() {
         return List.of(FuelGeneratorDeclaration.builder("hydrogen_burner", "Steel")
                 .machineType("hydrogen_burner")
-                .fuelMap("ktfruaddon.fuel.hydrogen")
+                .fuelMap("gt6ktfruaddon.fuel.hydrogen")
                 .efficiency(10_000)
                 .energy("RU", 32)
                 .tank(16_000)
