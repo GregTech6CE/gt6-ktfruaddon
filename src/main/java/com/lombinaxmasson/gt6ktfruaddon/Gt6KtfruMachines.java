@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gregtech.gregtech.api.addon.AddonMachineContributor;
+import com.gregtech.gregtech.api.addon.BehaviorMachineDeclaration.Face;
 import com.gregtech.gregtech.api.addon.FuelGeneratorDeclaration;
 import com.gregtech.gregtech.api.addon.MachineDeclaration;
 import com.gregtech.gregtech.api.addon.RecipeMapDeclaration;
@@ -171,13 +172,79 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
 
     private static MachineDeclaration basic(String id, String material, String type, String energy, long perTick,
             int tier, int parallel, String recipeMap) {
-        return MachineDeclaration.builder(id, material)
+        var builder = MachineDeclaration.builder(id, material)
                 .machineType(type)
                 .energy(energy, perTick)
                 .tier(tier)
                 .parallel(parallel)
                 .recipeMap(recipeMap)
-                .basic()
-                .build();
+                .basic();
+        sides(builder, id);
+        return builder.build();
+    }
+
+    /**
+     * Faces follow {@code tileEntityInit0} names, not the raw GT6 bit index.
+     * {@code SBIT_I} and {@code SIDE_INSIDE} are no external face. The port's
+     * {@link Face#LEFT} is the machine's left.
+     */
+    private static void sides(MachineDeclaration.Builder builder, String id) {
+        if (id.startsWith("fluid_heater_")) {
+            builder.itemInputs().itemOutputs();
+            builder.fluidInputs(Face.BACK).fluidAutoInput(Face.BACK);
+            builder.fluidOutputs(Face.TOP).fluidAutoOutput(Face.TOP);
+            builder.energyInputs(Face.BOTTOM).cheapOverclocking(true);
+            return;
+        }
+        if (id.startsWith("light_mixer_") || id.startsWith("electric_light_mixer_")) {
+            builder.itemInputs(Face.LEFT, Face.FRONT).itemAutoInput(Face.LEFT);
+            builder.itemOutputs(Face.RIGHT, Face.BACK).itemAutoOutput(Face.RIGHT);
+            builder.fluidInputs(Face.LEFT, Face.FRONT).fluidAutoInput(Face.FRONT);
+            builder.fluidOutputs(Face.RIGHT, Face.BACK).fluidAutoOutput(Face.BACK);
+            builder.energyInputs(Face.BOTTOM);
+            // Only the kinetic LightMixer checks the block above. The electric one does not.
+            if (id.startsWith("light_mixer_")) builder.minimumLightAbove(14);
+            return;
+        }
+        if (id.startsWith("circuit_assembler_")) {
+            builder.itemInputs(Face.LEFT).itemAutoInput(Face.LEFT);
+            builder.itemOutputs(Face.RIGHT).itemAutoOutput(Face.RIGHT);
+            builder.fluidInputs(Face.BOTTOM, Face.LEFT).fluidAutoInput(Face.BOTTOM);
+            builder.energyInputs(Face.TOP);
+            return;
+        }
+        if (id.startsWith("laser_cutter_")) {
+            builder.itemInputs(Face.LEFT).itemAutoInput(Face.LEFT);
+            builder.itemOutputs(Face.RIGHT).itemAutoOutput(Face.RIGHT);
+            // Source auto is the top, which is not one of the input faces.
+            builder.fluidInputs(Face.BOTTOM, Face.LEFT).fluidAutoInput(Face.TOP);
+            builder.energyInputs(Face.TOP);
+            return;
+        }
+        if (id.startsWith("heat_mixer_") || id.startsWith("ultrasonic_mixer_")) {
+            builder.itemInputs(Face.LEFT, Face.TOP).itemAutoInput(Face.LEFT);
+            builder.itemOutputs(Face.RIGHT, Face.BACK).itemAutoOutput(Face.RIGHT);
+            builder.fluidInputs(Face.LEFT, Face.TOP).fluidAutoInput(Face.TOP);
+            builder.fluidOutputs(Face.RIGHT, Face.BACK).fluidAutoOutput(Face.BACK);
+            builder.energyInputs(Face.BOTTOM);
+            return;
+        }
+        if (id.startsWith("electronics_designer_") || id.startsWith("flaw_detector_")) {
+            builder.itemInputs(Face.LEFT).itemAutoInput(Face.LEFT);
+            builder.itemOutputs(Face.RIGHT).itemAutoOutput(Face.RIGHT);
+            builder.fluidInputs(Face.TOP).fluidAutoInput(Face.TOP);
+            builder.energyInputs(Face.BACK).cheapOverclocking(true);
+            return;
+        }
+        if (id.startsWith("wafer_tester_") || id.startsWith("wafer_coater_")) {
+            builder.itemInputs(Face.TOP, Face.LEFT).itemAutoInput(Face.LEFT);
+            builder.itemOutputs(Face.RIGHT, Face.BOTTOM).itemAutoOutput(Face.RIGHT);
+            builder.fluidInputs(Face.TOP, Face.LEFT).fluidAutoInput(Face.TOP);
+            builder.fluidOutputs(Face.RIGHT, Face.BOTTOM).fluidAutoOutput(Face.BOTTOM);
+            builder.energyInputs(Face.BACK);
+            if (id.startsWith("wafer_tester_")) builder.cheapOverclocking(true);
+            return;
+        }
+        throw new IllegalStateException("No side mask for " + id);
     }
 }

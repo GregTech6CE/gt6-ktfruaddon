@@ -108,12 +108,12 @@
     "layer0": {
       "parent": "minecraft:block/block",
       "textures": {
-        "down": "gt6ce:block/machines/generators/burning_liquid/colored/bottom",
-        "up": "gt6ce:block/machines/generators/burning_liquid/colored/top",
-        "north": "gt6ce:block/machines/generators/burning_liquid/colored/front",
-        "south": "gt6ce:block/machines/generators/burning_liquid/colored/back",
-        "west": "gt6ce:block/machines/generators/burning_liquid/colored/right",
-        "east": "gt6ce:block/machines/generators/burning_liquid/colored/left"
+        "down": "gt6ktfruaddon:block/machines/generators/motor_liquid/colored/sides",
+        "up": "gt6ktfruaddon:block/machines/generators/motor_liquid/colored/sides",
+        "north": "gt6ktfruaddon:block/machines/generators/motor_liquid/colored/front",
+        "south": "gt6ktfruaddon:block/machines/generators/motor_liquid/colored/back",
+        "west": "gt6ktfruaddon:block/machines/generators/motor_liquid/colored/sides",
+        "east": "gt6ktfruaddon:block/machines/generators/motor_liquid/colored/sides"
       },
       "elements": [
         {
@@ -166,12 +166,12 @@
     "layer1": {
       "parent": "minecraft:block/block",
       "textures": {
-        "down": "gt6ce:block/machines/generators/burning_liquid/overlay/bottom",
-        "up": "gt6ce:block/machines/generators/burning_liquid/overlay_active/top",
-        "north": "gt6ce:block/machines/generators/burning_liquid/overlay_active/front",
-        "south": "gt6ce:block/machines/generators/burning_liquid/overlay_active/back",
-        "west": "gt6ce:block/machines/generators/burning_liquid/overlay_active/right",
-        "east": "gt6ce:block/machines/generators/burning_liquid/overlay_active/left"
+        "down": "gt6ktfruaddon:block/machines/generators/motor_liquid/overlay_active/sides",
+        "up": "gt6ktfruaddon:block/machines/generators/motor_liquid/overlay_active/sides",
+        "north": "gt6ktfruaddon:block/machines/generators/motor_liquid/overlay_active/front",
+        "south": "gt6ktfruaddon:block/machines/generators/motor_liquid/overlay_active/back",
+        "west": "gt6ktfruaddon:block/machines/generators/motor_liquid/overlay_active/sides",
+        "east": "gt6ktfruaddon:block/machines/generators/motor_liquid/overlay_active/sides"
       },
       "elements": [
         {
@@ -218,6 +218,6 @@
   },
   "parent": "minecraft:block/block",
   "textures": {
-    "particle": "gt6ce:block/machines/generators/burning_liquid/colored/bottom"
+    "particle": "gt6ktfruaddon:block/machines/generators/motor_liquid/colored/sides"
   }
 }

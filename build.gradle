@@ -71,7 +71,9 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
-def gtSdk = files(fileTree(dir: 'libs/gt6ce', include: 'gt6ce-addon-sdk-1.21.1-neoforge-*.jar'))
+// Face lists, cheap overclocking and the light check are on the API 0 SDK.
+// The 0.8.0 SDK's recipe-machine builder does not have them.
+def gtSdk = files('libs/gt6ce/gt6ce-addon-sdk-1.21.1-neoforge-0.0.0.jar')
 def gtMod = files('libs/gt6ce/gt6ce-1.21.1-neoforge.jar')
 
 dependencies {

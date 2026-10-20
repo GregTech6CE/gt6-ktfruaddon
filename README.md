@@ -6,18 +6,17 @@ GT6CE 的 NeoForge 1.21.1 附属，用来试现在的附属接口能接住多少
 
 ## 开发
 
-需要 JDK 21。编译只依赖 GT6CE 的加载器 SDK `gt6ce-addon-sdk-1.21.1-neoforge-0.8.0.jar`。`runClient` 和 `runServer` 使用完整的 `gt6ce-1.21.1-neoforge.jar`。两个 jar 都不进 git，也不打进成品。
+需要 JDK 21。编译只依赖 GT6CE 的加载器 SDK `gt6ce-addon-sdk-1.21.1-neoforge-0.0.0.jar`。侧面、廉价超频和上方光照都在这份 API 0 的配方机器构建器上；0.8.0 的构建器没有这些方法。`runClient` 和 `runServer` 使用同一份源码打出来的 `gt6ce-1.21.1-neoforge.jar`（模组版本 0.0.0）。两个 jar 都不进 git，也不打进成品。
 
-依赖模组是 `gt6ce`，`versionRange="[0.8,)"`。当前钉住的 GT6CE 提交写在 `libs/gt6ce/build-commit.txt`。
+依赖模组是 `gt6ce`，`versionRange="[0.0.0,0.8)"`。0.8.0 的 `MachineDeclaration` 装不下这些字段，装上会在注册时崩溃，所以范围不包含它。`update-gt.ps1` 仍下载 CI 上的 0.8.0 产物，不能直接替换这份本地运行包。
 
 ```powershell
 $env:JAVA_HOME = 'C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot'
-.\update-gt.ps1
 .\gradlew.bat build
 .\gradlew.bat runClient
 ```
 
-`update-gt.ps1` 从 SaltNya/GregTech6 最近一次成功的 NeoForge 构建下载 SDK 和模组 jar，并核对校验和。CI 不下载产物，而是按 `build-commit.txt` 自己构建同一提交。
+`libs/gt6ce/build-commit.txt` 是本地 `GregTech6` 的 `addon/behavior-energy`（`0f77a888`）。CI 按这个提交自己构建 SDK 和模组 jar。`update-gt.ps1` 下载的是主线上的 0.8.0 产物，不能拿来覆盖这两个 jar。
 
 ## 许可
 

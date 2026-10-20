@@ -30,6 +30,6 @@ API probe for GT6CE. Single-block recipe machines and fluid fuel generators from
 [[dependencies.${mod_id}]]
     modId="gt6ce"
     type="required"
-    versionRange="[0.8,)"
+    versionRange="[0.0.0,0.8)"
     ordering="AFTER"
     side="BOTH"

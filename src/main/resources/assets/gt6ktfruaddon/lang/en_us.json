@@ -1,5 +1,15 @@
-﻿{
+{
     "itemGroup.gt6ktfruaddon":  "GT6 kTFRUAddon",
+    "gt6ktfruaddon.recipe.fluid_heating": "Fluid Heating",
+    "gt6ktfruaddon.recipe.light_mixer": "Light Mixer",
+    "gt6ktfruaddon.recipe.circuit_assembler": "Circuit Assembler",
+    "gt6ktfruaddon.recipe.laser_cutter": "Laser Cutter",
+    "gt6ktfruaddon.recipe.heat_mixer": "Heat Mixer",
+    "gt6ktfruaddon.recipe.electronics_designer": "Electronics Designer",
+    "gt6ktfruaddon.recipe.flaw_detector": "Flaw Detector",
+    "gt6ktfruaddon.recipe.wafer_tester": "Wafer Tester",
+    "gt6ktfruaddon.recipe.wafer_coater": "Wafer Coater",
+    "gt6ktfruaddon.recipe.ultrasonic_mixer": "Ultrasonic Mixer",
     "block.gt6ktfruaddon.fluid_heater_steel":  "Fluid Heater (Steel)",
     "block.gt6ktfruaddon.fluid_heater_invar":  "Fluid Heater (Invar)",
     "block.gt6ktfruaddon.fluid_heater_titanium":  "Fluid Heater (Titanium)",

@@ -11,7 +11,7 @@
 | `kTFRUAddon/`，分支 `1.7.10`，提交 `6404ab69` | 行为与数据的阅读权威。AGPL-3.0。不进本仓库。上游 `dev` 停在 2026-02-13 的 `3e5b60ec`，比 `1.7.10` 旧，不跟。 |
 | 本仓库 `main` | 附属本体。计划卡、语言、配方声明、改编后的代码都写在这里。编译只用 GT6CE 附属 SDK。 |
 | `D:\Baobao\projects\dev\java\cruciblecraft-template-1.21.1` | 分档、证据层、关卡口径的参考。它的表面清单是旧对照，而且 CrucibleCraft 自己不收这些机器。 |
-| `D:\Baobao\projects\dev\java\GregTech6CommunityEdition` | 接口形状的本地参考。附属实际编译对着 `libs/gt6ce/build-commit.txt` 里的 `32203391638dbcf5bd6524b21c85f6ea446dcb10`（探针文档写模组 0.8.0）。本机工作树的 `mod_version` 是 0.7.0，`API_VERSION` 是 7，和那只 jar 可能不一致。卡开工时以 SDK 里真实存在的类型为准。 |
+| `D:\Baobao\projects\dev\java\GregTech6CommunityEdition` | 接口形状的本地参考。附属编译对着 `libs/gt6ce/build-commit.txt` 里的 `0f77a88844a42f329cbc17e8075f89631cafae88`（`addon/behavior-energy`，模组版本 0.0.0，API 0）。0.8.0 的配方机器构建器没有侧面方法。 |
 
 上游检出有 412 个 Java 文件。主体在 `tile`（148）和 `api`（119），配方在 `recipe`（24）。`kTFRUAddon/进度.csv` 是上游作者自己的研究树进度，不拿来当移植队列。
 
