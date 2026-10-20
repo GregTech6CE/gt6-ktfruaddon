@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import com.gregtech.gregtech.api.addon.GregTechAddon;
 import com.gregtech.gregtech.api.addon.GregTechAddons;
 import com.gregtech.gregtech.api.addon.GregTechMaterials;
+import com.gregtech.gregtech.api.addon.MachineDeclaration;
 import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
@@ -42,10 +43,11 @@ public final class Gt6KtfruAddon {
             CREATIVE_MODE_TABS.register("main", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.gt6ktfruaddon"))
                     .withTabsBefore(CreativeModeTabs.FUNCTIONAL_BLOCKS)
-                    .icon(() -> stack("crystal_puller"))
+                    .icon(() -> stack("heat_mixer_lv"))
                     .withSearchBar()
                     .displayItems((parameters, output) -> {
-                        accept(output, "crystal_puller");
+                        for (MachineDeclaration machine : new Gt6KtfruMachines().machines())
+                            accept(output, machine.id());
                         accept(output, "hydrogen_burner");
                         for (MaterialDeclaration material : new Gt6KtfruMaterials().materials()) {
                             if (material.dust() || material.metal())
@@ -85,6 +87,9 @@ public final class Gt6KtfruAddon {
                     throw new IllegalStateException("methanol fluid item is missing");
                 if (fluidItem(acetylene) == Items.AIR)
                     throw new IllegalStateException("acetylene fluid item is missing");
+                Gt6KtfruRecipes.register();
+                if (stack("heat_mixer_lv").isEmpty())
+                    throw new IllegalStateException("heat mixer is missing");
                 FluidStack hydrogen = AddonFluids.still("Hydrogen", 250);
                 if (hydrogen == null || hydrogen.isEmpty())
                     throw new IllegalStateException("GT fluid field Hydrogen is missing");

@@ -8,7 +8,7 @@ GT6CE 的 NeoForge 1.21.1 附属，用来试现在的附属接口能接住多少
 - 基础机器拉晶炉：1 份硅粉，128 EU/t，200 tick，出 1 份单晶硅粉。
 - 氢燃烧器：三块储罐壁的多方块，烧 `gt6ce:hydrogen`，每 tick 输出 32 RU，排气是少量蒸汽。能量从正面背后 2 格送出。
 
-可移植范围在 [`docs/ktfruaddon-gt6-surface.md`](docs/ktfruaddon-gt6-surface.md)，从 CrucibleCraft 拷来。阶段卡在 [`docs/card-plans/README.md`](docs/card-plans/README.md)。正在做的是表面材料。占位的拉晶炉和氢燃烧器还在，机器卡会换掉它们。
+可移植范围在 [`docs/ktfruaddon-gt6-surface.md`](docs/ktfruaddon-gt6-surface.md)，从 CrucibleCraft 拷来。阶段卡在 [`docs/card-plans/README.md`](docs/card-plans/README.md)。表面材料卡已关。占位的拉晶炉和氢燃烧器还在，机器卡会换掉它们。
 
 ## 开发
 

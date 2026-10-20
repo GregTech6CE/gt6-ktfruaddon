@@ -1,0 +1,10 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["III", "ICI", "III"],
+  "key": {
+    "I": { "item": "minecraft:iron_block" },
+    "C": { "item": "minecraft:lapis_lazuli" }
+  },
+  "result": { "id": "gt6ktfruaddon:electronics_designer_lv", "count": 1 }
+}

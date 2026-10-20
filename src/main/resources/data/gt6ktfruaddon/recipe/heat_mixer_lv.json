@@ -1,0 +1,10 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["III", "ICI", "III"],
+  "key": {
+    "I": { "item": "minecraft:iron_block" },
+    "C": { "item": "minecraft:coal" }
+  },
+  "result": { "id": "gt6ktfruaddon:heat_mixer_lv", "count": 1 }
+}

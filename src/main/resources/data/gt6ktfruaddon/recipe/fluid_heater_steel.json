@@ -1,0 +1,10 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["III", "ICI", "III"],
+  "key": {
+    "I": { "item": "minecraft:iron_block" },
+    "C": { "item": "minecraft:blaze_powder" }
+  },
+  "result": { "id": "gt6ktfruaddon:fluid_heater_steel", "count": 1 }
+}
