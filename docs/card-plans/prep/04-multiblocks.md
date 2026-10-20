@@ -2,6 +2,7 @@
 
 - 状态：prep
 - 依赖：01、02
+- 排在卡 06 之后
 - 文件范围：`MachineLayout`、对应的 `LARGE_RECIPE` 或燃料多方块、结构和语言
 - 平台：NeoForge 1.21.1
 
