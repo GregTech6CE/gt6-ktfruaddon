@@ -14,7 +14,8 @@ import com.gregtech.gregtech.api.addon.StructureRole;
 /**
  * Single-block machines from {@code tileEntityInit0}. Recipe machines are
  * 20000–27542. Fuel generators are the gas turbines and diesel engines from
- * 10000–10160. The three distillation towers are the large recipe machines.
+ * 10000–10160. The large recipe machines are the three distillation towers and
+ * the ore processing system.
  * The gas compressor and the gas battery are not registered.
  */
 public final class Gt6KtfruMachines implements AddonMachineContributor {
@@ -35,6 +36,9 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
     public static final String TINY_DISTILL_TYPE = "tiny_distillation_tower";
     public static final String SMALL_DISTILL_TYPE = "small_distillation_tower";
     public static final String DISTILL_TYPE = "distillation_tower";
+    public static final String ORE_PROCESS = "gt6ktfruaddon.recipe.ore_processing_system";
+    /** Layout name and machine type. The controller id uses the same string. */
+    public static final String ORE_PROCESS_TYPE = "ore_processing_system";
     /** Built-in GT fuel map behind {@code FM.Gas}. Already contains hydrogen. */
     public static final String GAS_FUEL = "gt.recipe.fuels.gas";
     /** Built-in GT fuel map behind {@code FM.Engine}. Already contains diesel. */
@@ -67,6 +71,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
         maps.add(map(TINY_DISTILL, "Tiny Distillation Tower", "tinydistillationtower", 1, 3, 0, 1, 3, 0, 1));
         maps.add(map(SMALL_DISTILL, "Small Distillation Tower", "smalldistillationtower", 1, 3, 0, 1, 6, 0, 1));
         maps.add(map(DISTILL, "Distillation Tower", "distillationtower", 1, 3, 0, 1, 9, 0, 1));
+        maps.add(map(ORE_PROCESS, "Ore Process System", "oreprocesssystem", 3, 9, 1, 3, 3, 0, 1));
         return List.copyOf(maps);
     }
 
@@ -90,6 +95,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
         machines.add(distillationTower(TINY_DISTILL_TYPE, TINY_DISTILL));
         machines.add(distillationTower(SMALL_DISTILL_TYPE, SMALL_DISTILL));
         machines.add(distillationTower(DISTILL_TYPE, DISTILL));
+        machines.add(oreProcessingSystem());
         return List.copyOf(machines);
     }
 
@@ -98,7 +104,8 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
         return List.of(
                 distillationLayout(TINY_DISTILL_TYPE, 4),
                 distillationLayout(SMALL_DISTILL_TYPE, 6),
-                distillationLayout(DISTILL_TYPE, 9));
+                distillationLayout(DISTILL_TYPE, 9),
+                oreProcessingLayout());
     }
 
     @Override
@@ -325,5 +332,88 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
     /** Source local row grows to the machine's left, so right is {@code 1 - row}. */
     private static MachineLayout.Cell towerCell(int row, int layer, int col, String part, StructureRole role) {
         return new MachineLayout.Cell(1 - row, layer - 1, col, part, role);
+    }
+
+    /**
+     * Source 30041. Titanium controller, 2048 EU, parallel 64. The declaration
+     * window is half to double, so the upper bound is 4096 rather than 16384.
+     * Crushed-ore rows are 128 EU and need each ore's byproducts, which the
+     * material API does not expose, so this map has no rows yet.
+     */
+    private static MachineDeclaration oreProcessingSystem() {
+        List<String> keys = new ArrayList<>();
+        for (int line = 1; line <= 4; line++) {
+            keys.add("gt6ktfruaddon.structure." + ORE_PROCESS_TYPE + "." + line);
+        }
+        return MachineDeclaration.builder(ORE_PROCESS_TYPE, "Titanium")
+                .machineType(ORE_PROCESS_TYPE)
+                .energy("EU", 2048)
+                .tier(4)
+                .parallel(64)
+                .recipeMap(ORE_PROCESS)
+                .largeRecipe()
+                .itemInputs(Face.TOP)
+                .itemAutoInput(Face.TOP)
+                .itemOutputs()
+                .fluidInputs(Face.TOP)
+                .fluidAutoInput(Face.TOP)
+                .fluidOutputs()
+                .energyInputs(Face.BOTTOM, Face.TOP, Face.FRONT, Face.BACK, Face.LEFT, Face.RIGHT)
+                .structureKeys(List.copyOf(keys))
+                .build();
+    }
+
+    /**
+     * Layer rule ABC, offset 0,0,0. Local row grows to the machine's left and
+     * local column grows backward, so a cell is {@code (-row, layer, col)}.
+     * The controller is layer A, row 0, column 0.
+     */
+    private static final String[] ORE_BOTTOM = {
+            "AAAAA", "AAAAA", "AAAAA", "BBBBB", "BBBBB", "NBBBB"
+    };
+    private static final String[] ORE_MIDDLE = {
+            "CCCCC", "CCCCC", "CCCCC", "BBDDD", "BBDDD", "BBDDD"
+    };
+    private static final String[] ORE_TOP = {
+            "     ", "     ", "     ", "EEDDD", "EEDDD", "EEDDD"
+    };
+
+    private static MachineLayout oreProcessingLayout() {
+        List<MachineLayout.Cell> cells = new ArrayList<>();
+        String[][] layers = {ORE_BOTTOM, ORE_MIDDLE, ORE_TOP};
+        for (int layer = 0; layer < layers.length; layer++) {
+            String[] rows = layers[layer];
+            for (int row = 0; row < rows.length; row++) {
+                String line = rows[row];
+                for (int col = 0; col < line.length(); col++) {
+                    if (layer == 0 && row == 0 && col == 0) continue;
+                    char symbol = line.charAt(col);
+                    if (symbol == ' ') continue;
+                    cells.add(new MachineLayout.Cell(-row, layer, col, orePart(symbol), oreRole(symbol)));
+                }
+            }
+        }
+        return new MachineLayout(ORE_PROCESS_TYPE, List.copyOf(cells));
+    }
+
+    private static String orePart(char symbol) {
+        return switch (symbol) {
+            case 'A' -> "titanium_wall";
+            case 'B', 'N' -> "tungstensteel_wall";
+            case 'C' -> "sluice_part";
+            case 'D' -> "centrifuge_part";
+            case 'E' -> "shredder_blades";
+            default -> throw new IllegalStateException("unknown ore structure symbol " + symbol);
+        };
+    }
+
+    /** {@code N} is the only output. Parts with no usage flag are casings. */
+    private static StructureRole oreRole(char symbol) {
+        return switch (symbol) {
+            case 'A', 'B' -> StructureRole.ITEM_FLUID_INPUT;
+            case 'N' -> StructureRole.ITEM_FLUID_OUTPUT;
+            case 'C', 'D', 'E' -> StructureRole.CASING;
+            default -> throw new IllegalStateException("unknown ore structure symbol " + symbol);
+        };
     }
 }

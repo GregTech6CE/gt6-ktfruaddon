@@ -13,6 +13,7 @@
     "gt6ktfruaddon.recipe.tiny_distill_tower": "微型蒸馏塔",
     "gt6ktfruaddon.recipe.small_distill_tower": "小型蒸馏塔",
     "gt6ktfruaddon.recipe.distill_tower": "蒸馏塔",
+    "gt6ktfruaddon.recipe.ore_processing_system": "集成矿物处理器",
     "block.gt6ktfruaddon.fluid_heater_steel":  "流体加热器（钢）",
     "block.gt6ktfruaddon.fluid_heater_invar":  "流体加热器（殷钢）",
     "block.gt6ktfruaddon.fluid_heater_titanium":  "流体加热器（钛）",
@@ -111,5 +112,10 @@
     "gt6ktfruaddon.structure.distillation_tower.3": "蒸馏塔主方块放在侧面底层的中央, 正面朝外",
     "gt6ktfruaddon.structure.distillation_tower.4": "流体会从蒸馏塔背面的一溜除去层外的输出口处自动输出",
     "gt6ktfruaddon.structure.distillation_tower.5": "从蒸馏塔底层的输出口可以抽取固体产物",
-    "gt6ktfruaddon.structure.distillation_tower.6": "只能从蒸馏塔的底层输入原料"
+    "gt6ktfruaddon.structure.distillation_tower.6": "只能从蒸馏塔的底层输入原料",
+    "block.gt6ktfruaddon.ore_processing_system": "集成矿物处理器",
+    "gt6ktfruaddon.structure.ore_processing_system.1": "左右 6 格、前后 5 格、高 3 层。控制器在底层最前一排、面对正面时的左手端，正面朝外",
+    "gt6ktfruaddon.structure.ore_processing_system.2": "面对正面时的左手三列：底层钛墙，中层洗矿零件，顶层留空",
+    "gt6ktfruaddon.structure.ore_processing_system.3": "右手三列：底层钨钢墙；中层前两排钨钢墙、后三排离心零件；顶层前两排粉碎叶片、后三排离心零件",
+    "gt6ktfruaddon.structure.ore_processing_system.4": "面对正面时右手端最前那块钨钢墙输出物品和流体，其余钛墙和钨钢墙输入。EU 从控制器进入"
 }

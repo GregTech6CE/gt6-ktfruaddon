@@ -99,6 +99,8 @@ public final class Gt6KtfruAddon {
                     throw new IllegalStateException("small distillation tower is missing");
                 if (stack("distillation_tower").isEmpty())
                     throw new IllegalStateException("distillation tower is missing");
+                if (stack("ore_processing_system").isEmpty())
+                    throw new IllegalStateException("ore processing system is missing");
                 if (stack("gas_turbine_steel").isEmpty())
                     throw new IllegalStateException("steel gas turbine is missing");
                 FluidStack hydrogen = AddonFluids.still("Hydrogen", 250);

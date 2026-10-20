@@ -13,6 +13,7 @@
     "gt6ktfruaddon.recipe.tiny_distill_tower": "Tiny Distillation Tower",
     "gt6ktfruaddon.recipe.small_distill_tower": "Small Distillation Tower",
     "gt6ktfruaddon.recipe.distill_tower": "Distillation Tower",
+    "gt6ktfruaddon.recipe.ore_processing_system": "Ore Processing System",
     "block.gt6ktfruaddon.fluid_heater_steel":  "Fluid Heater (Steel)",
     "block.gt6ktfruaddon.fluid_heater_invar":  "Fluid Heater (Invar)",
     "block.gt6ktfruaddon.fluid_heater_titanium":  "Fluid Heater (Titanium)",
@@ -111,5 +112,10 @@
     "gt6ktfruaddon.structure.distillation_tower.3": "Main centered on Side-Bottom of Tower facing outwards",
     "gt6ktfruaddon.structure.distillation_tower.4": "Outputs automatically to the Holes on the Backside",
     "gt6ktfruaddon.structure.distillation_tower.5": "Bottom Hole is for outputting all Items",
-    "gt6ktfruaddon.structure.distillation_tower.6": "Input only possible at Bottom Layer of Tower"
+    "gt6ktfruaddon.structure.distillation_tower.6": "Input only possible at Bottom Layer of Tower",
+    "block.gt6ktfruaddon.ore_processing_system": "Ore Processing System",
+    "gt6ktfruaddon.structure.ore_processing_system.1": "6 across, 5 deep and 3 high. Controller at the front-left end of the bottom layer when facing the front, facing outward",
+    "gt6ktfruaddon.structure.ore_processing_system.2": "Three columns on your left: titanium walls on the bottom, sluice parts in the middle, empty on top",
+    "gt6ktfruaddon.structure.ore_processing_system.3": "Three columns on your right: tungstensteel walls on the bottom; middle is tungstensteel for the front two rows and centrifuge parts for the back three; top is shredder blades for the front two and centrifuge parts for the back three",
+    "gt6ktfruaddon.structure.ore_processing_system.4": "The front tungstensteel wall on your right outputs items and fluids. The other titanium and tungstensteel walls are inputs. EU enters the controller"
 }
