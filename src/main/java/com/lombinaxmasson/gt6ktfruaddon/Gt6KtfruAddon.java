@@ -93,6 +93,12 @@ public final class Gt6KtfruAddon {
                 Gt6KtfruRecipes.register();
                 if (stack("heat_mixer_lv").isEmpty())
                     throw new IllegalStateException("heat mixer is missing");
+                if (stack("tiny_distillation_tower").isEmpty())
+                    throw new IllegalStateException("tiny distillation tower is missing");
+                if (stack("small_distillation_tower").isEmpty())
+                    throw new IllegalStateException("small distillation tower is missing");
+                if (stack("distillation_tower").isEmpty())
+                    throw new IllegalStateException("distillation tower is missing");
                 if (stack("gas_turbine_steel").isEmpty())
                     throw new IllegalStateException("steel gas turbine is missing");
                 FluidStack hydrogen = AddonFluids.still("Hydrogen", 250);

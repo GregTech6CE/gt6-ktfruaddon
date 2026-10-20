@@ -7,8 +7,9 @@ import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.MaterialFormRequest;
 
 /**
- * Chemical materials from kTFRUAddon materialPreInit at 6404ab69. Temperatures
- * follow the source: Celsius entries are stored as Celsius plus 273. Density is 1
+ * Chemical materials from kTFRUAddon materialPreInit at 6404ab69. Bittern is the
+ * one extra liquid: it is an flList fluid the tiny distillation recipe outputs.
+ * Temperatures follow the source: Celsius entries are stored as Celsius plus 273. Density is 1
  * because that list does not carry one. Plate, foil and ore requests stay empty:
  * a form the material flags do not allow fails startup, and ore is not a generated prefix.
  */
@@ -154,7 +155,10 @@ public final class Gt6KtfruMaterials implements AddonMaterialContributor {
                 MaterialDeclaration.builder("FluorobenzoylChloride").displayName("4-Fluorobenzoyl Chloride").color(0xEBF5D2).chemicalFormula("C₇H₄ClFO").meltingPointKelvin(263).boilingPointKelvin(467).density(1F).liquid().build(),
                 MaterialDeclaration.builder("Difluorobenzophenone").displayName("4,4'-Difluorobenzophenone").color(0xF0EBDC).chemicalFormula("C₁₃H₈F₂O").meltingPointKelvin(380).boilingPointKelvin(648).density(1F).dust().build(),
                 MaterialDeclaration.builder("Hydroquinone").displayName("Hydroquinone").color(0xF0F0F0).chemicalFormula("C₆H₆O₂").meltingPointKelvin(445).boilingPointKelvin(560).density(1F).dust().build(),
-                MaterialDeclaration.builder("PEEK").displayName("Polyether Ether Ketone").color(0xD2BEA0).chemicalFormula("(C₁₉H₁₂O₃)n").meltingPointKelvin(616).boilingPointKelvin(873).density(1F).dust().build()
+                MaterialDeclaration.builder("PEEK").displayName("Polyether Ether Ketone").color(0xD2BEA0).chemicalFormula("(C₁₉H₁₂O₃)n").meltingPointKelvin(616).boilingPointKelvin(873).density(1F).dust().build(),
+                // flList.Bittern, not a materialPreInit row. The tiny tower's ocean recipe outputs it.
+                // The source register call sets no color or temperature, so those stay at the builder defaults.
+                MaterialDeclaration.builder("Bittern").displayName("Bittern").liquid().build()
         );
     }
 

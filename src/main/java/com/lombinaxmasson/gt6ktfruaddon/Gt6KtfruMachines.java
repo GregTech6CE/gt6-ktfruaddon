@@ -7,12 +7,15 @@ import com.gregtech.gregtech.api.addon.AddonMachineContributor;
 import com.gregtech.gregtech.api.addon.BehaviorMachineDeclaration.Face;
 import com.gregtech.gregtech.api.addon.FuelGeneratorDeclaration;
 import com.gregtech.gregtech.api.addon.MachineDeclaration;
+import com.gregtech.gregtech.api.addon.MachineLayout;
 import com.gregtech.gregtech.api.addon.RecipeMapDeclaration;
+import com.gregtech.gregtech.api.addon.StructureRole;
 
 /**
  * Single-block machines from {@code tileEntityInit0}. Recipe machines are
  * 20000–27542. Fuel generators are the gas turbines and diesel engines from
- * 10000–10160. The gas compressor and the gas battery are not registered.
+ * 10000–10160. The three distillation towers are the large recipe machines.
+ * The gas compressor and the gas battery are not registered.
  */
 public final class Gt6KtfruMachines implements AddonMachineContributor {
     public static final String FLUID_HEATING = "gt6ktfruaddon.recipe.fluid_heating";
@@ -25,6 +28,13 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
     public static final String WAFER_TESTER = "gt6ktfruaddon.recipe.wafer_tester";
     public static final String WAFER_COATER = "gt6ktfruaddon.recipe.wafer_coater";
     public static final String ULTRASONIC_MIXER = "gt6ktfruaddon.recipe.ultrasonic_mixer";
+    public static final String TINY_DISTILL = "gt6ktfruaddon.recipe.tiny_distill_tower";
+    public static final String SMALL_DISTILL = "gt6ktfruaddon.recipe.small_distill_tower";
+    public static final String DISTILL = "gt6ktfruaddon.recipe.distill_tower";
+    /** Layout name and machine type. The controller id uses the same string. */
+    public static final String TINY_DISTILL_TYPE = "tiny_distillation_tower";
+    public static final String SMALL_DISTILL_TYPE = "small_distillation_tower";
+    public static final String DISTILL_TYPE = "distillation_tower";
     /** Built-in GT fuel map behind {@code FM.Gas}. Already contains hydrogen. */
     public static final String GAS_FUEL = "gt.recipe.fuels.gas";
     /** Built-in GT fuel map behind {@code FM.Engine}. Already contains diesel. */
@@ -54,6 +64,9 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
         maps.add(map(WAFER_TESTER, "Wafer Tester", "wafertester", 3, 3, 0, 0, 0, 0, 1));
         maps.add(map(WAFER_COATER, "Wafer Coater", "wafercoater", 3, 3, 0, 3, 0, 0, 1));
         maps.add(map(ULTRASONIC_MIXER, "Ultrasonic Mixer", "ultrasonicmixer", 6, 3, 0, 6, 2, 0, 1));
+        maps.add(map(TINY_DISTILL, "Tiny Distillation Tower", "tinydistillationtower", 1, 3, 0, 1, 3, 0, 1));
+        maps.add(map(SMALL_DISTILL, "Small Distillation Tower", "smalldistillationtower", 1, 3, 0, 1, 6, 0, 1));
+        maps.add(map(DISTILL, "Distillation Tower", "distillationtower", 1, 3, 0, 1, 9, 0, 1));
         return List.copyOf(maps);
     }
 
@@ -74,7 +87,18 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
         electric(machines, "wafer_tester", "wafertester", "EU", WAFER_TESTER, 1, 5, null);
         electric(machines, "wafer_coater", "wafercoater", "EU", WAFER_COATER, 1, 5, null);
         electric(machines, "ultrasonic_mixer", "ultrasonicmixer", "EU", ULTRASONIC_MIXER, 3, 5, null);
+        machines.add(distillationTower(TINY_DISTILL_TYPE, TINY_DISTILL));
+        machines.add(distillationTower(SMALL_DISTILL_TYPE, SMALL_DISTILL));
+        machines.add(distillationTower(DISTILL_TYPE, DISTILL));
         return List.copyOf(machines);
+    }
+
+    @Override
+    public List<MachineLayout> layouts() {
+        return List.of(
+                distillationLayout(TINY_DISTILL_TYPE, 4),
+                distillationLayout(SMALL_DISTILL_TYPE, 6),
+                distillationLayout(DISTILL_TYPE, 9));
     }
 
     @Override
@@ -246,5 +270,60 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
             return;
         }
         throw new IllegalStateException("No side mask for " + id);
+    }
+
+    /**
+     * Sources 30004, 30005 and 30006. One 3×3 heat layer, then four, six or nine
+     * 3×3 distillation layers. The controller sits in the front-middle of the
+     * lowest distillation layer and is not a cell. Output hatches are the
+     * back-middle column. Coordinates are the layout's right, up and back.
+     */
+    private static MachineDeclaration distillationTower(String type, String recipe) {
+        List<String> keys = new ArrayList<>();
+        for (int line = 1; line <= 6; line++) {
+            keys.add("gt6ktfruaddon.structure." + type + "." + line);
+        }
+        return MachineDeclaration.builder(type, "StainlessSteel")
+                .machineType(type)
+                // Source nominal is 512 HU. The declaration only exposes half to
+                // double, so 128 keeps the 64 HU ocean row inside.
+                .energy("HU", 128)
+                .tier(2)
+                .parallel(1)
+                .recipeMap(recipe)
+                .largeRecipe()
+                .cheapOverclocking(true)
+                .itemInputs()
+                .itemOutputs()
+                .fluidInputs()
+                .fluidOutputs()
+                .energyInputs()
+                .structureKeys(List.copyOf(keys))
+                .build();
+    }
+
+    private static MachineLayout distillationLayout(String type, int wallLayers) {
+        List<MachineLayout.Cell> cells = new ArrayList<>();
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                cells.add(towerCell(row, 0, col, "heat_transmitter", StructureRole.ENERGY_INPUT));
+            }
+        }
+        for (int layer = 1; layer <= wallLayers; layer++) {
+            for (int row = 0; row < 3; row++) {
+                for (int col = 0; col < 3; col++) {
+                    if (layer == 1 && row == 1 && col == 0) continue;
+                    boolean output = row == 1 && col == 2;
+                    cells.add(towerCell(row, layer, col, "distillation_tower_part",
+                            output ? StructureRole.ITEM_FLUID_OUTPUT : StructureRole.ITEM_FLUID_INPUT));
+                }
+            }
+        }
+        return new MachineLayout(type, List.copyOf(cells));
+    }
+
+    /** Source local row grows to the machine's left, so right is {@code 1 - row}. */
+    private static MachineLayout.Cell towerCell(int row, int layer, int col, String part, StructureRole role) {
+        return new MachineLayout.Cell(1 - row, layer - 1, col, part, role);
     }
 }

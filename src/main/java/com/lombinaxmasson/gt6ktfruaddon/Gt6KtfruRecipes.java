@@ -22,6 +22,9 @@ public final class Gt6KtfruRecipes {
     public static void register() {
         Gt6KtfruSourceRecipes.register();
         lightMixer();
+        distillationTower(Gt6KtfruMachines.TINY_DISTILL, 40);
+        distillationTower(Gt6KtfruMachines.SMALL_DISTILL, 30);
+        distillationTower(Gt6KtfruMachines.DISTILL, 20);
         require(AddonRecipes.map(Gt6KtfruMachines.HEAT_MIXER).find(
                 List.of(dust("Sulfur", 1)), List.of(fluid("Hydrogen", 2000)), true, 6, 3),
                 "heat mixer sulfur row");
@@ -51,6 +54,21 @@ public final class Gt6KtfruRecipes {
                         fluid("GenLiquid_Chloroform", 100),
                         fluid("GenGas_HydrochloricAcid", 600)},
                 600, 32);
+    }
+
+    /**
+     * Chemistry.java:107–109. Ocean water into bittern, distilled water and a small salt dust.
+     * The three towers use the same row at 20, 30 and 40 ticks.
+     */
+    private static void distillationTower(String map, long duration) {
+        add(map, NO_ITEMS,
+                new ItemStack[] {prefix("dustSmall", "Salt", 1)},
+                new FluidStack[] {fluid("Ocean", 1000)},
+                new FluidStack[] {fluid("GenLiquid_Bittern", 100), fluid("DistW", 500)},
+                duration, 64);
+        require(AddonRecipes.map(map).find(
+                List.of(), List.of(fluid("Ocean", 1000)), true, 1, 3),
+                map + " ocean row");
     }
 
     private static void add(String map, ItemStack[] itemsIn, ItemStack[] itemsOut,
