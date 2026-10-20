@@ -1,5 +1,6 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
+import com.gregtech.gregtech.api.addon.FuelGeneratorDeclaration;
 import com.gregtech.gregtech.api.addon.GregTechMaterials;
 import com.gregtech.gregtech.api.addon.MachineDeclaration;
 
@@ -21,22 +22,30 @@ public final class Gt6KtfruMachineColors {
 
     @SubscribeEvent
     public static void blocks(RegisterColorHandlersEvent.Block event) {
-        for (MachineDeclaration machine : new Gt6KtfruMachines().machines()) {
-            Block block = block(machine.id());
-            if (block == null) continue;
-            String material = machine.material();
-            event.register((state, level, pos, index) -> color(material), block);
-        }
+        Gt6KtfruMachines machines = new Gt6KtfruMachines();
+        for (MachineDeclaration machine : machines.machines())
+            paint(event, machine.id(), machine.material());
+        for (FuelGeneratorDeclaration generator : machines.fuelGenerators())
+            paint(event, generator.id(), generator.material());
     }
 
     @SubscribeEvent
     public static void items(RegisterColorHandlersEvent.Item event) {
-        for (MachineDeclaration machine : new Gt6KtfruMachines().machines()) {
-            Block block = block(machine.id());
-            if (block == null) continue;
-            String material = machine.material();
-            event.register((stack, index) -> color(material), block);
-        }
+        Gt6KtfruMachines machines = new Gt6KtfruMachines();
+        for (MachineDeclaration machine : machines.machines())
+            paint(event, machine.id(), machine.material());
+        for (FuelGeneratorDeclaration generator : machines.fuelGenerators())
+            paint(event, generator.id(), generator.material());
+    }
+
+    private static void paint(RegisterColorHandlersEvent.Block event, String id, String material) {
+        Block block = block(id);
+        if (block != null) event.register((state, level, pos, index) -> color(material), block);
+    }
+
+    private static void paint(RegisterColorHandlersEvent.Item event, String id, String material) {
+        Block block = block(id);
+        if (block != null) event.register((stack, index) -> color(material), block);
     }
 
     private static Block block(String id) {

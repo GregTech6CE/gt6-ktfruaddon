@@ -2,6 +2,7 @@ package com.lombinaxmasson.gt6ktfruaddon;
 
 import org.slf4j.Logger;
 
+import com.gregtech.gregtech.api.addon.FuelGeneratorDeclaration;
 import com.gregtech.gregtech.api.addon.GregTechAddon;
 import com.gregtech.gregtech.api.addon.GregTechAddons;
 import com.gregtech.gregtech.api.addon.GregTechMaterials;
@@ -46,9 +47,11 @@ public final class Gt6KtfruAddon {
                     .icon(() -> stack("heat_mixer_lv"))
                     .withSearchBar()
                     .displayItems((parameters, output) -> {
-                        for (MachineDeclaration machine : new Gt6KtfruMachines().machines())
+                        Gt6KtfruMachines machines = new Gt6KtfruMachines();
+                        for (MachineDeclaration machine : machines.machines())
                             accept(output, machine.id());
-                        accept(output, "hydrogen_burner");
+                        for (FuelGeneratorDeclaration generator : machines.fuelGenerators())
+                            accept(output, generator.id());
                         for (MaterialDeclaration material : new Gt6KtfruMaterials().materials()) {
                             if (material.dust() || material.metal())
                                 acceptStack(output, AddonItems.stack("dust", material.name(), 1));
@@ -90,6 +93,8 @@ public final class Gt6KtfruAddon {
                 Gt6KtfruRecipes.register();
                 if (stack("heat_mixer_lv").isEmpty())
                     throw new IllegalStateException("heat mixer is missing");
+                if (stack("gas_turbine_steel").isEmpty())
+                    throw new IllegalStateException("steel gas turbine is missing");
                 FluidStack hydrogen = AddonFluids.still("Hydrogen", 250);
                 if (hydrogen == null || hydrogen.isEmpty())
                     throw new IllegalStateException("GT fluid field Hydrogen is missing");

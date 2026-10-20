@@ -5,16 +5,13 @@ import java.util.List;
 
 import com.gregtech.gregtech.api.addon.AddonMachineContributor;
 import com.gregtech.gregtech.api.addon.FuelGeneratorDeclaration;
-import com.gregtech.gregtech.api.addon.FuelMapDeclaration;
 import com.gregtech.gregtech.api.addon.MachineDeclaration;
-import com.gregtech.gregtech.api.addon.MachineLayout;
 import com.gregtech.gregtech.api.addon.RecipeMapDeclaration;
-import com.gregtech.gregtech.api.addon.StructureRole;
 
 /**
- * Single-block machines from {@code tileEntityInit0} 20000–27542. The gas
- * compressor fills a compressed-gas tank and is not registered. The placeholder
- * crystal puller is gone. The hydrogen burner stays until card 03.
+ * Single-block machines from {@code tileEntityInit0}. Recipe machines are
+ * 20000–27542. Fuel generators are the gas turbines and diesel engines from
+ * 10000–10160. The gas compressor and the gas battery are not registered.
  */
 public final class Gt6KtfruMachines implements AddonMachineContributor {
     public static final String FLUID_HEATING = "gt6ktfruaddon.recipe.fluid_heating";
@@ -27,6 +24,10 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
     public static final String WAFER_TESTER = "gt6ktfruaddon.recipe.wafer_tester";
     public static final String WAFER_COATER = "gt6ktfruaddon.recipe.wafer_coater";
     public static final String ULTRASONIC_MIXER = "gt6ktfruaddon.recipe.ultrasonic_mixer";
+    /** Built-in GT fuel map behind {@code FM.Gas}. Already contains hydrogen. */
+    public static final String GAS_FUEL = "gt.recipe.fuels.gas";
+    /** Built-in GT fuel map behind {@code FM.Engine}. Already contains diesel. */
+    public static final String ENGINE_FUEL = "gt.recipe.fuels.engine";
 
     private static final String[] ELECTRIC = {
             "", "SteelGalvanized", "Aluminium", "StainlessSteel", "Chromium", "Titanium"
@@ -76,35 +77,37 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
     }
 
     @Override
-    public List<MachineLayout> layouts() {
-        return List.of(new MachineLayout("hydrogen_burner", List.of(
-                new MachineLayout.Cell(-1, 0, 1, "tank_wall", StructureRole.FLUID_INPUT),
-                new MachineLayout.Cell(0, 0, 1, "tank_wall", StructureRole.FLUID_INPUT),
-                new MachineLayout.Cell(1, 0, 1, "tank_wall", StructureRole.FLUID_INPUT))));
-    }
-
-    @Override
-    public List<FuelMapDeclaration> fuelMaps() {
-        return List.of(new FuelMapDeclaration(
-                "gt6ktfruaddon.fuel.hydrogen",
-                "Hydrogen Burner",
-                "gt6ktfruaddon:textures/gui/machines/burner",
-                0, 0, 0,
-                1, 1, 1, 1,
-                false, false, false, false));
-    }
-
-    @Override
     public List<FuelGeneratorDeclaration> fuelGenerators() {
-        return List.of(FuelGeneratorDeclaration.builder("hydrogen_burner", "Steel")
-                .machineType("hydrogen_burner")
-                .fuelMap("gt6ktfruaddon.fuel.hydrogen")
-                .efficiency(10_000)
-                .energy("RU", 32)
-                .tank(16_000)
-                .outputBehind(2)
-                .multi()
-                .build());
+        List<FuelGeneratorDeclaration> generators = new ArrayList<>();
+        // The fuel signature includes the output rate, so each block keeps its own machine type.
+        gas(generators, "bronze", "Bronze", 16);
+        gas(generators, "steel", "Steel", 32);
+        gas(generators, "invar", "Invar", 64);
+        gas(generators, "titanium", "Titanium", 128);
+        gas(generators, "tungstensteel", "Tungstensteel", 372);
+        gas(generators, "iridium", "Iridium", 768);
+        gas(generators, "chromium", "Chromium", 256);
+        diesel(generators, "diesel", "bronze", "Bronze", 3300, 16);
+        diesel(generators, "diesel", "arsenic_copper", "ArsenicCopper", 3300, 16);
+        diesel(generators, "diesel", "arsenic_bronze", "ArsenicBronze", 3300, 24);
+        diesel(generators, "diesel", "steel", "Steel", 3300, 32);
+        diesel(generators, "diesel", "invar", "Invar", 3300, 64);
+        diesel(generators, "diesel", "titanium", "Titanium", 3300, 128);
+        diesel(generators, "diesel", "tungstensteel", "Tungstensteel", 3300, 372);
+        diesel(generators, "diesel", "iridium", "Iridium", 3300, 768);
+        diesel(generators, "diesel", "chromium", "Chromium", 3300, 256);
+        diesel(generators, "turbo_diesel", "bronze", "Bronze", 5200, 24);
+        diesel(generators, "turbo_diesel", "arsenic_copper", "ArsenicCopper", 5200, 24);
+        diesel(generators, "turbo_diesel", "arsenic_bronze", "ArsenicBronze", 5200, 36);
+        diesel(generators, "turbo_diesel", "steel", "Steel", 5200, 48);
+        diesel(generators, "turbo_diesel", "invar", "Invar", 5200, 96);
+        diesel(generators, "turbo_diesel", "titanium", "Titanium", 5200, 172);
+        diesel(generators, "turbo_diesel", "tungstensteel", "Tungstensteel", 5200, 558);
+        diesel(generators, "turbo_diesel", "iridium", "Iridium", 5200, 1152);
+        diesel(generators, "turbo_diesel", "chromium", "Chromium", 5200, 384);
+        diesel(generators, "turbo_diesel", "osmium", "Osmium", 5000, 2304);
+        diesel(generators, "turbo_diesel", "trinaquadalloy", "Trinaquadalloy", 4800, 4608);
+        return List.copyOf(generators);
     }
 
     private static RecipeMapDeclaration map(String name, String title, String gui,
@@ -139,6 +142,31 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
             int count = parallel == null ? 1 : parallel[tier - first];
             out.add(basic(prefix + "_" + TIER[tier], ELECTRIC[tier], type, energy, VOLTAGE[tier], tier, count, recipeMap));
         }
+    }
+
+    private static void gas(List<FuelGeneratorDeclaration> out, String suffix, String material, long perTick) {
+        out.add(fuel("gas_turbine_" + suffix, material, "gas_turbine_" + suffix, GAS_FUEL, 3500, perTick));
+    }
+
+    private static void diesel(List<FuelGeneratorDeclaration> out, String prefix, String suffix, String material,
+            int efficiency, long perTick) {
+        String id = prefix + "_" + suffix;
+        out.add(fuel(id, material, id, ENGINE_FUEL, efficiency, perTick));
+    }
+
+    private static FuelGeneratorDeclaration fuel(String id, String material, String type, String fuelMap,
+            int efficiency, long perTick) {
+        return FuelGeneratorDeclaration.builder(id, material)
+                .machineType(type)
+                .fuelMap(fuelMap)
+                .efficiency(efficiency)
+                .energy("RU", perTick)
+                // Vanilla MotorLiquid sizes both tanks at rate * 10. The TFRU fork uses 16 and 128;
+                // this template has one capacity for the fuel tank and every exhaust tank.
+                .tank(Math.toIntExact(perTick * 10))
+                .outputFront()
+                .single()
+                .build();
     }
 
     private static MachineDeclaration basic(String id, String material, String type, String energy, long perTick,

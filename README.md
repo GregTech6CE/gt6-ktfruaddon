@@ -2,13 +2,7 @@
 
 GT6CE 的 NeoForge 1.21.1 附属，用来试现在的附属接口能接住多少。仓库名和显示名是 gt6-ktfruaddon，游戏里的模组 id 是 `gt6ktfruaddon`（模组 id 不能带连字符）。这是一条新写的探针，不是 [kuzuanpa/kTFRUAddon](https://github.com/kuzuanpa/kTFRUAddon) 1.7.10 源码的移植。项目协议是 AGPL-3.0-only，与上游相同。上游检出在仓库根的 `kTFRUAddon/`，已忽略，不进版本库。
 
-第一条竖切只有这些：
-
-- 材料 `MonocrystallineSilicon`，`dust()`，物品在 `gt6ce` 命名空间。
-- 基础机器拉晶炉：1 份硅粉，128 EU/t，200 tick，出 1 份单晶硅粉。
-- 氢燃烧器：三块储罐壁的多方块，烧 `gt6ce:hydrogen`，每 tick 输出 32 RU，排气是少量蒸汽。能量从正面背后 2 格送出。
-
-可移植范围在 [`docs/ktfruaddon-gt6-surface.md`](docs/ktfruaddon-gt6-surface.md)，从 CrucibleCraft 拷来。阶段卡在 [`docs/card-plans/README.md`](docs/card-plans/README.md)。表面材料卡已关。占位的拉晶炉和氢燃烧器还在，机器卡会换掉它们。
+可移植范围在 [`docs/ktfruaddon-gt6-surface.md`](docs/ktfruaddon-gt6-surface.md)，从 CrucibleCraft 拷来。阶段卡在 [`docs/card-plans/README.md`](docs/card-plans/README.md)。表面材料卡已关。单方块配方机器在卡 02，流体燃料机在卡 03。占位氢燃烧器已撤。
 
 ## 开发
 

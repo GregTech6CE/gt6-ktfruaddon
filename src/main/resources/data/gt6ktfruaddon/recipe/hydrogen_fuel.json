@@ -1,8 +1,0 @@
-{
-  "type": "gt6ce:machine",
-  "map": "gt6ktfruaddon.fuel.hydrogen",
-  "fluid_inputs": [{ "fluid": "gt6ce:hydrogen", "amount": 250 }],
-  "fluid_outputs": [{ "fluid": "gt6ce:steam", "amount": 50 }],
-  "eu_per_tick": 32,
-  "duration": 40
-}
