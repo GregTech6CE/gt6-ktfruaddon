@@ -117,5 +117,7 @@
     "gt6ktfruaddon.structure.ore_processing_system.1": "左右 6 格、前后 5 格、高 3 层。控制器在底层最前一排、面对正面时的左手端，正面朝外",
     "gt6ktfruaddon.structure.ore_processing_system.2": "面对正面时的左手三列：底层钛墙，中层洗矿零件，顶层留空",
     "gt6ktfruaddon.structure.ore_processing_system.3": "右手三列：底层钨钢墙；中层前两排钨钢墙、后三排离心零件；顶层前两排粉碎叶片、后三排离心零件",
-    "gt6ktfruaddon.structure.ore_processing_system.4": "面对正面时右手端最前那块钨钢墙输出物品和流体，其余钛墙和钨钢墙输入。EU 从控制器进入"
+    "gt6ktfruaddon.structure.ore_processing_system.4": "面对正面时右手端最前那块钨钢墙输出物品和流体，其余钛墙和钨钢墙输入。EU 从控制器进入",
+    "block.gt6ktfruaddon.steel_compressed_gas_tank": "钢压缩气罐主阀",
+    "block.gt6ktfruaddon.stainless_compressed_gas_tank": "不锈钢压缩气罐主阀"
 }

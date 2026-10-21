@@ -7,7 +7,7 @@
 
 ## 背景
 
-表面清单的材料在 kTFRUAddon `api/material/materialPreInit.java`，大约 22000 段。接口能声明 `dust()`、`liquid()`、`gas()` 和 `metal()`。不能新增前缀。
+表面清单的材料在 kTFRUAddon `api/material/materialPreInit.java`，大约 22000 段。接口能声明 `dust()`、`liquid()`、`gas()`、`metal()` 和 `ores()`。物品前缀另由 `prefixes()` 声明；这张材料卡没有使用它。
 
 ## 目标
 

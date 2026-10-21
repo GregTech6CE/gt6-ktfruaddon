@@ -71,7 +71,9 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
-// Face lists, cheap overclocking and the light check are on the API 0 SDK.
+// Face lists, cheap overclocking, light checks, energy ranges, large-machine
+// IO targets and behavior recipe catalysts are on the API 0 SDK built from
+// addon/behavior-recipe-catalyst at 9688dada.
 // The 0.8.0 SDK's recipe-machine builder does not have them.
 def gtSdk = files('libs/gt6ce/gt6ce-addon-sdk-1.21.1-neoforge-0.0.0.jar')
 def gtMod = files('libs/gt6ce/gt6ce-1.21.1-neoforge.jar')

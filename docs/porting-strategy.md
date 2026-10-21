@@ -11,7 +11,7 @@
 | `kTFRUAddon/`，分支 `1.7.10`，提交 `6404ab69` | 行为与数据的阅读权威。AGPL-3.0。不进本仓库。上游 `dev` 停在 2026-02-13 的 `3e5b60ec`，比 `1.7.10` 旧，不跟。 |
 | 本仓库 `main` | 附属本体。计划卡、语言、配方声明、改编后的代码都写在这里。编译只用 GT6CE 附属 SDK。 |
 | `D:\Baobao\projects\dev\java\cruciblecraft-template-1.21.1` | 分档、证据层、关卡口径的参考。它的表面清单是旧对照，而且 CrucibleCraft 自己不收这些机器。 |
-| `D:\Baobao\projects\dev\java\GregTech6CommunityEdition` | 接口形状的本地参考。附属编译对着 `libs/gt6ce/build-commit.txt` 里的 `0f77a88844a42f329cbc17e8075f89631cafae88`（`addon/behavior-energy`，模组版本 0.0.0，API 0）。0.8.0 的配方机器构建器没有侧面方法。 |
+| `D:\Baobao\projects\dev\java\GregTech6CommunityEdition` | 接口形状的本地参考。附属编译对着 `libs/gt6ce/build-commit.txt` 里的 `9688dada8a8b723007601af81b0829a0a660a8c2`（`addon/behavior-recipe-catalyst`，模组版本 0.0.0，API 0）。0.8.0 的配方机器构建器没有这些 API 0 入口。 |
 
 上游检出有 412 个 Java 文件。主体在 `tile`（148）和 `api`（119），配方在 `recipe`（24）。`kTFRUAddon/进度.csv` 是上游作者自己的研究树进度，不拿来当移植队列。
 
@@ -49,30 +49,29 @@
 
 对着本机 GT6CE 的 `com.gregtech.gregtech.api.addon`。SDK jar 若缺某个类型，以 jar 为准，把这条记进卡 05。
 
-材料走 `AddonMaterialContributor`。身份是名字。`MaterialDeclaration.builder(int, String)` 已废弃，数字 id 在启动时被忽略，0.9 会删。源表从 22000 起的 id 不保留。能声明的形态是 `dust()`、`liquid()`、`gas()`、`metal()`。`metal()` 会连带锭、杆、齿轮和粉。`link()` 留给后面的成分和合金，不塞进第一张材料卡。
+材料走 `AddonMaterialContributor`。身份是名字。`MaterialDeclaration.builder(int, String)` 已废弃，数字 id 在启动时被忽略，0.9 会删。源表从 22000 起的 id 不保留。能声明的形态是 `dust()`、`liquid()`、`gas()`、`metal()`，矿石用 `ores()`。`metal()` 会连带锭、杆、齿轮和粉。`oreByproducts` 只写在自己的材料声明上，读不到内置材料的副产物。`link()` 留给后面的成分和合金，不塞进第一张材料卡。
 
-已有前缀可以用 `forms()` 的 `MaterialFormRequest` 按材料另要。GT6CE 里 `plate`、`foil`、`ore`、`crystal` 已经注册。卡 01 把硅橡胶的板和箔、智金和二氧化钼的矿写成「没有入口」。开工时先试 `forms()`，生成失败再写入卡 05。
+已有前缀可以用 `forms()` 的 `MaterialFormRequest` 按材料另要。`plate` 和 `foil` 对没有锭的附属材料也能生成。`forms()` 不能点 `ore` 或 `oreSmall`，那两件走 `ores()`。`crystal` 仍不生成物品。
 
-新前缀没有入口。`prefixList` 里这些留在缺口账：`flywheel`、`bladeLargeTurbine`、`turbineLargeGas` 及其 checked/damaged、`turbineLargeSteam` 及其 checked/damaged、`dustCommercialPure`、`dustAnalyticalPure`、`dustAbsolutelyPure`。纯度若要做成物品，用不同的材料名，并在卡上写明这是替代。
+物品前缀用 `prefixes()`，物品落在附属自己的命名空间。GT 不为这个前缀加加工配方，这一节也不包括方块前缀。`prefixList` 里的 `flywheel`、大涡轮叶片和三级纯尘可以按这个入口声明，加工配方要附属自己写。
 
 机器走 `AddonMachineContributor`：
 
-- `RecipeMapDeclaration` 加 `MachineDeclaration` 的 `BASIC` 或 `LARGE_RECIPE`。能源短名沿用源注册（EU、RU、HU、KU、LU），SDK 不认的短名记缺口。
-- `FuelMapDeclaration` 加 `FuelGeneratorDeclaration`。效率是万分比，每 tick 一个包，储罐有上限，输出只在正面、背面，或正面背后 1 到 8 格。燃料图和配方图不能混用。
-- `BehaviorMachineDeclaration` 只覆盖单方块。GUI 尺寸和槽位精灵位置是固定的。行为机器每 tick 清掉没用完的能量，不能拿来做飞轮或水槽。
-- `MachineLayout` 的格子只能填已经存在的 GT 零件名、`air`，或结构壳。角色用 `StructureRole`。自有外壳、灯模块、刀头、镜子、计算零件不注册成新零件来充数。
+- `RecipeMapDeclaration` 加 `MachineDeclaration` 的 `BASIC` 或 `LARGE_RECIPE`。能源短名沿用源注册（EU、RU、HU、KU、LU），SDK 不认的短名记缺口。单方块未声明范围时接受标称的一半到两倍；大型配方机未声明范围时按 GT 的固定大型机规则，需精确匹配源范围时用 `energyRange(min, max)`。
+- `FuelMapDeclaration` 加 `FuelGeneratorDeclaration`。效率是万分比，每 tick 一个包，储罐有上限，输出只在正面、背面，或正面背后 1 到 8 格。燃料图和配方图不能混用，燃料机没有物品槽。
+- `BehaviorMachineDeclaration` 的 GUI 尺寸和槽位精灵位置是固定的。`energyCapacity` 大于 0 时，没用完的能量留到下一 tick，`emit` 按声明的面推出去。`maxRange`、`breakBlock` 和 `collectItems` 做范围破坏和物品收集。同名结构可以带 `parts()` 里的能量零件。
+- `MachineLayout` 的格子填已经存在的 GT 零件名、`air`、结构壳，或 `parts()` 返回的外壳和能量零件。角色用 `StructureRole`。灯模块、刀头、镜子、计算零件仍不在格子里。
+- `fluidPipes()` 和 `itemPipes()` 各加一行材料，GT 按内置档位展开。`compressedGasTanks()` 声明压缩气罐，`pushCompressedGas` 只灌相邻的这种罐。
 
-配方行在 `GregTechAddon.onRecipesReady` 里用 `AddonRecipes` 添加。缺一格就保持缺口，不用原版零件或其他材料顶上。
+配方行在 `GregTechAddon.onRecipesReady` 里用 `AddonRecipes` 添加。编程电路用 `AddonItems.selectorTag`，不消耗的物品输入写下标到 `keptInputs`，数量仍至少是 1。缺一格就保持缺口，不用原版零件或其他材料顶上。
 
 ## 公开接口表达不了的部分
 
-这些留在卡 05，有公开入口之后另开实施卡。
+这些留在卡 05，有公开入口之后另开实施卡。缺陷检测器的互斥输出和输出储罐搜索、大型气罐阀门已经落地。
 
-- 新的线缆和管道，包括特氟龙流体管和 PVC 物品管。
-- 跨 tick 的 RU 存储：飞轮箱、水库、无线电池。
-- 手摇马达，以及看邻水的水车。
-- 变压器、飞轮齿轮、能量种类互转。
-- 矿机和虚空漏斗。
+- 有自己 IO 或界面的功能结构零件。
+- 控制器的第二种输入能量。掩膜对准机是 LU 加 EU，脱燃工厂是 EU 加 HU。
+- 写在 GT 零件上的外观号，以及研究任务。
 - 研究树、计算机集群、房间、加速器、戴森球界面。
 - 修改 GT 本体机器的方块实体。数据包只能改已经存在的配方图上的静态行。
 - TFC 压板、TFC 配方、TFC 受热坩埚接口。
@@ -93,7 +92,7 @@
 2. 材料卡。范围仍是粉、液体、气体，外加 `forms()` 能要到的已有前缀。名字、显示名、颜色、化学式、开尔文温度跟源表。摄氏条目沿用源码 `registerC` 的 +273。源表把乙烷标成液体，声明照这个标。
 3. 单方块配方机器。流体加热器、光混合器、气体压缩机、电路组装机、激光切割机、热混合器、电子设计器、缺陷检测器、电动光混合器、晶圆测试器、晶圆涂布器、超声混合器。矿机和虚空漏斗进缺口账。源码里整段注释掉的机器不恢复。
 4. 这十张图上能对上的源配方，并在 EMI 里能查到。卡 06，排在燃料机和多方块之前。对不上的行保持缺口。
-5. 单方块流体燃料机。小型燃气轮机七档、柴油机、涡轮增压柴油。源码用 `isGregtechTFRU` 挡住柴油机注册，这里作为附属内容注册。排气以 `6404ab69` 的统一排气为准。气体电池先核对是不是「流体进、能量包出」；对不上就进缺口账。占位拉晶炉和氢燃烧器在对应的卡里撤掉或收成该卡的最小一台。
+5. 单方块流体燃料机。小型燃气轮机七档、柴油机、涡轮增压柴油。源码用 `isGregtechTFRU` 挡住柴油机注册，这里作为附属内容注册。排气以 `6404ab69` 的统一排气为准。气体电池走行为机：燃料图可查、可作为 JEI/EMI 催化剂，机器行为和自有电极另开实施。占位拉晶炉和氢燃烧器在对应的卡里撤掉或收成该卡的最小一台。
 6. 多方块。先读控制器的结构零件名，分成「全部是现有 GT 零件」和「要自有零件」两列。只做前一列。最小候选是蒸馏塔：现有零件、一张蒸馏配方图、一条配方。
 7. 缺口账从第 1 步起就追加。某条有了公开入口之后另开实施卡。
 

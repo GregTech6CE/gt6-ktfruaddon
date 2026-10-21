@@ -2,6 +2,7 @@ package com.lombinaxmasson.gt6ktfruaddon;
 
 import org.slf4j.Logger;
 
+import com.gregtech.gregtech.api.addon.BehaviorMachineDeclaration;
 import com.gregtech.gregtech.api.addon.FuelGeneratorDeclaration;
 import com.gregtech.gregtech.api.addon.GregTechAddon;
 import com.gregtech.gregtech.api.addon.GregTechAddons;
@@ -52,6 +53,8 @@ public final class Gt6KtfruAddon {
                             accept(output, machine.id());
                         for (FuelGeneratorDeclaration generator : machines.fuelGenerators())
                             accept(output, generator.id());
+                        for (BehaviorMachineDeclaration behavior : machines.behaviorMachines())
+                            accept(output, behavior.id());
                         for (MaterialDeclaration material : new Gt6KtfruMaterials().materials()) {
                             if (material.dust() || material.metal())
                                 acceptStack(output, AddonItems.stack("dust", material.name(), 1));
@@ -103,6 +106,9 @@ public final class Gt6KtfruAddon {
                     throw new IllegalStateException("ore processing system is missing");
                 if (stack("gas_turbine_steel").isEmpty())
                     throw new IllegalStateException("steel gas turbine is missing");
+                if (stack(Gt6KtfruMachines.STEEL_GAS_TANK).isEmpty()
+                        || stack(Gt6KtfruMachines.STAINLESS_GAS_TANK).isEmpty())
+                    throw new IllegalStateException("compressed gas tank valve is missing");
                 FluidStack hydrogen = AddonFluids.still("Hydrogen", 250);
                 if (hydrogen == null || hydrogen.isEmpty())
                     throw new IllegalStateException("GT fluid field Hydrogen is missing");

@@ -2,23 +2,28 @@ package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.gregtech.gregtech.api.addon.AddonMachineContributor;
+import com.gregtech.gregtech.api.addon.BehaviorMachineDeclaration;
 import com.gregtech.gregtech.api.addon.BehaviorMachineDeclaration.Face;
+import com.gregtech.gregtech.api.addon.BehaviorMachineDeclaration.SlotRole;
 import com.gregtech.gregtech.api.addon.FuelGeneratorDeclaration;
 import com.gregtech.gregtech.api.addon.MachineDeclaration;
 import com.gregtech.gregtech.api.addon.MachineLayout;
 import com.gregtech.gregtech.api.addon.RecipeMapDeclaration;
 import com.gregtech.gregtech.api.addon.StructureRole;
+import com.gregtech.gregtech.api.addon.platform.BehaviorMachineContributor;
+import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 
 /**
  * Single-block machines from {@code tileEntityInit0}. Recipe machines are
  * 20000–27542. Fuel generators are the gas turbines and diesel engines from
  * 10000–10160. The large recipe machines are the three distillation towers and
- * the ore processing system.
- * The gas compressor and the gas battery are not registered.
+ * the ore processing system. The two large compressed-gas valves are behavior
+ * machines. The gas compressor and the gas battery are not registered.
  */
-public final class Gt6KtfruMachines implements AddonMachineContributor {
+public final class Gt6KtfruMachines implements AddonMachineContributor, BehaviorMachineContributor {
     public static final String FLUID_HEATING = "gt6ktfruaddon.recipe.fluid_heating";
     public static final String LIGHT_MIXER = "gt6ktfruaddon.recipe.light_mixer";
     public static final String CIRCUIT_ASSEMBLER = "gt6ktfruaddon.recipe.circuit_assembler";
@@ -43,6 +48,15 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
     public static final String GAS_FUEL = "gt.recipe.fuels.gas";
     /** Built-in GT fuel map behind {@code FM.Engine}. Already contains diesel. */
     public static final String ENGINE_FUEL = "gt.recipe.fuels.engine";
+    /** Source 30100. Layout name, machine type and block id. */
+    public static final String STEEL_GAS_TANK = "steel_compressed_gas_tank";
+    /** Source 30101. */
+    public static final String STAINLESS_GAS_TANK = "stainless_compressed_gas_tank";
+    /**
+     * Source {@code NBT_TANK_CAPACITY}. One behavior tank stops at
+     * 1,024,000,000 mB, so the valve splits this across seven tanks.
+     */
+    public static final long GAS_TANK_CAPACITY = 6_912_000_000L;
 
     private static final String[] ELECTRIC = {
             "", "SteelGalvanized", "Aluminium", "StainlessSteel", "Chromium", "Titanium"
@@ -105,7 +119,29 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
                 distillationLayout(TINY_DISTILL_TYPE, 4),
                 distillationLayout(SMALL_DISTILL_TYPE, 6),
                 distillationLayout(DISTILL_TYPE, 9),
-                oreProcessingLayout());
+                oreProcessingLayout(),
+                gasTankLayout(STEEL_GAS_TANK, "dense_steel_wall"),
+                gasTankLayout(STAINLESS_GAS_TANK, "tank_wall_dense"));
+    }
+
+    @Override
+    public List<BehaviorMachineDeclaration> behaviorMachines() {
+        return List.of(
+                gasTank(STEEL_GAS_TANK, "Steel"),
+                gasTank(STAINLESS_GAS_TANK, "StainlessSteel"));
+    }
+
+    @Override
+    public Set<String> machineTypes() {
+        return Set.of(STEEL_GAS_TANK, STAINLESS_GAS_TANK);
+    }
+
+    @Override
+    public MachineBehavior create(String machineType) {
+        if (STEEL_GAS_TANK.equals(machineType) || STAINLESS_GAS_TANK.equals(machineType)) {
+            return new Gt6KtfruGasTank();
+        }
+        throw new IllegalArgumentException(machineType);
     }
 
     @Override
@@ -210,6 +246,11 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
                 .parallel(parallel)
                 .recipeMap(recipeMap)
                 .basic();
+        // Source FlawDetector keeps NBT_USE_OUTPUT_TANK and rolls the first item
+        // output's chance once: hit for output 0, otherwise output 1.
+        if (id.startsWith("flaw_detector_")) {
+            builder.searchOutputTanks(true).exclusiveOutputs(true);
+        }
         sides(builder, id);
         return builder.build();
     }
@@ -405,6 +446,53 @@ public final class Gt6KtfruMachines implements AddonMachineContributor {
             case 'E' -> "shredder_blades";
             default -> throw new IllegalStateException("unknown ore structure symbol " + symbol);
         };
+    }
+
+    /**
+     * Source 30100 / 30101. The 3×3×3 sits one block behind the valve and is
+     * aligned to the machine: right and up run -1..1, back runs 0..2. The valve
+     * itself is the near-face center, so that cell is absent. The middle cell
+     * is air and must be empty. The other 25 cells are the wall named here.
+     */
+    private static MachineLayout gasTankLayout(String type, String wall) {
+        List<MachineLayout.Cell> cells = new ArrayList<>();
+        for (int up = -1; up <= 1; up++) {
+            for (int right = -1; right <= 1; right++) {
+                for (int back = 0; back <= 2; back++) {
+                    if (right == 0 && up == 0 && back == 0) continue;
+                    if (right == 0 && up == 0 && back == 1) {
+                        cells.add(new MachineLayout.Cell(0, 0, 1, "air", StructureRole.AIR));
+                    } else {
+                        cells.add(new MachineLayout.Cell(right, up, back, wall, StructureRole.CASING));
+                    }
+                }
+            }
+        }
+        return new MachineLayout(type, List.copyOf(cells));
+    }
+
+    /**
+     * The valve has no energy of its own. The declared packet is the API maximum
+     * so an ordinary EU cable is below the accepted window and is ignored.
+     * Seven tanks sum to {@link #GAS_TANK_CAPACITY}.
+     */
+    private static BehaviorMachineDeclaration gasTank(String id, String material) {
+        int[] capacity = {
+                1_024_000_000, 1_024_000_000, 1_024_000_000, 1_024_000_000,
+                1_024_000_000, 1_024_000_000, 768_000_000
+        };
+        var builder = BehaviorMachineDeclaration.builder(id, material)
+                .machineType(id)
+                .energy("EU", 1_000_000_000_000L)
+                .tier(1)
+                .energyFaces(List.of(Face.BOTTOM))
+                .gui("gt6ktfruaddon:textures/gui/machines/gastank.png")
+                .energyGauge(8, 8)
+                .progress(148, 64);
+        for (int tank = 0; tank < capacity.length; tank++) {
+            builder.fluid(capacity[tank], 20 + tank * BehaviorMachineDeclaration.TANK_WIDTH, 8, SlotRole.ANY);
+        }
+        return builder.build();
     }
 
     /** {@code N} is the only output. Parts with no usage flag are casings. */

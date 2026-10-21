@@ -1,5 +1,6 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
+import com.gregtech.gregtech.api.addon.BehaviorMachineDeclaration;
 import com.gregtech.gregtech.api.addon.FuelGeneratorDeclaration;
 import com.gregtech.gregtech.api.addon.GregTechMaterials;
 import com.gregtech.gregtech.api.addon.MachineDeclaration;
@@ -27,6 +28,8 @@ public final class Gt6KtfruMachineColors {
             paint(event, machine.id(), machine.material());
         for (FuelGeneratorDeclaration generator : machines.fuelGenerators())
             paint(event, generator.id(), generator.material());
+        for (BehaviorMachineDeclaration behavior : machines.behaviorMachines())
+            paint(event, behavior.id(), behavior.material());
     }
 
     @SubscribeEvent
@@ -36,6 +39,8 @@ public final class Gt6KtfruMachineColors {
             paint(event, machine.id(), machine.material());
         for (FuelGeneratorDeclaration generator : machines.fuelGenerators())
             paint(event, generator.id(), generator.material());
+        for (BehaviorMachineDeclaration behavior : machines.behaviorMachines())
+            paint(event, behavior.id(), behavior.material());
     }
 
     private static void paint(RegisterColorHandlersEvent.Block event, String id, String material) {
