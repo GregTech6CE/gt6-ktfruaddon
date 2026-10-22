@@ -56,3 +56,4 @@
 - 2026-10-22：`6eba3e1ed` 删掉了 `MachineDeclaration`、`BehaviorMachineDeclaration`、`FuelGeneratorDeclaration`、`MachineLayout` 和 `RecipeMapDeclaration`。现有机器改到 `RecipeMachine`、`BehaviorMachine`、`FuelGenerator`、`StructureLayout` 和 `RecipeTable`，从 `addonMachines()`、`structureLayouts()` 和 `recipeTables()` 返回。行为机的 `auxiliaryEnergy` 和条件零件打开了第二种输入。功能零件可以有物品槽、tick、右键和命名字段。普通方块和标签可以当 `CASING`。还留在上面的是 GT 零件外观号，以及功能零件的流体储罐、自己的 GUI 和从任意物品反查材料组成。
 - 2026-10-22：研究任务移出缺口。科技树、监视器、数据库和研究数据物品都是 kTFRU 自己的，附属自己注册和保存；GT 只提供机器外壳和配方查询。
 - 2026-10-22：无线计算机、无线能量塔和电磁坩埚的温度也移出缺口。链路和熔融物都存在 kTFRU 自己的方块上。坩埚还缺从任意物品反查材料组成。
+- 2026-10-22：压缩机、单方块压缩气罐和特氟龙 / PVC 管进卡 07。上面两条缺口没变。其余活着的 A/B 机器在卡 08–19 排队。

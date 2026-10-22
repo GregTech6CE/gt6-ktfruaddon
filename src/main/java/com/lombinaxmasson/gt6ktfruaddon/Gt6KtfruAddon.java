@@ -49,6 +49,11 @@ public final class Gt6KtfruAddon {
                         Gt6KtfruMachines machines = new Gt6KtfruMachines();
                         for (AddonMachine machine : machines.addonMachines())
                             accept(output, machine.casing().id());
+                        for (String drum : Gt6KtfruMachines.GAS_DRUMS) accept(output, drum);
+                        for (String size : Gt6KtfruMachines.FLUID_PIPE_SIZES)
+                            accept(output, Gt6KtfruMachines.fluidPipeId(size));
+                        for (String size : Gt6KtfruMachines.ITEM_PIPE_SIZES)
+                            accept(output, Gt6KtfruMachines.itemPipeId(size));
                         for (MaterialDeclaration material : new Gt6KtfruMaterials().materials()) {
                             if (material.dust() || material.metal())
                                 acceptStack(output, AddonItems.stack("dust", material.name(), 1));
@@ -103,6 +108,14 @@ public final class Gt6KtfruAddon {
                 if (stack(Gt6KtfruMachines.STEEL_GAS_TANK).isEmpty()
                         || stack(Gt6KtfruMachines.STAINLESS_GAS_TANK).isEmpty())
                     throw new IllegalStateException("compressed gas tank valve is missing");
+                if (stack(Gt6KtfruMachines.BRONZE_COMPRESSOR).isEmpty())
+                    throw new IllegalStateException("bronze gas compressor is missing");
+                if (stack(Gt6KtfruMachines.STEEL_GAS_DRUM).isEmpty())
+                    throw new IllegalStateException("steel compressed gas drum is missing");
+                if (stack(Gt6KtfruMachines.fluidPipeId("tiny")).isEmpty())
+                    throw new IllegalStateException("tiny teflon pipe is missing");
+                if (stack(Gt6KtfruMachines.itemPipeId("medium")).isEmpty())
+                    throw new IllegalStateException("medium pvc item pipe is missing");
                 FluidStack hydrogen = AddonFluids.still("Hydrogen", 250);
                 if (hydrogen == null || hydrogen.isEmpty())
                     throw new IllegalStateException("GT fluid field Hydrogen is missing");

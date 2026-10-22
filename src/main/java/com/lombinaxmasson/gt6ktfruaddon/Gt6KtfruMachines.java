@@ -8,9 +8,12 @@ import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.AddonMachineContributor;
 import com.gregtech.gregtech.api.addon.BehaviorMachine;
 import com.gregtech.gregtech.api.addon.CellMatch;
+import com.gregtech.gregtech.api.addon.CompressedGasTankDeclaration;
 import com.gregtech.gregtech.api.addon.EnergyInput;
+import com.gregtech.gregtech.api.addon.FluidPipeDeclaration;
 import com.gregtech.gregtech.api.addon.FuelGenerator;
 import com.gregtech.gregtech.api.addon.FuelOutput;
+import com.gregtech.gregtech.api.addon.ItemPipeDeclaration;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.MachineIo;
@@ -25,8 +28,10 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  * Single-block machines from {@code tileEntityInit0}. Recipe machines are
  * 20000–27542. Fuel generators are the gas turbines and diesel engines from
  * 10000–10160. The large recipe machines are the three distillation towers and
- * the ore processing system. The two large compressed-gas valves are behavior
- * machines. The gas compressor and the gas battery are not registered.
+ * the ore processing system. The two large compressed-gas valves and the five
+ * gas compressors are behavior machines. Teflon fluid pipes, PVC item pipes
+ * and the five compressed-gas drums are separate declarations. The gas battery
+ * is not registered.
  */
 public final class Gt6KtfruMachines implements AddonMachineContributor, BehaviorMachineContributor {
     public static final String FLUID_HEATING = "gt6ktfruaddon.recipe.fluid_heating";
@@ -57,6 +62,36 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     public static final String STEEL_GAS_TANK = "steel_compressed_gas_tank";
     /** Source 30101. */
     public static final String STAINLESS_GAS_TANK = "stainless_compressed_gas_tank";
+    /** Shared machine type for source 22000–22004. Block ids stay per tier. */
+    public static final String GAS_COMPRESSOR = "gas_compressor";
+    public static final String BRONZE_COMPRESSOR = "gas_compressor_bronze";
+    public static final String STEEL_GAS_DRUM = "steel_gas_drum";
+    public static final String STAINLESS_GAS_DRUM = "stainless_gas_drum";
+    public static final String MANASTEEL_GAS_DRUM = "manasteel_gas_drum";
+    public static final String NETHERITE_GAS_DRUM = "netherite_gas_drum";
+    public static final String TUNGSTENSTEEL_GAS_DRUM = "tungstensteel_gas_drum";
+    public static final String[] GAS_DRUMS = {
+            STEEL_GAS_DRUM, STAINLESS_GAS_DRUM, MANASTEEL_GAS_DRUM,
+            NETHERITE_GAS_DRUM, TUNGSTENSTEEL_GAS_DRUM
+    };
+    /** PipeSpec.PipeSize names, lower case. */
+    public static final String[] FLUID_PIPE_SIZES = {
+            "tiny", "small", "medium", "large", "huge", "quadruple", "nonuple"
+    };
+    /** ItemPipeSpec.ItemPipeSize names, lower case. */
+    public static final String[] ITEM_PIPE_SIZES = {
+            "medium", "large", "huge", "restrictive_medium", "restrictive_large", "restrictive_huge"
+    };
+    public static final String TEFLON_PIPE = "teflon";
+    public static final String PVC_PIPE = "pvc";
+
+    public static String fluidPipeId(String size) {
+        return "pipe_" + size + "_" + TEFLON_PIPE;
+    }
+
+    public static String itemPipeId(String size) {
+        return "item_pipe_" + size + "_" + PVC_PIPE;
+    }
     /**
      * Source {@code NBT_TANK_CAPACITY}. One behavior tank stops at
      * 1,024,000,000 mB, so the valve splits this across seven tanks.
@@ -117,6 +152,11 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         machines.add(oreProcessingSystem());
         machines.add(gasTank(STEEL_GAS_TANK, "Steel"));
         machines.add(gasTank(STAINLESS_GAS_TANK, "StainlessSteel"));
+        machines.add(compressor(BRONZE_COMPRESSOR, "Bronze", 1, 32, 8_000));
+        machines.add(compressor("gas_compressor_steel", "Steel", 2, 128, 20_000));
+        machines.add(compressor("gas_compressor_titanium", "Titanium", 3, 512, 80_000));
+        machines.add(compressor("gas_compressor_tungstensteel", "Tungstensteel", 4, 2048, 200_000));
+        machines.add(compressor("gas_compressor_adamantium", "Adamantium", 5, 8192, 800_000));
         gas(machines, "bronze", "Bronze", 16);
         gas(machines, "steel", "Steel", 32);
         gas(machines, "invar", "Invar", 64);
@@ -160,7 +200,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
 
     @Override
     public Set<String> machineTypes() {
-        return Set.of(STEEL_GAS_TANK, STAINLESS_GAS_TANK);
+        return Set.of(STEEL_GAS_TANK, STAINLESS_GAS_TANK, GAS_COMPRESSOR);
     }
 
     @Override
@@ -168,7 +208,28 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         if (STEEL_GAS_TANK.equals(machineType) || STAINLESS_GAS_TANK.equals(machineType)) {
             return new Gt6KtfruGasTank();
         }
+        if (GAS_COMPRESSOR.equals(machineType)) return new Gt6KtfruGasCompressor();
         throw new IllegalArgumentException(machineType);
+    }
+
+    @Override
+    public List<FluidPipeDeclaration> fluidPipes() {
+        return List.of(new FluidPipeDeclaration(TEFLON_PIPE, "Teflon", 800, true, true, false, true, 0, 0));
+    }
+
+    @Override
+    public List<ItemPipeDeclaration> itemPipes() {
+        return List.of(new ItemPipeDeclaration(PVC_PIPE, "PVC", 8192, 4));
+    }
+
+    @Override
+    public List<CompressedGasTankDeclaration> compressedGasTanks() {
+        return List.of(
+                drum(STEEL_GAS_DRUM, "Steel", 12_800_000, false, false, false),
+                drum(STAINLESS_GAS_DRUM, "StainlessSteel", 12_800_000, true, false, false),
+                drum(MANASTEEL_GAS_DRUM, "Manasteel", 12_800_000, true, false, true),
+                drum(NETHERITE_GAS_DRUM, "Netherite", 25_600_000, true, true, true),
+                drum(TUNGSTENSTEEL_GAS_DRUM, "Tungstensteel", 51_200_000, false, false, true));
     }
 
     private static RecipeTable map(String name, String title, String gui,
@@ -483,6 +544,25 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
             builder.fluid(capacity[tank], 20 + tank * BehaviorMachine.TANK_WIDTH, 8, BehaviorMachine.SlotRole.ANY);
         }
         return builder.build();
+    }
+
+    /**
+     * Source 22000–22004. Capacity stays at the behavior default, so the buffer
+     * holds up to twice the rated KU and the tick spends whatever arrived.
+     * The tank is an input: pipes can fill it and cannot pull from it.
+     */
+    private static BehaviorMachine compressor(String id, String material, int tier, long ku, int tank) {
+        return BehaviorMachine.builder(MachineCasing.builder(id, material)
+                        .machineType(GAS_COMPRESSOR).tier(tier).build())
+                .energy(EnergyInput.builder("KU", ku).faces(MachineFace.BOTTOM).build())
+                .gui("gt6ktfruaddon:textures/gui/machines/gascompressor.png")
+                .fluid(tank, 152, 8, BehaviorMachine.SlotRole.INPUT)
+                .build();
+    }
+
+    private static CompressedGasTankDeclaration drum(String id, String material, int capacity,
+            boolean acid, boolean plasma, boolean magic) {
+        return new CompressedGasTankDeclaration(id, material, capacity, acid, plasma, magic);
     }
 
     /** {@code N} is the only output. Parts with no usage flag are casings. */
