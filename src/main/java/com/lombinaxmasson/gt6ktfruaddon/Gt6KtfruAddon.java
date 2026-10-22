@@ -134,6 +134,16 @@ public final class Gt6KtfruAddon {
                 if (stack("mask_aligner_uv").isEmpty() || stack("cnc_machine").isEmpty()
                         || stack("aluminium_wall").isEmpty() || stack("mask_aligner_energy_uv").isEmpty())
                     throw new IllegalStateException("mask aligner is missing");
+                if (stack("research_reactor").isEmpty() || stack("optical_microscope").isEmpty()
+                        || stack("electron_microscope").isEmpty() || stack("structure_glass").isEmpty()
+                        || stack("wireless_compute_controller").isEmpty() || stack("spacetime_compute_t2").isEmpty()
+                        || stack("quantum_compute_node_naquadah").isEmpty()
+                        || stack("wireless_battery_inductive").isEmpty() || stack("wireless_battery_quantum").isEmpty()
+                        || stack("wireless_receiver_inductive").isEmpty() || stack("wireless_receiver_quantum").isEmpty()
+                        || stack("laser_fusion_industrial").isEmpty() || stack("catalytic_reactor_iv").isEmpty()
+                        || stack("centrifugal_microgravity").isEmpty() || stack("ai_pattern_recognition").isEmpty()
+                        || stack("fusion_tokamak_t1").isEmpty())
+                    throw new IllegalStateException("late kTFRU machine is missing");
                 if (stack(Gt6KtfruMachines.SUN_HEATER).isEmpty() || stack(Gt6KtfruMachines.SUN_MIRROR).isEmpty()
                         || stack(Gt6KtfruMachines.TIDAL).isEmpty() || stack(Gt6KtfruMachines.OIL_MINER).isEmpty()
                         || stack(Gt6KtfruMachines.MANTLE).isEmpty() || stack(Gt6KtfruMachines.FUEL_DEBURN_TYPE).isEmpty()

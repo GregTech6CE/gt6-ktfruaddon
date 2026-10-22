@@ -53,9 +53,17 @@
 - **第二种能量不能和主输入用同一面。** 来源：卡 13（分激电机 `MultiSeparateExciteDynamo` 30055，RU 和激励 EU 都从正面进）。`BehaviorMachine.build` 拒绝辅助能量和主输入共用一面。激励 EU 放在顶面。那一面贴着结构，包进不去。
 - **一格只能写一个零件名，附属布局也认不全 GT 零件名。** 来源：卡 14（流体电池池壁 31034–31036 三选一，变换电池 `T` 是卡 10 的 `TransformerPart` 或能量墙；钨钢壳 18023、EU 线圈 18041）。`CellMatch` 一格一个名字。`SharedLargeMachineParts.idForName` 不认识 `implosion_compressor_wall` 和 `large_niobium_titanium_coil`，写进布局会在加载时抛未知零件。池壁布局只用青铜墙，钢墙和塑料墙仍单独注册。钨钢流体电池的壳用 `tungstensteel_wall`。EU 变换电池的线圈用 `large_copper_coil`。`T` 用这一档的能量墙。
 - **行为机不能把能量推进另一台机器。** 来源：卡 14（`TransformBattery` 封存后对每个 `TransformerPart` 调用 `doInject`，面是 `SIDE_INSIDE`）、卡 17（`WirelessBatteryBase` 对 `WirelessEnergyReceiver` 调用 `doInject`，面同样是 `SIDE_INSIDE`）。`MachineBehaviorContext` 没有按坐标注入。`EnergyPart.charge` 只对这份布局绑上的能量零件。封存后的变换电池把能量留在控制器里。未封存仍会收电，见上面「不能拒绝注入」。封存只让 `canInsert` 拒绝放入；`SlotRole.ANY` 的取出不看这个回调，物品仍能拿出来。卡 17 的塔把数量交给附属自己的投递表，接收器在自己的 tick 里用 `generate` 入账，再从正面 `emit`。
-- **配方机没有第二种能量，也没有启动能量。** 来源：卡 18（托卡马克 `FusionReactorTokamakExp` 30014、`FusionReactorTokamakT1` 30015 的第二种能量是 LU，并且 `NBT_SPECIAL_IS_START_ENERGY`）。`RecipeMachine` 只有一个 `energy`。两台机器只收 EU，功率不恒定。启动充能、磁场和算力检查没有落。结构层大约 27 格宽，并且用特殊零件谓词，没有收成 `StructureLayout`。现在是单方块配方机。
-- **行为机读不到旁边那台行为机的状态。** 来源：卡 15（`ResearchAssembler` 30042 看背后两格的 `IResearchDatabase`，研究台看相邻的 `ResearchTreeMonitor`）。`MachineBehaviorContext` 只有本机的 `state()`。`level()` 和 `pos()` 能拿到方块，另一台行为机的 `BehaviorState` 没有公开读取入口。监视器和组装机各自存同一份原版小树：`minecraft:paper`、`minecraft:glass`、`minecraft:iron_ingot`。组装机只加工第一件产物落在这棵树里的组装配方。
-- **不能沿 GT 电线把两台控制器判成连通。** 来源：卡 16（`ControllerElectric` 1100 顺着 `MultiTileEntityWireElectric` 走到另一台控制器）。行为机只能看 `level()` 里的方块。GT 电线没有附属能认的方块标签。电控制器只认六个正交邻居里的控制器。有线控制器改走附属自己的 `network_cable`。
+- **配方机没有第二种能量，也没有启动能量。** 来源：卡 18（托卡马克 `FusionReactorTokamakExp` 30014、`FusionReactorTokamakT1` 30015 的第二种能量是 LU，并且 `NBT_SPECIAL_IS_START_ENERGY`）。`RecipeMachine` 只有一个 `energy`。两台机器的结构已经收成布局，只收 EU，功率不恒定。启动充能、磁场和算力检查没有落。实验型的燃料图并进同一张托卡马克配方图。
+- **行为机读不到旁边那台行为机的状态。** 来源：卡 15（`ResearchAssembler` 30042 看背后两格的 `IResearchDatabase`，研究台看相邻的 `ResearchTreeMonitor`）。`MachineBehaviorContext` 只有本机的 `state()`。`level()` 和 `pos()` 能拿到方块，另一台行为机的 `BehaviorState` 没有公开读取入口。研究组装机和研究反应釜改成了配方机，EU 窗口按源注册落地，研究树门槛不再执行。监视器仍是行为机，不再替组装机保存那份原版小树。
+- **不能沿 GT 电线把两台控制器判成连通。** 来源：卡 16（`ControllerElectric` 1100 顺着 `MultiTileEntityWireElectric` 走到另一台控制器）。行为机只能看 `level()` 里的方块。GT 电线没有附属能认的方块标签。1100、1102、1104 在源里是注释，没有恢复。无线控制器改认 512 格内的无线计算节点。
+- **结构里的计算格只能认一种方块。** 来源：卡 16（`ComputePartPredicate`）、卡 18（托卡马克 H 格）。`CellMatch` 一格一个零件或一个方块。无线控制器的 N 格固定为 `wireless_compute_node_aluminium`。量子阵列、时空阵列和量子计算中心的计算格固定为 `quantum_compute_node_naquadah`。托卡马克的 H 格同样固定成铝制无线节点，写不出「计算零件或储罐墙」。可扩展层只收了一层。阵列只在放大镜上报源里的需求算力和产出算力，不调度集群。
+- **激光聚变没有脉冲缓存和冷却。** 来源：卡 18（`LaserFusionExperimental` 30071、`LaserFusionIndustrial` 30072）。两台是收 LU 的大型配方机，窗口是源里的单包上限。`RecipeMachine` 不保存脉冲，也不走冷却。源配方依赖 kTFRU 物品，没有搬进行。
+- **量子枢纽只存 EU。** 来源：卡 17（`WirelessBatteryQuantum` 30115）。源可以锁定任意能量类型。这台行为机的缓存是 EU，窗口 1–32768。
+- **量子中继不送 QU。** 来源：卡 18（`QuantumCommunicationRelay` 30074）。它是 EU 8192 的单方块配方机。配方机不能再声明 QU 输出，也没有 32768000 的 QU 缓存和每刻 128 QU 的配对发送。
+- **微重力房间不改世界规则。** 来源：卡 18（`CentrifugalMicrogravityController` 30102）。成型后每刻消耗 2048 EU，计数到 600。接口没有房间。
+- **AI 中心不跑研究小游戏。** 来源：卡 18（30106–30108）。放大镜报每刻点数。不消耗 Normal 算力，也不给研究任务加分。
+- **显微镜不推进研究任务。** 来源：卡 15（`OpticalMicroscope` 30077、`ElectronMicroscope` 30078）。成型后按每件 EU 消耗槽里的物品。
+- **线圈 18041 仍用 `large_copper_coil`。** 来源：卡 17（感应塔的 `mCoil`）。共享零件表没有 18041，最近的线圈名是 18040。
 - **流体查询只有气体。** 来源：卡 14（`LiquidBattery` 倒掉气体和导电流体，酸、魔流体或温度高于 573 就爆炸）。`AddonFluids` 只有 `gas`。温度用流体类型自己的 `getTemperature`。气体和温度高于 573 的流体被倒掉。酸、魔流体和导电流体留在罐里。没有爆炸。
 
 ## 不做
@@ -87,3 +95,4 @@
 - 2026-10-22：卡 17 的无线塔并进「不能把能量推进另一台机器」。接收器改由自己的 tick 入账。
 - 2026-10-22：卡 18 补入配方机没有第二种能量和启动能量。托卡马克结构没有收成布局。
 - 2026-10-22：卡 19 的坩埚不读物品组成。已知铁的熔点和升温按 `CrucibleSpec.KG_PER_ENERGY` 100 落地。超过 1024 EU 的包进不了主输入窗口，没有爆炸。
+- 2026-10-22：卡 20 把托卡马克收成布局，并补上研究组装机不再执行研究树、计算格只能认一种方块、激光聚变没有脉冲缓存、量子枢纽只存 EU、量子中继不送 QU、微重力房间不改世界规则、AI 中心不跑小游戏、显微镜不推进研究任务，以及线圈 18041 仍用 `large_copper_coil`。

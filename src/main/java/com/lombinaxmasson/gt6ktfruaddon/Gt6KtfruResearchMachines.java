@@ -9,33 +9,51 @@ import com.gregtech.gregtech.api.addon.EnergyInput;
 import com.gregtech.gregtech.api.addon.EnergyOutput;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
+import com.gregtech.gregtech.api.addon.RecipeMachine;
+import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 
 /**
- * Card 15. Research blocks that this source actually registers, plus the
- * research assembler. Microscopes, the research reactor, 9816 and 9817 are
- * not in the checkout.
+ * Research blocks from {@code tileEntityInit0}. The assembler and reactor are
+ * large EU recipe machines. The microscopes keep their structures and spend EU
+ * per item; they do not promote research tasks.
  */
 public final class Gt6KtfruResearchMachines {
     static final String ASSEMBLER = "research_assembler";
+    static final String REACTOR = "research_reactor";
+    static final String OPTICAL = "optical_microscope";
+    static final String ELECTRON = "electron_microscope";
+    static final String ASSEMBLER_MAP = "gt6ktfruaddon.recipe.research_assembler";
+    static final String REACTOR_MAP = "gt6ktfruaddon.recipe.research_reactor";
     private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
 
     private Gt6KtfruResearchMachines() {}
 
+    public static void addMaps(List<RecipeTable> maps) {
+        maps.add(Gt6KtfruMachines.map(ASSEMBLER_MAP, "Research Assembler", "gascompressor", 9, 6, 0, 3, 3, 0, 1));
+        maps.add(Gt6KtfruMachines.map(REACTOR_MAP, "Research Reactor", "gascompressor", 9, 6, 0, 6, 6, 0, 1));
+    }
+
     public static void add(List<AddonMachine> machines) {
-        table(machines, "research_monitor");
-        table(machines, "research_table_circuit");
-        table(machines, "research_table_item");
-        table(machines, "research_table_printer");
-        table(machines, "research_database_item");
-        table(machines, "research_database_online");
-        table(machines, "research_table_identify");
-        machines.add(assembler());
+        table(machines, "research_monitor", true);
+        table(machines, "research_table_circuit", true);
+        table(machines, "research_table_item", true);
+        table(machines, "research_table_printer", true);
+        table(machines, "research_database_item", true);
+        table(machines, "research_database_online", true);
+        table(machines, "research_table_identify", true);
+        table(machines, "research_table_compute", false);
+        table(machines, "research_table_current_control", false);
+        machines.add(recipe(ASSEMBLER, "Aluminium", ASSEMBLER_MAP));
+        machines.add(recipe(REACTOR, "StainlessSteel", REACTOR_MAP));
+        machines.add(microscope(OPTICAL, "Aluminium", 128, 16, 512, 16384));
+        machines.add(microscope(ELECTRON, "StainlessSteel", 512, 16, 4096, 131072));
     }
 
     public static void addLayouts(List<StructureLayout> layouts) {
         layouts.add(Gt6KtfruResearchLayouts.assembler(ASSEMBLER));
+        layouts.add(Gt6KtfruResearchLayouts.assembler(REACTOR));
     }
 
     public static Set<String> behaviorTypes() {
@@ -47,7 +65,10 @@ public final class Gt6KtfruResearchMachines {
                 "research_database_item",
                 "research_database_online",
                 "research_table_identify",
-                ASSEMBLER);
+                "research_table_compute",
+                "research_table_current_control",
+                OPTICAL,
+                ELECTRON);
     }
 
     public static boolean owns(String machineType) {
@@ -55,32 +76,37 @@ public final class Gt6KtfruResearchMachines {
     }
 
     public static MachineBehavior create(String machineType) {
-        if (ASSEMBLER.equals(machineType)) return new Gt6KtfruResearchAssembler();
+        if (OPTICAL.equals(machineType)) return new Gt6KtfruMicroscope(256);
+        if (ELECTRON.equals(machineType)) return new Gt6KtfruMicroscope(4096);
         return new Gt6KtfruResearch("research_monitor".equals(machineType));
     }
 
-    /** Bottom EU is the required input. The front can emit one 512 EU packet. */
-    private static void table(List<AddonMachine> machines, String id) {
-        machines.add(BehaviorMachine.builder(MachineCasing.builder(id, "StainlessSteel").machineType(id).build())
-                .energy(EnergyInput.builder("EU", 512).faces(MachineFace.BOTTOM).capacity(512).build())
-                .energyOutput(EnergyOutput.builder("EU", 512, 1).faces(MachineFace.FRONT).build())
-                .gui(GUI)
-                .build());
+    /** 9810–9815 accept and emit 512 EU. 9816 and 9817 only emit. */
+    private static void table(List<AddonMachine> machines, String id, boolean input) {
+        var builder = BehaviorMachine.builder(MachineCasing.builder(id, "StainlessSteel").machineType(id).build())
+                .gui(GUI);
+        if (input) {
+            builder.energy(EnergyInput.builder("EU", 512).faces(MachineFace.BOTTOM).capacity(512).build());
+        }
+        builder.energyOutput(EnergyOutput.builder("EU", 512, 1).faces(MachineFace.FRONT).build());
+        machines.add(builder.build());
     }
 
-    /**
-     * Registered LU window is 64–256, so the nominal 128 sits in the middle.
-     * The recipe map is the built-in assembler.
-     */
-    private static BehaviorMachine assembler() {
-        return BehaviorMachine.builder(MachineCasing.builder(ASSEMBLER, "Aluminium").machineType(ASSEMBLER).build())
-                .energy(EnergyInput.builder("LU", 128).capacity(8192).build())
+    /** EU 131072, accepted packets 64–524288. The walls carry items, fluids and energy. */
+    private static RecipeMachine recipe(String id, String material, String map) {
+        return RecipeMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
+                .recipeMap(map)
+                .largeRecipe()
+                .energy(EnergyInput.builder("EU", 131072).range(64, 524288).faces().build())
+                .structureKeys(List.of("gt6ktfruaddon.structure." + id + ".1"))
+                .build();
+    }
+
+    private static BehaviorMachine microscope(String id, String material, long eu, long min, long max, long capacity) {
+        return BehaviorMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
+                .energy(EnergyInput.builder("EU", eu).range(min, max).faces(MachineFace.BOTTOM).capacity(capacity).build())
                 .gui(GUI)
-                .progress(80, 26)
-                .item(26, 26, BehaviorMachine.SlotRole.INPUT)
                 .item(44, 26, BehaviorMachine.SlotRole.INPUT)
-                .item(116, 26, BehaviorMachine.SlotRole.OUTPUT)
-                .fluid(16_000, 152, 8, BehaviorMachine.SlotRole.INPUT)
                 .build();
     }
 }

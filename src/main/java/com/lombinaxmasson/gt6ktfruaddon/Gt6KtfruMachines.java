@@ -42,10 +42,10 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  * mantle heater and fuel deburn factory.
  * Card 13 adds the large gas and steam turbines, dynamos, expanded motors and fluid boiler.
  * Card 14 adds the liquid batteries and transform batteries.
- * Card 15 adds the research blocks that this checkout registers, and the research assembler.
- * Card 16 adds the live compute controllers, the network cable and the two cluster parts.
- * Card 17 adds the wireless battery and its receiver.
- * Card 18 adds the two tokamaks that this checkout registers.
+ * Card 15 adds the research tables, microscopes, assembler and reactor.
+ * Card 16 adds the wireless, biology, quantum and spacetime controllers, plus the compute nodes.
+ * Card 17 adds the inductive tower, the quantum hub and both receivers.
+ * Card 18 adds the late recipe machines, tokamak layouts, catalytic reactors, microgravity and AI centers.
  * Card 19 adds the electromagnetic crucible and its screen.
  */
 public final class Gt6KtfruMachines implements AddonMachineContributor, BehaviorMachineContributor {
@@ -182,6 +182,8 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         maps.add(map(CNC, "CNC", "gascompressor", 4, 3, 1, 3, 0, 1, 1));
         maps.add(map(FUEL_DEBURN, "Fuel Deburner", "gascompressor", 3, 3, 0, 6, 6, 0, 1));
         maps.add(map(FUSION_TOKAMAK, "Fusion Tokamak", "gascompressor", 3, 3, 0, 6, 6, 1, 1));
+        Gt6KtfruResearchMachines.addMaps(maps);
+        Gt6KtfruLateMachines.addMaps(maps);
         return List.copyOf(maps);
     }
 
@@ -259,8 +261,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         Gt6KtfruResearchMachines.add(machines);
         Gt6KtfruComputeMachines.add(machines);
         Gt6KtfruWirelessMachines.add(machines);
-        fusion(machines, "fusion_tokamak_exp", 2048);
-        fusion(machines, "fusion_tokamak_t1", 16384);
+        Gt6KtfruLateMachines.add(machines);
         Gt6KtfruCrucibleMachines.add(machines);
         return List.copyOf(machines);
     }
@@ -288,7 +289,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         Gt6KtfruTurbines.addLayouts(layouts);
         Gt6KtfruBatteries.addLayouts(layouts);
         Gt6KtfruResearchMachines.addLayouts(layouts);
-        Gt6KtfruWirelessMachines.addLayouts(layouts);
+        Gt6KtfruGeneratedLayouts.addLayouts(layouts);
         Gt6KtfruCrucibleMachines.addLayouts(layouts);
         return List.copyOf(layouts);
     }
@@ -317,6 +318,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         Gt6KtfruTurbines.addParts(parts);
         Gt6KtfruBatteries.addParts(parts);
         Gt6KtfruCrucibleMachines.addParts(parts);
+        Gt6KtfruGeneratedLayouts.addParts(parts);
         return List.copyOf(parts);
     }
 
@@ -335,6 +337,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         types.addAll(Gt6KtfruResearchMachines.behaviorTypes());
         types.addAll(Gt6KtfruComputeMachines.behaviorTypes());
         types.addAll(Gt6KtfruWirelessMachines.behaviorTypes());
+        types.addAll(Gt6KtfruLateMachines.behaviorTypes());
         types.addAll(Gt6KtfruCrucibleMachines.behaviorTypes());
         return Set.copyOf(types);
     }
@@ -363,6 +366,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         if (Gt6KtfruResearchMachines.owns(machineType)) return Gt6KtfruResearchMachines.create(machineType);
         if (Gt6KtfruComputeMachines.owns(machineType)) return Gt6KtfruComputeMachines.create(machineType);
         if (Gt6KtfruWirelessMachines.owns(machineType)) return Gt6KtfruWirelessMachines.create(machineType);
+        if (Gt6KtfruLateMachines.owns(machineType)) return Gt6KtfruLateMachines.create(machineType);
         if (Gt6KtfruCrucibleMachines.owns(machineType)) return Gt6KtfruCrucibleMachines.create(machineType);
         throw new IllegalArgumentException(machineType);
     }
@@ -387,27 +391,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 drum(TUNGSTENSTEEL_GAS_DRUM, "Tungstensteel", 51_200_000, false, false, true));
     }
 
-    /**
-     * The live tokamaks. The 27-wide structure, LU start charge and compute check
-     * stay off this single-block recipe machine.
-     */
-    private static void fusion(List<AddonMachine> machines, String id, long eu) {
-        var energy = EnergyInput.builder("EU", eu).faces(MachineFace.BACK);
-        var io = MachineIo.builder()
-                .itemInputs(MachineFace.TOP).itemAutoInput(MachineFace.TOP)
-                .itemOutputs(MachineFace.BOTTOM).itemAutoOutput(MachineFace.BOTTOM)
-                .fluidInputs(MachineFace.LEFT).fluidAutoInput(MachineFace.LEFT)
-                .fluidOutputs(MachineFace.RIGHT).fluidAutoOutput(MachineFace.RIGHT);
-        machines.add(RecipeMachine.builder(MachineCasing.builder(id, "StainlessSteel").machineType(id).build())
-                .recipeMap(FUSION_TOKAMAK)
-                .basic()
-                .constantEnergy(false)
-                .energy(energy.build())
-                .io(io.build())
-                .build());
-    }
-
-    private static RecipeTable map(String name, String title, String gui,
+    static RecipeTable map(String name, String title, String gui,
             int inputItems, int outputItems, int minimalInputItems,
             int inputFluids, int outputFluids, int minimalInputFluids, int minimalInputs) {
         return RecipeTable.machine(name)

@@ -98,3 +98,5 @@
 ## 检出的用法
 
 日常对照时让 `kTFRUAddon/` 停在 `6404ab69`。需要更新时在那个目录里拉取 `1.7.10`，并先改本页的提交号和「待分档」列表，然后才改计划卡。不要把那个目录 `git add` 进本仓库。
+
+注意：`kTFRUAddon/` 在 `.gitignore` 里，默认的 `rg` / `Grep` / `Glob` 从仓库根搜会自动跳过它。搜 `kTFRUAddon` 时必须直接把搜索路径指到 `D:\Baobao\projects\dev\java\gt6-ktfruaddon\kTFRUAddon`（或使用 `--no-ignore` / 临时去掉 `.gitignore` 里的忽略项再搜），不要去工作区外找别的检出。
