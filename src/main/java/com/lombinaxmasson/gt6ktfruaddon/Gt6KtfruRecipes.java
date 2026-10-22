@@ -21,6 +21,8 @@ public final class Gt6KtfruRecipes {
 
     public static void register() {
         Gt6KtfruSourceRecipes.register();
+        // Chemistry.java fuel-battery rows all carry a zero-amount fluid. None are added.
+        AddonRecipes.map(Gt6KtfruMachines.FUEL_BATTERY);
         lightMixer();
         distillationTower(Gt6KtfruMachines.TINY_DISTILL, 40);
         distillationTower(Gt6KtfruMachines.SMALL_DISTILL, 30);

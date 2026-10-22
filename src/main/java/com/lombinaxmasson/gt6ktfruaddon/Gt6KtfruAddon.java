@@ -54,6 +54,7 @@ public final class Gt6KtfruAddon {
                             accept(output, Gt6KtfruMachines.fluidPipeId(size));
                         for (String size : Gt6KtfruMachines.ITEM_PIPE_SIZES)
                             accept(output, Gt6KtfruMachines.itemPipeId(size));
+                        for (var item : Gt6KtfruItems.ALL) output.accept(item.get());
                         for (MaterialDeclaration material : new Gt6KtfruMaterials().materials()) {
                             if (material.dust() || material.metal())
                                 acceptStack(output, AddonItems.stack("dust", material.name(), 1));
@@ -67,6 +68,7 @@ public final class Gt6KtfruAddon {
 
     public Gt6KtfruAddon(IEventBus modEventBus, ModContainer modContainer) {
         CREATIVE_MODE_TABS.register(modEventBus);
+        Gt6KtfruItems.ITEMS.register(modEventBus);
         GregTechAddons.register(new GregTechAddon() {
             @Override
             public String id() {
@@ -116,6 +118,22 @@ public final class Gt6KtfruAddon {
                     throw new IllegalStateException("tiny teflon pipe is missing");
                 if (stack(Gt6KtfruMachines.itemPipeId("medium")).isEmpty())
                     throw new IllegalStateException("medium pvc item pipe is missing");
+                if (stack("void_hopper_wood").isEmpty() || stack("miner_tin_alloy").isEmpty()
+                        || stack("water_mill").isEmpty() || stack("manual_motor_wood").isEmpty()
+                        || stack("manual_kinetic_motor_wood").isEmpty()
+                        || stack("flywheel_wood").isEmpty()
+                        || stack("large_vacuum_flywheel_adamantium").isEmpty())
+                    throw new IllegalStateException("kinetic behavior machine is missing");
+                if (stack("gas_battery_aluminium").isEmpty() || stack("gas_battery_stainless").isEmpty()
+                        || stack("ktfru.item.battery.pole.nickel").isEmpty()
+                        || stack("proton_exchange_membrane").isEmpty())
+                    throw new IllegalStateException("gas battery is missing");
+                if (stack("transformer_small_lv").isEmpty() || stack("light_transformer_large_luv").isEmpty()
+                        || stack("flywheel_gear_small_t1").isEmpty() || stack("flywheel_gear_large_t6").isEmpty())
+                    throw new IllegalStateException("transformer part is missing");
+                if (stack("mask_aligner_uv").isEmpty() || stack("cnc_machine").isEmpty()
+                        || stack("aluminium_wall").isEmpty() || stack("mask_aligner_energy_uv").isEmpty())
+                    throw new IllegalStateException("mask aligner is missing");
                 FluidStack hydrogen = AddonFluids.still("Hydrogen", 250);
                 if (hydrogen == null || hydrogen.isEmpty())
                     throw new IllegalStateException("GT fluid field Hydrogen is missing");

@@ -10,10 +10,12 @@ import com.gregtech.gregtech.api.addon.BehaviorMachine;
 import com.gregtech.gregtech.api.addon.CellMatch;
 import com.gregtech.gregtech.api.addon.CompressedGasTankDeclaration;
 import com.gregtech.gregtech.api.addon.EnergyInput;
+import com.gregtech.gregtech.api.addon.EnergyOutput;
 import com.gregtech.gregtech.api.addon.FluidPipeDeclaration;
 import com.gregtech.gregtech.api.addon.FuelGenerator;
 import com.gregtech.gregtech.api.addon.FuelOutput;
 import com.gregtech.gregtech.api.addon.ItemPipeDeclaration;
+import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.MachineIo;
@@ -30,8 +32,11 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  * 10000–10160. The large recipe machines are the three distillation towers and
  * the ore processing system. The two large compressed-gas valves and the five
  * gas compressors are behavior machines. Teflon fluid pipes, PVC item pipes
- * and the five compressed-gas drums are separate declarations. The gas battery
- * is not registered.
+ * and the five compressed-gas drums are separate declarations. Card 08 adds the
+ * void hoppers, miners, water mill, manual motors and flywheel boxes.
+ * Card 09 adds the two gas batteries. Their recipe map has no rows.
+ * Card 10 adds the transformer, flywheel-gear and light-transformer parts.
+ * Card 11 adds the mask aligners, the CNC machine and their structure parts.
  */
 public final class Gt6KtfruMachines implements AddonMachineContributor, BehaviorMachineContributor {
     public static final String FLUID_HEATING = "gt6ktfruaddon.recipe.fluid_heating";
@@ -52,6 +57,22 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     public static final String SMALL_DISTILL_TYPE = "small_distillation_tower";
     public static final String DISTILL_TYPE = "distillation_tower";
     public static final String ORE_PROCESS = "gt6ktfruaddon.recipe.ore_processing_system";
+    /** Source {@code ktfru.recipe.fuelbattery}. No rows are added. */
+    public static final String FUEL_BATTERY = "gt6ktfruaddon.recipe.fuel_battery";
+    public static final String GAS_BATTERY = "gas_battery";
+    public static final String MASK_ALIGNER = "gt6ktfruaddon.recipe.mask_aligner";
+    public static final String CNC = "gt6ktfruaddon.recipe.cnc";
+    public static final String MASK_ALIGNER_UV = "mask_aligner_uv";
+    public static final String MASK_ALIGNER_UV_PLUS = "mask_aligner_uv_plus";
+    public static final String MASK_ALIGNER_DUV = "mask_aligner_duv";
+    public static final String MASK_ALIGNER_EUV = "mask_aligner_euv";
+    public static final String CNC_MACHINE = "cnc_machine";
+    public static final String TRANSFORMER_SMALL = "transformer_small";
+    public static final String TRANSFORMER_LARGE = "transformer_large";
+    public static final String FLYWHEEL_GEAR_SMALL = "flywheel_gear_small";
+    public static final String FLYWHEEL_GEAR_LARGE = "flywheel_gear_large";
+    public static final String LIGHT_TRANSFORMER_SMALL = "light_transformer_small";
+    public static final String LIGHT_TRANSFORMER_LARGE = "light_transformer_large";
     /** Layout name and machine type. The controller id uses the same string. */
     public static final String ORE_PROCESS_TYPE = "ore_processing_system";
     /** Built-in GT fuel map behind {@code FM.Gas}. Already contains hydrogen. */
@@ -64,6 +85,17 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     public static final String STAINLESS_GAS_TANK = "stainless_compressed_gas_tank";
     /** Shared machine type for source 22000–22004. Block ids stay per tier. */
     public static final String GAS_COMPRESSOR = "gas_compressor";
+    public static final String VOID_HOPPER = "void_hopper";
+    public static final String MINER = "miner";
+    public static final String WATER_MILL = "water_mill";
+    public static final String MANUAL_MOTOR = "manual_motor";
+    public static final String FLYWHEEL = "flywheel";
+    public static final String LARGE_FLYWHEEL = "large_flywheel";
+    public static final String ELECTRIC_FLYWHEEL = "electric_flywheel";
+    public static final String LARGE_ELECTRIC_FLYWHEEL = "large_electric_flywheel";
+    public static final String VACUUM_FLYWHEEL = "vacuum_flywheel";
+    public static final String LARGE_VACUUM_FLYWHEEL = "large_vacuum_flywheel";
+    private static final String KINETIC_GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
     public static final String BRONZE_COMPRESSOR = "gas_compressor_bronze";
     public static final String STEEL_GAS_DRUM = "steel_gas_drum";
     public static final String STAINLESS_GAS_DRUM = "stainless_gas_drum";
@@ -126,6 +158,9 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         maps.add(map(SMALL_DISTILL, "Small Distillation Tower", "smalldistillationtower", 1, 3, 0, 1, 6, 0, 1));
         maps.add(map(DISTILL, "Distillation Tower", "distillationtower", 1, 3, 0, 1, 9, 0, 1));
         maps.add(map(ORE_PROCESS, "Ore Process System", "oreprocesssystem", 3, 9, 1, 3, 3, 0, 1));
+        maps.add(map(FUEL_BATTERY, "Fuel Battery", "gascompressor", 2, 0, 2, 3, 2, 2, 4));
+        maps.add(map(MASK_ALIGNER, "Mask Aligner", "gascompressor", 3, 3, 1, 3, 0, 0, 1));
+        maps.add(map(CNC, "CNC", "gascompressor", 4, 3, 1, 3, 0, 1, 1));
         return List.copyOf(maps);
     }
 
@@ -157,6 +192,19 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         machines.add(compressor("gas_compressor_titanium", "Titanium", 3, 512, 80_000));
         machines.add(compressor("gas_compressor_tungstensteel", "Tungstensteel", 4, 2048, 200_000));
         machines.add(compressor("gas_compressor_adamantium", "Adamantium", 5, 8192, 800_000));
+        kineticBehaviors(machines);
+        machines.add(gasBattery("gas_battery_aluminium", "Aluminium", 1));
+        machines.add(gasBattery("gas_battery_stainless", "StainlessSteel", 2));
+        transformerParts(machines);
+        machines.add(maskAligner(MASK_ALIGNER_UV, "Aluminium", 2, 128, 64, 256,
+                MachineFace.TOP, MachineFace.BACK, null, false));
+        machines.add(maskAligner(MASK_ALIGNER_UV_PLUS, "StainlessSteel", 3, 512, 256, 1024,
+                null, MachineFace.TOP, MachineFace.BACK, false));
+        machines.add(maskAligner(MASK_ALIGNER_DUV, "Chromium", 4, 2048, 1024, 4096,
+                MachineFace.TOP, MachineFace.BACK, null, true));
+        machines.add(maskAligner(MASK_ALIGNER_EUV, "Tungsten", 5, 8192, 4096, 16384,
+                MachineFace.TOP, MachineFace.BACK, null, true));
+        machines.add(cncMachine());
         gas(machines, "bronze", "Bronze", 16);
         gas(machines, "steel", "Steel", 32);
         gas(machines, "invar", "Invar", 64);
@@ -195,12 +243,45 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 distillationLayout(DISTILL_TYPE, 9),
                 oreProcessingLayout(),
                 gasTankLayout(STEEL_GAS_TANK, "dense_steel_wall"),
-                gasTankLayout(STAINLESS_GAS_TANK, "tank_wall_dense"));
+                gasTankLayout(STAINLESS_GAS_TANK, "tank_wall_dense"),
+                maskAlignerUvLayout(),
+                maskAlignerUvPlusLayout(),
+                maskAlignerDuvLayout(MASK_ALIGNER_DUV),
+                maskAlignerDuvLayout(MASK_ALIGNER_EUV),
+                cncLayout());
+    }
+
+    @Override
+    public List<LayoutPart> layoutParts() {
+        return List.of(
+                casing("aluminium_wall", "Aluminium", 4.0F),
+                casing("sunlight_absorber", "Silver", 6.0F),
+                casing("catalytic_reactor_casing", "Tungstensteel", 10.0F),
+                casing("mask_aligner_platform_motor", "StainlessSteel", 6.0F),
+                casing("mask_aligner_wafer_platform", "StainlessSteel", 6.0F),
+                casing("cnc_platform", "Aluminium", 6.0F),
+                casing("cnc_motor", "Aluminium", 6.0F),
+                casing("cnc_cutter_head", "StainlessSteel", 6.0F),
+                casing("light_module_uv", "Aluminium", 6.0F),
+                casing("light_module_uv_plus", "StainlessSteel", 6.0F),
+                casing("light_module_duv", "Chromium", 6.0F),
+                casing("light_module_euv", "Tungstensteel", 6.0F),
+                casing("mask_aligner_shell", "StainlessSteel", 10.0F),
+                casing("mask_aligner_io_uv", "Aluminium", 6.0F),
+                casing("mask_aligner_io_uv_plus", "StainlessSteel", 6.0F),
+                energyModule("mask_aligner_energy_uv", "Aluminium", 192, 64, 256),
+                energyModule("mask_aligner_energy_uv_plus", "StainlessSteel", 768, 256, 1024));
     }
 
     @Override
     public Set<String> machineTypes() {
-        return Set.of(STEEL_GAS_TANK, STAINLESS_GAS_TANK, GAS_COMPRESSOR);
+        return Set.of(STEEL_GAS_TANK, STAINLESS_GAS_TANK, GAS_COMPRESSOR,
+                VOID_HOPPER, MINER, WATER_MILL, MANUAL_MOTOR,
+                FLYWHEEL, LARGE_FLYWHEEL, ELECTRIC_FLYWHEEL, LARGE_ELECTRIC_FLYWHEEL,
+                VACUUM_FLYWHEEL, LARGE_VACUUM_FLYWHEEL, GAS_BATTERY,
+                TRANSFORMER_SMALL, TRANSFORMER_LARGE,
+                FLYWHEEL_GEAR_SMALL, FLYWHEEL_GEAR_LARGE,
+                LIGHT_TRANSFORMER_SMALL, LIGHT_TRANSFORMER_LARGE);
     }
 
     @Override
@@ -209,6 +290,18 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
             return new Gt6KtfruGasTank();
         }
         if (GAS_COMPRESSOR.equals(machineType)) return new Gt6KtfruGasCompressor();
+        if (VOID_HOPPER.equals(machineType)) return new Gt6KtfruVoidHopper();
+        if (MINER.equals(machineType)) return new Gt6KtfruMiner();
+        if (WATER_MILL.equals(machineType)) return new Gt6KtfruWaterMill();
+        if (MANUAL_MOTOR.equals(machineType)) return new Gt6KtfruManualMotor();
+        if (FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(4, 0.1);
+        if (LARGE_FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(16, 0.15);
+        if (ELECTRIC_FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(4, 0.07);
+        if (LARGE_ELECTRIC_FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(16, 0.1);
+        if (VACUUM_FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(4, 0.0001);
+        if (LARGE_VACUUM_FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(16, 0.00012);
+        if (GAS_BATTERY.equals(machineType)) return new Gt6KtfruFuelBattery();
+        if (transformerType(machineType)) return new Gt6KtfruTransformerPart(transformerAmpere(machineType));
         throw new IllegalArgumentException(machineType);
     }
 
@@ -383,6 +476,175 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     }
 
     /**
+     * Source 30003, 30009, 30010, 30011. LU stays on the controller declaration.
+     * UV and UV+ take that LU through the light-module cells. The energy module
+     * is a condition part and is not a second recipe energy.
+     */
+    private static RecipeMachine maskAligner(String id, String material, int tier, long nominal, long min, long max,
+            MachineFace itemIn, MachineFace itemOut, MachineFace fluidOut, boolean controllerEnergy) {
+        var io = MachineIo.builder();
+        if (itemIn != null) io.itemInputs(itemIn).itemAutoInput(itemIn);
+        if (itemOut != null) io.itemOutputs(itemOut).itemAutoOutput(itemOut);
+        if (fluidOut != null) io.fluidOutputs(fluidOut).fluidAutoOutput(fluidOut);
+        var energy = EnergyInput.builder("LU", nominal).range(min, max);
+        if (controllerEnergy) energy.faces(MachineFace.all());
+        else energy.faces();
+        return RecipeMachine.builder(MachineCasing.builder(id, material).machineType(id).tier(tier).build())
+                .energy(energy.build())
+                .io(io.build())
+                .parallel(1)
+                .recipeMap(MASK_ALIGNER)
+                .largeRecipe()
+                .structureKeys(structureLines(id, 4))
+                .build();
+    }
+
+    /** Source 30012. EU enters the aluminium walls. The motor and cutter are casings. */
+    private static RecipeMachine cncMachine() {
+        return RecipeMachine.builder(MachineCasing.builder(CNC_MACHINE, "Aluminium").machineType(CNC_MACHINE).tier(2).build())
+                .energy(EnergyInput.builder("EU", 128).range(64, 256).faces().build())
+                .io(MachineIo.builder()
+                        .itemInputs(MachineFace.TOP).itemAutoInput(MachineFace.TOP)
+                        .itemOutputs(MachineFace.BOTTOM).itemAutoOutput(MachineFace.BOTTOM)
+                        .build())
+                .parallel(1)
+                .recipeMap(CNC)
+                .largeRecipe()
+                .structureKeys(structureLines(CNC_MACHINE, 4))
+                .build();
+    }
+
+    private static List<String> structureLines(String type, int count) {
+        List<String> keys = new ArrayList<>();
+        for (int line = 1; line <= count; line++) keys.add("gt6ktfruaddon.structure." + type + "." + line);
+        return List.copyOf(keys);
+    }
+
+    /** Layer Y, offset -1,0,0. Positive source X is the machine's left, so right is {@code 1 - row}. */
+    private static void yLayer(StructureLayout.Builder layout, String type, int up, String[] rows) {
+        for (int row = 0; row < rows.length; row++) {
+            String line = rows[row];
+            for (int col = 0; col < line.length(); col++) {
+                char symbol = line.charAt(col);
+                if (symbol == ' ') continue;
+                layout.cell(1 - row, up, col, CellMatch.part(maskPart(type, symbol)), maskRole(type, symbol));
+            }
+        }
+    }
+
+    private static StructureLayout maskAlignerUvLayout() {
+        var layout = StructureLayout.builder(MASK_ALIGNER_UV);
+        yLayer(layout, MASK_ALIGNER_UV, 0, new String[] {"WW", " A", "WW"});
+        yLayer(layout, MASK_ALIGNER_UV, 1, new String[] {"WW", "BC", "WW"});
+        return layout.build();
+    }
+
+    private static StructureLayout maskAlignerUvPlusLayout() {
+        var layout = StructureLayout.builder(MASK_ALIGNER_UV_PLUS);
+        yLayer(layout, MASK_ALIGNER_UV_PLUS, 0, new String[] {"WWW", " DA", "WWW"});
+        yLayer(layout, MASK_ALIGNER_UV_PLUS, 1, new String[] {"WBW", "BCB", "WBW"});
+        yLayer(layout, MASK_ALIGNER_UV_PLUS, 2, new String[] {"LLL", "LLL", "LLL"});
+        return layout.build();
+    }
+
+    /**
+     * DUV and EUV share one map. 31110 and 31120 were never registered, so those
+     * two cells are absent. 0 is the controller.
+     */
+    private static StructureLayout maskAlignerDuvLayout(String type) {
+        var layout = StructureLayout.builder(type);
+        int[][][] ids = {
+                {{31002, 0, 31002}, {31002, 31200, 31002}},
+                {{31002, 31110, 31002}, {31002, 31120, 31002}}
+        };
+        for (int up = 0; up < ids.length; up++) {
+            for (int back = 0; back < ids[up].length; back++) {
+                for (int mapX = 0; mapX < ids[up][back].length; mapX++) {
+                    int id = ids[up][back][mapX];
+                    if (id == 0 || id == 31110 || id == 31120) continue;
+                    String part = id == 31200 ? "catalytic_reactor_casing" : "sunlight_absorber";
+                    layout.cell(1 - mapX, up, back, CellMatch.part(part), StructureRole.ITEM_FLUID_INPUT);
+                }
+            }
+        }
+        return layout.build();
+    }
+
+    private static StructureLayout cncLayout() {
+        var layout = StructureLayout.builder(CNC_MACHINE);
+        yLayer(layout, CNC_MACHINE, 0, new String[] {"AAA", " CC", "BBB", "BBB", "BBB"});
+        yLayer(layout, CNC_MACHINE, 1, new String[] {"AAA", "CCC", "   ", "   ", "   "});
+        yLayer(layout, CNC_MACHINE, 2, new String[] {" A ", " A ", " A ", " D ", "   "});
+        return layout.build();
+    }
+
+    private static String maskPart(String type, char symbol) {
+        if (CNC_MACHINE.equals(type)) {
+            return switch (symbol) {
+                case 'A' -> "aluminium_wall";
+                case 'B' -> "cnc_platform";
+                case 'C' -> "cnc_motor";
+                case 'D' -> "cnc_cutter_head";
+                default -> throw new IllegalStateException("unknown cnc symbol " + symbol);
+            };
+        }
+        if (MASK_ALIGNER_UV_PLUS.equals(type)) {
+            return switch (symbol) {
+                case 'W' -> "mask_aligner_shell";
+                case 'A' -> "mask_aligner_energy_uv_plus";
+                case 'B' -> "mask_aligner_platform_motor";
+                case 'C' -> "mask_aligner_wafer_platform";
+                case 'D' -> "mask_aligner_io_uv_plus";
+                case 'L' -> "light_module_uv_plus";
+                default -> throw new IllegalStateException("unknown uv+ symbol " + symbol);
+            };
+        }
+        return switch (symbol) {
+            case 'W' -> "aluminium_wall";
+            case 'A' -> "mask_aligner_energy_uv";
+            case 'B' -> "light_module_uv";
+            case 'C' -> "mask_aligner_io_uv";
+            default -> throw new IllegalStateException("unknown uv symbol " + symbol);
+        };
+    }
+
+    private static StructureRole maskRole(String type, char symbol) {
+        if (CNC_MACHINE.equals(type)) {
+            return switch (symbol) {
+                case 'A' -> StructureRole.ENERGY_INPUT;
+                case 'B' -> StructureRole.ITEM_FLUID_INPUT;
+                default -> StructureRole.CASING;
+            };
+        }
+        if (MASK_ALIGNER_UV_PLUS.equals(type)) {
+            return switch (symbol) {
+                case 'L' -> StructureRole.ENERGY_INPUT;
+                case 'C' -> StructureRole.ITEM_FLUID_IO;
+                case 'A' -> StructureRole.CASING;
+                default -> StructureRole.ITEM_FLUID_INPUT;
+            };
+        }
+        return switch (symbol) {
+            case 'B' -> StructureRole.ENERGY_INPUT;
+            case 'C' -> StructureRole.ITEM_FLUID_IO;
+            case 'A' -> StructureRole.CASING;
+            default -> StructureRole.ITEM_FLUID_INPUT;
+        };
+    }
+
+    private static LayoutPart casing(String name, String material, float hardness) {
+        return LayoutPart.builder(name, material).hardness(hardness).build();
+    }
+
+    private static LayoutPart energyModule(String name, String material, long nominal, long min, long max) {
+        return LayoutPart.builder(name, material).hardness(6.0F)
+                .energyInput(EnergyInput.builder("EU", nominal).range(min, max)
+                        .capacity(max).faces(MachineFace.all()).build())
+                .condition(nominal)
+                .build();
+    }
+
+    /**
      * Sources 30004, 30005 and 30006. One 3×3 heat layer, then four, six or nine
      * 3×3 distillation layers. The controller sits in the front-middle of the
      * lowest distillation layer and is not a cell. Output hatches are the
@@ -542,6 +804,198 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 .progress(148, 64);
         for (int tank = 0; tank < capacity.length; tank++) {
             builder.fluid(capacity[tank], 20 + tank * BehaviorMachine.TANK_WIDTH, 8, BehaviorMachine.SlotRole.ANY);
+        }
+        return builder.build();
+    }
+
+    /**
+     * Source 21010–21013, 27520–27523, 9800, 10021, 10022, 10026, 10027 and
+     * 15000–15055. Tier on a shared machine type selects the row.
+     */
+    private static void kineticBehaviors(List<AddonMachine> machines) {
+        String[] kinetic = {"Wood", "Bronze", "Steel", "Titanium", "Tungstensteel", "Adamantium"};
+        String[] kineticId = {"wood", "bronze", "steel", "titanium", "tungstensteel", "adamantium"};
+        int[] hopperInput = {64, 32, 128, 512};
+        int[] hopperRange = {4, 8, 16, 24};
+        for (int i = 0; i < 4; i++) {
+            machines.add(voidHopper("void_hopper_" + kineticId[i], kinetic[i], i + 1,
+                    hopperInput[i], hopperRange[i]));
+        }
+        machines.add(miner("miner_tin_alloy", "TinAlloy", 1, "RF", 128));
+        machines.add(miner("miner_lv", "SteelGalvanized", 2, "EU", 32));
+        machines.add(miner("miner_mv", "Aluminium", 3, "EU", 128));
+        machines.add(miner("miner_hv", "StainlessSteel", 4, "EU", 512));
+        machines.add(waterMill());
+        machines.add(manualMotor("manual_motor_wood", "WoodTreated", 1, "RU", 10));
+        machines.add(manualMotor("manual_motor_bronze", "Bronze", 2, "RU", 22));
+        machines.add(manualMotor("manual_kinetic_motor_wood", "WoodTreated", 3, "KU", 8));
+        machines.add(manualMotor("manual_kinetic_motor_bronze", "Bronze", 4, "KU", 16));
+        long[] vmax = {8, 32, 128, 512, 2048, 8192};
+        String[] kind = {
+                FLYWHEEL, LARGE_FLYWHEEL, ELECTRIC_FLYWHEEL,
+                LARGE_ELECTRIC_FLYWHEEL, VACUUM_FLYWHEEL, LARGE_VACUUM_FLYWHEEL
+        };
+        String[] kindId = {
+                "flywheel", "large_flywheel", "electric_flywheel",
+                "large_electric_flywheel", "vacuum_flywheel", "large_vacuum_flywheel"
+        };
+        int[] slots = {1, 4, 1, 4, 1, 4};
+        int[] ampere = {4, 16, 4, 16, 4, 16};
+        for (int kindIndex = 0; kindIndex < kind.length; kindIndex++) {
+            for (int material = 0; material < kinetic.length; material++) {
+                machines.add(flywheel(kindId[kindIndex] + "_" + kineticId[material], kinetic[material],
+                        kind[kindIndex], material + 1, vmax[material], slots[kindIndex], ampere[kindIndex]));
+            }
+        }
+    }
+
+    /**
+     * Source 10200–10255. The back stands in for the inside face. The buffer
+     * holds ampere packets and the front emits that packet size.
+     */
+    private static void transformerParts(List<AddonMachine> machines) {
+        String[] material = {
+                "SteelGalvanized", "Aluminium", "StainlessSteel", "Chromium", "Titanium", "Iridium"
+        };
+        String[] electric = {"lv", "mv", "hv", "ev", "iv", "luv"};
+        String[] gear = {"t1", "t2", "t3", "t4", "t5", "t6"};
+        String[] type = {
+                TRANSFORMER_SMALL, TRANSFORMER_LARGE,
+                FLYWHEEL_GEAR_SMALL, FLYWHEEL_GEAR_LARGE,
+                LIGHT_TRANSFORMER_SMALL, LIGHT_TRANSFORMER_LARGE
+        };
+        String[] id = {
+                "transformer_small", "transformer_large",
+                "flywheel_gear_small", "flywheel_gear_large",
+                "light_transformer_small", "light_transformer_large"
+        };
+        String[] energy = {"EU", "EU", "RU", "RU", "LU", "LU"};
+        int[] ampere = {4, 16, 4, 16, 4, 16};
+        for (int kind = 0; kind < type.length; kind++) {
+            String[] suffix = "RU".equals(energy[kind]) ? gear : electric;
+            for (int tier = 0; tier < material.length; tier++) {
+                machines.add(transformerPart(id[kind] + "_" + suffix[tier], material[tier],
+                        type[kind], tier + 1, energy[kind], ampere[kind]));
+            }
+        }
+    }
+
+    private static BehaviorMachine transformerPart(String id, String material, String type, int tier,
+                                                   String energy, int ampere) {
+        long packet = Gt6KtfruTransformerPart.packet(tier);
+        return BehaviorMachine.builder(MachineCasing.builder(id, material).machineType(type).tier(tier).build())
+                .energy(EnergyInput.builder(energy, packet).faces(MachineFace.BACK)
+                        .capacity(packet * ampere).build())
+                .energyOutput(EnergyOutput.builder(energy, packet, ampere).faces(MachineFace.FRONT).build())
+                .gui(KINETIC_GUI)
+                .toggle("gt6ktfruaddon.transformer.stopped", 152, 8, false)
+                .build();
+    }
+
+    private static boolean transformerType(String machineType) {
+        return TRANSFORMER_SMALL.equals(machineType) || TRANSFORMER_LARGE.equals(machineType)
+                || FLYWHEEL_GEAR_SMALL.equals(machineType) || FLYWHEEL_GEAR_LARGE.equals(machineType)
+                || LIGHT_TRANSFORMER_SMALL.equals(machineType) || LIGHT_TRANSFORMER_LARGE.equals(machineType);
+    }
+
+    private static int transformerAmpere(String machineType) {
+        if (TRANSFORMER_LARGE.equals(machineType) || FLYWHEEL_GEAR_LARGE.equals(machineType)
+                || LIGHT_TRANSFORMER_LARGE.equals(machineType)) return 16;
+        return 4;
+    }
+
+    /**
+     * Source 10010 / 10011. EU leaves the top. The bottom input exists because a
+     * behavior machine needs one. Fuel tanks are 8000 mB. The electrolyte tank
+     * is exactly the required amount.
+     */
+    private static BehaviorMachine gasBattery(String id, String material, int tier) {
+        long rate = Gt6KtfruFuelBattery.rate(tier);
+        int electrolyte = Gt6KtfruFuelBattery.electrolyte(tier);
+        return BehaviorMachine.builder(MachineCasing.builder(id, material)
+                        .machineType(GAS_BATTERY).tier(tier).build())
+                .energy(EnergyInput.builder("EU", rate).faces(MachineFace.BOTTOM)
+                        .capacity(Gt6KtfruFuelBattery.capacity(rate)).build())
+                .energyOutput(EnergyOutput.builder("EU", rate, 1).faces(MachineFace.TOP).build())
+                .gui(KINETIC_GUI)
+                .progress(8, 64)
+                .item(26, 8, BehaviorMachine.SlotRole.INPUT)
+                .item(48, 8, BehaviorMachine.SlotRole.INPUT)
+                .fluid(8000, 80, 8, BehaviorMachine.SlotRole.INPUT)
+                .fluid(8000, 98, 8, BehaviorMachine.SlotRole.INPUT)
+                .fluid(8000, 116, 8, BehaviorMachine.SlotRole.OUTPUT)
+                .fluid(8000, 134, 8, BehaviorMachine.SlotRole.OUTPUT)
+                .fluid(electrolyte, 152, 8, BehaviorMachine.SlotRole.INPUT)
+                .recipeMaps(FUEL_BATTERY)
+                .build();
+    }
+
+    private static BehaviorMachine voidHopper(String id, String material, int tier, long input, int range) {
+        var builder = BehaviorMachine.builder(MachineCasing.builder(id, material)
+                        .machineType(VOID_HOPPER).tier(tier).build())
+                .energy(EnergyInput.builder("RU", input).capacity(input * 2).build())
+                .gui(KINETIC_GUI)
+                .item(26, 8, BehaviorMachine.SlotRole.INPUT)
+                .toggle("gt6ktfruaddon.void_hopper.blacklist", 152, 8, false)
+                .toggle("gt6ktfruaddon.void_hopper.clear", 152, 28, false)
+                .maxRange(range);
+        for (int slot = 0; slot < 9; slot++) {
+            builder.item(8 + slot * 18, 64, BehaviorMachine.SlotRole.OUTPUT);
+        }
+        return builder.build();
+    }
+
+    /** Horizontal square stays on the tier. The declared cube is 32 so the dig can go down. */
+    private static BehaviorMachine miner(String id, String material, int tier, String energy, long input) {
+        var builder = BehaviorMachine.builder(MachineCasing.builder(id, material)
+                        .machineType(MINER).tier(tier).build())
+                .energy(EnergyInput.builder(energy, input).capacity(input * 2).build())
+                .gui(KINETIC_GUI)
+                .item(26, 8, BehaviorMachine.SlotRole.INPUT)
+                .toggle("gt6ktfruaddon.miner.reset", 152, 8, false)
+                .maxRange(32);
+        for (int slot = 0; slot < 9; slot++) {
+            builder.item(8 + slot * 18, 64, BehaviorMachine.SlotRole.OUTPUT);
+        }
+        return builder.build();
+    }
+
+    /**
+     * No energy in the source row. The top face is the required input, nominal 2 RU.
+     * Output is a packet of 2, one or two amps, front then back.
+     */
+    private static BehaviorMachine waterMill() {
+        return BehaviorMachine.builder(MachineCasing.builder(WATER_MILL, "WoodTreated")
+                        .machineType(WATER_MILL).tier(1).build())
+                .energy(EnergyInput.builder("RU", 2).faces(MachineFace.TOP).capacity(4).build())
+                .energyOutput(EnergyOutput.builder("RU", 2, 2)
+                        .faces(MachineFace.FRONT, MachineFace.BACK).build())
+                .gui(KINETIC_GUI)
+                .build();
+    }
+
+    /** Bottom input is required by the behavior machine. The crank emits on the front. */
+    private static BehaviorMachine manualMotor(String id, String material, int tier, String energy, long outputMax) {
+        return BehaviorMachine.builder(MachineCasing.builder(id, material)
+                        .machineType(MANUAL_MOTOR).tier(tier).build())
+                .energy(EnergyInput.builder(energy, outputMax).faces(MachineFace.BOTTOM)
+                        .capacity(outputMax).build())
+                .energyOutput(EnergyOutput.builder(energy, outputMax, 1).faces(MachineFace.FRONT).build())
+                .gui(KINETIC_GUI)
+                .build();
+    }
+
+    /** Back in, front out, at {@code vmax}. Capacity 0, so nothing is kept past the tick. */
+    private static BehaviorMachine flywheel(String id, String material, String type, int tier,
+            long vmax, int slots, int ampere) {
+        var builder = BehaviorMachine.builder(MachineCasing.builder(id, material)
+                        .machineType(type).tier(tier).build())
+                .energy(EnergyInput.builder("RU", vmax).faces(MachineFace.BACK).build())
+                .energyOutput(EnergyOutput.builder("RU", vmax, ampere).faces(MachineFace.FRONT).build())
+                .gui(KINETIC_GUI);
+        int x0 = slots == 1 ? 80 : 44;
+        for (int slot = 0; slot < slots; slot++) {
+            builder.item(x0 + slot * 18, 8, BehaviorMachine.SlotRole.INPUT);
         }
         return builder.build();
     }
