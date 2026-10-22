@@ -156,6 +156,9 @@ public final class Gt6KtfruMaterials implements AddonMaterialContributor {
                 MaterialDeclaration.builder("Difluorobenzophenone").displayName("4,4'-Difluorobenzophenone").color(0xF0EBDC).chemicalFormula("C₁₃H₈F₂O").meltingPointKelvin(380).boilingPointKelvin(648).density(1F).dust().build(),
                 MaterialDeclaration.builder("Hydroquinone").displayName("Hydroquinone").color(0xF0F0F0).chemicalFormula("C₆H₆O₂").meltingPointKelvin(445).boilingPointKelvin(560).density(1F).dust().build(),
                 MaterialDeclaration.builder("PEEK").displayName("Polyether Ether Ketone").color(0xD2BEA0).chemicalFormula("(C₁₉H₁₂O₃)n").meltingPointKelvin(616).boilingPointKelvin(873).density(1F).dust().build(),
+                // flList.YttriumZirconiumOxide. The source register call sets no color or formula.
+                // Its fluid temperature is 2700 and is not a melting point, so those stay at the builder defaults.
+                MaterialDeclaration.builder("YttriumZirconiumOxide").displayName("Yttrium-Zirconium Oxide").liquid().build(),
                 // flList.Bittern, not a materialPreInit row. The tiny tower's ocean recipe outputs it.
                 // The source register call sets no color or temperature, so those stay at the builder defaults.
                 MaterialDeclaration.builder("Bittern").displayName("Bittern").liquid().build()

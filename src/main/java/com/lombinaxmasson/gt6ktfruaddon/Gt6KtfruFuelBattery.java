@@ -2,6 +2,7 @@ package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.List;
 
+import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
@@ -13,8 +14,9 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 /**
- * Gas battery. Poles stay in the slots. The electrolyte tank has to be full.
- * Recipe rows are not registered: every source row contains a zero-amount fluid.
+ * Gas battery. Poles stay in the slots. The electrolyte tank has to be full and is not drained.
+ * Nickel with CaTiO3 requires yttrium-zirconium oxide. Carbon with platinum requires sulfuric acid.
+ * A zero-amount fluid cannot be stored on a recipe row, so the electrolyte is this check instead.
  */
 public final class Gt6KtfruFuelBattery implements MachineBehavior {
     private static final int FUEL_A = 0;
@@ -22,7 +24,7 @@ public final class Gt6KtfruFuelBattery implements MachineBehavior {
     private static final int OUT_A = 2;
     private static final int OUT_B = 3;
     private static final int ELECTROLYTE = 4;
-    /** Largest {@code |EUt| * duration} on the unread-as-registered source rows, 384 * 13. */
+    /** Largest {@code |EUt| * duration} on the source rows, 384 * 13. */
     private static final long RECIPE_HEADROOM = 4992;
 
     @Override
@@ -49,10 +51,32 @@ public final class Gt6KtfruFuelBattery implements MachineBehavior {
         return context.energy() < rate * 2
                 && !context.item(0).isEmpty()
                 && !context.item(1).isEmpty()
-                && context.fluid(ELECTROLYTE).getAmount() >= electrolyte(context);
+                && context.fluid(ELECTROLYTE).getAmount() >= electrolyte(context)
+                && electrolyteMatches(context);
+    }
+
+    /** The pole pair names the electrolyte. Either order is the same pair. */
+    private static boolean electrolyteMatches(MachineBehaviorContext context) {
+        String left = context.item(0).getDescriptionId();
+        String right = context.item(1).getDescriptionId();
+        if (pair(left, right, "ktfru.item.battery.pole.nickel", "ktfru.item.battery.pole.catio3"))
+            return sameFluid(context.fluid(ELECTROLYTE), "GenLiquid_YttriumZirconiumOxide");
+        if (pair(left, right, "ktfru.item.battery.pole.carbon", "ktfru.item.battery.pole.platinum"))
+            return sameFluid(context.fluid(ELECTROLYTE), "GenLiquid_SulfuricAcid");
+        return false;
+    }
+
+    private static boolean pair(String left, String right, String a, String b) {
+        return (left.contains(a) && right.contains(b)) || (left.contains(b) && right.contains(a));
+    }
+
+    private static boolean sameFluid(FluidStack tank, String field) {
+        FluidStack want = AddonFluids.still(field, 1);
+        return want != null && !want.isEmpty() && FluidStack.isSameFluidSameComponents(tank, want);
     }
 
     private static boolean craft(MachineBehaviorContext context, long rate) {
+        if (!electrolyteMatches(context)) return false;
         AddonRecipes.Line line = find(context);
         if (line == null || !outputsFit(context, line)) return false;
         boolean crafted = false;
@@ -105,7 +129,7 @@ public final class Gt6KtfruFuelBattery implements MachineBehavior {
     }
 
     private static int tankHolding(MachineBehaviorContext context, FluidStack need) {
-        for (int tank : new int[] {FUEL_A, FUEL_B, ELECTROLYTE}) {
+        for (int tank : new int[] {FUEL_A, FUEL_B}) {
             FluidStack here = context.fluid(tank);
             if (!here.isEmpty() && FluidStack.isSameFluidSameComponents(here, need)) return tank;
         }

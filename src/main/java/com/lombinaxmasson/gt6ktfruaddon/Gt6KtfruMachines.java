@@ -34,7 +34,7 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  * gas compressors are behavior machines. Teflon fluid pipes, PVC item pipes
  * and the five compressed-gas drums are separate declarations. Card 08 adds the
  * void hoppers, miners, water mill, manual motors and flywheel boxes.
- * Card 09 adds the two gas batteries. Their recipe map has no rows.
+ * Card 09 adds the two gas batteries. Rows keep both poles and leave the electrolyte out.
  * Card 10 adds the transformer, flywheel-gear and light-transformer parts.
  * Card 11 adds the mask aligners, the CNC machine and their structure parts.
  */

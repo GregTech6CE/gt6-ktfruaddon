@@ -21,8 +21,7 @@ public final class Gt6KtfruRecipes {
 
     public static void register() {
         Gt6KtfruSourceRecipes.register();
-        // Chemistry.java fuel-battery rows all carry a zero-amount fluid. None are added.
-        AddonRecipes.map(Gt6KtfruMachines.FUEL_BATTERY);
+        fuelBattery();
         lightMixer();
         distillationTower(Gt6KtfruMachines.TINY_DISTILL, 40);
         distillationTower(Gt6KtfruMachines.SMALL_DISTILL, 30);
@@ -44,6 +43,62 @@ public final class Gt6KtfruRecipes {
                 List.of(new ItemStack(Items.COAL)), List.of(), true, 3, 3) != null) {
             throw new IllegalStateException("temporary flaw detector row is still present");
         }
+    }
+
+    /**
+     * Chemistry.java:61–79. The source electrolyte amount is 0, so it is not a recipe fluid.
+     * Poles stay in the machine. Chemistry.java:58 makes the yttrium-zirconium oxide they check for.
+     */
+    private static void fuelBattery() {
+        ItemStack nickel = new ItemStack(Gt6KtfruItems.BATTERY_POLE_NICKEL.get());
+        ItemStack catio3 = new ItemStack(Gt6KtfruItems.BATTERY_POLE_CATIO3.get());
+        ItemStack carbon = new ItemStack(Gt6KtfruItems.BATTERY_POLE_CARBON.get());
+        ItemStack platinum = new ItemStack(Gt6KtfruItems.BATTERY_POLE_PLATINUM.get());
+        battery(nickel, catio3, -384, 9, two("Methane", 20, "Air", 80), two("CarbonDioxide", 20, "DistW", 40));
+        battery(nickel, catio3, -166, 9, two("GenGas_CarbonMonoxide", 20, "Air", 20), one("CarbonDioxide", 20));
+        battery(nickel, catio3, -16, 9, two("Hydrogen", 20, "Air", 20), one("DistW", 20));
+        battery(nickel, catio3, -180, 9, two("GenLiquid_Methanol", 20, "Air", 60), two("CarbonDioxide", 20, "DistW", 40));
+        battery(nickel, catio3, -288, 9, two("BioEthanol", 20, "Air", 120), two("CarbonDioxide", 40, "DistW", 60));
+        battery(nickel, catio3, -384, 13, two("Methane", 20, "Oxygen", 40), two("CarbonDioxide", 20, "DistW", 40));
+        battery(nickel, catio3, -166, 13, two("GenGas_CarbonMonoxide", 20, "Oxygen", 10), one("CarbonDioxide", 20));
+        battery(nickel, catio3, -16, 13, two("Hydrogen", 20, "Oxygen", 10), one("DistW", 20));
+        battery(nickel, catio3, -180, 13, two("GenLiquid_Methanol", 20, "Oxygen", 30), two("CarbonDioxide", 20, "DistW", 40));
+        battery(nickel, catio3, -288, 13, two("BioEthanol", 20, "Oxygen", 60), two("CarbonDioxide", 40, "DistW", 60));
+        battery(carbon, platinum, -16, 7, two("Hydrogen", 20, "Air", 10), one("DistW", 20));
+        battery(carbon, platinum, -180, 7, two("GenLiquid_Methanol", 20, "Air", 30), two("CarbonDioxide", 20, "DistW", 40));
+        battery(carbon, platinum, -288, 7, two("BioEthanol", 20, "Air", 60), two("CarbonDioxide", 40, "DistW", 60));
+        battery(carbon, platinum, -16, 10, two("Hydrogen", 20, "Oxygen", 10), one("DistW", 20));
+        battery(carbon, platinum, -180, 10, two("GenLiquid_Methanol", 20, "Oxygen", 30), two("CarbonDioxide", 20, "DistW", 40));
+        battery(carbon, platinum, -288, 10, two("BioEthanol", 20, "Oxygen", 60), two("CarbonDioxide", 40, "DistW", 60));
+        add(Gt6KtfruMachines.HEAT_MIXER,
+                new ItemStack[] {dust("Yttrium", 4), dust("Zirconium", 4)}, NO_ITEMS,
+                new FluidStack[] {fluid("Oxygen", 4000)},
+                new FluidStack[] {fluid("GenLiquid_YttriumZirconiumOxide", 1000)},
+                800, 500);
+        require(AddonRecipes.map(Gt6KtfruMachines.FUEL_BATTERY).find(
+                List.of(nickel, catio3), List.of(fluid("Methane", 20), fluid("Air", 80)), true, 2, 0),
+                "fuel battery methane row");
+        require(AddonRecipes.map(Gt6KtfruMachines.FUEL_BATTERY).find(
+                List.of(carbon, platinum), List.of(fluid("Hydrogen", 20), fluid("Oxygen", 10)), true, 2, 0),
+                "fuel battery sulfuric row");
+        require(AddonRecipes.map(Gt6KtfruMachines.HEAT_MIXER).find(
+                List.of(dust("Yttrium", 4), dust("Zirconium", 4)), List.of(fluid("Oxygen", 4000)), true, 6, 3),
+                "heat mixer yttrium zirconium oxide");
+    }
+
+    private static void battery(ItemStack a, ItemStack b, long euPerTick, long duration,
+            FluidStack[] fluidsIn, FluidStack[] fluidsOut) {
+        require(AddonRecipes.map(Gt6KtfruMachines.FUEL_BATTERY).add(new AddonRecipes.Line(
+                new ItemStack[] {a, b}, NO_ITEMS, fluidsIn, fluidsOut, duration, euPerTick, 0, null, new int[] {0, 1})),
+                Gt6KtfruMachines.FUEL_BATTERY);
+    }
+
+    private static FluidStack[] one(String field, int amount) {
+        return new FluidStack[] {fluid(field, amount)};
+    }
+
+    private static FluidStack[] two(String a, int aAmount, String b, int bAmount) {
+        return new FluidStack[] {fluid(a, aAmount), fluid(b, bAmount)};
     }
 
     /** Plastic.java. The only LightMixer row. */
