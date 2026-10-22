@@ -416,5 +416,7 @@
   "gt6ktfruaddon.wireless.links": "Receivers: %s",
   "gt6ktfruaddon.structure.wireless_battery.1": "Seven 4x4 layers, AABBBCC. Controller at the bottom corner.",
   "gt6ktfruaddon.structure.wireless_battery.2": "T and C are magnetic conductors. O is a large copper coil. W is a titanium wall. B is a battery cabin.",
-  "gt6ktfruaddon.structure.wireless_battery.3": "While sealed and formed, it sends EU to the noted receivers. The receiver emits from the front."
+  "gt6ktfruaddon.structure.wireless_battery.3": "While sealed and formed, it sends EU to the noted receivers. The receiver emits from the front.",
+  "block.gt6ktfruaddon.fusion_tokamak_exp": "Tokamak Fusion Reactor (Experimental)",
+  "block.gt6ktfruaddon.fusion_tokamak_t1": "Tokamak Fusion Reactor (T1)"
 }

@@ -27,6 +27,7 @@ public final class Gt6KtfruRecipes {
         distillationTower(Gt6KtfruMachines.TINY_DISTILL, 40);
         distillationTower(Gt6KtfruMachines.SMALL_DISTILL, 30);
         distillationTower(Gt6KtfruMachines.DISTILL, 20);
+        fusionTokamak();
         require(AddonRecipes.map(Gt6KtfruMachines.HEAT_MIXER).find(
                 List.of(dust("Sulfur", 1)), List.of(fluid("Hydrogen", 2000)), true, 6, 3),
                 "heat mixer sulfur row");
@@ -154,6 +155,13 @@ public final class Gt6KtfruRecipes {
         require(AddonRecipes.map(map).find(
                 List.of(), List.of(fluid("Ocean", 1000)), true, 1, 3),
                 map + " ocean row");
+    }
+
+    private static void fusionTokamak() {
+        add(Gt6KtfruMachines.FUSION_TOKAMAK, NO_ITEMS, NO_ITEMS,
+                new FluidStack[] {fluid("Deuterium", 144), fluid("Tritium", 144)},
+                new FluidStack[] {fluid("Helium", 144)},
+                400, 2048);
     }
 
     private static void add(String map, ItemStack[] itemsIn, ItemStack[] itemsOut,

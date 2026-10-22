@@ -45,6 +45,7 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  * Card 15 adds the research blocks that this checkout registers, and the research assembler.
  * Card 16 adds the live compute controllers, the network cable and the two cluster parts.
  * Card 17 adds the wireless battery and its receiver.
+ * Card 18 adds the two tokamaks that this checkout registers.
  */
 public final class Gt6KtfruMachines implements AddonMachineContributor, BehaviorMachineContributor {
     public static final String FLUID_HEATING = "gt6ktfruaddon.recipe.fluid_heating";
@@ -76,6 +77,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     public static final String MASK_ALIGNER_EUV = "mask_aligner_euv";
     public static final String CNC_MACHINE = "cnc_machine";
     public static final String FUEL_DEBURN = "gt6ktfruaddon.recipe.fuel_deburner";
+    public static final String FUSION_TOKAMAK = "gt6ktfruaddon.recipe.fusion_tokamak";
     public static final String SUN_HEATER = "sun_heater";
     public static final String SUN_MIRROR = "sun_heater_mirror_large";
     public static final String TIDAL = "tidal_wave_generator";
@@ -178,6 +180,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         maps.add(map(MASK_ALIGNER, "Mask Aligner", "gascompressor", 3, 3, 1, 3, 0, 0, 1));
         maps.add(map(CNC, "CNC", "gascompressor", 4, 3, 1, 3, 0, 1, 1));
         maps.add(map(FUEL_DEBURN, "Fuel Deburner", "gascompressor", 3, 3, 0, 6, 6, 0, 1));
+        maps.add(map(FUSION_TOKAMAK, "Fusion Tokamak", "gascompressor", 3, 3, 0, 6, 6, 1, 1));
         return List.copyOf(maps);
     }
 
@@ -255,6 +258,8 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         Gt6KtfruResearchMachines.add(machines);
         Gt6KtfruComputeMachines.add(machines);
         Gt6KtfruWirelessMachines.add(machines);
+        fusion(machines, "fusion_tokamak_exp", 2048);
+        fusion(machines, "fusion_tokamak_t1", 16384);
         return List.copyOf(machines);
     }
 
@@ -374,6 +379,26 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 drum(MANASTEEL_GAS_DRUM, "Manasteel", 12_800_000, true, false, true),
                 drum(NETHERITE_GAS_DRUM, "Netherite", 25_600_000, true, true, true),
                 drum(TUNGSTENSTEEL_GAS_DRUM, "Tungstensteel", 51_200_000, false, false, true));
+    }
+
+    /**
+     * The live tokamaks. The 27-wide structure, LU start charge and compute check
+     * stay off this single-block recipe machine.
+     */
+    private static void fusion(List<AddonMachine> machines, String id, long eu) {
+        var energy = EnergyInput.builder("EU", eu).faces(MachineFace.BACK);
+        var io = MachineIo.builder()
+                .itemInputs(MachineFace.TOP).itemAutoInput(MachineFace.TOP)
+                .itemOutputs(MachineFace.BOTTOM).itemAutoOutput(MachineFace.BOTTOM)
+                .fluidInputs(MachineFace.LEFT).fluidAutoInput(MachineFace.LEFT)
+                .fluidOutputs(MachineFace.RIGHT).fluidAutoOutput(MachineFace.RIGHT);
+        machines.add(RecipeMachine.builder(MachineCasing.builder(id, "StainlessSteel").machineType(id).build())
+                .recipeMap(FUSION_TOKAMAK)
+                .basic()
+                .constantEnergy(false)
+                .energy(energy.build())
+                .io(io.build())
+                .build());
     }
 
     private static RecipeTable map(String name, String title, String gui,

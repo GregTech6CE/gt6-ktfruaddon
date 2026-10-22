@@ -416,5 +416,7 @@
   "gt6ktfruaddon.wireless.links": "接收器：%s",
   "gt6ktfruaddon.structure.wireless_battery.1": "七层 4×4，顺序 AABBBCC。控制器在底层角落。",
   "gt6ktfruaddon.structure.wireless_battery.2": "T 和 C 是磁导体。O 是大型铜线圈。W 是钛墙。B 是电池舱。",
-  "gt6ktfruaddon.structure.wireless_battery.3": "封存并且结构成型后，向记下的接收器送出 EU。接收器从正面送出。"
+  "gt6ktfruaddon.structure.wireless_battery.3": "封存并且结构成型后，向记下的接收器送出 EU。接收器从正面送出。",
+  "block.gt6ktfruaddon.fusion_tokamak_exp": "托卡马克聚变反应堆（实验）",
+  "block.gt6ktfruaddon.fusion_tokamak_t1": "托卡马克聚变反应堆（T1）"
 }
