@@ -418,5 +418,14 @@
   "gt6ktfruaddon.structure.wireless_battery.2": "T and C are magnetic conductors. O is a large copper coil. W is a titanium wall. B is a battery cabin.",
   "gt6ktfruaddon.structure.wireless_battery.3": "While sealed and formed, it sends EU to the noted receivers. The receiver emits from the front.",
   "block.gt6ktfruaddon.fusion_tokamak_exp": "Tokamak Fusion Reactor (Experimental)",
-  "block.gt6ktfruaddon.fusion_tokamak_t1": "Tokamak Fusion Reactor (T1)"
+  "block.gt6ktfruaddon.fusion_tokamak_t1": "Tokamak Fusion Reactor (T1)",
+  "block.gt6ktfruaddon.electromagnet_crucible": "Electromagnetic Crucible",
+  "block.gt6ktfruaddon.crucible_screen": "Electromagnetic Crucible Screen",
+  "gt6ktfruaddon.crucible.stopped": "Stopped",
+  "gt6ktfruaddon.crucible.temperature": "Temperature %s K, %s",
+  "gt6ktfruaddon.crucible.molten": "iron is molten",
+  "gt6ktfruaddon.crucible.solid": "iron is solid",
+  "gt6ktfruaddon.structure.electromagnet_crucible.1": "Five 5x5 layers, ABBBC. The offset puts the controller in the bottom gap.",
+  "gt6ktfruaddon.structure.electromagnet_crucible.2": "P is the crucible screen. X is a titanium wall. C is a large copper coil.",
+  "gt6ktfruaddon.structure.electromagnet_crucible.3": "The bottom accepts 256-1024 EU. The known iron melts when the temperature crosses its melting point. Inserted items are not read."
 }

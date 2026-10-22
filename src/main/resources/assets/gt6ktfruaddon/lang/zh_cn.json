@@ -418,5 +418,14 @@
   "gt6ktfruaddon.structure.wireless_battery.2": "T 和 C 是磁导体。O 是大型铜线圈。W 是钛墙。B 是电池舱。",
   "gt6ktfruaddon.structure.wireless_battery.3": "封存并且结构成型后，向记下的接收器送出 EU。接收器从正面送出。",
   "block.gt6ktfruaddon.fusion_tokamak_exp": "托卡马克聚变反应堆（实验）",
-  "block.gt6ktfruaddon.fusion_tokamak_t1": "托卡马克聚变反应堆（T1）"
+  "block.gt6ktfruaddon.fusion_tokamak_t1": "托卡马克聚变反应堆（T1）",
+  "block.gt6ktfruaddon.electromagnet_crucible": "电磁坩埚",
+  "block.gt6ktfruaddon.crucible_screen": "电磁坩埚屏",
+  "gt6ktfruaddon.crucible.stopped": "停止",
+  "gt6ktfruaddon.crucible.temperature": "温度 %s K，%s",
+  "gt6ktfruaddon.crucible.molten": "铁已熔化",
+  "gt6ktfruaddon.crucible.solid": "铁是固体",
+  "gt6ktfruaddon.structure.electromagnet_crucible.1": "五层 5×5，顺序 ABBBC。偏移让控制器落在底层的空位。",
+  "gt6ktfruaddon.structure.electromagnet_crucible.2": "P 是坩埚屏。X 是钛墙。C 是大型铜线圈。",
+  "gt6ktfruaddon.structure.electromagnet_crucible.3": "底面收 256–1024 EU。已知的铁在升温跨过熔点时熔化。不读投入的物品。"
 }
