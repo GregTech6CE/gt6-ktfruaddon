@@ -37,6 +37,7 @@ public final class Gt6KtfruSourceRecipes {
         assembler();
         laserCutter();
         heatMixer();
+        eDA();
         flawDetector();
         waferTester();
         waferCoater();
@@ -52,6 +53,7 @@ public final class Gt6KtfruSourceRecipes {
         laserFusionExperimental();
         catalyticReactor();
         mirrorGoldSynthesis();
+        mirrorGoldQuantumization();
         cosmicRadiationResearch();
         microgravityCrystalGrowth();
         quantumGoldSynthesis();
@@ -93,6 +95,18 @@ public final class Gt6KtfruSourceRecipes {
     }
 
     private static void assembler() {
+        // Circuits.java:36
+        add("Circuits.java:36", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16L, 120L,
+                new ItemStack[] {form("plate", "Copper", 1), form("wireFine", "Constantan", 10), form("plate", "Ceramic", 1), form("foil", "Rubber", 6)},
+                new ItemStack[] {own("resistance_t1", 16)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Circuits.java:37
+        add("Circuits.java:37", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 180L, 90L,
+                new ItemStack[] {form("plate", "Copper", 1), form("wireFine", "Nichrome", 10), form("plate", "Ceramic", 1), form("foil", "Rubber", 8)},
+                new ItemStack[] {own("resistance_t2", 24)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
         // Circuits.java:38
         add("Circuits.java:38", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 1000L, 60L,
                 new ItemStack[] {form("plate", "Copper", 1), form("plateTiny", "Ruthenium", 1), form("plate", "Ceramic", 1), form("dust", "Teflon", 4)},
@@ -111,6 +125,36 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {own("resistance_t4", 64), own("resistance_t4", 64)},
                 new FluidStack[] {field("GenMolten_SolderingAlloy", 14)},
                 NO_FLUIDS);
+        // Circuits.java:44
+        add("Circuits.java:44", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16L, 120L,
+                new ItemStack[] {form("plate", "Copper", 1), form("wireFine", "Constantan", 10), form("plate", "Ceramic", 1), form("foil", "Plastic", 6)},
+                new ItemStack[] {own("resistance_t1", 16)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Circuits.java:45
+        add("Circuits.java:45", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 80L, 90L,
+                new ItemStack[] {form("plate", "Copper", 1), form("wireFine", "Nichrome", 10), form("plate", "Ceramic", 1), form("foil", "Plastic", 8)},
+                new ItemStack[] {own("resistance_t2", 24)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Circuits.java:49
+        add("Circuits.java:49", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16L, 180L,
+                new ItemStack[] {form("plate", "Copper", 1), form("stick", "ElectricalSteel", 4), form("wireFine", "Copper", 32), form("foil", "Rubber", 8)},
+                new ItemStack[] {own("coil_t1", 20)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Circuits.java:50
+        add("Circuits.java:50", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 80L, 140L,
+                new ItemStack[] {form("plate", "Copper", 1), form("stick", "ElectricalSteel", 4), form("wireFine", "Gold", 32), form("foil", "Rubber", 8)},
+                new ItemStack[] {own("coil_t2", 20)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Circuits.java:51
+        add("Circuits.java:51", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 1000L, 100L,
+                new ItemStack[] {form("plate", "Copper", 1), form("stick", "ElectricalSteel", 4), form("wireFine", "Platinum", 32), form("dust", "Teflon", 4)},
+                new ItemStack[] {own("coil_t3", 32)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
         // Circuits.java:52
         add("Circuits.java:52", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 4096L, 80L,
                 new ItemStack[] {form("plate", "Gold", 1), form("stick", "ElectricalSteel", 4), form("wireFine", "Graphene", 32), form("dust", "Teflon", 4)},
@@ -123,6 +167,42 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {own("coil_t4", 64)},
                 new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
                 NO_FLUIDS);
+        // Circuits.java:57
+        add("Circuits.java:57", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16L, 180L,
+                new ItemStack[] {form("plate", "Copper", 1), form("stick", "ElectricalSteel", 4), form("wireFine", "Copper", 32), form("foil", "Plastic", 8)},
+                new ItemStack[] {own("coil_t1", 20)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Circuits.java:58
+        add("Circuits.java:58", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 80L, 140L,
+                new ItemStack[] {form("plate", "Copper", 1), form("stick", "ElectricalSteel", 4), form("wireFine", "Gold", 32), form("foil", "Plastic", 8)},
+                new ItemStack[] {own("coil_t2", 20)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Circuits.java:63
+        add("Circuits.java:63", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16L, 120L,
+                new ItemStack[] {form("foil", "Copper", 16), form("foil", "Rubber", 8), form("plate", "Paper", 4), form("wireFine", "Copper", 8)},
+                new ItemStack[] {own("capacitor_t1", 32)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // Circuits.java:64
+        add("Circuits.java:64", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 140L, 100L,
+                new ItemStack[] {form("foil", "Aluminium", 16), form("foil", "Rubber", 8), form("dust", "Alumina", 16), form("wireFine", "Silver", 8)},
+                new ItemStack[] {own("capacitor_t2", 40)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // Circuits.java:65
+        add("Circuits.java:65", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 1000L, 80L,
+                new ItemStack[] {form("plate", "Copper", 1), form("wireFine", "Platinum", 4), form("foil", "Niobium", 32), form("dust", "Teflon", 4)},
+                new ItemStack[] {own("capacitor_t3", 64)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Circuits.java:66
+        add("Circuits.java:66", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 1000L, 80L,
+                new ItemStack[] {form("plate", "Copper", 1), form("wireFine", "Platinum", 4), form("foil", "Tantalum", 32), form("dust", "Teflon", 4)},
+                new ItemStack[] {own("capacitor_t3", 64)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
         // Circuits.java:67
         add("Circuits.java:67", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 1000L, 80L,
                 new ItemStack[] {form("plate", "Copper", 1), form("wireFine", "Graphene", 4), form("foil", "Niobium", 32), form("dust", "Teflon", 4)},
@@ -133,6 +213,18 @@ public final class Gt6KtfruSourceRecipes {
         add("Circuits.java:68", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 1000L, 80L,
                 new ItemStack[] {form("plate", "Copper", 1), form("wireFine", "Graphene", 4), form("foil", "Tantalum", 32), form("dust", "Teflon", 4)},
                 new ItemStack[] {own("capacitor_t3", 64)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Circuits.java:69
+        add("Circuits.java:69", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 1000L, 80L,
+                new ItemStack[] {form("plate", "Copper", 1), form("wireFine", "Platinum", 4), form("foil", "Niobium", 32), form("dust", "NanoBariumTitanate", 4)},
+                new ItemStack[] {own("capacitor_t3", 64), own("capacitor_t3", 64)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Circuits.java:70
+        add("Circuits.java:70", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 1000L, 80L,
+                new ItemStack[] {form("plate", "Copper", 1), form("wireFine", "Platinum", 4), form("foil", "Tantalum", 32), form("dust", "NanoBariumTitanate", 4)},
+                new ItemStack[] {own("capacitor_t3", 64), own("capacitor_t3", 64)},
                 new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
                 NO_FLUIDS);
         // Circuits.java:71
@@ -153,6 +245,12 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {own("diode_t1", 32)},
                 new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
                 NO_FLUIDS);
+        // Circuits.java:75
+        add("Circuits.java:75", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 1024L, 10L,
+                new ItemStack[] {own("diode_t2_part", 4), form("wireFine", "Silver", 1), form("dustTiny", "Teflon", 1)},
+                new ItemStack[] {own("diode_t2", 4)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 1)},
+                NO_FLUIDS);
         // Circuits.java:76
         add("Circuits.java:76", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 4096L, 10L,
                 new ItemStack[] {own("diode_t3_part", 4), form("wireFine", "Graphene", 1), form("dustTiny", "Teflon", 1)},
@@ -171,6 +269,12 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {own("led_set", 2)},
                 new FluidStack[] {field("GenLiquid_MoltenTeflon", 144)},
                 NO_FLUIDS);
+        // Circuits.java:84
+        add("Circuits.java:84", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16L, 80L,
+                new ItemStack[] {form("plate", "Wood", 1), form("dust", "SiliconDioxide", 1)},
+                new ItemStack[] {gt("circuit_plate", 1)},
+                new FluidStack[] {field("Glue", 288)},
+                NO_FLUIDS);
         // Circuits.java:86
         add("Circuits.java:86", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16L, 80L,
                 new ItemStack[] {form("foil", "Bakelite", 4)},
@@ -182,6 +286,42 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {form("foil", "Bakelite", 6), form("foil", "EpoxyResin", 6)},
                 new ItemStack[] {own("circuit_board_empty_t3", 1)},
                 new FluidStack[] {field("Glass", 576)},
+                NO_FLUIDS);
+        // Circuits.java:106
+        add("Circuits.java:106", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16L, 100L,
+                new ItemStack[] {gt("circuit_part_basic", 2), gt("circuit_plate_copper", 1), own("coil_t1", 1), own("capacitor_t1", 2), own("resistance_t1", 4)},
+                new ItemStack[] {gt("circuit_board_basic", 1)},
+                new FluidStack[] {field("Glue", 72)},
+                NO_FLUIDS);
+        // Circuits.java:107
+        add("Circuits.java:107", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 24L, 200L,
+                new ItemStack[] {gt("circuit_part_good", 2), gt("circuit_plate_copper", 1), own("coil_t1", 2), own("capacitor_t1", 8), own("resistance_t1", 8)},
+                new ItemStack[] {gt("circuit_board_good", 1)},
+                new FluidStack[] {field("Glue", 72)},
+                NO_FLUIDS);
+        // Circuits.java:108
+        add("Circuits.java:108", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 120L,
+                new ItemStack[] {gt("circuit_part_advanced", 4), gt("circuit_plate_gold", 1), own("coil_t2", 2), own("capacitor_t2", 6), own("resistance_t2", 12)},
+                new ItemStack[] {gt("circuit_board_advanced", 1)},
+                new FluidStack[] {field("GenLiquid_MoltenBakelite", 72)},
+                NO_FLUIDS);
+        // Circuits.java:109
+        add("Circuits.java:109", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 384L, 120L,
+                new ItemStack[] {gt("circuit_part_elite", 4), gt("circuit_plate_gold", 1), own("coil_t2", 4), own("capacitor_t2", 8), own("resistance_t2", 20), own("diode_t1", 2)},
+                new ItemStack[] {gt("circuit_board_elite", 1)},
+                new FluidStack[] {field("GenLiquid_MoltenBakelite", 72)},
+                NO_FLUIDS);
+        // Circuits.java:110
+        add("Circuits.java:110", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 874L, 120L,
+                new ItemStack[] {gt("circuit_part_master", 6), gt("circuit_plate_platinum", 1), own("coil_t3", 8), own("capacitor_t3", 24), own("resistance_t3", 64), own("diode_t2", 8)},
+                new ItemStack[] {gt("circuit_board_master", 1)},
+                new FluidStack[] {field("GenLiquid_MoltenTeflon", 144)},
+                NO_FLUIDS);
+        // CompactItem.java:159
+        add("CompactItem.java:159", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 240L, 64L,
+                new ItemStack[] {own("piezoelectric_ceramic_plate", 1), form("wireFine", "Silver", 1)},
+                new ItemStack[] {own("ultrasonic_generator", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 15)},
                 NO_FLUIDS);
         // ComputerBuilding.java:403
         add("ComputerBuilding.java:403", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 90L, 280L,
@@ -483,6 +623,12 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {own("ram_bar2_g32", 1)},
                 new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
                 NO_FLUIDS);
+        // Fusion.java:89
+        add("Fusion.java:89", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 8192L, 600L,
+                new ItemStack[] {own("metastable_tantalum", 2), form("wireFine", "Platinum", 16), own("computer_ultimate_circuits", 1)},
+                new ItemStack[] {own("quantum_control_element", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
         // Fusion.java:94
         add("Fusion.java:94", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32768L, 1200L,
                 new ItemStack[] {own("superheavy_nuclide_precursor", 1), own("nuclear_target_substrate", 1), own("metastable_tantalum", 1)},
@@ -525,11 +671,365 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {own("laser_target_bismuth", 1)},
                 NO_FLUIDS,
                 NO_FLUIDS);
+        // Fusion.java:133
+        add("Fusion.java:133", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 8192L, 600L,
+                new ItemStack[] {form("plateDense", "Tungstensteel", 4), form("plate", "Glass", 8), form("wireFine", "Platinum", 16)},
+                new ItemStack[] {block("laser_focusing_array", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Fusion.java:135
+        add("Fusion.java:135", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 8192L, 600L,
+                new ItemStack[] {gt("casing_machine_titanium", 2), gt("pipe_small_titanium", 4), form("plate", "Tantalum", 2)},
+                new ItemStack[] {block("laser_target_injector", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Fusion.java:137
+        add("Fusion.java:137", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32768L, 1200L,
+                new ItemStack[] {gt("casing_machine_osmiumelemental", 2), form("plateDense", "OsmiumElemental", 2), form("wireFine", "Platinum", 32)},
+                new ItemStack[] {block("laser_pulse_storage", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
         // Fusion.java:139
         add("Fusion.java:139", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 8192L, 600L,
                 new ItemStack[] {form("plateDense", "Lead", 4), form("plate", "Tungstensteel", 2), form("foil", "Lithium", 8)},
                 new ItemStack[] {block("laser_product_collector", 1)},
                 new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Fusion.java:148
+        add("Fusion.java:148", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16384L, 1200L,
+                new ItemStack[] {form("plateDense", "Titanium", 4), gt("wire_04_copper", 8), form("plate", "StainlessSteel", 2), gt("circuit_elite", 1)},
+                new ItemStack[] {block("tokamak_magnetic_conductor_exp", 2)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // Fusion.java:150
+        add("Fusion.java:150", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32768L, 1600L,
+                new ItemStack[] {gt("wire_08_copper", 16), form("plateDense", "StainlessSteel", 4), form("plate", "PEEK", 2), gt("circuit_elite", 1)},
+                new ItemStack[] {block("tokamak_magnetic_coil_exp", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // Fusion.java:152
+        add("Fusion.java:152", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32768L, 1600L,
+                new ItemStack[] {form("plateDense", "StainlessSteel", 4), form("plate", "Titanium", 4), form("plate", "PEEK", 2), gt("circuit_elite", 1)},
+                new ItemStack[] {block("tokamak_magnetic_wall_exp", 2)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // Fusion.java:157
+        add("Fusion.java:157", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 65536L, 1800L,
+                new ItemStack[] {form("plateDense", "Tungstensteel", 4), gt("wire_04_graphene", 8), form("plate", "PEEK", 2), gt("circuit_master", 1)},
+                new ItemStack[] {block("tokamak_magnetic_conductor_t1", 2)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // Fusion.java:159
+        add("Fusion.java:159", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 131072L, 2400L,
+                new ItemStack[] {gt("wire_08_graphene", 16), form("plateDense", "Tungstensteel", 4), form("plate", "PEEK", 4), gt("circuit_master", 1)},
+                new ItemStack[] {block("tokamak_magnetic_coil_t1", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 9)},
+                NO_FLUIDS);
+        // Fusion.java:161
+        add("Fusion.java:161", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 131072L, 2400L,
+                new ItemStack[] {form("plateDense", "Tungstensteel", 4), form("plate", "Trinaquadalloy", 4), form("plate", "PEEK", 4), gt("circuit_master", 1)},
+                new ItemStack[] {block("tokamak_magnetic_wall_t1", 2)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 9)},
+                NO_FLUIDS);
+        // QuantumEntry.java:57
+        add("QuantumEntry.java:57", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 4096L, 1200L,
+                new ItemStack[] {form("dustAnalyticalPure", "Platinum", 4), form("foil", "MirrorGold", 4), form("wireFine", "Naquadah", 16), gt("circuit_elite", 1)},
+                new ItemStack[] {block("quantum_stabilization_substrate", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // QuantumEntry.java:73
+        add("QuantumEntry.java:73", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 8192L, 2400L,
+                new ItemStack[] {form("plate", "MirrorGold", 1), form("dustAbsolutelyPure", "intellite", 4), gt("compact_signal_emitter_luv", 1), gt("circuit_ultimate", 1)},
+                new ItemStack[] {block("entanglement_channel_module", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // QuantumEntry.java:79
+        add("QuantumEntry.java:79", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 4096L, 1600L,
+                new ItemStack[] {form("foil", "MirrorGold", 2), form("dustAnalyticalPure", "intellite", 2), form("wireFine", "Naquadah", 16), gt("circuit_elite", 1)},
+                new ItemStack[] {block("quantum_readout_coil", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // ResearchRecipes.java:140
+        add("ResearchRecipes.java:140", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16L, 128L,
+                new ItemStack[] {gt("laser_emitter_emptygas", 1)},
+                new ItemStack[] {gt("laser_emitter_carbondioxide", 1)},
+                new FluidStack[] {field("CarbonDioxide", 1000)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:213
+        add("tileEntityInit0.java:213", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32L, 400L,
+                new ItemStack[] {gt("casing_machine_steelgalvanized", 1), form("stickLong", "SteelGalvanized", 4), form("plateDense", "ElectricalSteel", 1), gt("wire_01_tin", 4), gt("cable_01_tin", 2), gt("circuit_basic", 1)},
+                new ItemStack[] {block("transformer_small_lv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:214
+        add("tileEntityInit0.java:214", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32L, 400L,
+                new ItemStack[] {gt("casing_machine_aluminium", 1), form("stickLong", "Aluminium", 4), form("plateDense", "ElectricalSteel", 1), gt("wire_01_copper", 8), gt("cable_01_copper", 2), gt("circuit_good", 1)},
+                new ItemStack[] {block("transformer_small_mv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:215
+        add("tileEntityInit0.java:215", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_stainlesssteel", 1), form("stickLong", "StainlessSteel", 4), form("plateDense", "ElectricalSteel", 1), gt("wire_01_gold", 16), gt("cable_01_gold", 2), gt("circuit_advanced", 1)},
+                new ItemStack[] {block("transformer_small_hv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:216
+        add("tileEntityInit0.java:216", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_chromium", 1), form("stickLong", "Chromium", 4), form("plateDense", "ElectricalSteel", 1), gt("wire_01_aluminium", 32), gt("cable_01_aluminium", 2), gt("circuit_elite", 1)},
+                new ItemStack[] {block("transformer_small_ev", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:217
+        add("tileEntityInit0.java:217", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 512L, 400L,
+                new ItemStack[] {gt("casing_machine_titanium", 1), form("stickLong", "Titanium", 4), form("plateDense", "ElectricalSteel", 2), gt("wire_01_platinum", 64), gt("cable_01_platinum", 2), gt("circuit_master", 1)},
+                new ItemStack[] {block("transformer_small_iv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:218
+        add("tileEntityInit0.java:218", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 512L, 400L,
+                new ItemStack[] {gt("casing_machine_iridium", 1), form("stickLong", "Iridium", 4), form("plateDense", "ElectricalSteel", 2), gt("wire_01_graphene", 64), gt("wire_01_graphene", 64), gt("circuit_ultimate", 1)},
+                new ItemStack[] {block("transformer_small_luv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:220
+        add("tileEntityInit0.java:220", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32L, 400L,
+                new ItemStack[] {gt("casing_machine_steelgalvanized", 1), form("stickLong", "SteelGalvanized", 4), form("plateDense", "ElectricalSteel", 4), gt("wire_08_tin", 4), gt("cable_04_tin", 2), gt("circuit_basic", 2)},
+                new ItemStack[] {block("transformer_large_lv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:221
+        add("tileEntityInit0.java:221", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32L, 400L,
+                new ItemStack[] {gt("casing_machine_aluminium", 1), form("stickLong", "Aluminium", 4), form("plateDense", "ElectricalSteel", 4), gt("wire_08_copper", 8), gt("cable_04_copper", 2), gt("circuit_good", 2)},
+                new ItemStack[] {block("transformer_large_mv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:222
+        add("tileEntityInit0.java:222", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_stainlesssteel", 1), form("stickLong", "StainlessSteel", 4), form("plateDense", "ElectricalSteel", 4), gt("wire_08_gold", 16), gt("cable_04_gold", 2), gt("circuit_advanced", 2)},
+                new ItemStack[] {block("transformer_large_hv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:223
+        add("tileEntityInit0.java:223", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_chromium", 1), form("stickLong", "Chromium", 4), form("plateDense", "ElectricalSteel", 4), gt("wire_08_aluminium", 32), gt("cable_04_aluminium", 2), gt("circuit_elite", 2)},
+                new ItemStack[] {block("transformer_large_ev", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:224
+        add("tileEntityInit0.java:224", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 512L, 400L,
+                new ItemStack[] {gt("casing_machine_titanium", 1), form("stickLong", "Titanium", 4), form("plateDense", "ElectricalSteel", 8), gt("wire_08_platinum", 64), gt("cable_04_platinum", 2), gt("circuit_master", 2)},
+                new ItemStack[] {block("transformer_large_iv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:225
+        add("tileEntityInit0.java:225", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 512L, 400L,
+                new ItemStack[] {gt("casing_machine_iridium", 1), form("stickLong", "Iridium", 4), form("plateDense", "ElectricalSteel", 8), gt("wire_08_graphene", 64), gt("wire_04_graphene", 2), gt("circuit_ultimate", 2)},
+                new ItemStack[] {block("transformer_large_luv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:227
+        add("tileEntityInit0.java:227", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32L, 400L,
+                new ItemStack[] {gt("casing_machine_steelgalvanized", 1), form("stickLong", "SteelGalvanized", 4), form("gearGtSmall", "SteelGalvanized", 4), gt("circuit_basic", 1)},
+                new ItemStack[] {block("flywheel_gear_small_t1", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:228
+        add("tileEntityInit0.java:228", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32L, 400L,
+                new ItemStack[] {gt("casing_machine_aluminium", 1), form("stickLong", "Aluminium", 4), form("gearGtSmall", "Aluminium", 4), gt("circuit_good", 1)},
+                new ItemStack[] {block("flywheel_gear_small_t2", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:229
+        add("tileEntityInit0.java:229", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_stainlesssteel", 1), form("stickLong", "StainlessSteel", 4), form("gearGtSmall", "StainlessSteel", 4), gt("circuit_advanced", 1)},
+                new ItemStack[] {block("flywheel_gear_small_t3", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:230
+        add("tileEntityInit0.java:230", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_chromium", 1), form("stickLong", "Chromium", 4), form("gearGtSmall", "Chromium", 4), gt("circuit_elite", 1)},
+                new ItemStack[] {block("flywheel_gear_small_t4", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:231
+        add("tileEntityInit0.java:231", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 512L, 400L,
+                new ItemStack[] {gt("casing_machine_titanium", 1), form("stickLong", "Titanium", 4), form("gearGtSmall", "Titanium", 4), gt("circuit_master", 1)},
+                new ItemStack[] {block("flywheel_gear_small_t5", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:232
+        add("tileEntityInit0.java:232", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 512L, 400L,
+                new ItemStack[] {gt("casing_machine_iridium", 1), form("stickLong", "Iridium", 4), form("gearGtSmall", "Iridium", 4), gt("circuit_ultimate", 1)},
+                new ItemStack[] {block("flywheel_gear_small_t6", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:234
+        add("tileEntityInit0.java:234", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32L, 400L,
+                new ItemStack[] {gt("casing_machine_steelgalvanized", 1), form("stickLong", "SteelGalvanized", 16), form("gearGt", "SteelGalvanized", 4), gt("circuit_basic", 2)},
+                new ItemStack[] {block("flywheel_gear_large_t1", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:235
+        add("tileEntityInit0.java:235", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32L, 400L,
+                new ItemStack[] {gt("casing_machine_aluminium", 1), form("stickLong", "Aluminium", 16), form("gearGt", "Aluminium", 4), gt("circuit_good", 2)},
+                new ItemStack[] {block("flywheel_gear_large_t2", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:236
+        add("tileEntityInit0.java:236", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_stainlesssteel", 1), form("stickLong", "StainlessSteel", 16), form("gearGt", "StainlessSteel", 4), gt("circuit_advanced", 2)},
+                new ItemStack[] {block("flywheel_gear_large_t3", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:237
+        add("tileEntityInit0.java:237", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_chromium", 1), form("stickLong", "Chromium", 16), form("gearGt", "Chromium", 4), gt("circuit_elite", 2)},
+                new ItemStack[] {block("flywheel_gear_large_t4", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:238
+        add("tileEntityInit0.java:238", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 512L, 400L,
+                new ItemStack[] {gt("casing_machine_titanium", 1), form("stickLong", "Titanium", 16), form("gearGt", "Titanium", 4), gt("circuit_master", 2)},
+                new ItemStack[] {block("flywheel_gear_large_t5", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:239
+        add("tileEntityInit0.java:239", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 512L, 400L,
+                new ItemStack[] {gt("casing_machine_iridium", 1), form("stickLong", "Iridium", 16), form("gearGt", "Iridium", 4), gt("circuit_ultimate", 2)},
+                new ItemStack[] {block("flywheel_gear_large_t6", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:241
+        add("tileEntityInit0.java:241", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32L, 400L,
+                new ItemStack[] {gt("casing_machine_steelgalvanized", 1), form("stickLong", "SteelGalvanized", 4), gt("compact_force_field_emitter_lv", 2), gt("wire_01_tin", 8), gt("cable_01_tin", 2), gt("circuit_basic", 1)},
+                new ItemStack[] {block("light_transformer_small_lv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:242
+        add("tileEntityInit0.java:242", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32L, 400L,
+                new ItemStack[] {gt("casing_machine_aluminium", 1), form("stickLong", "Aluminium", 4), gt("compact_force_field_emitter_mv", 2), gt("wire_01_copper", 8), gt("cable_01_copper", 2), gt("circuit_good", 1)},
+                new ItemStack[] {block("light_transformer_small_mv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:243
+        add("tileEntityInit0.java:243", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_stainlesssteel", 1), form("stickLong", "StainlessSteel", 4), gt("compact_force_field_emitter_hv", 2), gt("wire_01_gold", 8), gt("cable_01_gold", 2), gt("circuit_advanced", 1)},
+                new ItemStack[] {block("light_transformer_small_hv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:244
+        add("tileEntityInit0.java:244", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_chromium", 1), form("stickLong", "Chromium", 4), gt("compact_force_field_emitter_ev", 2), gt("wire_01_aluminium", 8), gt("cable_01_aluminium", 2), gt("circuit_elite", 1)},
+                new ItemStack[] {block("light_transformer_small_ev", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:245
+        add("tileEntityInit0.java:245", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 512L, 400L,
+                new ItemStack[] {gt("casing_machine_titanium", 1), form("stickLong", "Titanium", 4), gt("compact_force_field_emitter_iv", 2), gt("wire_01_platinum", 8), gt("cable_01_platinum", 2), gt("circuit_master", 1)},
+                new ItemStack[] {block("light_transformer_small_iv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:246
+        add("tileEntityInit0.java:246", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 512L, 400L,
+                new ItemStack[] {gt("casing_machine_iridium", 1), form("stickLong", "Iridium", 4), gt("compact_force_field_emitter_luv", 2), gt("wire_01_graphene", 8), gt("wire_01_graphene", 2), gt("circuit_ultimate", 1)},
+                new ItemStack[] {block("light_transformer_small_luv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:248
+        add("tileEntityInit0.java:248", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32L, 400L,
+                new ItemStack[] {gt("casing_machine_steelgalvanized", 1), form("stickLong", "SteelGalvanized", 16), gt("compact_force_field_emitter_lv", 8), gt("wire_08_tin", 8), gt("cable_04_tin", 2), gt("circuit_basic", 2)},
+                new ItemStack[] {block("light_transformer_large_lv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:249
+        add("tileEntityInit0.java:249", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32L, 400L,
+                new ItemStack[] {gt("casing_machine_aluminium", 1), form("stickLong", "Aluminium", 16), gt("compact_force_field_emitter_mv", 8), gt("wire_08_copper", 8), gt("cable_04_copper", 2), gt("circuit_good", 2)},
+                new ItemStack[] {block("light_transformer_large_mv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:250
+        add("tileEntityInit0.java:250", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_stainlesssteel", 1), form("stickLong", "StainlessSteel", 16), gt("compact_force_field_emitter_hv", 8), gt("wire_08_gold", 8), gt("cable_04_gold", 2), gt("circuit_advanced", 2)},
+                new ItemStack[] {block("light_transformer_large_hv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:251
+        add("tileEntityInit0.java:251", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_chromium", 1), form("stickLong", "Chromium", 16), gt("compact_force_field_emitter_ev", 8), gt("wire_08_aluminium", 8), gt("cable_04_aluminium", 2), gt("circuit_elite", 2)},
+                new ItemStack[] {block("light_transformer_large_ev", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:252
+        add("tileEntityInit0.java:252", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 512L, 400L,
+                new ItemStack[] {gt("casing_machine_titanium", 1), form("stickLong", "Titanium", 16), gt("compact_force_field_emitter_iv", 8), gt("wire_08_platinum", 8), gt("cable_04_platinum", 2), gt("circuit_master", 2)},
+                new ItemStack[] {block("light_transformer_large_iv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:253
+        add("tileEntityInit0.java:253", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 512L, 400L,
+                new ItemStack[] {gt("casing_machine_iridium", 1), form("stickLong", "Iridium", 16), gt("compact_force_field_emitter_luv", 8), gt("wire_08_graphene", 8), gt("wire_04_graphene", 2), gt("circuit_ultimate", 2)},
+                new ItemStack[] {block("light_transformer_large_luv", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 288)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:462
+        add("tileEntityInit0.java:462", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 400L, 800L,
+                new ItemStack[] {gt("casing_machine_dense_stainlesssteel", 1), form("rotor", "StainlessSteel", 16), gt("axle_steel_4", 1), gt("circuit_good", 2)},
+                new ItemStack[] {block("liquid_battery_stainless", 1)},
+                new FluidStack[] {field("GenMolten_StainlessSteel", 576)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:463
+        add("tileEntityInit0.java:463", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 800L, 800L,
+                new ItemStack[] {gt("casing_machine_dense_titanium", 1), form("rotor", "Titanium", 16), gt("axle_titanium_4", 1), gt("circuit_advanced", 2)},
+                new ItemStack[] {block("liquid_battery_titanium", 1)},
+                new FluidStack[] {field("GenMolten_Titanium", 576)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:464
+        add("tileEntityInit0.java:464", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 1400L, 800L,
+                new ItemStack[] {gt("casing_machine_dense_tungstensteel", 1), form("rotor", "Tungstensteel", 16), gt("axle_tungstensteel_4", 1), gt("circuit_elite", 2)},
+                new ItemStack[] {block("liquid_battery_tungstensteel", 1)},
+                new FluidStack[] {field("GenMolten_Tungstensteel", 576)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:536
+        add("tileEntityInit0.java:536", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32768L, 4800L,
+                new ItemStack[] {form("plateDouble", "Tungstensteel", 4), form("plateDouble", "Titanium", 4), form("dustAnalyticalPure", "Lead", 8), form("dustAnalyticalPure", "Tungsten", 4), form("dustAnalyticalPure", "Titanium", 4), gt("compact_sensor_hv", 1), gt("compact_signal_emitter_hv", 1), gt("circuit_elite", 2)},
+                new ItemStack[] {block("centrifugal_microgravity", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:537
+        add("tileEntityInit0.java:537", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32768L, 4800L,
+                new ItemStack[] {gt("casing_machine_titanium", 1), form("plateDouble", "Titanium", 4), form("dustAnalyticalPure", "Molybdenum", 8), gt("circuit_elite", 2)},
+                new ItemStack[] {block("microgravity_crystal_growth", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:555
+        add("tileEntityInit0.java:555", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16L, 200L,
+                new ItemStack[] {form("dust", "PotassiumSodium", 5), gt("casing_machine_double_silver", 1), form("dust", "Carbon", 1), form("plateCurved", "Silver", 9)},
+                new ItemStack[] {block("sunlight_absorber", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:556
+        add("tileEntityInit0.java:556", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16L, 200L,
+                new ItemStack[] {form("dust", "PotassiumSodium", 5), gt("casing_machine_silver", 1), form("plateCurved", "Silver", 12), circuit(0, 1)},
+                new ItemStack[] {block("heat_pipe", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:557
+        add("tileEntityInit0.java:557", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16L, 200L,
+                new ItemStack[] {form("dust", "PotassiumSodium", 5), gt("casing_machine_silver", 1), form("plateCurved", "Silver", 6), form("plateDense", "Silver", 1)},
+                new ItemStack[] {block("sun_heater_top_layer", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:598
+        add("tileEntityInit0.java:598", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 200L, 800L,
+                new ItemStack[] {circuit(7, 1), form("ingotDouble", "VanadiumSteel", 6)},
+                new ItemStack[] {block("enhanced_frame", 1)},
+                NO_FLUIDS,
+                NO_FLUIDS);
+        // tileEntityInit0.java:599
+        add("tileEntityInit0.java:599", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 200L, 800L,
+                new ItemStack[] {circuit(7, 1), form("plateDouble", "StainlessSteel", 4)},
+                new ItemStack[] {block("chemical_reactor_pipe", 1)},
+                NO_FLUIDS,
                 NO_FLUIDS);
         // tileEntityInit0.java:601
         add("tileEntityInit0.java:601", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 200L, 800L,
@@ -537,17 +1037,125 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {block("magnetic_conductor", 1)},
                 new FluidStack[] {field("GenMolten_SolderingAlloy", 144)},
                 NO_FLUIDS);
+        // tileEntityInit0.java:658
+        add("tileEntityInit0.java:658", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 8192L, 1200L,
+                new ItemStack[] {form("plateDouble", "Tungstensteel", 4), form("plate", "PEEK", 1), form("wireFine", "Graphene", 2), form("dustAnalyticalPure", "Silicon", 1), gt("circuit_ultimate", 1)},
+                new ItemStack[] {block("ai_compute_frame", 2)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:659
+        add("tileEntityInit0.java:659", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16384L, 1800L,
+                new ItemStack[] {own("ram_bar2_g32", 2), form("dustAnalyticalPure", "Silicon", 1), form("wireFine", "Graphene", 2), gt("circuit_ultimate", 1)},
+                new ItemStack[] {block("ai_memory_bank", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:660
+        add("tileEntityInit0.java:660", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16384L, 1800L,
+                new ItemStack[] {own("computer_gt3699_v4", 1), form("dustAnalyticalPure", "Platinum", 1), form("wireFine", "Graphene", 4), gt("circuit_ultimate", 1)},
+                new ItemStack[] {block("ai_routing_matrix", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
         // tileEntityInit0.java:661
         add("tileEntityInit0.java:661", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16384L, 1800L,
                 new ItemStack[] {own("computer_gt3699_v4", 1), form("dustAnalyticalPure", "Carbon", 1), own("ram_bar2_g32", 2), form("foil", "PEEK", 2)},
                 new ItemStack[] {block("ai_packing_planner", 1)},
                 new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
                 NO_FLUIDS);
+        // tileEntityInit0.java:662
+        add("tileEntityInit0.java:662", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16384L, 1800L,
+                new ItemStack[] {own("computer_gt3699_v4", 1), form("dustAnalyticalPure", "intellite", 1), gt("compact_signal_emitter_luv", 1), form("wireFine", "Graphene", 4), gt("circuit_ultimate", 1)},
+                new ItemStack[] {block("ai_recognition_matrix", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:673
+        add("tileEntityInit0.java:673", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 8192L, 1200L,
+                new ItemStack[] {gt("casing_machine_double_tungstensteel", 1), form("dustAnalyticalPure", "Copper", 8), form("dustAnalyticalPure", "Silver", 4), form("plate", "PEEK", 4), form("wireFine", "Graphene", 16), gt("circuit_master", 1)},
+                new ItemStack[] {block("wireless_receiver_inductive", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:675
+        add("tileEntityInit0.java:675", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32768L, 2400L,
+                new ItemStack[] {gt("casing_machine_double_naquadria", 1), form("plate", "MirrorGold", 2), form("dustAbsolutelyPure", "intellite", 4), form("dustAbsolutelyPure", "Naquadria", 2), block("entanglement_channel_module", 2), block("quantum_readout_coil", 1), gt("compact_signal_emitter_luv", 2), gt("circuit_ultimate", 2)},
+                new ItemStack[] {block("wireless_receiver_quantum", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
         // tileEntityInit0.java:687
         add("tileEntityInit0.java:687", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 4096L, 1600L,
                 new ItemStack[] {form("plateDouble", "Lead", 4), form("plateDouble", "Tungstensteel", 2), form("dustCommercialPure", "Lead", 1)},
                 new ItemStack[] {block("high_shield_laminated_wall", 1)},
                 new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:688
+        add("tileEntityInit0.java:688", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 8192L, 2400L,
+                new ItemStack[] {form("plateDouble", "Titanium", 4), form("dustAnalyticalPure", "Titanium", 2), gt("compact_electric_motor_hv", 1)},
+                new ItemStack[] {block("counter_rotating_mass_ring", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:689
+        add("tileEntityInit0.java:689", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 12288L, 3200L,
+                new ItemStack[] {form("plateDouble", "Tungstensteel", 4), form("dustAnalyticalPure", "Tungsten", 2), gt("compact_signal_emitter_hv", 1)},
+                new ItemStack[] {block("gyro_stabilization_anchor", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 24)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:690
+        add("tileEntityInit0.java:690", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 4096L, 1600L,
+                new ItemStack[] {form("plateDouble", "Titanium", 4), gt("compact_electric_motor_hv", 1)},
+                new ItemStack[] {block("sealed_access_hatch", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:691
+        add("tileEntityInit0.java:691", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 8192L, 2000L,
+                new ItemStack[] {form("plateDouble", "StainlessSteel", 4), gt("wire_04_tungsten", 4), form("dustAnalyticalPure", "Tungsten", 1)},
+                new ItemStack[] {block("room_energy_port", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:711
+        add("tileEntityInit0.java:711", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32L, 400L,
+                new ItemStack[] {gt("casing_machine_aluminium", 1), form("plate", "ElectricalSteel", 4), gt("compact_force_field_emitter_mv", 1), gt("circuit_good", 2)},
+                new ItemStack[] {block("wireless_compute_node_aluminium", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:712
+        add("tileEntityInit0.java:712", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_stainlesssteel", 1), form("plate", "ElectricalSteel", 4), gt("compact_force_field_emitter_hv", 1), gt("circuit_advanced", 2)},
+                new ItemStack[] {block("wireless_compute_node_stainless", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:713
+        add("tileEntityInit0.java:713", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 128L, 400L,
+                new ItemStack[] {gt("casing_machine_chromium", 1), form("plate", "ElectricalSteel", 4), gt("compact_force_field_emitter_ev", 1), gt("circuit_elite", 2)},
+                new ItemStack[] {block("wireless_compute_node_chromium", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:714
+        add("tileEntityInit0.java:714", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 512L, 400L,
+                new ItemStack[] {gt("casing_machine_titanium", 1), form("plate", "ElectricalSteel", 8), gt("compact_force_field_emitter_iv", 1), gt("circuit_master", 2)},
+                new ItemStack[] {block("wireless_compute_node_titanium", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:718
+        add("tileEntityInit0.java:718", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 8192L, 1200L,
+                new ItemStack[] {form("plate", "Naquadah", 1), block("quantum_coherence_casing", 1), gt("circuit_ultimate", 1)},
+                new ItemStack[] {block("quantum_compute_node_naquadah", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:720
+        add("tileEntityInit0.java:720", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 32768L, 2400L,
+                new ItemStack[] {form("plate", "Naquadria", 1), block("quantum_cryogenic_manifold", 1), block("quantum_gold_drive_module", 1), gt("circuit_ultimate", 2)},
+                new ItemStack[] {block("quantum_compute_node_naquadria", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:722
+        add("tileEntityInit0.java:722", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 131072L, 3600L,
+                new ItemStack[] {form("plate", "Naquadria", 1), block("quantum_phase_isolation_frame", 1), block("quantum_gold_lattice_stabilizer", 1), gt("circuit_ultimate", 4)},
+                new ItemStack[] {block("quantum_compute_node_enriched", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 9)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:724
+        add("tileEntityInit0.java:724", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 524288L, 4800L,
+                new ItemStack[] {form("plate", "Trinaquadalloy", 1), block("deep_coherence_containment_wall", 1), block("quantum_gold_lattice_stabilizer", 1), gt("circuit_ultimate", 8)},
+                new ItemStack[] {block("quantum_compute_node_trinaquadalloy", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 4)},
                 NO_FLUIDS);
     }
 
@@ -568,6 +1176,42 @@ public final class Gt6KtfruSourceRecipes {
         add("Chemistry.java:133", Gt6KtfruMachines.LASER_CUTTER, 500L, 200L,
                 new ItemStack[] {form("plate", "Graphene", 1)},
                 new ItemStack[] {form("stick", "Graphene", 2)},
+                NO_FLUIDS,
+                NO_FLUIDS);
+        // ComputerBuilding.java:56
+        add("ComputerBuilding.java:56", Gt6KtfruMachines.LASER_CUTTER, 64L, 140L,
+                new ItemStack[] {circuit(1, 1), gt("circuit_plate_copper", 1)},
+                new ItemStack[] {own("ram_board_t1", 14)},
+                NO_FLUIDS,
+                NO_FLUIDS);
+        // ComputerBuilding.java:57
+        add("ComputerBuilding.java:57", Gt6KtfruMachines.LASER_CUTTER, 64L, 400L,
+                new ItemStack[] {circuit(1, 1), gt("circuit_plate_gold", 1)},
+                new ItemStack[] {own("ram_board_t2", 14)},
+                NO_FLUIDS,
+                NO_FLUIDS);
+        // ComputerBuilding.java:58
+        add("ComputerBuilding.java:58", Gt6KtfruMachines.LASER_CUTTER, 64L, 1000L,
+                new ItemStack[] {circuit(1, 1), gt("circuit_plate_platinum", 1)},
+                new ItemStack[] {own("ram_board_t3", 14)},
+                NO_FLUIDS,
+                NO_FLUIDS);
+        // ComputerBuilding.java:60
+        add("ComputerBuilding.java:60", Gt6KtfruMachines.LASER_CUTTER, 64L, 140L,
+                new ItemStack[] {circuit(0, 1), gt("circuit_plate_copper", 1)},
+                new ItemStack[] {own("cpu_board_t1", 25)},
+                NO_FLUIDS,
+                NO_FLUIDS);
+        // ComputerBuilding.java:61
+        add("ComputerBuilding.java:61", Gt6KtfruMachines.LASER_CUTTER, 64L, 400L,
+                new ItemStack[] {circuit(0, 1), gt("circuit_plate_gold", 1)},
+                new ItemStack[] {own("cpu_board_t2", 25)},
+                NO_FLUIDS,
+                NO_FLUIDS);
+        // ComputerBuilding.java:62
+        add("ComputerBuilding.java:62", Gt6KtfruMachines.LASER_CUTTER, 64L, 1000L,
+                new ItemStack[] {circuit(0, 1), gt("circuit_plate_platinum", 1)},
+                new ItemStack[] {own("cpu_board_t3", 25)},
                 NO_FLUIDS,
                 NO_FLUIDS);
         // ComputerBuilding.java:163
@@ -737,6 +1381,42 @@ public final class Gt6KtfruSourceRecipes {
                 NO_FLUIDS,
                 0L,
                 new int[] {2100},
+                null);
+        // ComputerBuilding.java:388
+        add("ComputerBuilding.java:388", Gt6KtfruMachines.LASER_CUTTER, 64L, 400L,
+                new ItemStack[] {own("circuit_part_wafer_t3_checked", 1)},
+                new ItemStack[] {gt("circuit_part_advanced", 40), gt("circuit_part_good", 10)},
+                NO_FLUIDS,
+                NO_FLUIDS,
+                0L,
+                new int[] {4000, 1000},
+                null);
+        // ComputerBuilding.java:389
+        add("ComputerBuilding.java:389", Gt6KtfruMachines.LASER_CUTTER, 170L, 400L,
+                new ItemStack[] {own("circuit_part_wafer_t4_checked", 1)},
+                new ItemStack[] {gt("circuit_part_elite", 40), gt("circuit_part_advanced", 10)},
+                NO_FLUIDS,
+                NO_FLUIDS,
+                0L,
+                new int[] {2400, 1000},
+                null);
+        // ComputerBuilding.java:390
+        add("ComputerBuilding.java:390", Gt6KtfruMachines.LASER_CUTTER, 440L, 400L,
+                new ItemStack[] {own("circuit_part_wafer_t5_checked", 1)},
+                new ItemStack[] {gt("circuit_part_master", 40), gt("circuit_part_elite", 10)},
+                NO_FLUIDS,
+                NO_FLUIDS,
+                0L,
+                new int[] {3200, 1500},
+                null);
+        // ComputerBuilding.java:391
+        add("ComputerBuilding.java:391", Gt6KtfruMachines.LASER_CUTTER, 860L, 1000L,
+                new ItemStack[] {own("circuit_part_wafer_t6_checked", 1)},
+                new ItemStack[] {gt("circuit_part_ultimate", 40), gt("circuit_part_master", 10)},
+                NO_FLUIDS,
+                NO_FLUIDS,
+                0L,
+                new int[] {2600, 1900},
                 null);
         // ComputerBuilding.java:393
         add("ComputerBuilding.java:393", Gt6KtfruMachines.LASER_CUTTER, 170L, 4000L,
@@ -1817,6 +2497,153 @@ public final class Gt6KtfruSourceRecipes {
                 new FluidStack[] {field("Water", 1000)});
     }
 
+    private static void eDA() {
+        // ComputerBuilding.java:88
+        add("ComputerBuilding.java:88", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 3600L,
+                new ItemStack[] {gt("circuit_good", 1), own("tech_research_data19", 1), gt("co2_laser_mv", 1), gt("electric_dynamo_mv", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("cpu_photomask_t1", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2, 3});
+        // ComputerBuilding.java:89
+        add("ComputerBuilding.java:89", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 1800L,
+                new ItemStack[] {gt("circuit_good", 1), own("tech_research_data19", 1), gt("circuit_part_good", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("circuit_part_photomask_t3", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2});
+        // ComputerBuilding.java:91
+        add("ComputerBuilding.java:91", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 1800L,
+                new ItemStack[] {gt("circuit_good", 1), own("tech_research_data19", 1), form("dust", "Silicon", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("diode_photomask_t1", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2});
+        // ComputerBuilding.java:93
+        add("ComputerBuilding.java:93", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 7200L,
+                new ItemStack[] {gt("circuit_advanced", 1), own("tech_research_data25", 1), gt("co2_laser_mv", 1), gt("electric_dynamo_mv", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("cpu_photomask_t2", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2, 3});
+        // ComputerBuilding.java:94
+        add("ComputerBuilding.java:94", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 3600L,
+                new ItemStack[] {gt("circuit_advanced", 1), own("tech_research_data25", 1), gt("circuit_part_good", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("circuit_part_photomask_t4", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2});
+        // ComputerBuilding.java:96
+        add("ComputerBuilding.java:96", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 3600L,
+                new ItemStack[] {gt("circuit_advanced", 1), own("tech_research_data25", 1), own("silicon_boule_pure", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("diode_photomask_t2", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2});
+        // ComputerBuilding.java:98
+        add("ComputerBuilding.java:98", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 14400L,
+                new ItemStack[] {gt("circuit_elite", 1), own("tech_research_data29", 1), gt("co2_laser_mv", 1), gt("electric_dynamo_mv", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("cpu_photomask_t3", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2, 3});
+        // ComputerBuilding.java:99
+        add("ComputerBuilding.java:99", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 7200L,
+                new ItemStack[] {gt("circuit_elite", 1), own("tech_research_data29", 1), gt("circuit_part_good", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("circuit_part_photomask_t5", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2});
+        // ComputerBuilding.java:102
+        add("ComputerBuilding.java:102", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 28800L,
+                new ItemStack[] {gt("circuit_master", 1), own("tech_research_data33", 1), gt("co2_laser_mv", 1), gt("electric_dynamo_mv", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("cpu_photomask_t4", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2, 3});
+        // ComputerBuilding.java:103
+        add("ComputerBuilding.java:103", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 14400L,
+                new ItemStack[] {gt("circuit_master", 1), own("tech_research_data33", 1), gt("circuit_part_good", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("circuit_part_photomask_t6", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2});
+        // ComputerBuilding.java:106
+        add("ComputerBuilding.java:106", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 28800L,
+                new ItemStack[] {own("computer_gt2090", 1), own("tech_research_data33", 1), gt("co2_laser_mv", 1), gt("electric_dynamo_mv", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("cpu_photomask_t5", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2, 3});
+        // ComputerBuilding.java:109
+        add("ComputerBuilding.java:109", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 28800L,
+                new ItemStack[] {own("computer_gt3699", 1), own("tech_research_data36", 1), gt("co2_laser_mv", 1), gt("electric_dynamo_mv", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("cpu_photomask_t6", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2, 3});
+        // ComputerBuilding.java:112
+        add("ComputerBuilding.java:112", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 28800L,
+                new ItemStack[] {own("computer_gt3699_v2", 1), own("tech_research_data40", 1), gt("co2_laser_mv", 1), gt("electric_dynamo_mv", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("cpu_photomask_t7", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2, 3});
+        // ComputerBuilding.java:115
+        add("ComputerBuilding.java:115", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 28800L,
+                new ItemStack[] {own("computer_gt3699_v3", 1), own("tech_research_data43", 1), gt("co2_laser_mv", 1), gt("electric_dynamo_mv", 1), own("tech_research_data40", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("cpu_photomask_t8", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2, 3, 4});
+        // ComputerBuilding.java:118
+        add("ComputerBuilding.java:118", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 28800L,
+                new ItemStack[] {own("computer_gt3699_v3", 1), own("tech_research_data40", 1), form("wireFine", "Platinum", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("inter_layer_photomask_t1", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2});
+        // ComputerBuilding.java:119
+        add("ComputerBuilding.java:119", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 21600L,
+                new ItemStack[] {own("computer_gt3699_v4", 1), own("tech_research_data43", 1), form("wireFine", "Platinum", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("inter_layer_photomask_t2", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2});
+    }
+
     private static void flawDetector() {
         // recipePrefixItems.java:52
         add("recipePrefixItems.java:52", Gt6KtfruMachines.FLAW_DETECTOR, 16L, 12000L,
@@ -2868,6 +3695,24 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {block("quantum_coherence_casing_iridium", 1)},
                 new FluidStack[] {field("DistW", 1000)},
                 NO_FLUIDS);
+        // tileEntityInit0.java:591
+        add("tileEntityInit0.java:591", Gt6KtfruMachines.CNC, 200L, 8000L,
+                new ItemStack[] {circuit(0, 1), gt("titanium_wall", 1)},
+                new ItemStack[] {block("titanium_turbine_shell", 1)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:592
+        add("tileEntityInit0.java:592", Gt6KtfruMachines.CNC, 200L, 8000L,
+                new ItemStack[] {circuit(0, 1), gt("tungstensteel_wall", 1)},
+                new ItemStack[] {block("tungstensteel_turbine_shell", 1)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:593
+        add("tileEntityInit0.java:593", Gt6KtfruMachines.CNC, 200L, 8000L,
+                new ItemStack[] {circuit(0, 1), gt("adamantium_wall", 1)},
+                new ItemStack[] {block("adamantium_turbine_shell", 1)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
         // tileEntityInit0.java:610
         add("tileEntityInit0.java:610", Gt6KtfruMachines.CNC, 200L, 8000L,
                 new ItemStack[] {circuit(0, 1), block("trinaquadalloy_wall", 1)},
@@ -3437,6 +4282,15 @@ public final class Gt6KtfruSourceRecipes {
                 NO_FLUIDS);
     }
 
+    private static void mirrorGoldQuantumization() {
+        // QuantumEntry.java:89
+        add("QuantumEntry.java:89", Gt6KtfruLateMachines.MIRROR_QUANTUM, 16384L, 2400L,
+                new ItemStack[] {form("plate", "MirrorGold", 1), form("dustAbsolutelyPure", "intellite", 8), form("dustAbsolutelyPure", "Naquadria", 4), gt("compact_signal_emitter_luv", 2), gt("circuit_ultimate", 1)},
+                new ItemStack[] {block("quantum_gold_drive_module", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 36)},
+                NO_FLUIDS);
+    }
+
     private static void cosmicRadiationResearch() {
         // ComputerBuilding.java:176
         add("ComputerBuilding.java:176", Gt6KtfruLateMachines.COSMIC, 8192L, 2400L,
@@ -3504,17 +4358,65 @@ public final class Gt6KtfruSourceRecipes {
     }
 
     private static void researchAssembler() {
+        // CompactItem.java:41
+        add("CompactItem.java:41", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 372L, 80L,
+                new ItemStack[] {form("plateTiny", "intellite", 1), form("wireFine", "Titanium", 4)},
+                new ItemStack[] {own("intelligent_core", 2)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
         // CompactItem.java:42
         add("CompactItem.java:42", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 1574L, 80L,
                 new ItemStack[] {own("cpugt3660", 1), form("dust", "Titanium", 1)},
                 new ItemStack[] {own("intelligent_core", 2)},
                 new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
                 NO_FLUIDS);
+        // CompactItem.java:54
+        add("CompactItem.java:54", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 16L, 80L,
+                new ItemStack[] {circuit(0, 1), own("basic_circuit_part_core", 1)},
+                new ItemStack[] {gt("circuit_part_basic", 1)},
+                NO_FLUIDS,
+                NO_FLUIDS);
         // CompactItem.java:55
         add("CompactItem.java:55", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 32L, 80L,
                 new ItemStack[] {circuit(1, 1), form("plateGemTiny", "Silicon", 2), form("foil", "Copper", 1)},
                 new ItemStack[] {own("good_circuit_part_core", 2)},
                 NO_FLUIDS,
+                NO_FLUIDS);
+        // ComputerBuilding.java:471
+        add("ComputerBuilding.java:471", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 16L, 80L,
+                new ItemStack[] {form("plate", "SteelGalvanized", 4), form("screw", "Steel", 16), gt("circuit_basic", 8)},
+                new ItemStack[] {own("computer_basic_circuits", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // ComputerBuilding.java:472
+        add("ComputerBuilding.java:472", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 16L, 160L,
+                new ItemStack[] {form("plate", "SteelGalvanized", 4), form("screw", "Steel", 16), gt("circuit_good", 8)},
+                new ItemStack[] {own("computer_good_circuits", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // ComputerBuilding.java:473
+        add("ComputerBuilding.java:473", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 16L, 320L,
+                new ItemStack[] {form("plate", "SteelGalvanized", 4), form("screw", "Steel", 32), gt("circuit_advanced", 8)},
+                new ItemStack[] {own("computer_advanced_circuits", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // ComputerBuilding.java:474
+        add("ComputerBuilding.java:474", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 16L, 640L,
+                new ItemStack[] {form("plate", "StainlessSteel", 4), form("screw", "Steel", 32), gt("circuit_elite", 8)},
+                new ItemStack[] {own("computer_elite_circuits", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // ComputerBuilding.java:475
+        add("ComputerBuilding.java:475", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 32L, 960L,
+                new ItemStack[] {form("plate", "StainlessSteel", 4), form("screw", "StainlessSteel", 64), gt("circuit_master", 8)},
+                new ItemStack[] {own("computer_master_circuits", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
+                NO_FLUIDS);
+        // ComputerBuilding.java:476
+        add("ComputerBuilding.java:476", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 32L, 1280L,
+                new ItemStack[] {form("plate", "Tungstensteel", 4), form("screw", "StainlessSteel", 64), gt("circuit_ultimate", 8)},
+                new ItemStack[] {own("computer_ultimate_circuits", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 72)},
                 NO_FLUIDS);
         // Fusion.java:141
         add("Fusion.java:141", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 32768L, 2400L,
@@ -3527,6 +4429,108 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {block("laser_focusing_array", 24), block("laser_pulse_storage", 8), block("laser_product_collector", 4)},
                 new ItemStack[] {block("laser_fusion_industrial", 1)},
                 new FluidStack[] {field("GenMolten_SolderingAlloy", 2)},
+                NO_FLUIDS);
+        // Fusion.java:154
+        add("Fusion.java:154", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 65536L, 3200L,
+                new ItemStack[] {gt("casing_machine_double_stainlesssteel", 1), block("tokamak_magnetic_conductor_exp", 8), block("tokamak_magnetic_coil_exp", 4), block("tokamak_magnetic_wall_exp", 4), gt("circuit_elite", 2), gt("compact_sensor_ev", 2), own("computer_gt3660", 1)},
+                new ItemStack[] {block("fusion_tokamak_exp", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 9)},
+                NO_FLUIDS);
+        // Fusion.java:163
+        add("Fusion.java:163", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 262144L, 4800L,
+                new ItemStack[] {gt("casing_machine_double_tungstensteel", 1), block("tokamak_magnetic_conductor_t1", 16), block("tokamak_magnetic_coil_t1", 8), block("tokamak_magnetic_wall_t1", 8), gt("circuit_master", 4), gt("compact_sensor_iv", 2), own("computer_gt3699", 2)},
+                new ItemStack[] {block("fusion_tokamak_t1", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 4)},
+                NO_FLUIDS);
+        // ResearchRecipes.java:133
+        add("ResearchRecipes.java:133", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 16L, 128L,
+                new ItemStack[] {gt("laser_emitter_emptygas", 1)},
+                new ItemStack[] {gt("laser_emitter_helium", 1)},
+                new FluidStack[] {field("Helium", 1000)},
+                NO_FLUIDS);
+        // ResearchRecipes.java:134
+        add("ResearchRecipes.java:134", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 16L, 128L,
+                new ItemStack[] {gt("laser_emitter_emptygas", 1)},
+                new ItemStack[] {gt("laser_emitter_neon", 1)},
+                new FluidStack[] {field("Neon", 1000)},
+                NO_FLUIDS);
+        // ResearchRecipes.java:135
+        add("ResearchRecipes.java:135", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 16L, 128L,
+                new ItemStack[] {gt("laser_emitter_emptygas", 1)},
+                new ItemStack[] {gt("laser_emitter_argon", 1)},
+                new FluidStack[] {field("Argon", 1000)},
+                NO_FLUIDS);
+        // ResearchRecipes.java:136
+        add("ResearchRecipes.java:136", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 16L, 128L,
+                new ItemStack[] {gt("laser_emitter_emptygas", 1)},
+                new ItemStack[] {gt("laser_emitter_krypton", 1)},
+                new FluidStack[] {field("GenGas_Krypton", 1000)},
+                NO_FLUIDS);
+        // ResearchRecipes.java:137
+        add("ResearchRecipes.java:137", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 16L, 128L,
+                new ItemStack[] {gt("laser_emitter_emptygas", 1)},
+                new ItemStack[] {gt("laser_emitter_xenon", 1)},
+                new FluidStack[] {field("GenGas_Xenon", 1000)},
+                NO_FLUIDS);
+        // ResearchRecipes.java:138
+        add("ResearchRecipes.java:138", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 16L, 128L,
+                new ItemStack[] {gt("laser_emitter_emptygas", 1)},
+                new ItemStack[] {gt("laser_emitter_heliumneon", 1)},
+                new FluidStack[] {field("GenGas_HeliumNeon", 1000)},
+                NO_FLUIDS);
+        // ResearchRecipes.java:139
+        add("ResearchRecipes.java:139", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 16L, 128L,
+                new ItemStack[] {gt("laser_emitter_emptygas", 1)},
+                new ItemStack[] {gt("laser_emitter_carbonmonoxide", 1)},
+                new FluidStack[] {field("GenGas_CarbonMonoxide", 1000)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:528
+        add("tileEntityInit0.java:528", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 32768L, 2400L,
+                new ItemStack[] {form("plate", "MirrorGold", 2), gt("casing_machine_naquadria", 1), form("dustAbsolutelyPure", "intellite", 4), gt("compact_signal_emitter_luv", 4), gt("circuit_ultimate", 2)},
+                new ItemStack[] {block("mirror_gold_quantumization", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:529
+        add("tileEntityInit0.java:529", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 32768L, 2400L,
+                new ItemStack[] {form("plate", "MirrorGold", 2), gt("casing_machine_naquadria", 1), form("dustAbsolutelyPure", "intellite", 4), form("dustAbsolutelyPure", "Naquadria", 4), form("dustAnalyticalPure", "Platinum", 4), gt("compact_signal_emitter_luv", 4), gt("circuit_ultimate", 2)},
+                new ItemStack[] {block("quantum_gold_chamber", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:541
+        add("tileEntityInit0.java:541", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 32768L, 2400L,
+                new ItemStack[] {block("ai_routing_matrix", 1), block("ai_compute_frame", 4), block("ai_memory_bank", 4), own("computer_gt3699_v4", 1), form("dustAnalyticalPure", "Silicon", 1), form("plate", "PEEK", 1), gt("circuit_ultimate", 2)},
+                new ItemStack[] {block("ai_flow_control", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:542
+        add("tileEntityInit0.java:542", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 32768L, 2400L,
+                new ItemStack[] {block("ai_packing_planner", 1), block("ai_compute_frame", 4), block("ai_memory_bank", 4), own("computer_gt3699_v4", 1), form("dustAnalyticalPure", "Silicon", 1), form("plate", "PEEK", 1), gt("circuit_ultimate", 2)},
+                new ItemStack[] {block("ai_fill_planning", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:543
+        add("tileEntityInit0.java:543", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 32768L, 2400L,
+                new ItemStack[] {block("ai_recognition_matrix", 1), block("ai_compute_frame", 4), block("ai_memory_bank", 4), own("computer_gt3699_v4", 1), form("dustAnalyticalPure", "Silicon", 1), form("plate", "PEEK", 1), gt("circuit_ultimate", 2)},
+                new ItemStack[] {block("ai_pattern_recognition", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:678
+        add("tileEntityInit0.java:678", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 8192L, 1200L,
+                new ItemStack[] {gt("casing_machine_double_tungstensteel", 1), block("magnetic_conductor", 8), form("dustAnalyticalPure", "Copper", 16), form("dustAnalyticalPure", "Silver", 8), form("plate", "PEEK", 8), form("wireFine", "Graphene", 32), gt("circuit_master", 2)},
+                new ItemStack[] {block("wireless_battery_inductive", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:680
+        add("tileEntityInit0.java:680", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 32768L, 2400L,
+                new ItemStack[] {gt("casing_machine_double_naquadria", 1), form("plate", "MirrorGold", 4), form("dustAbsolutelyPure", "intellite", 8), form("dustAbsolutelyPure", "Naquadria", 4), block("entanglement_channel_module", 4), block("quantum_readout_coil", 2), gt("compact_signal_emitter_luv", 4), gt("circuit_ultimate", 4)},
+                new ItemStack[] {block("wireless_battery_quantum", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:683
+        add("tileEntityInit0.java:683", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 32768L, 2400L,
+                new ItemStack[] {form("plate", "QuantumGold", 4), form("dustAbsolutelyPure", "intellite", 4), form("dustAbsolutelyPure", "Naquadria", 4), block("quantum_readout_coil", 2), gt("compact_signal_emitter_luv", 4), gt("circuit_ultimate", 2), gt("casing_machine_trinaquadalloy", 1)},
+                new ItemStack[] {block("quantum_observation_tower", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
                 NO_FLUIDS);
     }
 
@@ -3598,6 +4602,15 @@ public final class Gt6KtfruSourceRecipes {
         Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(Gt6KtfruAddon.MODID, path));
         if (item == Items.AIR) {
             PROBLEMS.add("block " + path);
+            return ItemStack.EMPTY;
+        }
+        return new ItemStack(item, count);
+    }
+
+    private static ItemStack gt(String path, int count) {
+        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("gt6ce", path));
+        if (item == null || item == Items.AIR) {
+            PROBLEMS.add("gt6ce " + path);
             return ItemStack.EMPTY;
         }
         return new ItemStack(item, count);

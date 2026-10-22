@@ -9,6 +9,7 @@ from __future__ import annotations
 import ast
 import json
 import re
+import zipfile
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -17,6 +18,7 @@ SOURCE = ROOT / "kTFRUAddon" / "src" / "main" / "java" / "cn" / "kuzuanpa" / "kt
 GT = Path(r"D:\Baobao\projects\dev\java\GregTech6CommunityEdition\GregTech6")
 OUT_JAVA = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "Gt6KtfruSourceRecipes.java"
 REPORT = ROOT / "build" / "source-recipe-report.txt"
+RUNTIME_JAR = ROOT / "libs" / "gt6ce" / "gt6ce-1.21.1-neoforge.jar"
 
 MAPS = (
     "FluidHeating",
@@ -216,6 +218,48 @@ MC_BLOCKS = {
     "mossy_cobblestone": "Blocks.MOSSY_COBBLESTONE", "stonebrick": "Blocks.STONE_BRICKS",
     "nether_brick": "Blocks.NETHER_BRICKS",
 }
+# GT6 IL.* arrays are ULV-first; the port names them by tier suffix.
+IL_TIERS = ("ulv", "lv", "mv", "hv", "ev", "iv", "luv", "zpm", "uv", "xv")
+IL_ARRAYS = {
+    "MOTORS": "compact_electric_motor",
+    "PUMPS": "compact_electric_pump",
+    "PISTONS": "compact_electric_piston",
+    "EMITTERS": "compact_signal_emitter",
+    "CONVEYERS": "compact_electric_conveyor",
+    "SENSORS": "compact_sensor",
+    "ROBOT_ARMS": "compact_robot_arm",
+    "FIELD_GENERATORS": "compact_force_field_emitter",
+}
+IL_ALIASES = {
+    "Circuit_Wire_Copper": "circuit_wiring_copper",
+    "Circuit_Plate_Empty": "circuit_plate",
+    "Battery_Lead_Acid_Cell_Filled": "lead_acid_cell_filled",
+}
+for _crystal in ("Diamond", "Emerald", "Ruby", "Sapphire"):
+    IL_ALIASES[f"Processor_Crystal_{_crystal}"] = "crystal_processor_" + _crystal.lower()
+for _gas, _emitter in {
+    "He": "helium", "Ne": "neon", "Ar": "argon", "Kr": "krypton", "Xe": "xenon",
+    "HeNe": "heliumneon", "CO": "carbonmonoxide", "CO2": "carbondioxide", "Empty": "emptygas",
+}.items():
+    IL_ALIASES[f"Comp_Laser_Gas_{_gas}"] = "laser_emitter_" + _emitter
+CASING_PREFIX = {
+    "casingMachine": "",
+    "casingMachineDouble": "double_",
+    "casingMachineQuadruple": "quadruple_",
+    "casingMachineDense": "dense_",
+}
+# GT6 numeric registry ids that the port keeps under a gt6ce block/item name.
+GT_REGISTRY_ITEMS = {
+    10102: "co2_laser_mv",
+    10112: "electric_dynamo_mv",
+    18003: "tungstensteel_wall",
+    18005: "adamantium_wall",
+    18006: "titanium_wall",
+    24823: "axle_steel_4",
+    24833: "axle_titanium_4",
+    24843: "axle_tungstensteel_4",
+}
+
 CALL_RE = re.compile(
     r"(?<![A-Za-z0-9_])(?:recipeMaps\s*\.\s*)?"
     r"(" + "|".join(MAPS) + r")"
@@ -604,6 +648,43 @@ def sanitize(name: str) -> str:
     return name.replace(" ", "").replace("-", "").replace("'", "")
 
 
+def snake(name: str) -> str:
+    text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "_", name)
+    text = re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", "_", text)
+    text = re.sub(r"(?<=[0-9])(?=[A-Za-z])", "_", text)
+    return text.lower()
+
+
+def load_runtime_items() -> set[str]:
+    """Item model ids in the development jar; every gt6ce stack must be one of these."""
+    with zipfile.ZipFile(RUNTIME_JAR) as jar:
+        return {
+            Path(name).stem
+            for name in jar.namelist()
+            if name.startswith("assets/gt6ce/models/item/") and name.endswith(".json")
+        }
+
+
+def load_gt_electric_ids(symbols: dict[str, str]) -> dict[int, str]:
+    """GT6 numeric wire/cable ids from ``MultiTileEntityWireElectric.addElectricWires``."""
+    text = (
+        GT / "work" / "gt6-ref" / "gregtech6" / "src" / "main" / "java" / "gregtech"
+        / "loaders" / "b" / "Loader_MultiTileEntities.java"
+    ).read_text(encoding="utf-8")
+    table: dict[int, str] = {}
+    for match in re.finditer(r"addElectricWires\(\s*(\d+)\s*,\s*\d+\s*,.*?MT\.(\w+)\)\s*;", text):
+        base = int(match.group(1))
+        material = symbols.get(match.group(2))
+        if not material:
+            continue
+        name = snake(material)
+        for size in range(1, 17):
+            table[base + size - 1] = f"wire_{size:02d}_{name}"
+        for offset, size in ((16, 1), (17, 2), (19, 4), (23, 8), (27, 12)):
+            table[base + offset] = f"cable_{size:02d}_{name}"
+    return table
+
+
 def load_materials():
     names = {}
     kinds = {}
@@ -638,6 +719,7 @@ def load_materials():
             "gas": kind == "gas" or "GASES" in flags,
             "liquid": kind == "liquid" or "LIQUID" in flags,
             "molten": kind == "metal" or "MOLTEN" in flags or "METAL" in flags,
+            "kind": kind,
             "flags": flags,
         }
     return symbols, props
@@ -697,6 +779,8 @@ class World:
         self.item_prefixes, self.block_prefixes = load_prefixes()
         self.addon = load_addon()
         self.own_items = json.loads((ROOT / "tools" / "own_items.json").read_text(encoding="utf-8"))
+        self.gt_items = load_runtime_items()
+        self.gt_electric = load_gt_electric_ids(self.symbols)
 
     def material_name(self, expr: str) -> str:
         expr = expr.strip().replace("CS.", "")
@@ -735,6 +819,12 @@ class World:
             flags = self.props.get(material, {}).get("flags", set())
             if not flags:
                 return
+            # The port generates fine wire from GENERATE_WIRE, not from the GT6 WIRES form flag.
+            if prefix == "wireFine":
+                kind = self.props.get(material, {}).get("kind", "")
+                if "WIRES" in flags or kind in ("metal", "alloy") or {"PARTS", "INGOTS"} <= flags:
+                    return
+                raise Skip(f"材料没有{prefix} {material}")
             needed = CORE_PREFIX_FLAGS.get(prefix)
             if prefix.startswith("wire") or prefix.startswith("cable"):
                 needed = ("WIRES",)
@@ -830,6 +920,11 @@ class World:
         kind, per_unit = self.fluid_state(material, method)
         return fluid_field(material, kind, self.fluids, self.by_registry), units_mb(raw, per_unit, round_up_flag)
 
+    def gt_item(self, item_id: str, count: int):
+        if item_id not in self.gt_items:
+            raise Skip(f"GT物品 {item_id}")
+        return ("gt", item_id, count)
+
     def parse_item(self, expr: str, output: bool = False):
         expr = expr.strip().replace("CS.", "")
         if expr in ("ZL_IS", "NI"):
@@ -852,6 +947,29 @@ class World:
             count, kept = self.item_amount(getter.group(1), output)
             return ("own", path, count), kept
         if re.match(r"IL\.", expr) or ".IL." in expr:
+            array = re.fullmatch(
+                r"IL\.(" + "|".join(IL_ARRAYS) + r")\s*\[\s*(\d+)\s*\]\s*\.\s*get\((.*)\)", expr
+            )
+            if array:
+                table, index_expr, count_expr = array.groups()
+                index = int(index_expr)
+                if index >= len(IL_TIERS):
+                    raise Skip(f"GT元件 {table}[{index}]")
+                count, kept = self.item_amount(count_expr, output)
+                return self.gt_item(f"{IL_ARRAYS[table]}_{IL_TIERS[index]}", count), kept
+            single = re.fullmatch(r"IL\.(\w+)\s*\.\s*get\((.*)\)", expr)
+            if single:
+                name, count_expr = single.groups()
+                item_id = IL_ALIASES.get(name)
+                if item_id is None:
+                    if name.startswith("Emitter_"):
+                        item_id = "compact_signal_emitter_" + name[len("Emitter_"):].lower()
+                    elif name.startswith("Sensor_"):
+                        item_id = "compact_sensor_" + name[len("Sensor_"):].lower()
+                    else:
+                        item_id = snake(name)
+                count, kept = self.item_amount(count_expr, output)
+                return self.gt_item(item_id, count), kept
             name = re.search(r"IL\.(\w+)", expr)
             raise Skip("GT元件 " + (name.group(1) if name else expr))
         own_prefix = re.fullmatch(r"prefixList\.(\w+)\.mat\((.*)\)", expr)
@@ -871,16 +989,19 @@ class World:
             raise Skip("自有前缀")
         if "getItem(" in expr or "GTTileEntityRegistry" in expr:
             tile_match = re.fullmatch(
-                r"(?:GTTileEntityRegistry\.ktfruaddon|kRegistry0|kRegistry|ktfru|registry)\.getItem\(\s*(\d+)(?:\s*,\s*([^)]+))?\s*\)",
+                r"(?:GTTileEntityRegistry\.ktfruaddon|kRegistry0|kRegistry|ktfru|registry|gRegistry)\.getItem\(\s*(\d+)(?:\s*,\s*([^)]+))?\s*\)",
                 expr,
             )
             if tile_match:
                 tile_id = int(tile_match.group(1))
+                count_expr = tile_match.group(2) or "1"
+                count, kept = self.item_amount(count_expr, output)
                 block_id = TILE_ITEMS.get(tile_id)
                 if block_id:
-                    count_expr = tile_match.group(2) or "1"
-                    count, kept = self.item_amount(count_expr, output)
                     return ("block", block_id, count), kept
+                gt_id = GT_REGISTRY_ITEMS.get(tile_id) or self.gt_electric.get(tile_id)
+                if gt_id:
+                    return self.gt_item(gt_id, count), kept
             raise Skip("机器物品")
         if expr.startswith("ANY.") or "ANY." in expr:
             raise Skip("矿辞通配 " + expr)
@@ -902,6 +1023,39 @@ class World:
                 meta = parts[2] if len(parts) > 2 else None
                 count, kept = self.item_amount(parts[1], output)
                 return self.vanilla(parts[0], count, meta), kept
+        casing = re.fullmatch(
+            r"(?:OP\s*\.\s*)?(casingMachine(?:Double|Quadruple|Dense)?)\s*\.\s*mat\((.*)\)", expr
+        )
+        if casing:
+            prefix, inner = casing.groups()
+            parts = split_args(inner)
+            if len(parts) < 2:
+                raise Skip(f"前缀参数 {expr}")
+            material = self.material_name(parts[0])
+            count, kept = self.item_amount(parts[1], output)
+            item_id = f"casing_machine_{CASING_PREFIX[prefix]}{material.lower()}"
+            return self.gt_item(item_id, count), kept
+        wire = re.fullmatch(r"(?:OP\s*\.\s*)?wireGt(\d+)\s*\.\s*mat\((.*)\)", expr)
+        if wire:
+            size, inner = wire.groups()
+            parts = split_args(inner)
+            if len(parts) < 2:
+                raise Skip(f"前缀参数 {expr}")
+            material = self.material_name(parts[0])
+            count, kept = self.item_amount(parts[1], output)
+            item_id = f"wire_{int(size):02d}_{snake(material)}"
+            return self.gt_item(item_id, count), kept
+        pipe = re.fullmatch(
+            r"(?:OP\s*\.\s*)?pipe(Tiny|Small|Medium|Large|Huge|Quadruple|Nonuple)\s*\.\s*mat\((.*)\)", expr
+        )
+        if pipe:
+            size, inner = pipe.groups()
+            parts = split_args(inner)
+            if len(parts) < 2:
+                raise Skip(f"前缀参数 {expr}")
+            material = self.material_name(parts[0])
+            count, kept = self.item_amount(parts[1], output)
+            return self.gt_item(f"pipe_{size.lower()}_{snake(material)}", count), kept
         prefixed = re.fullmatch(r"(?:OP\s*\.\s*)?(\w+)\s*\.\s*mat\((.*)\)", expr)
         if prefixed and (prefixed.group(1) in self.item_prefixes or prefixed.group(1) in self.block_prefixes):
             prefix, inner = prefixed.groups()
@@ -1300,6 +1454,8 @@ def purity_rows(world: World, file_name: str, line: int, raw: str):
 def parse_call(world: World, file_name: str, line: int, map_name: str, arity: str, args: list[str], raw: str, special: int = 0):
     if map_name == "LightMixer":
         raise Skip("保持卡 02 的光混合行")
+    if Path(file_name).name == "RocketBuilding.java":
+        raise Skip("C档")
     if file_name == "Chemistry.java" and line in (107, 108, 109):
         raise Skip("保持卡 04 的海水蒸馏行")
     held = reserved(raw)
@@ -1448,6 +1604,8 @@ def java_stack(stack) -> str:
         return f'own("{stack[1]}", {stack[2]})'
     if stack[0] == "block":
         return f'block("{stack[1]}", {stack[2]})'
+    if stack[0] == "gt":
+        return f'gt("{stack[1]}", {stack[2]})'
     if stack[0] == "circuit":
         return f"circuit({stack[1]}, {stack[2]})"
     if stack[0] == "fluid":
@@ -1619,6 +1777,15 @@ public final class Gt6KtfruSourceRecipes {{
         return new ItemStack(item, count);
     }}
 
+    private static ItemStack gt(String path, int count) {{
+        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("gt6ce", path));
+        if (item == null || item == Items.AIR) {{
+            PROBLEMS.add("gt6ce " + path);
+            return ItemStack.EMPTY;
+        }}
+        return new ItemStack(item, count);
+    }}
+
     private static ItemStack circuit(int index, int count) {{
         ItemStack stack = AddonItems.selectorTag(index);
         if (stack == null || stack.isEmpty()) {{
@@ -1665,6 +1832,7 @@ def main():
     for file_name in FILES:
         original = (SOURCE / file_name).read_text(encoding="utf-8")
         text = strip_comments(original)
+        locals_ = dict(re.findall(r"\bItemStack\s+(\w+)\s*=\s*([^;]+);", text))
         for match in CALL_RE.finditer(text):
             map_name, arity = match.group(1), match.group(2)
             counts[map_name] += 1
@@ -1679,10 +1847,18 @@ def main():
                 amat_val = amat_matches[-1].group(1).strip().replace("ANY.Steel", "MT.Steel")
                 call_body = re.sub(r"\baMat\b", amat_val, call_body)
                 raw = re.sub(r"\baMat\b", amat_val, raw)
+            for name, value in locals_.items():
+                if re.search(rf"\b{name}\b", call_body):
+                    call_body = re.sub(rf"\b{name}\b", value, call_body)
+                    raw = re.sub(rf"\b{name}\b", value, raw)
             if "kRegistry0.getItem()" in call_body:
-                line_start = text.rfind("\n", 0, match.start()) + 1
-                same_line = text[line_start:match.start()]
-                add_match = re.search(r'kRegistry0\.add\(\s*"[^"]*"\s*,\s*"[^"]*"\s*,\s*(\d+)\s*,', same_line)
+                window = text[max(0, match.start() - 3000):match.start()]
+                add_at = window.rfind("kRegistry0.add(")
+                add_match = None
+                if add_at >= 0:
+                    add_match = re.search(
+                        r'kRegistry0\.add\(.*?,\s*"[^"]*"\s*,\s*(\d+)\s*,', window[add_at:]
+                    )
                 if add_match:
                     tid = add_match.group(1)
                     call_body = call_body.replace("kRegistry0.getItem()", f"kRegistry0.getItem({tid})")

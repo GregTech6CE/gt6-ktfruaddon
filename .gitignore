@@ -46,3 +46,6 @@ libs/gt6ce/*.jar
 
 # Local upstream checkout. Its own branch stays 1.7.10.
 /kTFRUAddon/
+
+### Python ###
+__pycache__/
