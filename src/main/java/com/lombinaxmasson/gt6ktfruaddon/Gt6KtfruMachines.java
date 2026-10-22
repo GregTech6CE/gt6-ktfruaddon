@@ -41,6 +41,7 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  * Card 12 adds the sun heater, large mirror, tidal generator, oil miner,
  * mantle heater and fuel deburn factory.
  * Card 13 adds the large gas and steam turbines, dynamos, expanded motors and fluid boiler.
+ * Card 14 adds the liquid batteries and transform batteries.
  */
 public final class Gt6KtfruMachines implements AddonMachineContributor, BehaviorMachineContributor {
     public static final String FLUID_HEATING = "gt6ktfruaddon.recipe.fluid_heating";
@@ -247,6 +248,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         diesel(machines, "turbo_diesel", "trinaquadalloy", "Trinaquadalloy", 4800, 4608);
         Gt6KtfruHeatMachines.add(machines);
         Gt6KtfruTurbines.add(machines);
+        Gt6KtfruBatteries.add(machines);
         return List.copyOf(machines);
     }
 
@@ -271,6 +273,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 Gt6KtfruHeatLayouts.mantle(),
                 Gt6KtfruHeatLayouts.fuelDeburn()));
         Gt6KtfruTurbines.addLayouts(layouts);
+        Gt6KtfruBatteries.addLayouts(layouts);
         return List.copyOf(layouts);
     }
 
@@ -296,6 +299,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 energyModule("mask_aligner_energy_uv_plus", "StainlessSteel", 768, 256, 1024)));
         Gt6KtfruHeatMachines.addParts(parts);
         Gt6KtfruTurbines.addParts(parts);
+        Gt6KtfruBatteries.addParts(parts);
         return List.copyOf(parts);
     }
 
@@ -310,6 +314,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 LIGHT_TRANSFORMER_SMALL, LIGHT_TRANSFORMER_LARGE,
                 SUN_HEATER, SUN_MIRROR, TIDAL, OIL_MINER, MANTLE, FUEL_DEBURN_TYPE));
         types.addAll(Gt6KtfruTurbines.behaviorTypes());
+        types.addAll(Gt6KtfruBatteries.behaviorTypes());
         return Set.copyOf(types);
     }
 
@@ -333,6 +338,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         if (transformerType(machineType)) return new Gt6KtfruTransformerPart(transformerAmpere(machineType));
         if (Gt6KtfruHeatMachines.owns(machineType)) return Gt6KtfruHeatMachines.create(machineType);
         if (Gt6KtfruTurbines.owns(machineType)) return Gt6KtfruTurbines.create(machineType);
+        if (Gt6KtfruBatteries.owns(machineType)) return Gt6KtfruBatteries.create(machineType);
         throw new IllegalArgumentException(machineType);
     }
 
