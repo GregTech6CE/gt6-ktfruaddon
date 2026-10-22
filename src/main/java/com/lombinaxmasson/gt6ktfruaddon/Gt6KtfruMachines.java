@@ -907,7 +907,8 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     /**
      * Source 10010 / 10011. EU leaves the top. The bottom input exists because a
      * behavior machine needs one. Fuel tanks are 8000 mB. The electrolyte tank
-     * is exactly the required amount.
+     * is exactly the required amount. Toggle 0 stops processing. Toggle 1
+     * opens the electrolyte tank.
      */
     private static BehaviorMachine gasBattery(String id, String material, int tier) {
         long rate = Gt6KtfruFuelBattery.rate(tier);
@@ -919,6 +920,8 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 .energyOutput(EnergyOutput.builder("EU", rate, 1).faces(MachineFace.TOP).build())
                 .gui(KINETIC_GUI)
                 .progress(8, 64)
+                .toggle("gt6ktfruaddon.fuel_battery.stopped", 44, 64, false)
+                .toggle("gt6ktfruaddon.fuel_battery.electrolyte", 64, 64, false)
                 .item(26, 8, BehaviorMachine.SlotRole.INPUT)
                 .item(48, 8, BehaviorMachine.SlotRole.INPUT)
                 .fluid(8000, 80, 8, BehaviorMachine.SlotRole.INPUT)

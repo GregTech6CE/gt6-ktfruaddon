@@ -4,10 +4,14 @@ import java.util.List;
 
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
+import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -17,6 +21,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * Gas battery. Poles stay in the slots. The electrolyte tank has to be full and is not drained.
  * Nickel with CaTiO3 requires yttrium-zirconium oxide. Carbon with platinum requires sulfuric acid.
  * A zero-amount fluid cannot be stored on a recipe row, so the electrolyte is this check instead.
+ * Toggle 0 stops processing. Toggle 1 opens the electrolyte tank and closes the fuel tanks.
  */
 public final class Gt6KtfruFuelBattery implements MachineBehavior {
     private static final int FUEL_A = 0;
@@ -24,6 +29,9 @@ public final class Gt6KtfruFuelBattery implements MachineBehavior {
     private static final int OUT_A = 2;
     private static final int OUT_B = 3;
     private static final int ELECTROLYTE = 4;
+    /** Same order as the toggles on the behavior machine. */
+    private static final int STOPPED = 0;
+    private static final int EDITING = 1;
     /** Largest {@code |EUt| * duration} on the source rows, 384 * 13. */
     private static final long RECIPE_HEADROOM = 4992;
 
@@ -39,16 +47,32 @@ public final class Gt6KtfruFuelBattery implements MachineBehavior {
 
     @Override
     public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return stack.getDescriptionId().contains("ktfru.item.battery.pole");
+        return context.item(slot).isEmpty() && stack.getDescriptionId().contains("ktfru.item.battery.pole");
     }
 
     @Override
     public boolean canFill(MachineBehaviorContext context, int tank, FluidStack stack) {
-        return tank == FUEL_A || tank == FUEL_B || tank == ELECTROLYTE;
+        if (stack == null || stack.isEmpty()) return false;
+        if (context.toggle(EDITING)) return tank == ELECTROLYTE;
+        return tank == FUEL_A || tank == FUEL_B;
+    }
+
+    @Override
+    public boolean onUse(MachineBehaviorContext context, Player player, InteractionHand hand) {
+        if (!AddonTools.isMagnifyingGlass(player.getItemInHand(hand))) return false;
+        player.displayClientMessage(Component.translatable("gt6ktfruaddon.fuel_battery.composition",
+                name(context.fluid(ELECTROLYTE)), name(context.item(0)), name(context.item(1))), false);
+        player.displayClientMessage(Component.translatable("gt6ktfruaddon.fuel_battery.input",
+                name(context.fluid(FUEL_A)), name(context.fluid(FUEL_B))), false);
+        player.displayClientMessage(Component.translatable("gt6ktfruaddon.fuel_battery.output",
+                name(context.fluid(OUT_A)), name(context.fluid(OUT_B))), false);
+        return true;
     }
 
     private static boolean ready(MachineBehaviorContext context, long rate) {
-        return context.energy() < rate * 2
+        return !context.toggle(STOPPED)
+                && !context.toggle(EDITING)
+                && context.energy() < rate * 2
                 && !context.item(0).isEmpty()
                 && !context.item(1).isEmpty()
                 && context.fluid(ELECTROLYTE).getAmount() >= electrolyte(context)
@@ -79,6 +103,7 @@ public final class Gt6KtfruFuelBattery implements MachineBehavior {
         if (!electrolyteMatches(context)) return false;
         AddonRecipes.Line line = find(context);
         if (line == null || !outputsFit(context, line)) return false;
+        alignFuels(context, line);
         boolean crafted = false;
         for (int pass = 0; pass < 16 && context.energy() < rate * 2; pass++) {
             if (!outputsFit(context, line) || !consumeFluids(context, line.fluidInputs())) break;
@@ -88,6 +113,32 @@ public final class Gt6KtfruFuelBattery implements MachineBehavior {
             crafted = true;
         }
         return crafted;
+    }
+
+    /** Put the recipe's first fuel into tank 0 when it is sitting in tank 1. */
+    private static void alignFuels(MachineBehaviorContext context, AddonRecipes.Line line) {
+        FluidStack[] inputs = line.fluidInputs();
+        if (inputs == null || inputs.length == 0 || inputs[0] == null || inputs[0].isEmpty()) return;
+        FluidStack first = context.fluid(FUEL_A);
+        if (!first.isEmpty() && FluidStack.isSameFluidSameComponents(first, inputs[0])) return;
+        FluidStack second = context.fluid(FUEL_B);
+        if (second.isEmpty() || !FluidStack.isSameFluidSameComponents(second, inputs[0])) return;
+        int firstAmount = first.getAmount();
+        int secondAmount = second.getAmount();
+        if (firstAmount > 0) context.drain(FUEL_A, firstAmount, false);
+        context.drain(FUEL_B, secondAmount, false);
+        context.fill(FUEL_A, second, false);
+        if (firstAmount > 0) context.fill(FUEL_B, first, false);
+    }
+
+    private static Component name(FluidStack stack) {
+        return stack == null || stack.isEmpty()
+                ? Component.translatable("gt6ktfruaddon.fuel_battery.empty") : stack.getHoverName();
+    }
+
+    private static Component name(ItemStack stack) {
+        return stack == null || stack.isEmpty()
+                ? Component.translatable("gt6ktfruaddon.fuel_battery.empty") : stack.getHoverName();
     }
 
     private static AddonRecipes.Line find(MachineBehaviorContext context) {
