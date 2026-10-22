@@ -1,21 +1,99 @@
 {
+  "loader": "neoforge:composite",
+  "children": {
+    "layer0": {
+      "parent": "minecraft:block/block",
+      "textures": {
+        "down": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material",
+        "up": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material",
+        "north": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material",
+        "south": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material",
+        "west": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material",
+        "east": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material"
+      },
+      "elements": [
+        {
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            16,
+            16,
+            16
+          ],
+          "faces": {
+            "down": {
+              "texture": "#down",
+              "cullface": "down",
+              "tintindex": 0
+            },
+            "up": {
+              "texture": "#up",
+              "cullface": "up",
+              "tintindex": 0
+            },
+            "north": {
+              "texture": "#north",
+              "cullface": "north",
+              "tintindex": 0
+            },
+            "south": {
+              "texture": "#south",
+              "cullface": "south",
+              "tintindex": 0
+            },
+            "west": {
+              "texture": "#west",
+              "cullface": "west",
+              "tintindex": 0
+            },
+            "east": {
+              "texture": "#east",
+              "cullface": "east",
+              "tintindex": 0
+            }
+          }
+        }
+      ],
+      "render_type": "minecraft:solid"
+    },
+    "layer1": {
+      "parent": "minecraft:block/block",
+      "textures": {
+        "north": "gt6ktfruaddon:block/machines/tankgascompressedinputer/front",
+        "south": "gt6ktfruaddon:block/machines/tankgascompressedinputer/back"
+      },
+      "elements": [
+        {
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            16,
+            16,
+            16
+          ],
+          "faces": {
+            "north": {
+              "texture": "#north",
+              "cullface": "north"
+            },
+            "south": {
+              "texture": "#south",
+              "cullface": "south"
+            }
+          }
+        }
+      ],
+      "render_type": "minecraft:cutout"
+    }
+  },
   "parent": "minecraft:block/block",
   "textures": {
-    "particle": "minecraft:block/white_concrete",
-    "all": "minecraft:block/white_concrete"
-  },
-  "elements": [
-    {
-      "from": [0, 0, 0],
-      "to": [16, 16, 16],
-      "faces": {
-        "down": { "texture": "#all", "cullface": "down", "tintindex": 0 },
-        "up": { "texture": "#all", "cullface": "up", "tintindex": 0 },
-        "north": { "texture": "#all", "cullface": "north", "tintindex": 0 },
-        "south": { "texture": "#all", "cullface": "south", "tintindex": 0 },
-        "west": { "texture": "#all", "cullface": "west", "tintindex": 0 },
-        "east": { "texture": "#all", "cullface": "east", "tintindex": 0 }
-      }
-    }
-  ]
+    "particle": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material"
+  }
 }

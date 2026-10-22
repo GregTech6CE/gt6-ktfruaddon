@@ -1,10 +1,13 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.List;
+import java.util.Set;
 
 import com.gregtech.gregtech.api.addon.AddonMaterialContributor;
 import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.MaterialFormRequest;
+import com.gregtech.gregtech.api.addon.PrefixCondition;
+import com.gregtech.gregtech.api.addon.PrefixDeclaration;
 
 /**
  * Chemical materials from kTFRUAddon materialPreInit at 6404ab69. Bittern is the
@@ -177,4 +180,39 @@ public final class Gt6KtfruMaterials implements AddonMaterialContributor {
     }
 
     @Override public List<MaterialFormRequest> forms() { return List.of(); }
+
+    /**
+     * prefixList at 6404ab69. Flywheel, blades and the six turbine prefixes use the
+     * tool-and-smithable filter. Turbine molten, metal-or-alloy and the three named
+     * exclusions are not prefix conditions, so those prefixes share the flywheel filter.
+     * Purity dusts list the refining families; an empty list cannot carry only negative
+     * conditions.
+     */
+    @Override public List<PrefixDeclaration> prefixes() {
+        Set<PrefixCondition> tool = Set.of(PrefixCondition.HAS_TOOL_STATS, PrefixCondition.SMITHABLE);
+        List<String> purity = List.of(
+                "Lithium", "Iron", "Nickel", "Cobalt", "Copper", "Zinc", "Silver", "Tin", "Lead", "Bismuth",
+                "Aluminium", "Titanium", "Zirconium", "Niobium", "Tantalum", "Chromium",
+                "Gold", "Platinum", "Palladium", "Rhodium", "Iridium", "OsmiumElemental", "intellite",
+                "Tungsten", "Molybdenum",
+                "Carbon", "Silicon", "Germanium", "Gallium", "Indium",
+                "Deuterium", "Tritium", "Uranium", "Thorium", "Naquadria");
+        return List.of(
+                prefix("flywheel", "", " Flywheel", 8, "item/material_icons/flywheel", List.of(), tool),
+                prefix("bladeLargeTurbine", "Large ", " Turbine Blade", 2, "item/material_icons/blade_large_turbine", List.of(), tool),
+                prefix("turbineLargeGas", "Large ", " Gas Turbine", 72, "item/material_icons/turbine_large", List.of(), tool),
+                prefix("turbineLargeGasChecked", "Checked Large ", " Gas Turbine", 72, "item/material_icons/turbine_large", List.of(), tool),
+                prefix("turbineLargeGasDamaged", "Used Large ", " Gas Turbine", 72, "item/material_icons/turbine_large", List.of(), tool),
+                prefix("turbineLargeSteam", "Large ", " Steam Turbine", 48, "item/material_icons/turbine_large", List.of(), tool),
+                prefix("turbineLargeSteamChecked", "Checked Large ", " Steam Turbine", 48, "item/material_icons/turbine_large", List.of(), tool),
+                prefix("turbineLargeSteamDamaged", "Used Large ", " Steam Turbine", 48, "item/material_icons/turbine_large", List.of(), tool),
+                prefix("dustCommercialPure", "Commercial Pure ", " Dust", 1, "item/material_icons/dust_commercial_pure", purity, Set.of()),
+                prefix("dustAnalyticalPure", "Analytical Pure ", " Dust", 1, "item/material_icons/dust_analytical_pure", purity, Set.of()),
+                prefix("dustAbsolutelyPure", "Absolutely Pure ", " Dust", 1, "item/material_icons/dust_absolutely_pure", purity, Set.of()));
+    }
+
+    private static PrefixDeclaration prefix(String name, String displayPrefix, String displaySuffix, long units,
+            String texture, List<String> materials, Set<PrefixCondition> conditions) {
+        return new PrefixDeclaration(name, displayPrefix, displaySuffix, units, texture, materials, conditions);
+    }
 }

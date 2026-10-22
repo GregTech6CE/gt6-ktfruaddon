@@ -177,11 +177,11 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         maps.add(map(SMALL_DISTILL, "Small Distillation Tower", "smalldistillationtower", 1, 3, 0, 1, 6, 0, 1));
         maps.add(map(DISTILL, "Distillation Tower", "distillationtower", 1, 3, 0, 1, 9, 0, 1));
         maps.add(map(ORE_PROCESS, "Ore Process System", "oreprocesssystem", 3, 9, 1, 3, 3, 0, 1));
-        maps.add(map(FUEL_BATTERY, "Fuel Battery", "gascompressor", 2, 0, 2, 3, 2, 2, 4));
-        maps.add(map(MASK_ALIGNER, "Mask Aligner", "gascompressor", 3, 3, 1, 3, 0, 0, 1));
-        maps.add(map(CNC, "CNC", "gascompressor", 4, 3, 1, 3, 0, 1, 1));
-        maps.add(map(FUEL_DEBURN, "Fuel Deburner", "gascompressor", 3, 3, 0, 6, 6, 0, 1));
-        maps.add(map(FUSION_TOKAMAK, "Fusion Tokamak", "gascompressor", 3, 3, 0, 6, 6, 1, 1));
+        maps.add(map(FUEL_BATTERY, "Fuel Battery", "fuelbattery", 2, 0, 2, 3, 2, 2, 4));
+        maps.add(map(MASK_ALIGNER, "Mask Aligner", "maskaligner", 3, 3, 1, 3, 0, 0, 1));
+        maps.add(map(CNC, "CNC", "cnc", 4, 3, 1, 3, 0, 1, 1));
+        maps.add(map(FUEL_DEBURN, "Fuel Deburner", "fueldeburner", 3, 3, 0, 6, 6, 0, 1));
+        maps.add(map(FUSION_TOKAMAK, "Fusion Tokamak", "fusiontokamak", 3, 3, 0, 6, 6, 1, 1));
         Gt6KtfruResearchMachines.addMaps(maps);
         Gt6KtfruLateMachines.addMaps(maps);
         return List.copyOf(maps);

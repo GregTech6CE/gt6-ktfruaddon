@@ -7,6 +7,7 @@ through AddonItems and AddonFluids. Prints the skip ledger used by card 06.
 from __future__ import annotations
 
 import ast
+import json
 import re
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -95,6 +96,21 @@ CORE_PREFIX_FLAGS = {
     "bolt": ("PARTS",), "screw": ("PARTS",), "spring": ("PARTS",), "springSmall": ("PARTS",),
     "itemCasing": ("PARTS",), "round": ("PARTS",),
 }
+# prefixList field to the registry name passed to PrefixDeclaration.
+PREFIX_FIELDS = {
+    "flywheel": "flywheel",
+    "largeTurbineBlade": "bladeLargeTurbine",
+    "turbineLargeGas": "turbineLargeGas",
+    "turbineLargeGasChecked": "turbineLargeGasChecked",
+    "turbineLargeGasDamaged": "turbineLargeGasDamaged",
+    "turbineLargeSteam": "turbineLargeSteam",
+    "turbineLargeSteamChecked": "turbineLargeSteamChecked",
+    "turbineLargeSteamDamaged": "turbineLargeSteamDamaged",
+    "CommercialPureDust": "dustCommercialPure",
+    "AnalyticalPureDust": "dustAnalyticalPure",
+    "AbsolutelyPureDust": "dustAbsolutelyPure",
+}
+OWN_PREFIXES = set(PREFIX_FIELDS.values())
 METAL_PREFIXES = {
     "ingot", "ingotDouble", "ingotTriple", "ingotQuadruple", "ingotQuintuple", "ingotHot",
     "nugget", "plate", "plateTiny", "plateDouble", "plateTriple", "plateQuadruple",
@@ -211,9 +227,9 @@ def split_args(text: str) -> list[str]:
                     break
                 i += 1
             continue
-        if char == "(":
+        if char in "([{":
             depth += 1
-        elif char == ")":
+        elif char in ")]}":
             depth -= 1
         elif char == "," and depth == 0:
             args.append(text[start:i].strip())
@@ -270,6 +286,16 @@ def eval_int(expr: str) -> int:
     if value > 2_000_000_000:
         raise Skip(f"数量过大 {expr}")
     return value
+
+
+def eval_item_count(expr: str) -> tuple[int, bool]:
+    """A source count of zero is a catalyst. The addon stack stays at one and is kept."""
+    try:
+        return eval_int(expr), False
+    except Skip as skip:
+        if skip.reason == "催化剂数量 0":
+            return 1, True
+        raise
 
 
 def units_mb(raw: int, per_unit: int, round_up: bool) -> int:
@@ -414,6 +440,7 @@ class World:
         self.fluids, self.by_registry = load_fluids()
         self.item_prefixes, self.block_prefixes = load_prefixes()
         self.addon = load_addon()
+        self.own_items = json.loads((ROOT / "tools" / "own_items.json").read_text(encoding="utf-8"))
 
     def material_name(self, expr: str) -> str:
         expr = expr.strip().replace("CS.", "")
@@ -437,13 +464,15 @@ class World:
             return self.symbols[symbol]
         listed = re.fullmatch(r"matList\.(\w+)\.(?:mat|get\(\))", expr)
         if listed:
-            name = listed.group(1)
+            name = {"Ij": "intellite"}.get(listed.group(1), listed.group(1))
             if name not in self.addon:
                 raise Skip(f"未移植材料 {name}")
             return name
         raise Skip(f"材料 {expr}")
 
     def form_allowed(self, prefix: str, material: str) -> None:
+        if prefix in OWN_PREFIXES:
+            return
         if prefix in self.block_prefixes or prefix not in self.item_prefixes:
             raise Skip(f"前缀没有物品 {prefix}")
         if material not in self.addon:
@@ -543,18 +572,43 @@ class World:
         kind, per_unit = self.fluid_state(material, method)
         return fluid_field(material, kind, self.fluids, self.by_registry), units_mb(raw, per_unit, round_up_flag)
 
-    def parse_item(self, expr: str):
+    def parse_item(self, expr: str, output: bool = False):
         expr = expr.strip().replace("CS.", "")
         if expr in ("ZL_IS", "NI"):
             return None
-        if expr.startswith("ST.tag(") or expr.startswith("tag("):
-            raise Skip("编程电路")
+        tagged = re.fullmatch(r"(?:ST\.)?tag\(([^)]*)\)", expr)
+        if tagged or expr.startswith("ST.tag(") or expr.startswith("tag("):
+            if not tagged:
+                raise Skip("编程电路")
+            index = eval_int(tagged.group(1))
+            if index < 0 or index > 24:
+                raise Skip(f"编程电路 {index}")
+            return ("circuit", index, 1), False
         if expr.startswith("ItemList.") or ".ItemList." in expr:
-            name = re.search(r"ItemList\.(\w+)", expr)
-            raise Skip("附属物品 " + (name.group(1) if name else expr))
+            found = re.search(r"ItemList\.\s*(\w+)", expr)
+            name = found.group(1) if found else expr
+            getter = re.search(r"\.get\(([^)]*)\)\s*$", expr)
+            path = self.own_items.get(name)
+            if getter is None or not path:
+                raise Skip("附属物品 " + name)
+            count, kept = self.item_amount(getter.group(1), output)
+            return ("own", path, count), kept
         if re.match(r"IL\.", expr) or ".IL." in expr:
             name = re.search(r"IL\.(\w+)", expr)
             raise Skip("GT元件 " + (name.group(1) if name else expr))
+        own_prefix = re.fullmatch(r"prefixList\.(\w+)\.mat\((.*)\)", expr)
+        if own_prefix:
+            field, inner = own_prefix.groups()
+            registry = PREFIX_FIELDS.get(field)
+            if registry is None:
+                raise Skip("自有前缀 " + field)
+            parts = split_args(inner)
+            if len(parts) < 2:
+                raise Skip(f"前缀参数 {expr}")
+            if re.search(r"\bmaterial\b", parts[0]):
+                raise Skip("纯度循环")
+            count, kept = self.item_amount(parts[1], output)
+            return self.item_form(registry, parts[0], count), kept
         if "prefixList." in expr:
             raise Skip("自有前缀")
         if "getItem(" in expr or "GTTileEntityRegistry" in expr:
@@ -573,28 +627,44 @@ class World:
             if parts and parts[0].strip() in ("MD.MC", "MD.MC"):
                 name = parts[1].strip().strip('"')
                 meta = parts[3] if len(parts) > 3 else None
-                return self.mc_named(name, eval_int(parts[2]), meta)
+                count, kept = self.item_amount(parts[2], output)
+                return self.mc_named(name, count, meta), kept
             if len(parts) >= 2:
                 meta = parts[2] if len(parts) > 2 else None
-                return self.vanilla(parts[0], eval_int(parts[1]), meta)
+                count, kept = self.item_amount(parts[1], output)
+                return self.vanilla(parts[0], count, meta), kept
         prefixed = re.fullmatch(r"OP\.(\w+)\.mat\((.*)\)", expr)
         if prefixed:
             prefix, inner = prefixed.groups()
             parts = split_args(inner)
             if len(parts) < 2:
                 raise Skip(f"前缀参数 {expr}")
-            return self.item_form(prefix, parts[0], eval_int(parts[1]))
+            count, kept = self.item_amount(parts[1], output)
+            return self.item_form(prefix, parts[0], count), kept
         dusted = re.fullmatch(r"matList\.(\w+)\.get(Dust|DustTiny|DustSmall|DustDiv72)\((.*)\)", expr)
         if dusted:
-            material, kind, count = dusted.groups()
+            material, kind, count_expr = dusted.groups()
             prefix = {"Dust": "dust", "DustTiny": "dustTiny", "DustSmall": "dustSmall", "DustDiv72": "dustDiv72"}[kind]
-            return self.item_form(prefix, f"matList.{material}.mat", eval_int(count))
+            count, kept = self.item_amount(count_expr, output)
+            return self.item_form(prefix, f"matList.{material}.mat", count), kept
         om = re.fullmatch(r"OM\.dust\((.*)\)", expr)
         if om:
             parts = split_args(om.group(1))
-            prefix, count = dust_from_raw(eval_raw(parts[1]))
-            return self.item_form(prefix, parts[0], count)
+            try:
+                raw = eval_raw(parts[1])
+            except Skip as skip:
+                if skip.reason != "催化剂数量 0" or output:
+                    raise
+                raise Skip("催化剂数量 0")
+            prefix, count = dust_from_raw(raw)
+            return self.item_form(prefix, parts[0], count), False
         raise Skip(f"物品 {expr[:120]}")
+
+    def item_amount(self, expr: str, output: bool) -> tuple[int, bool]:
+        count, kept = eval_item_count(expr)
+        if output and kept:
+            raise Skip("催化剂数量 0")
+        return count, kept
 
     def parse_fluid(self, expr: str):
         expr = expr.strip().replace("CS.", "")
@@ -646,10 +716,25 @@ class World:
             return ("fluid", field, mb)
         raise Skip(f"流体 {expr[:120]}")
 
+    def parse_items(self, exprs: list[str], output: bool = False):
+        stacks = []
+        kept = []
+        for expr in exprs:
+            parsed = self.parse_item(expr, output)
+            if parsed is None:
+                continue
+            stack, keep = parsed
+            stacks.append(stack)
+            kept.append(keep)
+        return stacks, kept
+
     def parse_many(self, kind: str, exprs: list[str]):
+        if kind == "items":
+            stacks, _kept = self.parse_items(exprs)
+            return stacks
         values = []
         for expr in exprs:
-            parsed = self.parse_item(expr) if kind == "items" else self.parse_fluid(expr)
+            parsed = self.parse_fluid(expr)
             if parsed is not None:
                 values.append(parsed)
         return values
@@ -677,41 +762,82 @@ def classify_arg(expr: str):
     return ("items", [bare])
 
 
-def optimize(duration, items_in, items_out, fluids_in, fluids_out):
+def item_count(stack) -> int:
+    return stack[3] if stack[0] == "item" else stack[2]
+
+
+def set_item_count(stack, value: int) -> None:
+    if stack[0] == "item":
+        stack[3] = value
+    else:
+        stack[2] = value
+
+
+def same_item(left, right) -> bool:
+    if left[0] != right[0]:
+        return False
+    if left[0] == "item":
+        return left[1:3] == right[1:3]
+    return left[1] == right[1]
+
+
+def optimize(duration, items_in, kept_in, items_out, kept_out, fluids_in, fluids_out):
     ins = [list(item) for item in items_in]
     outs = [list(item) for item in items_out]
+    kept_in = list(kept_in)
+    kept_out = list(kept_out)
     fins = [list(fluid) for fluid in fluids_in]
     fouts = [list(fluid) for fluid in fluids_out]
     limit = max(1, duration // 16)
-    for incoming in ins:
-        for outgoing in outs:
-            if incoming[1:3] == outgoing[1:3] and incoming[3] and outgoing[3]:
-                if incoming[3] >= outgoing[3]:
-                    incoming[3] -= outgoing[3]
-                    outgoing[3] = 0
-                else:
-                    outgoing[3] -= incoming[3]
-                    incoming[3] = 0
-    counts = [item[3] for item in ins + outs if item[3]] + [fluid[2] for fluid in fins + fouts if fluid[2]]
+    for index, incoming in enumerate(ins):
+        if kept_in[index]:
+            continue
+        for other, outgoing in enumerate(outs):
+            if kept_out[other] or not same_item(incoming, outgoing):
+                continue
+            left = item_count(incoming)
+            right = item_count(outgoing)
+            if not left or not right:
+                continue
+            if left >= right:
+                set_item_count(incoming, left - right)
+                set_item_count(outgoing, 0)
+            else:
+                set_item_count(outgoing, right - left)
+                set_item_count(incoming, 0)
+    counts = [item_count(item) for item, kept in zip(ins + outs, kept_in + kept_out) if item_count(item) and not kept]
+    counts += [fluid[2] for fluid in fins + fouts if fluid[2]]
     for count in counts:
         limit = min(limit, count)
-    for divisor in range(int(limit), 1, -1):
-        if all(count % divisor == 0 for count in counts):
-            duration //= divisor
-            for item in ins + outs:
-                item[3] //= divisor
-            for fluid in fins + fouts:
-                fluid[2] //= divisor
-            break
-    ins = [tuple(item) for item in ins if item[3] > 0]
-    outs = [tuple(item) for item in outs if item[3] > 0]
+    if counts:
+        for divisor in range(int(limit), 1, -1):
+            if all(count % divisor == 0 for count in counts):
+                duration //= divisor
+                for item, kept in zip(ins + outs, kept_in + kept_out):
+                    if not kept:
+                        set_item_count(item, item_count(item) // divisor)
+                for fluid in fins + fouts:
+                    fluid[2] //= divisor
+                break
+    kept_ins = []
+    kept_outs = []
+    next_in = []
+    next_out = []
+    for item, kept in zip(ins, kept_in):
+        if item_count(item) > 0:
+            next_in.append(tuple(item))
+            kept_ins.append(kept)
+    for item, kept in zip(outs, kept_out):
+        if item_count(item) > 0:
+            next_out.append(tuple(item))
+            kept_outs.append(kept)
     fins = [tuple(fluid) for fluid in fins if fluid[2] > 0]
     fouts = [tuple(fluid) for fluid in fouts if fluid[2] > 0]
-    if not ins and not fins:
+    if not next_in and not fins:
         raise Skip("优化后没有输入")
-    if not outs and not fouts:
+    if not next_out and not fouts:
         raise Skip("优化后没有输出")
-    return duration, ins, outs, fins, fouts
+    return duration, next_in, kept_ins, next_out, kept_outs, fins, fouts
 
 
 def reserved(text: str) -> str | None:
@@ -740,6 +866,81 @@ def c_tier(text: str) -> bool:
     ))
 
 
+def parse_chance_list(token: str) -> list[int]:
+    compact = re.sub(r"\s+", "", token)
+    match = re.fullmatch(r"(?:new)?long\[\]\{([0-9,]*)\}", compact)
+    if not match:
+        raise Skip("概率输出")
+    body = match.group(1)
+    values = [int(part) for part in body.split(",") if part] if body else []
+    if any(value < 0 or value > 10000 for value in values):
+        raise Skip("概率输出")
+    return values
+
+
+def fit_chances(raw: list[int] | None, outputs: int):
+    """gregapi uses 0 and 10000 for a certain output. The addon chance array rejects 0."""
+    if raw is None:
+        return None
+    if len(raw) > outputs:
+        raise Skip("概率数组长于输出")
+    fitted = []
+    for index in range(outputs):
+        value = raw[index] if index < len(raw) else 10000
+        if value <= 0 or value >= 10000:
+            value = 10000
+        fitted.append(value)
+    if all(value == 10000 for value in fitted):
+        return None
+    return fitted
+
+
+def purity_row(world: World, line: int, material: str, prefix_in: str, prefix_out: str, reagent: str, eu: int, duration: int):
+    fluid_in = world.parse_fluid(reagent)
+    fluid_out = world.parse_fluid("FL.Water.make(1000)")
+    return {
+        "file": "PurityRefining.java",
+        "line": line,
+        "map": "HeatMixer",
+        "eu": eu,
+        "duration": duration,
+        "items_in": [world.item_form(prefix_in, material, 4)],
+        "items_out": [world.item_form(prefix_out, material, 3)],
+        "fluids_in": [fluid_in],
+        "fluids_out": [fluid_out],
+        "chances": None,
+        "kept": None,
+        "d_tier": False,
+    }
+
+
+def purity_rows(world: World, file_name: str, line: int, raw: str):
+    """PurityRefining keeps the material in a variable. Expand the two HeatMixer sites."""
+    if file_name != "PurityRefining.java":
+        return None
+    compact = re.sub(r"\s+", "", raw)
+    if "OP.dust.mat(material,4)" in compact and "CommercialPureDust.mat(material,3)" in compact:
+        return [
+            purity_row(world, line, material, "dust", "dustCommercialPure", "MT.H.gas(U4,T)", 1024, 1200)
+            for material in ("MT.W", "MT.Mo")
+        ]
+    if "CommercialPureDust.mat(material,4)" not in compact or "AnalyticalPureDust.mat(material,3)" not in compact:
+        return None
+    groups = (
+        (("MT.Al", "MT.Ti", "MT.Zr", "MT.Nb", "MT.Ta", "MT.Cr"), "MT.Cl.gas(U4,T)", 1024, 1200),
+        (("MT.Au", "MT.Pt", "MT.Pd", "MT.Rh", "MT.Ir", "MT.Os", "matList.Ij.mat"), "MT.H.gas(U4,T)", 2048, 1600),
+        (("MT.W", "MT.Mo"), "MT.Ar.gas(U4,T)", 4096, 2400),
+        (("MT.C", "MT.Si", "MT.Ge", "MT.Ga", "MT.In"), "MT.Ar.gas(U4,T)", 2048, 1600),
+    )
+    rows = []
+    for materials, reagent, eu, duration in groups:
+        for material in materials:
+            rows.append(purity_row(
+                world, line, material, "dustCommercialPure", "dustAnalyticalPure", reagent, eu, duration
+            ))
+    return rows
+
+
 def parse_call(world: World, file_name: str, line: int, map_name: str, arity: str, args: list[str], raw: str):
     if map_name == "LightMixer":
         raise Skip("保持卡 02 的光混合行")
@@ -762,14 +963,14 @@ def parse_call(world: World, file_name: str, line: int, map_name: str, arity: st
     eu = classified[index][1]
     duration = classified[index + 1][1]
     rest = classified[index + 2:]
+    raw_chances = None
     if rest and rest[0][0] == "num":
-        chance = rest[0][1]
-        if chance not in (0, 10000):
-            raise Skip("概率输出")
+        raw_chances = [rest[0][1]]
         rest = rest[1:]
     if rest and rest[0][0] == "chances":
-        if not re.fullmatch(r"new long\[\]\{\s*(?:0|10000)\s*(?:,\s*(?:0|10000)\s*)*\}", rest[0][1].replace(" ", "")):
+        if raw_chances is not None:
             raise Skip("概率输出")
+        raw_chances = parse_chance_list(rest[0][1])
         rest = rest[1:]
     needed = {"0": 0, "1": 1, "2": 2, "X": 1}[arity]
     if arity == "X":
@@ -784,7 +985,7 @@ def parse_call(world: World, file_name: str, line: int, map_name: str, arity: st
                 raise Skip("物品参数")
             item_exprs.extend(rest[0][1])
             rest = rest[1:]
-    items_in = world.parse_many("items", item_exprs)
+    items_in, kept_in = world.parse_items(item_exprs)
     if rest and rest[0][0] == "items":
         fluids_in, fluids_out = [], []
         item_out_exprs = []
@@ -815,11 +1016,13 @@ def parse_call(world: World, file_name: str, line: int, map_name: str, arity: st
                     raise Skip("流体输出")
                 fluids_out.extend(world.parse_many("fluids", value))
             item_out_exprs = []
-    items_out = world.parse_many("items", item_out_exprs)
+    items_out, kept_out = world.parse_items(item_out_exprs, output=True)
     if optimize_flag:
-        duration, items_in, items_out, fluids_in, fluids_out = optimize(
-            duration, items_in, items_out, fluids_in, fluids_out
+        duration, items_in, kept_in, items_out, kept_out, fluids_in, fluids_out = optimize(
+            duration, items_in, kept_in, items_out, kept_out, fluids_in, fluids_out
         )
+    chances = fit_chances(raw_chances, len(items_out))
+    kept = [index for index, flag in enumerate(kept_in) if flag] or None
     slots = SLOTS[map_name]
     if len(items_in) > slots[0] or len(fluids_in) > slots[3]:
         raise Skip("输入超过配方图槽位")
@@ -830,9 +1033,8 @@ def parse_call(world: World, file_name: str, line: int, map_name: str, arity: st
     if not items_out and not fluids_out:
         raise Skip("没有输出")
     for stack in items_in + items_out:
-        if stack[0] == "item" and stack[3] > 99:
-            raise Skip("堆叠超过 99")
-        if stack[0] == "vanilla" and stack[2] > 99:
+        amount = stack[3] if stack[0] == "item" else stack[2]
+        if amount > 99:
             raise Skip("堆叠超过 99")
     return {
         "file": file_name,
@@ -844,6 +1046,8 @@ def parse_call(world: World, file_name: str, line: int, map_name: str, arity: st
         "items_out": items_out,
         "fluids_in": fluids_in,
         "fluids_out": fluids_out,
+        "chances": chances,
+        "kept": kept,
         "d_tier": "Coolant_IC2" in raw,
     }
 
@@ -881,9 +1085,19 @@ def java_stack(stack) -> str:
         return f'form("{stack[1]}", "{stack[2]}", {stack[3]})'
     if stack[0] == "vanilla":
         return f"vanilla({stack[1]}, {stack[2]})"
+    if stack[0] == "own":
+        return f'own("{stack[1]}", {stack[2]})'
+    if stack[0] == "circuit":
+        return f"circuit({stack[1]}, {stack[2]})"
     if stack[0] == "fluid":
         return f'field("{stack[1]}", {stack[2]})'
     raise AssertionError(stack)
+
+
+def java_ints(values) -> str:
+    if not values:
+        return "null"
+    return "new int[] {" + ", ".join(str(value) for value in values) + "}"
 
 
 def java_array(kind: str, stacks) -> str:
@@ -909,12 +1123,18 @@ def emit(rows: list[dict]) -> str:
         for row in group:
             note = " D-tier Coolant_IC2." if row["d_tier"] else ""
             body.append(f"        // {row['file']}:{row['line']}{note}")
+            tail = ""
+            if row["chances"] or row["kept"]:
+                tail = ",\n                {chances},\n                {kept}".format(
+                    chances=java_ints(row["chances"]),
+                    kept=java_ints(row["kept"]),
+                )
             body.append(
                 "        add(\"{file}:{line}\", Gt6KtfruMachines.{field}, {eu}L, {duration}L,\n"
                 "                {items_in},\n"
                 "                {items_out},\n"
                 "                {fluids_in},\n"
-                "                {fluids_out});".format(
+                "                {fluids_out}{tail});".format(
                     file=row["file"],
                     line=row["line"],
                     field=MAP_FIELD[map_name],
@@ -924,6 +1144,7 @@ def emit(rows: list[dict]) -> str:
                     items_out=java_array("item", row["items_out"]),
                     fluids_in=java_array("fluid", row["fluids_in"]),
                     fluids_out=java_array("fluid", row["fluids_out"]),
+                    tail=tail,
                 )
             )
         body.append("    }")
@@ -970,11 +1191,19 @@ public final class Gt6KtfruSourceRecipes {{
 
     private static void add(String where, String map, long euPerTick, long duration,
             ItemStack[] itemsIn, ItemStack[] itemsOut, FluidStack[] fluidsIn, FluidStack[] fluidsOut) {{
+        add(where, map, euPerTick, duration, itemsIn, itemsOut, fluidsIn, fluidsOut, null, null);
+    }}
+
+    private static void add(String where, String map, long euPerTick, long duration,
+            ItemStack[] itemsIn, ItemStack[] itemsOut, FluidStack[] fluidsIn, FluidStack[] fluidsOut,
+            int[] chances, int[] kept) {{
         if (broken(itemsIn) || broken(fluidsIn) || broken(itemsOut) || broken(fluidsOut)) {{
             return;
         }}
-        if (AddonRecipes.map(map).add(new AddonRecipes.Line(
-                itemsIn, itemsOut, fluidsIn, fluidsOut, duration, euPerTick, 0)) == null) {{
+        AddonRecipes.Line line = chances == null && kept == null
+                ? new AddonRecipes.Line(itemsIn, itemsOut, fluidsIn, fluidsOut, duration, euPerTick, 0)
+                : new AddonRecipes.Line(itemsIn, itemsOut, fluidsIn, fluidsOut, duration, euPerTick, 0, chances, kept);
+        if (AddonRecipes.map(map).add(line) == null) {{
             PROBLEMS.add(where + " was rejected");
         }}
     }}
@@ -1006,6 +1235,24 @@ public final class Gt6KtfruSourceRecipes {{
         return new ItemStack(item, count);
     }}
 
+    private static ItemStack own(String path, int count) {{
+        ItemStack stack = Gt6KtfruItems.stack(path, count);
+        if (stack == null || stack.isEmpty()) {{
+            PROBLEMS.add("item " + path);
+            return ItemStack.EMPTY;
+        }}
+        return stack;
+    }}
+
+    private static ItemStack circuit(int index, int count) {{
+        ItemStack stack = AddonItems.selectorTag(index);
+        if (stack == null || stack.isEmpty()) {{
+            PROBLEMS.add("selector " + index);
+            return ItemStack.EMPTY;
+        }}
+        return stack.copyWithCount(count);
+    }}
+
     private static FluidStack field(String name, int amount) {{
         FluidStack stack = AddonFluids.still(name, amount);
         if (stack == null || stack.isEmpty()) {{
@@ -1024,6 +1271,10 @@ def recipe_text(row: dict) -> str:
             return f"{stack[1]} {stack[2]}mB"
         if stack[0] == "item":
             return f"{stack[3]} {stack[1]} {stack[2]}"
+        if stack[0] == "own":
+            return f"{stack[2]} {stack[1]}"
+        if stack[0] == "circuit":
+            return f"circuit {stack[1]}"
         return f"{stack[2]} {stack[1]}"
 
     left = ", ".join(show(stack) for stack in row["items_in"] + row["fluids_in"])
@@ -1046,8 +1297,13 @@ def main():
             close_at = matching_paren(text, open_at)
             raw = text[match.start():close_at + 1]
             line = line_of(text, match.start())
+            args = split_args(text[open_at + 1:close_at])
             try:
-                rows.append(parse_call(world, file_name, line, map_name, arity, split_args(text[open_at + 1:close_at]), raw))
+                expanded = purity_rows(world, file_name, line, raw)
+                if expanded is not None:
+                    rows.extend(expanded)
+                    continue
+                rows.append(parse_call(world, file_name, line, map_name, arity, args, raw))
             except Skip as skip:
                 skips.append((map_name, file_name, line, skip.reason, raw.replace("\n", " ")[:180]))
     expected = {

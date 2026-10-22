@@ -1,0 +1,61 @@
+{
+  "loader": "neoforge:composite",
+  "children": {
+    "layer0": {
+      "parent": "minecraft:block/block",
+      "textures": {
+        "down": "gt6ktfruaddon:block/machines/multiblockmains/turbine",
+        "up": "gt6ktfruaddon:block/machines/multiblockmains/turbine",
+        "north": "gt6ktfruaddon:block/machines/multiblockmains/turbine",
+        "south": "gt6ktfruaddon:block/machines/multiblockmains/turbine",
+        "west": "gt6ktfruaddon:block/machines/multiblockmains/turbine",
+        "east": "gt6ktfruaddon:block/machines/multiblockmains/turbine"
+      },
+      "elements": [
+        {
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            16,
+            16,
+            16
+          ],
+          "faces": {
+            "down": {
+              "texture": "#down",
+              "cullface": "down"
+            },
+            "up": {
+              "texture": "#up",
+              "cullface": "up"
+            },
+            "north": {
+              "texture": "#north",
+              "cullface": "north"
+            },
+            "south": {
+              "texture": "#south",
+              "cullface": "south"
+            },
+            "west": {
+              "texture": "#west",
+              "cullface": "west"
+            },
+            "east": {
+              "texture": "#east",
+              "cullface": "east"
+            }
+          }
+        }
+      ],
+      "render_type": "minecraft:cutout"
+    }
+  },
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "gt6ktfruaddon:block/machines/multiblockmains/turbine"
+  }
+}

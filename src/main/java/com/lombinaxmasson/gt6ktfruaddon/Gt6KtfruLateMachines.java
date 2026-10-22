@@ -50,7 +50,7 @@ public final class Gt6KtfruLateMachines {
         maps.add(Gt6KtfruMachines.map(MIRROR, "Mirror Gold Synthesis", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
         maps.add(Gt6KtfruMachines.map(MIRROR_QUANTUM, "Mirror Gold Quantumization", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
         maps.add(Gt6KtfruMachines.map(COSMIC, "Cosmic Radiation Research", "gascompressor", 1, 3, 0, 0, 0, 0, 1));
-        maps.add(Gt6KtfruMachines.map(CRYSTAL, "Microgravity Crystal Growth", "gascompressor", 1, 1, 0, 2, 0, 0, 1));
+        maps.add(Gt6KtfruMachines.map(CRYSTAL, "Microgravity Crystal Growth", "heatmixer", 1, 1, 0, 2, 0, 0, 1));
         maps.add(Gt6KtfruMachines.map(QUANTUM_GOLD, "Quantum Gold Synthesis", "gascompressor", 4, 4, 0, 2, 2, 0, 1));
         maps.add(Gt6KtfruMachines.map(OBSERVATION, "Quantum Observation", "gascompressor", 4, 4, 0, 2, 2, 0, 1));
         maps.add(Gt6KtfruMachines.map(RELAY_MAP, "Quantum Communication", "gascompressor", 1, 1, 0, 0, 0, 0, 1));

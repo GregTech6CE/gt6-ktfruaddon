@@ -1,1 +1,3 @@
-{ "parent": "gt6ktfruaddon:block/machine/basic/sun_heater" }
+{
+  "parent": "gt6ktfruaddon:block/machine/basic/research_assembler"
+}

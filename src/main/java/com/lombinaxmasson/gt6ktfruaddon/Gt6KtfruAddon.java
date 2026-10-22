@@ -54,7 +54,12 @@ public final class Gt6KtfruAddon {
                             accept(output, Gt6KtfruMachines.fluidPipeId(size));
                         for (String size : Gt6KtfruMachines.ITEM_PIPE_SIZES)
                             accept(output, Gt6KtfruMachines.itemPipeId(size));
-                        for (var item : Gt6KtfruItems.ALL) output.accept(item.get());
+                        for (var item : Gt6KtfruItems.BY_PATH.values()) output.accept(item.get());
+                        acceptStack(output, AddonItems.stack("flywheel", "Iron", 1));
+                        acceptStack(output, AddonItems.stack("bladeLargeTurbine", "Steel", 1));
+                        acceptStack(output, AddonItems.stack("dustCommercialPure", "Iron", 1));
+                        acceptStack(output, AddonItems.stack("dustAnalyticalPure", "Iron", 1));
+                        acceptStack(output, AddonItems.stack("dustAbsolutelyPure", "Iron", 1));
                         for (MaterialDeclaration material : new Gt6KtfruMaterials().materials()) {
                             if (material.dust() || material.metal())
                                 acceptStack(output, AddonItems.stack("dust", material.name(), 1));
@@ -128,6 +133,10 @@ public final class Gt6KtfruAddon {
                         || stack("ktfru.item.battery.pole.nickel").isEmpty()
                         || stack("proton_exchange_membrane").isEmpty())
                     throw new IllegalStateException("gas battery is missing");
+                if (AddonItems.stack("flywheel", "Iron", 1).isEmpty()
+                        || AddonItems.stack("dustCommercialPure", "Iron", 1).isEmpty()
+                        || Gt6KtfruItems.stack("nickel_catalyst_cluster", 1).isEmpty())
+                    throw new IllegalStateException("kTFRU prefix or catalyst item is missing");
                 if (stack("transformer_small_lv").isEmpty() || stack("light_transformer_large_luv").isEmpty()
                         || stack("flywheel_gear_small_t1").isEmpty() || stack("flywheel_gear_large_t6").isEmpty())
                     throw new IllegalStateException("transformer part is missing");
