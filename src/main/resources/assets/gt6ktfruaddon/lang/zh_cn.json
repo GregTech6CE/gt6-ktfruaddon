@@ -407,5 +407,14 @@
   "gt6ktfruaddon.compute.remembered": "已记下 %s %s,%s,%s",
   "gt6ktfruaddon.compute.saved": "链路 %s %s,%s,%s %s",
   "gt6ktfruaddon.compute.in": "距离内",
-  "gt6ktfruaddon.compute.out": "距离外"
+  "gt6ktfruaddon.compute.out": "距离外",
+  "block.gt6ktfruaddon.wireless_battery": "无线能量塔",
+  "block.gt6ktfruaddon.wireless_receiver": "无线能量接收器",
+  "gt6ktfruaddon.wireless_battery.sealed": "封存",
+  "gt6ktfruaddon.wireless_receiver.stopped": "停止",
+  "gt6ktfruaddon.wireless.remembered": "已记下接收器 %s,%s,%s",
+  "gt6ktfruaddon.wireless.links": "接收器：%s",
+  "gt6ktfruaddon.structure.wireless_battery.1": "七层 4×4，顺序 AABBBCC。控制器在底层角落。",
+  "gt6ktfruaddon.structure.wireless_battery.2": "T 和 C 是磁导体。O 是大型铜线圈。W 是钛墙。B 是电池舱。",
+  "gt6ktfruaddon.structure.wireless_battery.3": "封存并且结构成型后，向记下的接收器送出 EU。接收器从正面送出。"
 }

@@ -44,6 +44,7 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  * Card 14 adds the liquid batteries and transform batteries.
  * Card 15 adds the research blocks that this checkout registers, and the research assembler.
  * Card 16 adds the live compute controllers, the network cable and the two cluster parts.
+ * Card 17 adds the wireless battery and its receiver.
  */
 public final class Gt6KtfruMachines implements AddonMachineContributor, BehaviorMachineContributor {
     public static final String FLUID_HEATING = "gt6ktfruaddon.recipe.fluid_heating";
@@ -253,6 +254,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         Gt6KtfruBatteries.add(machines);
         Gt6KtfruResearchMachines.add(machines);
         Gt6KtfruComputeMachines.add(machines);
+        Gt6KtfruWirelessMachines.add(machines);
         return List.copyOf(machines);
     }
 
@@ -279,6 +281,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         Gt6KtfruTurbines.addLayouts(layouts);
         Gt6KtfruBatteries.addLayouts(layouts);
         Gt6KtfruResearchMachines.addLayouts(layouts);
+        Gt6KtfruWirelessMachines.addLayouts(layouts);
         return List.copyOf(layouts);
     }
 
@@ -322,6 +325,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         types.addAll(Gt6KtfruBatteries.behaviorTypes());
         types.addAll(Gt6KtfruResearchMachines.behaviorTypes());
         types.addAll(Gt6KtfruComputeMachines.behaviorTypes());
+        types.addAll(Gt6KtfruWirelessMachines.behaviorTypes());
         return Set.copyOf(types);
     }
 
@@ -348,6 +352,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         if (Gt6KtfruBatteries.owns(machineType)) return Gt6KtfruBatteries.create(machineType);
         if (Gt6KtfruResearchMachines.owns(machineType)) return Gt6KtfruResearchMachines.create(machineType);
         if (Gt6KtfruComputeMachines.owns(machineType)) return Gt6KtfruComputeMachines.create(machineType);
+        if (Gt6KtfruWirelessMachines.owns(machineType)) return Gt6KtfruWirelessMachines.create(machineType);
         throw new IllegalArgumentException(machineType);
     }
 

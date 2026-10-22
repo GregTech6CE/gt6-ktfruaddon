@@ -407,5 +407,14 @@
   "gt6ktfruaddon.compute.remembered": "Noted %s %s,%s,%s",
   "gt6ktfruaddon.compute.saved": "Link %s %s,%s,%s %s",
   "gt6ktfruaddon.compute.in": "in range",
-  "gt6ktfruaddon.compute.out": "out of range"
+  "gt6ktfruaddon.compute.out": "out of range",
+  "block.gt6ktfruaddon.wireless_battery": "Wireless Energy Tower",
+  "block.gt6ktfruaddon.wireless_receiver": "Wireless Energy Receiver",
+  "gt6ktfruaddon.wireless_battery.sealed": "Sealed",
+  "gt6ktfruaddon.wireless_receiver.stopped": "Stopped",
+  "gt6ktfruaddon.wireless.remembered": "Noted receiver %s,%s,%s",
+  "gt6ktfruaddon.wireless.links": "Receivers: %s",
+  "gt6ktfruaddon.structure.wireless_battery.1": "Seven 4x4 layers, AABBBCC. Controller at the bottom corner.",
+  "gt6ktfruaddon.structure.wireless_battery.2": "T and C are magnetic conductors. O is a large copper coil. W is a titanium wall. B is a battery cabin.",
+  "gt6ktfruaddon.structure.wireless_battery.3": "While sealed and formed, it sends EU to the noted receivers. The receiver emits from the front."
 }
