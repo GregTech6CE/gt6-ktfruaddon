@@ -22,8 +22,8 @@ public final class Gt6KtfruWirelessMachines {
     private Gt6KtfruWirelessMachines() {}
 
     public static void add(List<AddonMachine> machines) {
-        machines.add(tower(INDUCTIVE, "Tungstensteel", 4096, 2048, 8192, Gt6KtfruWireless.INDUCTIVE_CAPACITY));
-        machines.add(tower(QUANTUM, "Naquadria", 16384, 1, 32768, Gt6KtfruWireless.QUANTUM_CAPACITY));
+        machines.add(inductiveTower());
+        machines.add(quantumTower());
         machines.add(receiver(INDUCTIVE_RECEIVER, "Tungstensteel", 8192, 4));
         machines.add(receiver(QUANTUM_RECEIVER, "Naquadria", 32768, 16));
     }
@@ -45,9 +45,24 @@ public final class Gt6KtfruWirelessMachines {
         };
     }
 
-    private static BehaviorMachine tower(String id, String material, long eu, long min, long max, long capacity) {
-        return BehaviorMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
-                .energy(EnergyInput.builder("EU", eu).range(min, max).faces(MachineFace.BOTTOM).capacity(capacity).build())
+    /** Nominal 4096 accepts 2048–8192 on the main input. */
+    private static BehaviorMachine inductiveTower() {
+        return BehaviorMachine.builder(MachineCasing.builder(INDUCTIVE, "Tungstensteel").machineType(INDUCTIVE).build())
+                .energy(EnergyInput.builder("EU", 4096).faces(MachineFace.BOTTOM).capacity(Gt6KtfruWireless.INDUCTIVE_CAPACITY).build())
+                .gui(GUI)
+                .toggle("gt6ktfruaddon.wireless_battery.sealed", 152, 64, true)
+                .build();
+    }
+
+    /** Quantum hub accepts 1–32768 EU via auxiliary energy and 8192–32768 EU on the bottom. */
+    private static BehaviorMachine quantumTower() {
+        return BehaviorMachine.builder(MachineCasing.builder(QUANTUM, "Naquadria").machineType(QUANTUM).build())
+                .energy(EnergyInput.builder("EU", 16384).faces(MachineFace.BOTTOM).capacity(Gt6KtfruWireless.QUANTUM_CAPACITY).build())
+                .auxiliaryEnergy(EnergyInput.builder("EU", 16384)
+                        .range(1, 32768)
+                        .faces(MachineFace.BACK, MachineFace.LEFT, MachineFace.RIGHT, MachineFace.TOP)
+                        .capacity(Gt6KtfruWireless.QUANTUM_CAPACITY)
+                        .build())
                 .gui(GUI)
                 .toggle("gt6ktfruaddon.wireless_battery.sealed", 152, 64, true)
                 .build();

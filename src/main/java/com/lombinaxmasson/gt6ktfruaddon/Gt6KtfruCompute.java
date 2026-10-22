@@ -16,16 +16,25 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
- * Wireless controllers link a normal compute node inside 512 blocks of the same dimension.
- * Arrays report the source compute numbers while the structure is formed. They do not schedule a cluster.
- * A structure compute cell accepts one node block, not every compute part.
+ * Addon-side compute cluster topology.
+ * Compute nodes register their live output at {@code (dim, pos)}.
+ * Wireless controllers sum bound wireless nodes within 512 blocks of the same dimension.
+ * Biology, quantum and spacetime arrays can bind an upstream controller and expose their converted compute.
+ * AI centers and downstream arrays allocate compute per server tick from their bound controller.
  */
 public final class Gt6KtfruCompute implements MachineBehavior {
-    static final long REACH = 512;
+    static final long REACH = 512L;
+    private static final long EXPIRY_TICKS = 20L;
+
+    private static final Map<Key, NodeEntry> NODES = new HashMap<>();
+    private static final Map<Key, ControllerEntry> CONTROLLERS = new HashMap<>();
+    private static final Map<UUID, Mark> PENDING_NODE = new HashMap<>();
+    private static final Map<UUID, Key> PENDING_CONTROLLER = new HashMap<>();
 
     enum Kind { PLAIN, CLUSTER, NODE, WIRELESS, ARRAY }
 
@@ -41,11 +50,107 @@ public final class Gt6KtfruCompute implements MachineBehavior {
         this.unit = unit;
     }
 
+    public static synchronized Key takePendingController(UUID player, String dim) {
+        Key key = PENDING_CONTROLLER.get(player);
+        if (key != null && dim.equals(key.dim())) {
+            PENDING_CONTROLLER.remove(player);
+            return key;
+        }
+        return null;
+    }
+
+    public static synchronized boolean isControllerOnline(Level level, BlockPos pos) {
+        if (level == null || pos == null) return false;
+        String dim = level.dimension().location().toString();
+        ControllerEntry entry = CONTROLLERS.get(new Key(dim, pos));
+        return entry != null && entry.formed && level.getGameTime() - entry.lastTick <= EXPIRY_TICKS;
+    }
+
+    public static synchronized boolean allocate(Level level, BlockPos controllerPos, String neededUnit, long amount) {
+        if (level == null || controllerPos == null || amount <= 0) return false;
+        String dim = level.dimension().location().toString();
+        long now = level.getGameTime();
+        ControllerEntry entry = CONTROLLERS.get(new Key(dim, controllerPos));
+        if (entry == null || !entry.formed || now - entry.lastTick > EXPIRY_TICKS) return false;
+        if (!entry.unit.equalsIgnoreCase(neededUnit)) return false;
+        if (entry.allocatedTick != now) {
+            entry.allocatedTick = now;
+            entry.allocated = 0L;
+        }
+        if (entry.available - entry.allocated < amount) return false;
+        entry.allocated += amount;
+        return true;
+    }
+
     @Override
     public void tick(MachineBehaviorContext context) {
-        boolean formed = context.structureFormed();
-        context.working(kind == Kind.ARRAY && formed);
-        if (kind == Kind.WIRELESS) context.working(formed && !context.state().getString("links").isEmpty());
+        String dim = context.level().dimension().location().toString();
+        BlockPos here = context.pos().immutable();
+        Key self = new Key(dim, here);
+        long now = context.level().getGameTime();
+
+        if (kind == Kind.NODE) {
+            synchronized (Gt6KtfruCompute.class) {
+                NODES.put(self, new NodeEntry(provided, unit, now));
+            }
+            context.working(true);
+            return;
+        }
+        if (kind == Kind.WIRELESS) {
+            boolean formed = context.structureFormed();
+            long total = 0L;
+            if (formed) {
+                List<BlockPos> linked = links(context);
+                synchronized (Gt6KtfruCompute.class) {
+                    for (BlockPos nodePos : linked) {
+                        if (!reachable(here, nodePos)) continue;
+                        NodeEntry node = NODES.get(new Key(dim, nodePos));
+                        if (node != null && now - node.lastTick <= EXPIRY_TICKS && "Normal".equals(node.unit)) {
+                            total += node.power;
+                        }
+                    }
+                    updateController(self, formed, "Normal", total, now);
+                }
+            } else {
+                synchronized (Gt6KtfruCompute.class) {
+                    updateController(self, false, "Normal", 0L, now);
+                }
+            }
+            context.state().setLong("available", total);
+            context.working(formed && total > 0);
+            return;
+        }
+        if (kind == Kind.ARRAY) {
+            boolean formed = context.structureFormed();
+            boolean active = false;
+            if (formed) {
+                if (required <= 0L) {
+                    active = true;
+                } else {
+                    BlockPos upstream = Gt6KtfruResearch.parsePos(context.state().getString("controller"));
+                    if (upstream != null && allocate(context.level(), upstream, "Normal", required)) {
+                        active = true;
+                    }
+                }
+            }
+            long out = active ? provided : 0L;
+            synchronized (Gt6KtfruCompute.class) {
+                updateController(self, formed, unit, out, now);
+            }
+            context.working(active);
+            return;
+        }
+        context.working(false);
+    }
+
+    @Override
+    public void beforeBreak(MachineBehaviorContext context) {
+        String dim = context.level().dimension().location().toString();
+        Key self = new Key(dim, context.pos().immutable());
+        synchronized (Gt6KtfruCompute.class) {
+            NODES.remove(self);
+            CONTROLLERS.remove(self);
+        }
     }
 
     @Override
@@ -62,15 +167,22 @@ public final class Gt6KtfruCompute implements MachineBehavior {
     public boolean onUse(MachineBehaviorContext context, Player player, InteractionHand hand) {
         if (!AddonTools.isMagnifyingGlass(player.getItemInHand(hand))) return false;
         String dim = context.level().dimension().location().toString();
+        BlockPos here = context.pos().immutable();
         if (kind == Kind.NODE) {
-            Link.remember(player.getUUID(), new Mark(dim, context.pos(), unit));
+            synchronized (Gt6KtfruCompute.class) {
+                PENDING_NODE.put(player.getUUID(), new Mark(dim, here, unit));
+            }
             player.displayClientMessage(Component.translatable("gt6ktfruaddon.compute.node",
                     provided, unit), false);
             return true;
         }
         if (kind == Kind.WIRELESS) {
-            Mark pending = Link.take(player.getUUID());
-            if (pending != null && dim.equals(pending.dim()) && reachable(context.pos(), pending.pos())
+            Mark pending;
+            synchronized (Gt6KtfruCompute.class) {
+                pending = PENDING_NODE.remove(player.getUUID());
+                PENDING_CONTROLLER.put(player.getUUID(), new Key(dim, here));
+            }
+            if (pending != null && dim.equals(pending.dim()) && reachable(here, pending.pos())
                     && node(context, pending.pos(), "wireless_compute_node")) {
                 List<BlockPos> links = links(context);
                 if (!links.contains(pending.pos())) {
@@ -83,12 +195,33 @@ public final class Gt6KtfruCompute implements MachineBehavior {
             return true;
         }
         if (kind == Kind.ARRAY) {
+            synchronized (Gt6KtfruCompute.class) {
+                Key upstream = PENDING_CONTROLLER.get(player.getUUID());
+                if (upstream != null && dim.equals(upstream.dim()) && !upstream.pos().equals(here)) {
+                    PENDING_CONTROLLER.remove(player.getUUID());
+                    context.state().setString("controller", Gt6KtfruResearch.formatPos(upstream.pos()));
+                } else {
+                    PENDING_CONTROLLER.put(player.getUUID(), new Key(dim, here));
+                }
+            }
             player.displayClientMessage(Component.translatable("gt6ktfruaddon.compute.array",
                     context.structureFormed() ? 1 : 0, required, provided, unit), false);
             return true;
         }
         player.displayClientMessage(Component.translatable("gt6ktfruaddon.compute.plain", provided), false);
         return true;
+    }
+
+    private static void updateController(Key key, boolean formed, String unit, long available, long now) {
+        ControllerEntry entry = CONTROLLERS.get(key);
+        if (entry == null) {
+            entry = new ControllerEntry();
+            CONTROLLERS.put(key, entry);
+        }
+        entry.formed = formed;
+        entry.unit = unit;
+        entry.available = available;
+        entry.lastTick = now;
     }
 
     private static boolean reachable(BlockPos from, BlockPos to) {
@@ -127,17 +260,16 @@ public final class Gt6KtfruCompute implements MachineBehavior {
         context.state().setString("links", text.toString());
     }
 
+    record Key(String dim, BlockPos pos) {}
     private record Mark(String dim, BlockPos pos, String unit) {}
+    private record NodeEntry(long power, String unit, long lastTick) {}
 
-    private static final class Link {
-        private static final Map<UUID, Mark> PENDING = new HashMap<>();
-
-        static void remember(UUID player, Mark mark) {
-            PENDING.put(player, mark);
-        }
-
-        static Mark take(UUID player) {
-            return PENDING.remove(player);
-        }
+    private static final class ControllerEntry {
+        boolean formed;
+        String unit = "Normal";
+        long available;
+        long allocated;
+        long allocatedTick = -1L;
+        long lastTick;
     }
 }

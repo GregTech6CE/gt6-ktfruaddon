@@ -395,7 +395,7 @@
   "gt6ktfruaddon.research.tree": "Research tree: %s",
   "gt6ktfruaddon.structure.research_assembler.1": "Two layers. The bottom is a crafting table and steel walls. The top is three steel walls.",
   "gt6ktfruaddon.structure.research_assembler.2": "The controller is the gap in the first row of the bottom layer. The crafting table is a plain block.",
-  "gt6ktfruaddon.structure.research_assembler.3": "EU 131072, packets 64-524288, enters through the steel walls. The recipe map is the research assembler.",
+  "gt6ktfruaddon.structure.research_assembler.3": "EU 131072, packets 64-524288. Checks the research monitor two blocks behind before running a recipe.",
   "block.gt6ktfruaddon.electric_controller": "Electric Compute Controller",
   "block.gt6ktfruaddon.wireless_controller": "Wireless Compute Controller",
   "block.gt6ktfruaddon.wired_controller": "Wired Compute Controller",
@@ -558,7 +558,15 @@
   "block.gt6ktfruaddon.zero_point_compute_core": "Zero-Point Compute Core",
   "gt6ktfruaddon.compute.node": "Noted %s %s",
   "gt6ktfruaddon.compute.links": "Linked nodes: %s",
-  "gt6ktfruaddon.compute.array": "Formed %s. Requires %s, provides %s %s. No cluster schedule.",
+  "gt6ktfruaddon.compute.array": "Formed %s. Requires %s, provides %s %s.",
   "gt6ktfruaddon.compute.plain": "Emits %s EU",
-  "gt6ktfruaddon.ai.points": "Would grant %s points per tick. Formed %s. The minigame is not run."
+  "gt6ktfruaddon.ai.points": "AI output: %s point(s)/t, formed: %s, status: %s, compute: %s Normal/t",
+  "gt6ktfruaddon.microgravity.status": "Microgravity: %s, formed: %s",
+  "gt6ktfruaddon.microgravity_room.status": "Room formed: %s, spin: %s / 600, active: %s",
+  "gt6ktfruaddon.laser_fusion.status": "Laser fusion state: %s, pulse: %s / %s LU, peak: %s LU, cooldown: %s t",
+  "gt6ktfruaddon.quantum_relay.recorded": "Quantum relay recorded at %s,%s,%s",
+  "gt6ktfruaddon.quantum_relay.same_dimension": "Quantum relays must be in the same dimension",
+  "gt6ktfruaddon.quantum_relay.linked": "Linked to %s,%s,%s, QU: %s / %s",
+  "gt6ktfruaddon.microscope.status": "Microscope formed: %s, monitor: %s, %s EU/item",
+  "gt6ktfruaddon.research_assembler.status": "Research machine formed: %s, monitor: %s (online: %s)"
 }

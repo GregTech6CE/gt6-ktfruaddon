@@ -6,6 +6,7 @@ import java.util.Set;
 import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.BehaviorMachine;
 import com.gregtech.gregtech.api.addon.EnergyInput;
+import com.gregtech.gregtech.api.addon.EnergyOutput;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.MachineIo;
@@ -14,10 +15,11 @@ import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 
 /**
- * Late recipe machines and the behavior multiblocks that are not compute or wireless energy.
- * Laser chambers accept LU in the source pulse window. They do not store a pulse or run a cooldown.
- * Tokamaks keep EU only. The LU start charge, field and compute check are not on the recipe machine.
- * The quantum relay does not emit QU.
+ * Late recipe machines and the addon-side subsystem behavior machines:
+ * - Laser fusion (30071, 30072): discrete LU pulse storage, peak check and mandatory cooling.
+ * - Microgravity room (30102), crystal growth (30103) and microgravity assembler (30105): room index check.
+ * - Quantum communication relay (30074): paired EU-to-QU recipe runner emitting 128 QU/tick from the top face.
+ * - AI research centers (30106–30108): 67,108,864 Normal compute/tick allocation and monitor point progress.
  */
 public final class Gt6KtfruLateMachines {
     static final String LASER = "gt6ktfruaddon.recipe.laser_fusion";
@@ -29,6 +31,11 @@ public final class Gt6KtfruLateMachines {
     static final String QUANTUM_GOLD = "gt6ktfruaddon.recipe.quantum_gold";
     static final String OBSERVATION = "gt6ktfruaddon.recipe.quantum_observation";
     static final String RELAY_MAP = "gt6ktfruaddon.recipe.quantum_communication";
+    static final String LASER_EXP = "laser_fusion_experimental";
+    static final String LASER_IND = "laser_fusion_industrial";
+    static final String MICROGRAVITY_ASSEMBLER = "microgravity_assembler";
+    static final String MICROGRAVITY_CRYSTAL = "microgravity_crystal_growth";
+    static final String QUANTUM_RELAY = "quantum_communication_relay";
     static final String ROOM = "centrifugal_microgravity";
     static final String FLOW = "ai_flow_control";
     static final String FILL = "ai_fill_planning";
@@ -52,18 +59,18 @@ public final class Gt6KtfruLateMachines {
     public static void add(List<AddonMachine> machines) {
         machines.add(tokamak("fusion_tokamak_exp", 2048));
         machines.add(tokamak("fusion_tokamak_t1", 16384));
-        machines.add(laser("laser_fusion_experimental", "Tungstensteel", 131072));
-        machines.add(laser("laser_fusion_industrial", "Osmium", 2097152));
+        machines.add(laser(LASER_EXP, "Tungstensteel", 131_072L, 2L * 8L * 1024L * 1024L));
+        machines.add(laser(LASER_IND, "Osmium", 2_097_152L, 8L * 134_217_728L));
         machines.add(catalytic("catalytic_reactor_ev", "StainlessSteel", 2048, 256, 4096));
         machines.add(catalytic("catalytic_reactor_iv", "Tungstensteel", 8192, 1024, 16384));
         machines.add(basic("mirror_gold_synthesis", "Iridium", 8192, 8192, 8192, MIRROR, true));
         machines.add(basic("mirror_gold_quantumization", "Naquadria", 16384, 16384, 16384, MIRROR_QUANTUM, true));
         machines.add(basic("cosmic_radiation_chamber", "Tungstensteel", 8192, 2048, 16384, COSMIC, false));
-        machines.add(basic("microgravity_assembler", "Tungstensteel", 8192, 2048, 16384, COSMIC, false));
+        machines.add(microgravityAssembler());
         machines.add(large("quantum_gold_chamber", "Naquadria", 65536, 65536, 65536, QUANTUM_GOLD));
         machines.add(large("quantum_observation_tower", "Trinaquadalloy", 16384, 16384, 16384, OBSERVATION));
-        machines.add(large("microgravity_crystal_growth", "Titanium", 8192, 1024, 16384, CRYSTAL));
-        machines.add(basic("quantum_communication_relay", "Iridium", 8192, 8192, 8192, RELAY_MAP, false));
+        machines.add(microgravityCrystal());
+        machines.add(quantumRelay());
         machines.add(room());
         machines.add(ai(FLOW));
         machines.add(ai(FILL));
@@ -71,7 +78,16 @@ public final class Gt6KtfruLateMachines {
     }
 
     public static Set<String> behaviorTypes() {
-        return Set.of(ROOM, FLOW, FILL, PATTERN);
+        return Set.of(
+                LASER_EXP,
+                LASER_IND,
+                MICROGRAVITY_ASSEMBLER,
+                MICROGRAVITY_CRYSTAL,
+                QUANTUM_RELAY,
+                ROOM,
+                FLOW,
+                FILL,
+                PATTERN);
     }
 
     public static boolean owns(String machineType) {
@@ -79,9 +95,17 @@ public final class Gt6KtfruLateMachines {
     }
 
     public static MachineBehavior create(String machineType) {
-        if (ROOM.equals(machineType)) return new Gt6KtfruLateBehavior(true, 0);
-        long points = FLOW.equals(machineType) ? 8 : FILL.equals(machineType) ? 4 : 2;
-        return new Gt6KtfruLateBehavior(false, points);
+        return switch (machineType) {
+            case LASER_EXP -> Gt6KtfruLaserFusion.experimental();
+            case LASER_IND -> Gt6KtfruLaserFusion.industrial();
+            case MICROGRAVITY_ASSEMBLER -> new Gt6KtfruRooms(COSMIC, false, 0);
+            case MICROGRAVITY_CRYSTAL -> new Gt6KtfruRooms(CRYSTAL, true, 2);
+            case QUANTUM_RELAY -> new Gt6KtfruQuantumRelay();
+            case ROOM -> new Gt6KtfruLateBehavior(true, 0);
+            case FLOW -> new Gt6KtfruLateBehavior(false, 8);
+            case FILL -> new Gt6KtfruLateBehavior(false, 4);
+            default -> new Gt6KtfruLateBehavior(false, 2);
+        };
     }
 
     private static RecipeMachine tokamak(String id, long eu) {
@@ -94,13 +118,87 @@ public final class Gt6KtfruLateMachines {
                 .build();
     }
 
-    private static RecipeMachine laser(String id, String material, long lu) {
-        return RecipeMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
-                .recipeMap(LASER)
-                .largeRecipe()
-                .constantEnergy(false)
-                .energy(EnergyInput.builder("LU", lu).range(1, lu).faces().build())
-                .structureKeys(List.of("gt6ktfruaddon.structure." + id + ".1"))
+    private static BehaviorMachine laser(String id, String material, long maxPacket, long pulseCapacity) {
+        return BehaviorMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
+                .energy(EnergyInput.builder("LU", maxPacket / 2)
+                        .faces(MachineFace.TOP)
+                        .capacity(pulseCapacity)
+                        .build())
+                .auxiliaryEnergy(EnergyInput.builder("LU", maxPacket)
+                        .range(1, maxPacket)
+                        .faces(MachineFace.BOTTOM, MachineFace.BACK, MachineFace.LEFT, MachineFace.RIGHT)
+                        .capacity(pulseCapacity)
+                        .build())
+                .gui(GUI)
+                .progress(88, 26)
+                .item(26, 26, BehaviorMachine.SlotRole.INPUT)
+                .item(156, 26, BehaviorMachine.SlotRole.OUTPUT)
+                .fluid(8_000, 46, 8, BehaviorMachine.SlotRole.INPUT)
+                .fluid(8_000, 66, 8, BehaviorMachine.SlotRole.INPUT)
+                .fluid(8_000, 116, 8, BehaviorMachine.SlotRole.OUTPUT)
+                .fluid(8_000, 136, 8, BehaviorMachine.SlotRole.OUTPUT)
+                .recipeMaps(LASER)
+                .build();
+    }
+
+    private static BehaviorMachine microgravityAssembler() {
+        return BehaviorMachine.builder(MachineCasing.builder(MICROGRAVITY_ASSEMBLER, "Tungstensteel")
+                        .machineType(MICROGRAVITY_ASSEMBLER).build())
+                .energy(EnergyInput.builder("EU", 8192).faces(MachineFace.BACK).capacity(65536).build())
+                .auxiliaryEnergy(EnergyInput.builder("EU", 8192)
+                        .range(2048, 16384)
+                        .faces(MachineFace.BOTTOM, MachineFace.LEFT, MachineFace.RIGHT, MachineFace.TOP)
+                        .capacity(65536)
+                        .build())
+                .gui(GUI)
+                .progress(66, 26)
+                .item(36, 26, BehaviorMachine.SlotRole.INPUT)
+                .item(102, 26, BehaviorMachine.SlotRole.OUTPUT)
+                .item(120, 26, BehaviorMachine.SlotRole.OUTPUT)
+                .item(138, 26, BehaviorMachine.SlotRole.OUTPUT)
+                .recipeMaps(COSMIC)
+                .build();
+    }
+
+    private static BehaviorMachine microgravityCrystal() {
+        return BehaviorMachine.builder(MachineCasing.builder(MICROGRAVITY_CRYSTAL, "Titanium")
+                        .machineType(MICROGRAVITY_CRYSTAL).build())
+                .energy(EnergyInput.builder("EU", 8192).faces(MachineFace.BOTTOM).capacity(65536).build())
+                .auxiliaryEnergy(EnergyInput.builder("EU", 8192)
+                        .range(1024, 16384)
+                        .faces(MachineFace.BACK, MachineFace.LEFT, MachineFace.RIGHT, MachineFace.TOP)
+                        .capacity(65536)
+                        .build())
+                .gui(GUI)
+                .progress(92, 26)
+                .item(26, 26, BehaviorMachine.SlotRole.INPUT)
+                .item(124, 26, BehaviorMachine.SlotRole.OUTPUT)
+                .fluid(16_000, 48, 8, BehaviorMachine.SlotRole.INPUT)
+                .fluid(16_000, 68, 8, BehaviorMachine.SlotRole.INPUT)
+                .recipeMaps(CRYSTAL)
+                .build();
+    }
+
+    private static BehaviorMachine quantumRelay() {
+        return BehaviorMachine.builder(MachineCasing.builder(QUANTUM_RELAY, "Iridium")
+                        .machineType(QUANTUM_RELAY).build())
+                .energy(EnergyInput.builder("QU", Gt6KtfruQuantumRelay.QU_PER_TICK)
+                        .faces(MachineFace.BOTTOM)
+                        .capacity(Gt6KtfruQuantumRelay.ENERGY_CAPACITY)
+                        .build())
+                .auxiliaryEnergy(EnergyInput.builder("EU", 8192)
+                        .range(2048, 32768)
+                        .faces(MachineFace.BACK, MachineFace.LEFT, MachineFace.RIGHT)
+                        .capacity(Gt6KtfruQuantumRelay.ENERGY_CAPACITY)
+                        .build())
+                .energyOutput(EnergyOutput.builder("QU", Gt6KtfruQuantumRelay.QU_PER_TICK, 1)
+                        .faces(MachineFace.TOP)
+                        .build())
+                .gui(GUI)
+                .progress(76, 26)
+                .item(44, 26, BehaviorMachine.SlotRole.INPUT)
+                .item(112, 26, BehaviorMachine.SlotRole.OUTPUT)
+                .recipeMaps(RELAY_MAP)
                 .build();
     }
 
@@ -143,9 +241,10 @@ public final class Gt6KtfruLateMachines {
                 .build();
     }
 
+    /** Nominal 4096 accepts 2048–8192 EU on the bottom. */
     private static BehaviorMachine room() {
         return BehaviorMachine.builder(MachineCasing.builder(ROOM, "Tungstensteel").machineType(ROOM).build())
-                .energy(EnergyInput.builder("EU", 2048).range(2048, 8192).faces(MachineFace.BOTTOM).capacity(65536).build())
+                .energy(EnergyInput.builder("EU", 4096).faces(MachineFace.BOTTOM).capacity(65536).build())
                 .gui(GUI)
                 .build();
     }

@@ -395,7 +395,7 @@
   "gt6ktfruaddon.research.tree": "研究树：%s",
   "gt6ktfruaddon.structure.research_assembler.1": "两层。底层是工作台和钢墙，上层是三格钢墙。",
   "gt6ktfruaddon.structure.research_assembler.2": "控制器在底层第一行的空位。工作台是普通方块。",
-  "gt6ktfruaddon.structure.research_assembler.3": "EU 131072，包大小 64–524288，从钢墙进入。配方表是研究组装。",
+  "gt6ktfruaddon.structure.research_assembler.3": "EU 131072，包大小 64–524288。开机前检查背后两格的研究监视器。",
   "block.gt6ktfruaddon.electric_controller": "电计算控制器",
   "block.gt6ktfruaddon.wireless_controller": "无线计算控制器",
   "block.gt6ktfruaddon.wired_controller": "有线计算控制器",
@@ -558,7 +558,15 @@
   "block.gt6ktfruaddon.zero_point_compute_core": "Zero-Point Compute Core",
   "gt6ktfruaddon.compute.node": "已记下 %s %s",
   "gt6ktfruaddon.compute.links": "已连接节点：%s",
-  "gt6ktfruaddon.compute.array": "成型 %s。需要 %s，提供 %s %s。不调度集群。",
+  "gt6ktfruaddon.compute.array": "成型 %s。需要 %s，提供 %s %s。",
   "gt6ktfruaddon.compute.plain": "送出 %s EU",
-  "gt6ktfruaddon.ai.points": "成型后每刻记 %s 分。成型 %s。不跑小游戏。"
+  "gt6ktfruaddon.ai.points": "AI 产出：%s 点/刻，成型：%s，状态：%s，算力：%s Normal/刻",
+  "gt6ktfruaddon.microgravity.status": "微重力环境：%s，成型：%s",
+  "gt6ktfruaddon.microgravity_room.status": "微重力舱成型：%s，加速：%s / 600，激活：%s",
+  "gt6ktfruaddon.laser_fusion.status": "激光聚变状态：%s，脉冲：%s / %s LU，峰值：%s LU，冷却：%s t",
+  "gt6ktfruaddon.quantum_relay.recorded": "已记录量子中继器坐标 %s,%s,%s",
+  "gt6ktfruaddon.quantum_relay.same_dimension": "量子中继器必须位于同一维度",
+  "gt6ktfruaddon.quantum_relay.linked": "已配对 %s,%s,%s，QU：%s / %s",
+  "gt6ktfruaddon.microscope.status": "显微镜成型：%s，监视器：%s，%s EU/件",
+  "gt6ktfruaddon.research_assembler.status": "研究机器成型：%s，监视器：%s（在线：%s）"
 }

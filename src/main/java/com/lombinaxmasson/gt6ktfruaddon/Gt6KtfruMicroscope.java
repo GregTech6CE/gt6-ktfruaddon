@@ -1,12 +1,22 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
+import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-/** Spends a fixed EU cost and consumes one item. Research tasks are not promoted. */
+/**
+ * Optical microscope (256 EU/item) and electron microscope (4096 EU/item).
+ * Consumes items from slot 0 while the structure is formed, unlocking the item in the bound
+ * or adjacent {@code research_monitor} and placing any remainder into slot 1.
+ */
 public final class Gt6KtfruMicroscope implements MachineBehavior {
     private final long perItem;
 
@@ -16,24 +26,80 @@ public final class Gt6KtfruMicroscope implements MachineBehavior {
 
     @Override
     public void tick(MachineBehaviorContext context) {
-        boolean formed = context.structureFormed();
-        ItemStack sample = context.item(0);
-        boolean running = formed && !sample.isEmpty() && context.consume(perItem);
-        if (running) {
-            sample.shrink(1);
-            context.setItem(0, sample.isEmpty() ? ItemStack.EMPTY : sample);
+        long aux = context.energy("EU");
+        if (aux > 0) {
+            long move = Math.min(aux, Math.max(0L, context.capacity() - context.energy()));
+            if (move > 0 && context.consume("EU", move)) context.generate(move);
         }
-        context.working(running);
-        context.progress(running ? 1.0F : 0.0F);
+        if (!context.structureFormed()) {
+            context.working(false);
+            return;
+        }
+        BlockPos monitor = resolveMonitor(context);
+        ItemStack stack = context.item(0);
+        if (stack.isEmpty() || context.energy() < perItem) {
+            context.working(false);
+            return;
+        }
+        int remaining = stack.getCount() - 1;
+        if (remaining > 0 && !context.item(1).isEmpty()) {
+            context.working(false);
+            return;
+        }
+        if (!context.consume(perItem)) {
+            context.working(false);
+            return;
+        }
+        var id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        if (id != null && monitor != null) {
+            Gt6KtfruResearch.unlockItem(context.level(), monitor, id.toString());
+        }
+        if (remaining <= 0) {
+            context.setItem(0, ItemStack.EMPTY);
+        } else {
+            ItemStack remainder = stack.copy();
+            remainder.setCount(remaining);
+            context.setItem(1, remainder);
+            context.setItem(0, ItemStack.EMPTY);
+        }
+        context.working(true);
     }
 
     @Override
     public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return slot == 0;
+        return slot == 0 && stack != null && !stack.isEmpty();
     }
 
     @Override
     public boolean canFill(MachineBehaviorContext context, int tank, FluidStack stack) {
         return false;
+    }
+
+    @Override
+    public boolean onUse(MachineBehaviorContext context, Player player, InteractionHand hand) {
+        if (!AddonTools.isMagnifyingGlass(player.getItemInHand(hand))) return false;
+        String dim = context.level().dimension().location().toString();
+        Gt6KtfruResearch.Key pending = Gt6KtfruResearch.takePendingMonitor(player.getUUID(), dim);
+        if (pending != null) {
+            context.state().setString("monitor", Gt6KtfruResearch.formatPos(pending.pos()));
+        }
+        BlockPos monitor = resolveMonitor(context);
+        String label = monitor == null ? "none" : Gt6KtfruResearch.formatPos(monitor);
+        player.displayClientMessage(Component.translatable("gt6ktfruaddon.microscope.status",
+                context.structureFormed() ? 1 : 0, label, perItem), false);
+        return true;
+    }
+
+    private static BlockPos resolveMonitor(MachineBehaviorContext context) {
+        BlockPos saved = Gt6KtfruResearch.parsePos(context.state().getString("monitor"));
+        if (saved != null && Gt6KtfruResearch.isMonitorOnline(context.level(), saved)) {
+            return saved;
+        }
+        BlockPos adjacent = Gt6KtfruResearch.findAdjacentMonitor(context.level(), context.pos());
+        if (adjacent != null) {
+            context.state().setString("monitor", Gt6KtfruResearch.formatPos(adjacent));
+            return adjacent;
+        }
+        return saved;
     }
 }
