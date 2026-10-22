@@ -3,7 +3,9 @@ package com.lombinaxmasson.gt6ktfruaddon;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.gregtech.gregtech.api.addon.MachineLayout;
+import com.gregtech.gregtech.api.addon.CellMatch;
+import com.gregtech.gregtech.api.addon.LayoutCell;
+import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.StructureRole;
 
 import net.minecraft.core.BlockPos;
@@ -42,7 +44,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 @EventBusSubscriber(modid = Gt6KtfruAddon.MODID, bus = EventBusSubscriber.Bus.GAME)
 public final class Gt6KtfruStructureBuild {
     private static final int WAND_DAMAGE = 10;
-    private static Map<String, MachineLayout> layouts;
+    private static Map<String, StructureLayout> layouts;
 
     private Gt6KtfruStructureBuild() {}
 
@@ -56,7 +58,7 @@ public final class Gt6KtfruStructureBuild {
         if (!state.hasProperty(HorizontalDirectionalBlock.FACING)) return;
         ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
         if (!Gt6KtfruAddon.MODID.equals(blockId.getNamespace())) return;
-        MachineLayout layout = layouts().get(blockId.getPath());
+        StructureLayout layout = layouts().get(blockId.getPath());
         if (layout == null) return;
         event.setCanceled(true);
         event.setCancellationResult(InteractionResult.SUCCESS);
@@ -70,11 +72,11 @@ public final class Gt6KtfruStructureBuild {
     }
 
     private static boolean place(Level level, Player player, InteractionHand hand, ItemStack wand,
-            BlockPos origin, Direction facing, MachineLayout layout) {
+            BlockPos origin, Direction facing, StructureLayout layout) {
         boolean placed = false;
-        for (MachineLayout.Cell cell : layout.cells()) {
+        for (LayoutCell cell : layout.cells()) {
             if (cell.role() == StructureRole.AIR) continue;
-            Block part = partBlock(cell.part());
+            Block part = partBlock(cell.match());
             if (part == Blocks.AIR) continue;
             BlockPos pos = origin.relative(facing.getClockWise(), cell.right())
                     .above(cell.up())
@@ -139,8 +141,15 @@ public final class Gt6KtfruStructureBuild {
                 || block instanceof BaseFireBlock;
     }
 
-    private static Block partBlock(String part) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath("gt6ce", part);
+    private static Block partBlock(CellMatch match) {
+        ResourceLocation id;
+        if (match instanceof CellMatch.Part part) {
+            id = ResourceLocation.fromNamespaceAndPath("gt6ce", part.name());
+        } else if (match instanceof CellMatch.Block block) {
+            id = ResourceLocation.parse(block.id());
+        } else {
+            return Blocks.AIR;
+        }
         if (!BuiltInRegistries.BLOCK.containsKey(id)) return Blocks.AIR;
         return BuiltInRegistries.BLOCK.get(id);
     }
@@ -154,11 +163,11 @@ public final class Gt6KtfruStructureBuild {
         return hand == InteractionHand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
     }
 
-    private static Map<String, MachineLayout> layouts() {
+    private static Map<String, StructureLayout> layouts() {
         if (layouts == null) {
-            Map<String, MachineLayout> found = new HashMap<>();
-            for (MachineLayout layout : new Gt6KtfruMachines().layouts()) {
-                found.put(layout.machineName(), layout);
+            Map<String, StructureLayout> found = new HashMap<>();
+            for (StructureLayout layout : new Gt6KtfruMachines().structureLayouts()) {
+                found.put(layout.name(), layout);
             }
             layouts = Map.copyOf(found);
         }

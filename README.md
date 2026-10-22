@@ -16,7 +16,7 @@ $env:JAVA_HOME = 'C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot'
 .\gradlew.bat runClient
 ```
 
-`libs/gt6ce/build-commit.txt` 是本地 `GregTech6` 的 `addon/behavior-recipe-catalyst`（`9688dada`）。CI 按这个提交自己构建 SDK 和模组 jar。`update-gt.ps1` 下载的是主线上的 0.8.0 产物，不能拿来覆盖这两个 jar。`addon/behavior-energy` 上的 `0f77a888` 给燃料机加了液体马达提示，并去掉一部分 “(no auto)” 面标签；这一版运行包没有那次改动。
+`libs/gt6ce/build-commit.txt` 是本地 `GregTech6` 的 `addon/functional-parts`（`6eba3e1ed`）。CI 按这个提交自己构建 SDK 和模组 jar。`update-gt.ps1` 下载的是主线上的 0.8.0 产物，不能拿来覆盖这两个 jar。这一版删掉了旧的 `MachineDeclaration` 一族，机器从 `addonMachines()` 返回。`addon/behavior-energy` 上的 `0f77a888` 给燃料机加了液体马达提示，并去掉一部分 “(no auto)” 面标签；这一版运行包没有那次改动。
 
 ## 许可
 

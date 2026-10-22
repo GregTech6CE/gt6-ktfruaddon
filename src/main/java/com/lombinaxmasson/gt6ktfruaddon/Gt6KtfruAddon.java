@@ -2,12 +2,10 @@ package com.lombinaxmasson.gt6ktfruaddon;
 
 import org.slf4j.Logger;
 
-import com.gregtech.gregtech.api.addon.BehaviorMachineDeclaration;
-import com.gregtech.gregtech.api.addon.FuelGeneratorDeclaration;
+import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.GregTechAddon;
 import com.gregtech.gregtech.api.addon.GregTechAddons;
 import com.gregtech.gregtech.api.addon.GregTechMaterials;
-import com.gregtech.gregtech.api.addon.MachineDeclaration;
 import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
@@ -49,12 +47,8 @@ public final class Gt6KtfruAddon {
                     .withSearchBar()
                     .displayItems((parameters, output) -> {
                         Gt6KtfruMachines machines = new Gt6KtfruMachines();
-                        for (MachineDeclaration machine : machines.machines())
-                            accept(output, machine.id());
-                        for (FuelGeneratorDeclaration generator : machines.fuelGenerators())
-                            accept(output, generator.id());
-                        for (BehaviorMachineDeclaration behavior : machines.behaviorMachines())
-                            accept(output, behavior.id());
+                        for (AddonMachine machine : machines.addonMachines())
+                            accept(output, machine.casing().id());
                         for (MaterialDeclaration material : new Gt6KtfruMaterials().materials()) {
                             if (material.dust() || material.metal())
                                 acceptStack(output, AddonItems.stack("dust", material.name(), 1));

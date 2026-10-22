@@ -7,7 +7,7 @@
 
 ## 背景
 
-表面清单 20000–27553 里，能接上 `RecipeMapDeclaration` 加 `MachineDeclaration.basic()` 的单方块在这里落地。材料名来自 gregapi `MT.DATA` 的 `Heat_T`、`Kinetic_T`、`Electric_T`，再写成 GT6CE 注册表里的名字。电压是源注册的 `NBT_INPUT`。槽数来自 `recipeMaps.java` 的构造参数：输入物品、输出物品、最少物品、输入流体、输出流体、最少流体、最少输入。`needsOutputs` 为真，流体输出也算输出。
+表面清单 20000–27553 里，能接上 `RecipeTable.machine` 加 `RecipeMachine.basic()` 的单方块在这里落地。材料名来自 gregapi `MT.DATA` 的 `Heat_T`、`Kinetic_T`、`Electric_T`，再写成 GT6CE 注册表里的名字。电压是源注册的 `NBT_INPUT`。槽数来自 `recipeMaps.java` 的构造参数：输入物品、输出物品、最少物品、输入流体、输出流体、最少流体、最少输入。`needsOutputs` 为真，流体输出也算输出。
 
 ## 机器
 

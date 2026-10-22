@@ -1,9 +1,7 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
-import com.gregtech.gregtech.api.addon.BehaviorMachineDeclaration;
-import com.gregtech.gregtech.api.addon.FuelGeneratorDeclaration;
+import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.GregTechMaterials;
-import com.gregtech.gregtech.api.addon.MachineDeclaration;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -23,24 +21,17 @@ public final class Gt6KtfruMachineColors {
 
     @SubscribeEvent
     public static void blocks(RegisterColorHandlersEvent.Block event) {
-        Gt6KtfruMachines machines = new Gt6KtfruMachines();
-        for (MachineDeclaration machine : machines.machines())
-            paint(event, machine.id(), machine.material());
-        for (FuelGeneratorDeclaration generator : machines.fuelGenerators())
-            paint(event, generator.id(), generator.material());
-        for (BehaviorMachineDeclaration behavior : machines.behaviorMachines())
-            paint(event, behavior.id(), behavior.material());
+        paintAll(new Gt6KtfruMachines(), (id, material) -> paint(event, id, material));
     }
 
     @SubscribeEvent
     public static void items(RegisterColorHandlersEvent.Item event) {
-        Gt6KtfruMachines machines = new Gt6KtfruMachines();
-        for (MachineDeclaration machine : machines.machines())
-            paint(event, machine.id(), machine.material());
-        for (FuelGeneratorDeclaration generator : machines.fuelGenerators())
-            paint(event, generator.id(), generator.material());
-        for (BehaviorMachineDeclaration behavior : machines.behaviorMachines())
-            paint(event, behavior.id(), behavior.material());
+        paintAll(new Gt6KtfruMachines(), (id, material) -> paint(event, id, material));
+    }
+
+    private static void paintAll(Gt6KtfruMachines machines, java.util.function.BiConsumer<String, String> paint) {
+        for (AddonMachine machine : machines.addonMachines())
+            paint.accept(machine.casing().id(), machine.casing().material());
     }
 
     private static void paint(RegisterColorHandlersEvent.Block event, String id, String material) {
