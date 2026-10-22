@@ -49,3 +49,6 @@ libs/gt6ce/*.jar
 
 ### Python ###
 __pycache__/
+
+### Local instructions ###
+/CLAUDE.md
