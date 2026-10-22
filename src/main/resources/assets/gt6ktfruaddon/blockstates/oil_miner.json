@@ -1,0 +1,35 @@
+﻿{
+  "variants": {
+    "facing=north,lit=false,running=false": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner" }
+,
+    "facing=north,lit=false,running=true": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner" }
+,
+    "facing=north,lit=true,running=false": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner" }
+,
+    "facing=north,lit=true,running=true": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner" }
+,
+    "facing=east,lit=false,running=false": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner", "y": 90 }
+,
+    "facing=east,lit=false,running=true": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner", "y": 90 }
+,
+    "facing=east,lit=true,running=false": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner", "y": 90 }
+,
+    "facing=east,lit=true,running=true": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner", "y": 90 }
+,
+    "facing=south,lit=false,running=false": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner", "y": 180 }
+,
+    "facing=south,lit=false,running=true": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner", "y": 180 }
+,
+    "facing=south,lit=true,running=false": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner", "y": 180 }
+,
+    "facing=south,lit=true,running=true": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner", "y": 180 }
+,
+    "facing=west,lit=false,running=false": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner", "y": 270 }
+,
+    "facing=west,lit=false,running=true": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner", "y": 270 }
+,
+    "facing=west,lit=true,running=false": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner", "y": 270 }
+,
+    "facing=west,lit=true,running=true": { "model": "gt6ktfruaddon:block/machine/basic/oil_miner", "y": 270 }
+  }
+}

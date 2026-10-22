@@ -22,6 +22,7 @@ public final class Gt6KtfruRecipes {
     public static void register() {
         Gt6KtfruSourceRecipes.register();
         fuelBattery();
+        fuelDeburn();
         lightMixer();
         distillationTower(Gt6KtfruMachines.TINY_DISTILL, 40);
         distillationTower(Gt6KtfruMachines.SMALL_DISTILL, 30);
@@ -99,6 +100,33 @@ public final class Gt6KtfruRecipes {
 
     private static FluidStack[] two(String a, int aAmount, String b, int bAmount) {
         return new FluidStack[] {fluid(a, aAmount), fluid(b, bAmount)};
+    }
+
+    /**
+     * Chemistry.java:82–86. The circuit is a real input and the factory consumes it when the bar finishes.
+     * Recycled-fuel fluids are the five source liquids. Exhaust rows stay on the engine and centrifuge maps.
+     */
+    private static void fuelDeburn() {
+        deburn(0, 24, 3000, 638, new FluidStack[] {fluid("Water", 1000), fluid("CarbonDioxide", 2000)}, "GenLiquid_RecycledFuel0");
+        deburn(1, 80, 5000, 922, new FluidStack[] {fluid("Water", 2000), fluid("CarbonDioxide", 4000)}, "GenLiquid_RecycledFuel1");
+        deburn(2, 240, 5000, 1788, new FluidStack[] {fluid("Water", 4000), fluid("CarbonDioxide", 8000)}, "GenLiquid_RecycledFuel2");
+        deburn(3, 800, 12800, 1464, new FluidStack[] {fluid("Water", 6000), fluid("CarbonDioxide", 20000), fluid("Nitrogen", 4000)}, "GenLiquid_RecycledFuel3");
+        deburn(4, 1800, 51200, 2192, new FluidStack[] {fluid("Water", 16000), fluid("CarbonDioxide", 30000), fluid("Nitrogen", 8000)}, "GenLiquid_RecycledFuel4");
+        require(AddonFluids.still("GenLiquid_AqueousOilHeavy", 1), "aqueous heavy oil");
+        require(AddonRecipes.map(Gt6KtfruMachines.FUEL_DEBURN).find(
+                List.of(AddonItems.selectorTag(0)),
+                List.of(fluid("Water", 1000), fluid("CarbonDioxide", 2000)),
+                true, 1, 0),
+                "fuel deburner circuit 0");
+    }
+
+    private static void deburn(int circuit, long eu, long duration, long special, FluidStack[] inputs, String output) {
+        ItemStack tag = AddonItems.selectorTag(circuit);
+        if (tag == null || tag.isEmpty()) throw new IllegalStateException("missing selector circuit " + circuit);
+        require(AddonRecipes.map(Gt6KtfruMachines.FUEL_DEBURN).add(new AddonRecipes.Line(
+                new ItemStack[] {tag}, NO_ITEMS, inputs,
+                new FluidStack[] {fluid(output, 100)},
+                duration, eu, special)), "fuel deburner circuit " + circuit);
     }
 
     /** Plastic.java. The only LightMixer row. */

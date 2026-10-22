@@ -134,6 +134,11 @@ public final class Gt6KtfruAddon {
                 if (stack("mask_aligner_uv").isEmpty() || stack("cnc_machine").isEmpty()
                         || stack("aluminium_wall").isEmpty() || stack("mask_aligner_energy_uv").isEmpty())
                     throw new IllegalStateException("mask aligner is missing");
+                if (stack(Gt6KtfruMachines.SUN_HEATER).isEmpty() || stack(Gt6KtfruMachines.SUN_MIRROR).isEmpty()
+                        || stack(Gt6KtfruMachines.TIDAL).isEmpty() || stack(Gt6KtfruMachines.OIL_MINER).isEmpty()
+                        || stack(Gt6KtfruMachines.MANTLE).isEmpty() || stack(Gt6KtfruMachines.FUEL_DEBURN_TYPE).isEmpty()
+                        || stack("tidal_blade").isEmpty() || stack("enhanced_frame").isEmpty())
+                    throw new IllegalStateException("heat machine is missing");
                 FluidStack hydrogen = AddonFluids.still("Hydrogen", 250);
                 if (hydrogen == null || hydrogen.isEmpty())
                     throw new IllegalStateException("GT fluid field Hydrogen is missing");

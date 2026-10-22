@@ -159,6 +159,17 @@ public final class Gt6KtfruMaterials implements AddonMaterialContributor {
                 // flList.YttriumZirconiumOxide. The source register call sets no color or formula.
                 // Its fluid temperature is 2700 and is not a melting point, so those stay at the builder defaults.
                 MaterialDeclaration.builder("YttriumZirconiumOxide").displayName("Yttrium-Zirconium Oxide").liquid().build(),
+                // flList aqueous oils. Temperature 277 K is the source fluid temperature.
+                MaterialDeclaration.builder("AqueousOilExtraHeavy").displayName("Aqueous Very Heavy Oil").meltingPointKelvin(277).boilingPointKelvin(350).density(1F).liquid().build(),
+                MaterialDeclaration.builder("AqueousOilHeavy").displayName("Aqueous Heavy Oil").meltingPointKelvin(277).boilingPointKelvin(350).density(1F).liquid().build(),
+                MaterialDeclaration.builder("AqueousOilMedium").displayName("Aqueous Medium Oil").meltingPointKelvin(277).boilingPointKelvin(350).density(1F).liquid().build(),
+                MaterialDeclaration.builder("AqueousOilLight").displayName("Aqueous Light Oil").meltingPointKelvin(277).boilingPointKelvin(350).density(1F).liquid().build(),
+                // flList.RecycledFuel0-4. The source register calls set no color or temperature.
+                MaterialDeclaration.builder("RecycledFuel0").displayName("#0 Recycled Fuel").liquid().build(),
+                MaterialDeclaration.builder("RecycledFuel1").displayName("#1 Recycled Fuel").liquid().build(),
+                MaterialDeclaration.builder("RecycledFuel2").displayName("#2 Recycled Fuel").liquid().build(),
+                MaterialDeclaration.builder("RecycledFuel3").displayName("#3 Recycled Fuel").liquid().build(),
+                MaterialDeclaration.builder("RecycledFuel4").displayName("#4 Recycled Fuel").liquid().build(),
                 // flList.Bittern, not a materialPreInit row. The tiny tower's ocean recipe outputs it.
                 // The source register call sets no color or temperature, so those stay at the builder defaults.
                 MaterialDeclaration.builder("Bittern").displayName("Bittern").liquid().build()

@@ -37,6 +37,8 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  * Card 09 adds the two gas batteries. Rows keep both poles and leave the electrolyte out.
  * Card 10 adds the transformer, flywheel-gear and light-transformer parts.
  * Card 11 adds the mask aligners, the CNC machine and their structure parts.
+ * Card 12 adds the sun heater, large mirror, tidal generator, oil miner,
+ * mantle heater and fuel deburn factory.
  */
 public final class Gt6KtfruMachines implements AddonMachineContributor, BehaviorMachineContributor {
     public static final String FLUID_HEATING = "gt6ktfruaddon.recipe.fluid_heating";
@@ -67,6 +69,14 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     public static final String MASK_ALIGNER_DUV = "mask_aligner_duv";
     public static final String MASK_ALIGNER_EUV = "mask_aligner_euv";
     public static final String CNC_MACHINE = "cnc_machine";
+    public static final String FUEL_DEBURN = "gt6ktfruaddon.recipe.fuel_deburner";
+    public static final String SUN_HEATER = "sun_heater";
+    public static final String SUN_MIRROR = "sun_heater_mirror_large";
+    public static final String TIDAL = "tidal_wave_generator";
+    public static final String OIL_MINER = "oil_miner";
+    public static final String MANTLE = "mantle_heater";
+    /** Layout name, machine type and block id. The recipe map is {@link #FUEL_DEBURN}. */
+    public static final String FUEL_DEBURN_TYPE = "fuel_deburn_factory";
     public static final String TRANSFORMER_SMALL = "transformer_small";
     public static final String TRANSFORMER_LARGE = "transformer_large";
     public static final String FLYWHEEL_GEAR_SMALL = "flywheel_gear_small";
@@ -161,6 +171,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         maps.add(map(FUEL_BATTERY, "Fuel Battery", "gascompressor", 2, 0, 2, 3, 2, 2, 4));
         maps.add(map(MASK_ALIGNER, "Mask Aligner", "gascompressor", 3, 3, 1, 3, 0, 0, 1));
         maps.add(map(CNC, "CNC", "gascompressor", 4, 3, 1, 3, 0, 1, 1));
+        maps.add(map(FUEL_DEBURN, "Fuel Deburner", "gascompressor", 3, 3, 0, 6, 6, 0, 1));
         return List.copyOf(maps);
     }
 
@@ -232,6 +243,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         diesel(machines, "turbo_diesel", "chromium", "Chromium", 5200, 384);
         diesel(machines, "turbo_diesel", "osmium", "Osmium", 5000, 2304);
         diesel(machines, "turbo_diesel", "trinaquadalloy", "Trinaquadalloy", 4800, 4608);
+        Gt6KtfruHeatMachines.add(machines);
         return List.copyOf(machines);
     }
 
@@ -248,12 +260,18 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 maskAlignerUvPlusLayout(),
                 maskAlignerDuvLayout(MASK_ALIGNER_DUV),
                 maskAlignerDuvLayout(MASK_ALIGNER_EUV),
-                cncLayout());
+                cncLayout(),
+                Gt6KtfruHeatLayouts.sunHeater(),
+                Gt6KtfruHeatLayouts.sunMirror(),
+                Gt6KtfruHeatLayouts.tidal(),
+                Gt6KtfruHeatLayouts.oilMiner(),
+                Gt6KtfruHeatLayouts.mantle(),
+                Gt6KtfruHeatLayouts.fuelDeburn());
     }
 
     @Override
     public List<LayoutPart> layoutParts() {
-        return List.of(
+        List<LayoutPart> parts = new ArrayList<>(List.of(
                 casing("aluminium_wall", "Aluminium", 4.0F),
                 casing("sunlight_absorber", "Silver", 6.0F),
                 casing("catalytic_reactor_casing", "Tungstensteel", 10.0F),
@@ -270,7 +288,9 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 casing("mask_aligner_io_uv", "Aluminium", 6.0F),
                 casing("mask_aligner_io_uv_plus", "StainlessSteel", 6.0F),
                 energyModule("mask_aligner_energy_uv", "Aluminium", 192, 64, 256),
-                energyModule("mask_aligner_energy_uv_plus", "StainlessSteel", 768, 256, 1024));
+                energyModule("mask_aligner_energy_uv_plus", "StainlessSteel", 768, 256, 1024)));
+        Gt6KtfruHeatMachines.addParts(parts);
+        return List.copyOf(parts);
     }
 
     @Override
@@ -281,7 +301,8 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 VACUUM_FLYWHEEL, LARGE_VACUUM_FLYWHEEL, GAS_BATTERY,
                 TRANSFORMER_SMALL, TRANSFORMER_LARGE,
                 FLYWHEEL_GEAR_SMALL, FLYWHEEL_GEAR_LARGE,
-                LIGHT_TRANSFORMER_SMALL, LIGHT_TRANSFORMER_LARGE);
+                LIGHT_TRANSFORMER_SMALL, LIGHT_TRANSFORMER_LARGE,
+                SUN_HEATER, SUN_MIRROR, TIDAL, OIL_MINER, MANTLE, FUEL_DEBURN_TYPE);
     }
 
     @Override
@@ -302,6 +323,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         if (LARGE_VACUUM_FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(16, 0.00012);
         if (GAS_BATTERY.equals(machineType)) return new Gt6KtfruFuelBattery();
         if (transformerType(machineType)) return new Gt6KtfruTransformerPart(transformerAmpere(machineType));
+        if (Gt6KtfruHeatMachines.owns(machineType)) return Gt6KtfruHeatMachines.create(machineType);
         throw new IllegalArgumentException(machineType);
     }
 
