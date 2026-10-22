@@ -383,5 +383,17 @@
   "gt6ktfruaddon.structure.liquid_battery.3": "RU enters the left, right, back and top. RU leaves the front. The 1 HU on the bottom is the required input.",
   "gt6ktfruaddon.structure.transform_battery.1": "Seven 4x4 layers, AABBBCC. Controller at the bottom corner.",
   "gt6ktfruaddon.structure.transform_battery.2": "T and W are both the energy wall. One cell cannot match a transformer part or that wall. O is the coil, C the conductor, B the cabin.",
-  "gt6ktfruaddon.structure.transform_battery.3": "Sealed energy stays in the controller. The EU coil is a large copper coil."
+  "gt6ktfruaddon.structure.transform_battery.3": "Sealed energy stays in the controller. The EU coil is a large copper coil.",
+  "block.gt6ktfruaddon.research_monitor": "Research Monitor",
+  "block.gt6ktfruaddon.research_table_circuit": "Research Table (Circuit)",
+  "block.gt6ktfruaddon.research_table_item": "Research Table (Item)",
+  "block.gt6ktfruaddon.research_table_printer": "Research Table (Printer)",
+  "block.gt6ktfruaddon.research_database_item": "Research Database (Item)",
+  "block.gt6ktfruaddon.research_database_online": "Research Database (Online)",
+  "block.gt6ktfruaddon.research_table_identify": "Research Table (Identify)",
+  "block.gt6ktfruaddon.research_assembler": "Research Assembler",
+  "gt6ktfruaddon.research.tree": "Research tree: %s",
+  "gt6ktfruaddon.structure.research_assembler.1": "Two layers. The bottom is a crafting table and steel walls. The top is three steel walls.",
+  "gt6ktfruaddon.structure.research_assembler.2": "The controller is the gap in the first row of the bottom layer. The crafting table is a plain block.",
+  "gt6ktfruaddon.structure.research_assembler.3": "LU enters every face except the front. Only assembler rows whose first output is in the research tree run."
 }

@@ -383,5 +383,17 @@
   "gt6ktfruaddon.structure.liquid_battery.3": "RU 从左、右、后、顶进入，正面送出。底面那 1 HU 只是行为机必须有的输入。",
   "gt6ktfruaddon.structure.transform_battery.1": "七层 4×4，顺序 AABBBCC。控制器在底层角落。",
   "gt6ktfruaddon.structure.transform_battery.2": "T 和 W 都是能量墙。一格不能同时认变换零件和墙。O 是线圈，C 是导体，B 是舱。",
-  "gt6ktfruaddon.structure.transform_battery.3": "封存后能量留在控制器里。EU 的线圈用大型铜线圈。"
+  "gt6ktfruaddon.structure.transform_battery.3": "封存后能量留在控制器里。EU 的线圈用大型铜线圈。",
+  "block.gt6ktfruaddon.research_monitor": "研究监视器",
+  "block.gt6ktfruaddon.research_table_circuit": "电路研究台",
+  "block.gt6ktfruaddon.research_table_item": "物品研究台",
+  "block.gt6ktfruaddon.research_table_printer": "研究打印机",
+  "block.gt6ktfruaddon.research_database_item": "物品研究数据库",
+  "block.gt6ktfruaddon.research_database_online": "在线研究数据库",
+  "block.gt6ktfruaddon.research_table_identify": "研究识别台",
+  "block.gt6ktfruaddon.research_assembler": "研究组装机",
+  "gt6ktfruaddon.research.tree": "研究树：%s",
+  "gt6ktfruaddon.structure.research_assembler.1": "两层。底层是工作台和钢墙，上层是三格钢墙。",
+  "gt6ktfruaddon.structure.research_assembler.2": "控制器在底层第一行的空位。工作台是普通方块。",
+  "gt6ktfruaddon.structure.research_assembler.3": "LU 从除正面以外的面进入。只加工第一件产物在研究树里的组装配方。"
 }

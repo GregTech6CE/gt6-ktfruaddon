@@ -24,7 +24,7 @@
 
 ### 行为机的能量与侧面
 
-- **纯发电行为机仍要声明进电面。** 来源：卡 08（水车 `WaterMill` 9800、手摇 `ManualGenerator` 10021/10022/10026/10027）、卡 09（气体电池 `FuelBattery` 10010–10011）。`BehaviorMachine.build` 要求 `energy` 非空，并且 `faces` 非空，否则抛 `Missing energy type` 或 `accepts energy on no face`。源机器只送电、不收电。现在水车把输入面放在顶面，手摇和气体电池放在底面。
+- **纯发电行为机仍要声明进电面。** 来源：卡 08（水车 `WaterMill` 9800、手摇 `ManualGenerator` 10021/10022/10026/10027）、卡 09（气体电池 `FuelBattery` 10010–10011）、卡 15（研究方块 9810–9815 和 1106，注册只写了送出 512 EU）。`BehaviorMachine.build` 要求 `energy` 非空，并且 `faces` 非空，否则抛 `Missing energy type` 或 `accepts energy on no face`。源机器只送电、不收电。现在水车把输入面放在顶面，手摇和气体电池放在底面。研究方块的底面收 256–1024 EU，行为不凭空产生那 512 EU。
 - **行为机不能按面限制物品和流体。** 来源：卡 07（压缩机 `tankGasCompressedInputer` 只从顶面进气）、卡 09（`FuelBattery` 正面和背面不收流体）、卡 14（流体电池 `LiquidBattery` 只从底面排液）。`BehaviorMachine.build` 拒绝 `MachineIo`（`Behavior machines cannot declare item and fluid faces`）。`BehaviorMachineBlockEntity` 注册物品和流体能力时忽略方向，共用同一个 `PipeItems` / `PipeFluids`；`canInsert` 和 `canFill` 也没有面参数。现在各面都能灌抽。流体电池的储罐角色是 `ANY`。
 - **行为机主输入不能声明包范围或忽略包大小，过载也不能关闭。** 来源：卡 07（压缩机）、卡 08（飞轮箱 `FlywheelBox` / `FlywheelBoxElec` 15000–15055）、卡 10（变换零件 `TransformerPart` 10200–10255）、卡 14（流体电池和变换电池的输入都从 64 拉到注册上限，跨度超过四倍）。`BehaviorMachine.build` 对主 `energy` 拒绝 `range` 和 `anyPacket()`。它们只在 `auxiliaryEnergy` 上可用。主输入固定按标称值的一半到两倍收包，超过上限就走 `MachineOverload`。源飞轮和电动飞轮的钳制、满箱爆炸，以及变换零件从内部面收任意包，都对不上这条主输入规则。卡 14 把 64 到注册上限放在辅助输入上，底面 1 HU 只用来满足主输入。
 - **行为机不能从回调里拒绝外部注入。** 来源：卡 10（`TransformerPart` 的 `mStopped`）、卡 14（变换电池 `TransformBattery` 未封存时不收电）。`doInject` 只看声明的面和缓存空余，不回调 `MachineBehavior`。停机开关只能停掉 `emit`，挡不住背面继续收电。
@@ -53,6 +53,7 @@
 - **第二种能量不能和主输入用同一面。** 来源：卡 13（分激电机 `MultiSeparateExciteDynamo` 30055，RU 和激励 EU 都从正面进）。`BehaviorMachine.build` 拒绝辅助能量和主输入共用一面。激励 EU 放在顶面。那一面贴着结构，包进不去。
 - **一格只能写一个零件名，附属布局也认不全 GT 零件名。** 来源：卡 14（流体电池池壁 31034–31036 三选一，变换电池 `T` 是卡 10 的 `TransformerPart` 或能量墙；钨钢壳 18023、EU 线圈 18041）。`CellMatch` 一格一个名字。`SharedLargeMachineParts.idForName` 不认识 `implosion_compressor_wall` 和 `large_niobium_titanium_coil`，写进布局会在加载时抛未知零件。池壁布局只用青铜墙，钢墙和塑料墙仍单独注册。钨钢流体电池的壳用 `tungstensteel_wall`。EU 变换电池的线圈用 `large_copper_coil`。`T` 用这一档的能量墙。
 - **行为机不能把能量推进另一台机器。** 来源：卡 14（`TransformBattery` 封存后对每个 `TransformerPart` 调用 `doInject`，面是 `SIDE_INSIDE`）。`MachineBehaviorContext` 没有按坐标注入。`EnergyPart.charge` 只对这份布局绑上的能量零件。封存后的变换电池把能量留在控制器里。未封存仍会收电，见上面「不能拒绝注入」。封存只让 `canInsert` 拒绝放入；`SlotRole.ANY` 的取出不看这个回调，物品仍能拿出来。
+- **行为机读不到旁边那台行为机的状态。** 来源：卡 15（`ResearchAssembler` 30042 看背后两格的 `IResearchDatabase`，研究台看相邻的 `ResearchTreeMonitor`）。`MachineBehaviorContext` 只有本机的 `state()`。`level()` 和 `pos()` 能拿到方块，另一台行为机的 `BehaviorState` 没有公开读取入口。监视器和组装机各自存同一份原版小树：`minecraft:paper`、`minecraft:glass`、`minecraft:iron_ingot`。组装机只加工第一件产物落在这棵树里的组装配方。
 - **流体查询只有气体。** 来源：卡 14（`LiquidBattery` 倒掉气体和导电流体，酸、魔流体或温度高于 573 就爆炸）。`AddonFluids` 只有 `gas`。温度用流体类型自己的 `getTemperature`。气体和温度高于 573 的流体被倒掉。酸、魔流体和导电流体留在罐里。没有爆炸。
 
 ## 不做
@@ -79,3 +80,4 @@
 - 2026-10-22：卡 12 补入固定结构格子、任意液体/不透明方块、以及只能从声明的面送能。脱燃出口框架和油矿钻头的外观号并进原来的 `NBT_DESIGN` 那条。
 - 2026-10-22：卡 13 补入燃料发电机只有 1 安培、辅助能量不能和主输入同一面。锅炉中间层并进固定格子。电机和蒸汽涡轮的送出面并进「只能从声明的面送能」。
 - 2026-10-22：卡 14 补入一格一个零件名、认不全的 GT 零件、不能把能量推进另一台机器，以及流体查询只有气体。流体电池的池子并进固定格子。底面排液并进「不能按面限制流体」。
+- 2026-10-22：卡 15 补入读不到相邻行为机的状态。研究方块的 512 EU 输出并进「纯发电行为机仍要声明进电面」。

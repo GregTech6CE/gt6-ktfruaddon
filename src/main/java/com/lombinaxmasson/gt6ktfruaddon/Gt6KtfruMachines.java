@@ -42,6 +42,7 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  * mantle heater and fuel deburn factory.
  * Card 13 adds the large gas and steam turbines, dynamos, expanded motors and fluid boiler.
  * Card 14 adds the liquid batteries and transform batteries.
+ * Card 15 adds the research blocks that this checkout registers, and the research assembler.
  */
 public final class Gt6KtfruMachines implements AddonMachineContributor, BehaviorMachineContributor {
     public static final String FLUID_HEATING = "gt6ktfruaddon.recipe.fluid_heating";
@@ -249,6 +250,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         Gt6KtfruHeatMachines.add(machines);
         Gt6KtfruTurbines.add(machines);
         Gt6KtfruBatteries.add(machines);
+        Gt6KtfruResearchMachines.add(machines);
         return List.copyOf(machines);
     }
 
@@ -274,6 +276,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 Gt6KtfruHeatLayouts.fuelDeburn()));
         Gt6KtfruTurbines.addLayouts(layouts);
         Gt6KtfruBatteries.addLayouts(layouts);
+        Gt6KtfruResearchMachines.addLayouts(layouts);
         return List.copyOf(layouts);
     }
 
@@ -315,6 +318,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 SUN_HEATER, SUN_MIRROR, TIDAL, OIL_MINER, MANTLE, FUEL_DEBURN_TYPE));
         types.addAll(Gt6KtfruTurbines.behaviorTypes());
         types.addAll(Gt6KtfruBatteries.behaviorTypes());
+        types.addAll(Gt6KtfruResearchMachines.behaviorTypes());
         return Set.copyOf(types);
     }
 
@@ -339,6 +343,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         if (Gt6KtfruHeatMachines.owns(machineType)) return Gt6KtfruHeatMachines.create(machineType);
         if (Gt6KtfruTurbines.owns(machineType)) return Gt6KtfruTurbines.create(machineType);
         if (Gt6KtfruBatteries.owns(machineType)) return Gt6KtfruBatteries.create(machineType);
+        if (Gt6KtfruResearchMachines.owns(machineType)) return Gt6KtfruResearchMachines.create(machineType);
         throw new IllegalArgumentException(machineType);
     }
 
