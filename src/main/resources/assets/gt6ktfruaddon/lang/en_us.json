@@ -395,5 +395,17 @@
   "gt6ktfruaddon.research.tree": "Research tree: %s",
   "gt6ktfruaddon.structure.research_assembler.1": "Two layers. The bottom is a crafting table and steel walls. The top is three steel walls.",
   "gt6ktfruaddon.structure.research_assembler.2": "The controller is the gap in the first row of the bottom layer. The crafting table is a plain block.",
-  "gt6ktfruaddon.structure.research_assembler.3": "LU enters every face except the front. Only assembler rows whose first output is in the research tree run."
+  "gt6ktfruaddon.structure.research_assembler.3": "LU enters every face except the front. Only assembler rows whose first output is in the research tree run.",
+  "block.gt6ktfruaddon.electric_controller": "Electric Compute Controller",
+  "block.gt6ktfruaddon.wireless_controller": "Wireless Compute Controller",
+  "block.gt6ktfruaddon.wired_controller": "Wired Compute Controller",
+  "block.gt6ktfruaddon.compute_user": "Compute User",
+  "block.gt6ktfruaddon.network_cable": "Compute Network Cable",
+  "block.gt6ktfruaddon.dream_brain": "Dream Brain",
+  "block.gt6ktfruaddon.compute_cluster": "Compute Cluster",
+  "block.gt6ktfruaddon.compute_cluster_simple": "Simple Compute Cluster",
+  "gt6ktfruaddon.compute.remembered": "Noted %s %s,%s,%s",
+  "gt6ktfruaddon.compute.saved": "Link %s %s,%s,%s %s",
+  "gt6ktfruaddon.compute.in": "in range",
+  "gt6ktfruaddon.compute.out": "out of range"
 }

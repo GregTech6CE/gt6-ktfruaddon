@@ -43,6 +43,7 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  * Card 13 adds the large gas and steam turbines, dynamos, expanded motors and fluid boiler.
  * Card 14 adds the liquid batteries and transform batteries.
  * Card 15 adds the research blocks that this checkout registers, and the research assembler.
+ * Card 16 adds the live compute controllers, the network cable and the two cluster parts.
  */
 public final class Gt6KtfruMachines implements AddonMachineContributor, BehaviorMachineContributor {
     public static final String FLUID_HEATING = "gt6ktfruaddon.recipe.fluid_heating";
@@ -251,6 +252,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         Gt6KtfruTurbines.add(machines);
         Gt6KtfruBatteries.add(machines);
         Gt6KtfruResearchMachines.add(machines);
+        Gt6KtfruComputeMachines.add(machines);
         return List.copyOf(machines);
     }
 
@@ -319,6 +321,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         types.addAll(Gt6KtfruTurbines.behaviorTypes());
         types.addAll(Gt6KtfruBatteries.behaviorTypes());
         types.addAll(Gt6KtfruResearchMachines.behaviorTypes());
+        types.addAll(Gt6KtfruComputeMachines.behaviorTypes());
         return Set.copyOf(types);
     }
 
@@ -344,6 +347,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         if (Gt6KtfruTurbines.owns(machineType)) return Gt6KtfruTurbines.create(machineType);
         if (Gt6KtfruBatteries.owns(machineType)) return Gt6KtfruBatteries.create(machineType);
         if (Gt6KtfruResearchMachines.owns(machineType)) return Gt6KtfruResearchMachines.create(machineType);
+        if (Gt6KtfruComputeMachines.owns(machineType)) return Gt6KtfruComputeMachines.create(machineType);
         throw new IllegalArgumentException(machineType);
     }
 

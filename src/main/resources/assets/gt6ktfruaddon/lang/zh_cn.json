@@ -395,5 +395,17 @@
   "gt6ktfruaddon.research.tree": "研究树：%s",
   "gt6ktfruaddon.structure.research_assembler.1": "两层。底层是工作台和钢墙，上层是三格钢墙。",
   "gt6ktfruaddon.structure.research_assembler.2": "控制器在底层第一行的空位。工作台是普通方块。",
-  "gt6ktfruaddon.structure.research_assembler.3": "LU 从除正面以外的面进入。只加工第一件产物在研究树里的组装配方。"
+  "gt6ktfruaddon.structure.research_assembler.3": "LU 从除正面以外的面进入。只加工第一件产物在研究树里的组装配方。",
+  "block.gt6ktfruaddon.electric_controller": "电计算控制器",
+  "block.gt6ktfruaddon.wireless_controller": "无线计算控制器",
+  "block.gt6ktfruaddon.wired_controller": "有线计算控制器",
+  "block.gt6ktfruaddon.compute_user": "计算用户",
+  "block.gt6ktfruaddon.network_cable": "计算网线",
+  "block.gt6ktfruaddon.dream_brain": "梦境终端",
+  "block.gt6ktfruaddon.compute_cluster": "计算集群",
+  "block.gt6ktfruaddon.compute_cluster_simple": "简易计算集群",
+  "gt6ktfruaddon.compute.remembered": "已记下 %s %s,%s,%s",
+  "gt6ktfruaddon.compute.saved": "链路 %s %s,%s,%s %s",
+  "gt6ktfruaddon.compute.in": "距离内",
+  "gt6ktfruaddon.compute.out": "距离外"
 }
