@@ -308,6 +308,7 @@ public final class Gt6KtfruItems {
             "research_viewer",
             "wireless_cli_wristband",
             "gtqt_icon",
+            "intelligent_core",
             "crucible_model_inner_layer",
             "co60_flaw_detection_core",
             "tm170_flaw_detection_core",

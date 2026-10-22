@@ -1,35 +1,64 @@
-﻿{
+{
   "variants": {
-    "facing=north,lit=false,running=false": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder" }
-,
-    "facing=north,lit=false,running=true": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder" }
-,
-    "facing=north,lit=true,running=false": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder" }
-,
-    "facing=north,lit=true,running=true": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder" }
-,
-    "facing=east,lit=false,running=false": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder", "y": 90 }
-,
-    "facing=east,lit=false,running=true": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder", "y": 90 }
-,
-    "facing=east,lit=true,running=false": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder", "y": 90 }
-,
-    "facing=east,lit=true,running=true": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder", "y": 90 }
-,
-    "facing=south,lit=false,running=false": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder", "y": 180 }
-,
-    "facing=south,lit=false,running=true": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder", "y": 180 }
-,
-    "facing=south,lit=true,running=false": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder", "y": 180 }
-,
-    "facing=south,lit=true,running=true": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder", "y": 180 }
-,
-    "facing=west,lit=false,running=false": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder", "y": 270 }
-,
-    "facing=west,lit=false,running=true": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder", "y": 270 }
-,
-    "facing=west,lit=true,running=false": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder", "y": 270 }
-,
-    "facing=west,lit=true,running=true": { "model": "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder", "y": 270 }
+    "facing=north,lit=false,running=false": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control"
+    },
+    "facing=north,lit=false,running=true": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control_running"
+    },
+    "facing=north,lit=true,running=false": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control_active"
+    },
+    "facing=north,lit=true,running=true": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control_active"
+    },
+    "facing=east,lit=false,running=false": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control",
+      "y": 90
+    },
+    "facing=east,lit=false,running=true": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control_running",
+      "y": 90
+    },
+    "facing=east,lit=true,running=false": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control_active",
+      "y": 90
+    },
+    "facing=east,lit=true,running=true": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control_active",
+      "y": 90
+    },
+    "facing=south,lit=false,running=false": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control",
+      "y": 180
+    },
+    "facing=south,lit=false,running=true": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control_running",
+      "y": 180
+    },
+    "facing=south,lit=true,running=false": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control_active",
+      "y": 180
+    },
+    "facing=south,lit=true,running=true": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control_active",
+      "y": 180
+    },
+    "facing=west,lit=false,running=false": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control",
+      "y": 270
+    },
+    "facing=west,lit=false,running=true": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control_running",
+      "y": 270
+    },
+    "facing=west,lit=true,running=false": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control_active",
+      "y": 270
+    },
+    "facing=west,lit=true,running=true": {
+      "model": "gt6ktfruaddon:block/machine/basic/research_table_current_control_active",
+      "y": 270
+    }
   }
 }

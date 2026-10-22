@@ -273,6 +273,7 @@
   "ResearchViewer": "research_viewer",
   "WirelessCLIWristband": "wireless_cli_wristband",
   "GTQTIcon": "gtqt_icon",
+  "IntelligentCore": "intelligent_core",
   "CrucibleModelInnerLayer": "crucible_model_inner_layer",
   "Co60FlawDetectionCore": "co60_flaw_detection_core",
   "Tm170FlawDetectionCore": "tm170_flaw_detection_core",

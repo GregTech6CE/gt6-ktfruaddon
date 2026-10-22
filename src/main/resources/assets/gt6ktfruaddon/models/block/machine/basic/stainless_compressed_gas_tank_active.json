@@ -4,12 +4,12 @@
     "layer0": {
       "parent": "minecraft:block/block",
       "textures": {
-        "down": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material",
-        "up": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material",
-        "north": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material",
-        "south": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material",
-        "west": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material",
-        "east": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material"
+        "down": "gt6ktfruaddon:block/machines/multiblockmains/tankmetal/colored/bottom",
+        "up": "gt6ktfruaddon:block/machines/multiblockmains/tankmetal/colored/top",
+        "north": "gt6ktfruaddon:block/machines/multiblockmains/tankmetal/colored_front/side",
+        "south": "gt6ktfruaddon:block/machines/multiblockmains/tankmetal/colored/side",
+        "west": "gt6ktfruaddon:block/machines/multiblockmains/tankmetal/colored/side",
+        "east": "gt6ktfruaddon:block/machines/multiblockmains/tankmetal/colored/side"
       },
       "elements": [
         {
@@ -58,42 +58,10 @@
         }
       ],
       "render_type": "minecraft:solid"
-    },
-    "layer1": {
-      "parent": "minecraft:block/block",
-      "textures": {
-        "north": "gt6ktfruaddon:block/machines/tankgascompressedinputer/front_active",
-        "south": "gt6ktfruaddon:block/machines/tankgascompressedinputer/back"
-      },
-      "elements": [
-        {
-          "from": [
-            0,
-            0,
-            0
-          ],
-          "to": [
-            16,
-            16,
-            16
-          ],
-          "faces": {
-            "north": {
-              "texture": "#north",
-              "cullface": "north"
-            },
-            "south": {
-              "texture": "#south",
-              "cullface": "south"
-            }
-          }
-        }
-      ],
-      "render_type": "minecraft:cutout"
     }
   },
   "parent": "minecraft:block/block",
   "textures": {
-    "particle": "gt6ktfruaddon:block/machines/tankgascompressedinputer/material"
+    "particle": "gt6ktfruaddon:block/machines/multiblockmains/tankmetal/colored/bottom"
   }
 }

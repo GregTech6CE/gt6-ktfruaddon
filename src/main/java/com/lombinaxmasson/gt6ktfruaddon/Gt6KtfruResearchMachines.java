@@ -31,7 +31,7 @@ public final class Gt6KtfruResearchMachines {
 
     public static void addMaps(List<RecipeTable> maps) {
         maps.add(Gt6KtfruMachines.map(ASSEMBLER_MAP, "Research Assembler", "researchassembler", 9, 6, 0, 3, 3, 0, 1));
-        maps.add(Gt6KtfruMachines.map(REACTOR_MAP, "Research Reactor", "gascompressor", 9, 6, 0, 6, 6, 0, 1));
+        maps.add(Gt6KtfruMachines.map(REACTOR_MAP, "Research Reactor", "fusion", 9, 6, 0, 6, 6, 0, 1));
     }
 
     public static void add(List<AddonMachine> machines) {

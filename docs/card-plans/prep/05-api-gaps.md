@@ -43,7 +43,7 @@
 ### 材料、前缀与物品反查
 
 - **材料读取接口没有质量、工具品质和工具速度。** 来源：卡 08（飞轮箱容量和损耗依赖飞轮材料的这三项）、卡 14（变换电池 RU 的飞轮物品，容量是最大库存乘堆叠数）。`GregTechMaterials.Material` 只有名字、id、颜色、熔点、沸点、密度、化学式、翻译键、组成和副产物。飞轮箱和这台变换电池的飞轮容量因此留在 0。
-- **无锭材料不能通过 `forms()` 请求板、箔或电线，也没有 `casingMachine` 这类方块前缀。** 来源：卡 01、卡 06（硅橡胶、丁苯橡胶、PEEK 的板和箔，石墨板，组装机里的 `casingMachine` 和缺失电线）。`MaterialFormRequest` 只对已有生成规则前缀放行；材料没有 `metal()` 时请求 plate 或 foil 会在启动时被拒绝。新物品前缀走 `PrefixDeclaration`，方块前缀没有入口。
+- **核心材料不能通过 `forms()` 请求未开启的电线或 `casingMachine` 方块前缀。** 来源：卡 01、卡 06（石墨板，组装机里的 `casingMachine` 和缺失电线）。`MaterialFormRequest` 对附属自有材料开放了 `plate` 和 `foil`（`SiliconeRubber`、`SBR`、`PEEK` 已通过 `forms()` 注册），核心材料仍走 `MaterialPrefix.isValidFor`；新物品前缀走 `PrefixDeclaration`，方块前缀没有入口。
 - **前缀条件没有熔融、金属或合金，也不能按材料名排除。** 来源：卡 22（`prefixList` 的大型涡轮叶片和六种涡轮）。源条件是工具属性、可熔、金属或合金，再排除退火铜、熟铁、铝铁。`PrefixCondition` 只有工具属性、可锻造，以及木、煤、石、食物、肉的否定。叶片和涡轮按飞轮的工具属性加可锻造生成。纯度粉改用精炼家族的显式名单。
 - **不能从任意物品反查材料和前缀组成。** 来源：卡 19（电磁坩埚 `ElectromagnetCrucible` 30032）。源里用 `OM.anydata_` 把投入的物品折算成材料和单位数。附属接口能按名字查 `GregTechMaterials.find`，不能从任意 `ItemStack` 反查它含什么材料。卡 19 不写猜 NBT 的替代查询。坩埚只对一份已知的铁加热，温度跨过 `Iron` 的熔点就记成熔化。材料质量不在接口里，总质量保持自身的 3200。
 

@@ -1,6 +1,5 @@
-"""Copy kTFRU machine art onto card 08–20 blocks that still use the white placeholder.
+"""Copy kTFRU and GT6 machine art onto all card 08–20 blocks.
 
-Leaves a machine on the white cube when the source checkout has no texture for it.
 Does not replace the behavior-machine GUI sheet.
 """
 
@@ -12,7 +11,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "kTFRUAddon" / "src" / "main" / "resources" / "assets" / "gregtech" / "textures" / "blocks" / "machines"
+GT_SRC = ROOT.parent / "GregTech6CommunityEdition" / "GregTech6" / "core" / "src" / "main" / "resources" / "assets" / "gt6ce" / "textures" / "block" / "machines"
 GUI_SRC = ROOT / "kTFRUAddon" / "src" / "main" / "resources" / "assets" / "gregtech" / "textures" / "gui" / "machines"
+GT_GUI_SRC = ROOT.parent / "GregTech6CommunityEdition" / "GregTech6" / "core" / "src" / "main" / "resources" / "assets" / "gt6ce" / "textures" / "gui" / "recipes"
 ASSETS = ROOT / "src" / "main" / "resources" / "assets" / "gt6ktfruaddon"
 DEST = ASSETS / "textures" / "block" / "machines"
 MODELS = ASSETS / "models" / "block" / "machine" / "basic"
@@ -23,7 +24,6 @@ REPORT = ROOT / "build" / "texture-port.txt"
 
 FACES = ("down", "up", "north", "south", "west", "east")
 SIX = {"down": "bottom", "up": "top", "north": "front", "south": "back", "west": "right", "east": "left"}
-NS = "gt6ktfruaddon:block/machine/basic/"
 COPIED: dict[str, str] = {}
 MISSING: list[str] = []
 
@@ -31,6 +31,8 @@ MISSING: list[str] = []
 def use(rel: str) -> str | None:
     rel = rel.removesuffix(".png")
     src = SRC / f"{rel}.png"
+    if not src.is_file():
+        src = GT_SRC / f"{rel}.png"
     if not src.is_file():
         MISSING.append(rel)
         return None
@@ -182,6 +184,31 @@ def turbine_faces(folder: str):
     return pack(colored, overlay, None, None)
 
 
+def hopper():
+    parts = {}
+    for key, rel in {
+        "down": "hopper/colored/bottom",
+        "up": "hopper/colored/top",
+        "side": "hopper/colored/side",
+        "odown": "hopper/overlay/bottom",
+        "oup": "hopper/overlay/top",
+        "oside": "hopper/overlay/side",
+    }.items():
+        texture = use(rel)
+        if texture is None:
+            return None
+        parts[key] = texture
+    colored = {
+        "down": parts["down"], "up": parts["up"], "north": parts["side"],
+        "south": parts["side"], "west": parts["side"], "east": parts["side"],
+    }
+    overlay = {
+        "down": parts["odown"], "up": parts["oup"], "north": parts["oside"],
+        "south": parts["oside"], "west": parts["oside"], "east": parts["oside"],
+    }
+    return pack(colored, overlay, None, None)
+
+
 def tokamak():
     base = use("fusion/tokamak/exp/base")
     stop = use("fusion/tokamak/exp/overlay_stop")
@@ -314,6 +341,12 @@ def turbine_icon():
 def spec_for(stem: str):
     if stem == "cnc_machine":
         return six("basicmachines/cncmachine3")
+    if stem in ("catalytic_reactor_ev", "catalytic_reactor_iv"):
+        return six("basicmachines/mixer")
+    if stem in ("microgravity_crystal_growth", "cosmic_radiation_chamber", "microgravity_assembler"):
+        return six("basicmachines/heatmixer")
+    if stem in ("laser_fusion_experimental", "laser_fusion_industrial"):
+        return six("basicmachines/fusionreactor")
     if stem.startswith("flywheel_gear_small_"):
         return common("multiblockparts/transformer/rot_small")
     if stem.startswith("flywheel_gear_large_"):
@@ -342,18 +375,26 @@ def spec_for(stem: str):
         "tidal_wave_generator": "multiblockmains/tidalWaveGenerator",
         "fluid_boiler": "multiblockmains/fluidBoiler",
         "research_monitor": "research/monitor",
+        "research_database_item": "research/monitor",
+        "research_database_online": "research/monitor",
     }
     if stem in bases:
         return base_front(bases[stem])
+    if stem.startswith("research_table_"):
+        return base_front("research/table/fill")
     if stem == "oil_miner":
         return turbine_faces("multiblockmains/oilminer")
-    if stem == "electromagnet_crucible":
+    if stem == "electromagnet_crucible" or stem.startswith("wireless_compute_controller"):
         return turbine_faces("multiblockmains/dummycrucible")
+    if stem in ("steel_compressed_gas_tank", "stainless_compressed_gas_tank"):
+        return turbine_faces("multiblockmains/tankmetal")
+    if stem.startswith("dynamo_") or stem == "separate_excite_dynamo":
+        return turbine_faces("multiblockmains/largedynamo")
     if stem.startswith(("large_gas_turbine_", "large_steam_turbine_", "expanded_motor_")):
         return turbine_icon()
     if stem in ("fusion_tokamak_exp", "fusion_tokamak_t1"):
         return tokamak()
-    if stem in ("mask_aligner_uv", "mask_aligner_duv", "mask_aligner_euv", "research_assembler"):
+    if stem in ("mask_aligner_uv", "mask_aligner_duv", "mask_aligner_euv", "research_assembler", "research_reactor", "optical_microscope"):
         return mask_zero()
     if stem == "mask_aligner_uv_plus":
         return mask_one()
@@ -367,11 +408,31 @@ def spec_for(stem: str):
         return manual("KU")
     if stem in ("gas_battery_aluminium", "gas_battery_stainless"):
         return fuel_battery()
-    if stem in ("steel_compressed_gas_tank", "stainless_compressed_gas_tank"):
+    if stem.startswith("gas_compressor_"):
         return gas_tank()
+    if stem.startswith("void_hopper_"):
+        return hopper()
     if stem == "compute_cluster_simple":
         return compute("multiblockparts/computeclustersimple")
-    if stem == "compute_cluster":
+    if stem in (
+        "compute_cluster",
+        "centrifugal_microgravity",
+        "electron_microscope",
+        "mirror_gold_synthesis",
+        "mirror_gold_quantumization",
+        "quantum_gold_chamber",
+        "quantum_observation_tower",
+        "quantum_communication_relay",
+        "quantum_compute_center",
+        "compute_user",
+        "dream_brain",
+    ) or stem.startswith((
+        "biology_compute_",
+        "quantum_compute_",
+        "spacetime_compute_",
+        "wireless_compute_node_",
+        "ai_",
+    )):
         return compute("multiblockparts/computecluster")
     return None
 
@@ -424,15 +485,15 @@ def copy_gui() -> None:
     }
     for source_name, dest_name in mapping.items():
         shutil.copyfile(GUI_SRC / source_name, RECIPES / dest_name)
+    for gt_name in ("mixer.png", "fusion.png"):
+        shutil.copyfile(GT_GUI_SRC / gt_name, RECIPES / gt_name)
     shutil.copyfile(ASSETS / "textures" / "gui" / "machines" / "gascompressor.png", RECIPES / "gascompressor.png")
 
 
 def main() -> None:
-    white = MODELS / "sun_heater.json"
-    text = white.read_text(encoding="utf-8-sig")
-    if "white_concrete" not in text:
-        raise SystemExit("sun_heater model is no longer the white placeholder")
-    write_json(MODELS / "sun_heater_placeholder.json", json.loads(text))
+    placeholder_file = MODELS / "sun_heater_placeholder.json"
+    if placeholder_file.is_file():
+        placeholder_file.unlink()
     mapped = []
     skipped = []
     for state in sorted(BLOCKSTATES.glob("*.json")):
@@ -452,15 +513,6 @@ def main() -> None:
         write_json(state, blockstate(stem))
         retarget_item(stem, f"gt6ktfruaddon:block/machine/basic/{stem}")
         mapped.append(stem)
-    placeholder = "gt6ktfruaddon:block/machine/basic/sun_heater_placeholder"
-    shared = "gt6ktfruaddon:block/machine/basic/sun_heater"
-    for state in BLOCKSTATES.glob("*.json"):
-        if state.stem in mapped:
-            continue
-        body = state.read_text(encoding="utf-8")
-        if shared in body:
-            state.write_text(body.replace(shared, placeholder), encoding="utf-8")
-            retarget_item(state.stem, placeholder)
     copy_gui()
     lines = [f"mapped {len(mapped)}", *("  " + stem for stem in mapped), f"left {len(skipped)}", *("  " + stem for stem in skipped)]
     lines.append(f"textures {len(COPIED)}")

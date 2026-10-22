@@ -102,7 +102,7 @@ public final class Gt6KtfruLaserFusion implements MachineBehavior {
 
     @Override
     public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return slot == 0 && stack != null && !stack.isEmpty();
+        return (slot == 0 || slot == 1) && stack != null && !stack.isEmpty();
     }
 
     @Override
@@ -123,7 +123,7 @@ public final class Gt6KtfruLaserFusion implements MachineBehavior {
 
     private boolean tryFirePulse(MachineBehaviorContext context, long pulse) {
         AddonRecipes.Line line = AddonRecipes.map(Gt6KtfruLateMachines.LASER).find(
-                List.of(context.item(0)),
+                List.of(context.item(0), context.item(1)),
                 List.of(context.fluid(0), context.fluid(1)),
                 true, 1, 2);
         if (line == null) return false;
@@ -134,10 +134,17 @@ public final class Gt6KtfruLaserFusion implements MachineBehavior {
         if (!pays(context, line) || !canStoreOutputs(context, line)) return false;
 
         ItemStack[] inItems = line.itemInputs();
-        if (inItems != null && inItems.length > 0 && inItems[0] != null && !inItems[0].isEmpty() && !kept(line, 0)) {
-            ItemStack have = context.item(0).copy();
-            have.shrink(inItems[0].getCount());
-            context.setItem(0, have.isEmpty() ? ItemStack.EMPTY : have);
+        if (inItems != null) {
+            for (int i = 0; i < inItems.length; i++) {
+                ItemStack need = inItems[i];
+                if (need == null || need.isEmpty() || kept(line, i)) continue;
+                int slot = inputSlotHolding(context, need);
+                if (slot >= 0) {
+                    ItemStack have = context.item(slot).copy();
+                    have.shrink(need.getCount());
+                    context.setItem(slot, have.isEmpty() ? ItemStack.EMPTY : have);
+                }
+            }
         }
         FluidStack[] inFluids = line.fluidInputs();
         if (inFluids != null) {
@@ -162,9 +169,9 @@ public final class Gt6KtfruLaserFusion implements MachineBehavior {
         ItemStack[] outItems = line.itemOutputs();
         if (outItems != null && outItems.length > 0 && outItems[0] != null && !outItems[0].isEmpty()) {
             ItemStack out = outItems[0].copy();
-            ItemStack have = context.item(1);
+            ItemStack have = context.item(2);
             if (!have.isEmpty()) out.grow(have.getCount());
-            context.setItem(1, out);
+            context.setItem(2, out);
         }
 
         context.state().setLong("pulse", pulse - requiredPulse);
@@ -177,11 +184,10 @@ public final class Gt6KtfruLaserFusion implements MachineBehavior {
 
     private static boolean pays(MachineBehaviorContext context, AddonRecipes.Line line) {
         ItemStack[] inItems = line.itemInputs();
-        if (inItems != null && inItems.length > 0 && inItems[0] != null && !inItems[0].isEmpty()) {
-            ItemStack have = context.item(0);
-            if (have.isEmpty() || !ItemStack.isSameItemSameComponents(have, inItems[0])
-                    || have.getCount() < inItems[0].getCount()) {
-                return false;
+        if (inItems != null) {
+            for (ItemStack need : inItems) {
+                if (need == null || need.isEmpty()) continue;
+                if (inputSlotHolding(context, need) < 0) return false;
             }
         }
         FluidStack[] inFluids = line.fluidInputs();
@@ -204,13 +210,24 @@ public final class Gt6KtfruLaserFusion implements MachineBehavior {
         }
         ItemStack[] outItems = line.itemOutputs();
         if (outItems != null && outItems.length > 0 && outItems[0] != null && !outItems[0].isEmpty()) {
-            ItemStack have = context.item(1);
+            ItemStack have = context.item(2);
             if (!have.isEmpty() && (!ItemStack.isSameItemSameComponents(have, outItems[0])
                     || have.getCount() + outItems[0].getCount() > have.getMaxStackSize())) {
                 return false;
             }
         }
         return true;
+    }
+
+    private static int inputSlotHolding(MachineBehaviorContext context, ItemStack need) {
+        for (int slot = 0; slot <= 1; slot++) {
+            ItemStack have = context.item(slot);
+            if (!have.isEmpty() && ItemStack.isSameItemSameComponents(have, need)
+                    && have.getCount() >= need.getCount()) {
+                return slot;
+            }
+        }
+        return -1;
     }
 
     private static int inputTankHolding(MachineBehaviorContext context, FluidStack need) {

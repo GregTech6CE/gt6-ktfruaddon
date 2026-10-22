@@ -35,7 +35,7 @@ FIXED = {
 }
 EXACT_SKIP = {
     "ArmorAirSealant", "SpaceSuitCloth",
-    "IntelligentCore", "RefinedStoragePart", "RefinedFluidStoragePart",
+    "RefinedStoragePart", "RefinedFluidStoragePart",
     "PreparedIronOre", "TwilightCore", "NaturalCore", "FlowerCluster",
     "ClayGlassBlockMold", "CeramicGlassBlockMold", "CeramicGlassBlockMoldFull",
     "CeramicGlassBlockMoldComplete", "ClayGlassBottleMold", "CeramicGlassBottleMold",
@@ -84,12 +84,16 @@ def enum_names() -> list[str]:
     return seen
 
 
-def display_names() -> dict[str, str]:
+def display_names() -> dict[str, tuple[str, int, str]]:
     found = {}
-    pattern = re.compile(r'ItemList\.(\w+)\s*\.set\(\s*addItem\(\s*-?\d+\s*,\s*"([^"]*)"')
+    group_re = re.compile(r'super\(\s*MOD_ID\s*,\s*"([^"]+)"\s*\)')
+    pattern = re.compile(r'ItemList\.(\w+)\s*\.set\(\s*addItem\(\s*(-?\d+)\s*,\s*"([^"]*)"')
     for path in ITEM_SRC.rglob("*.java"):
-        for name, label in pattern.findall(path.read_text(encoding="utf-8")):
-            found[name] = label
+        text = path.read_text(encoding="utf-8")
+        group_match = group_re.search(text)
+        group = group_match.group(1) if group_match else ""
+        for name, meta, label in pattern.findall(text):
+            found[name] = (group, int(meta), label)
     return found
 
 
@@ -225,7 +229,8 @@ def main() -> None:
     for name, path in mapping.items():
         if name in FIXED:
             continue
-        label = labels.get(name, "")
+        info = labels.get(name)
+        label = info[2] if info else ""
         english = label if label and not re.search(r"[\u4e00-\u9fff]", label) else spaced(name)
         chinese = label if re.search(r"[\u4e00-\u9fff]", label) else english
         key = "item.gt6ktfruaddon." + path
@@ -234,17 +239,37 @@ def main() -> None:
     upsert_lang(LANGS[0], en_pairs)
     upsert_lang(LANGS[1], zh_pairs)
     MODELS.mkdir(parents=True, exist_ok=True)
-    for path in extra:
+    item_tex_src = ROOT / "kTFRUAddon" / "src" / "main" / "resources" / "assets" / "ktfruaddon" / "textures" / "items"
+    item_tex_dest = ROOT / "src" / "main" / "resources" / "assets" / "gt6ktfruaddon" / "textures" / "item"
+    textured = 0
+    for name, path in mapping.items():
+        info = labels.get(name)
+        layer0 = "minecraft:item/paper"
+        if info and info[0]:
+            group, meta, _ = info
+            group_dir = group.lower()
+            src_png = item_tex_src / group / f"{meta}.png"
+            if src_png.is_file():
+                dest_png = item_tex_dest / group_dir / f"{meta}.png"
+                dest_png.parent.mkdir(parents=True, exist_ok=True)
+                dest_png.write_bytes(src_png.read_bytes())
+                src_meta = src_png.with_name(src_png.name + ".mcmeta")
+                if src_meta.is_file():
+                    dest_png.with_name(dest_png.name + ".mcmeta").write_bytes(src_meta.read_bytes())
+                layer0 = f"gt6ktfruaddon:item/{group_dir}/{meta}"
+                textured += 1
         model = MODELS / f"{path}.json"
-        if not model.exists():
-            model.write_text(MODEL, encoding="utf-8")
+        model.write_text(
+            f'{{\n  "parent": "minecraft:item/generated",\n  "textures": {{ "layer0": "{layer0}" }}\n}}\n',
+            encoding="utf-8",
+        )
     ICONS.mkdir(parents=True, exist_ok=True)
     for source_name, dest_name in PREFIX_TEXTURES.items():
         source = SHINY / source_name
         if not source.is_file():
             raise SystemExit(f"missing prefix texture {source}")
         (ICONS / dest_name).write_bytes(source.read_bytes())
-    print(f"items {len(mapping)} extra {len(extra)}")
+    print(f"items {len(mapping)} extra {len(extra)} textured {textured}")
 
 
 if __name__ == "__main__":

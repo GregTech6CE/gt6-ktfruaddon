@@ -6,6 +6,7 @@
   - `src/main/java/com/lombinaxmasson/gt6ktfruaddon/Gt6KtfruMaterials.java`
   - `src/main/java/com/lombinaxmasson/gt6ktfruaddon/Gt6KtfruItems.java`
   - `src/main/java/com/lombinaxmasson/gt6ktfruaddon/Gt6KtfruSourceRecipes.java`
+  - `src/main/java/com/lombinaxmasson/gt6ktfruaddon/Gt6KtfruLaserFusion.java`
   - `src/main/java/com/lombinaxmasson/gt6ktfruaddon/Gt6KtfruAddon.java`
   - `src/main/java/com/lombinaxmasson/gt6ktfruaddon/Gt6KtfruMachines.java`
   - `src/main/java/com/lombinaxmasson/gt6ktfruaddon/Gt6KtfruLateMachines.java`
@@ -18,52 +19,69 @@
 
 ## 背景
 
-`prefixList` 的 10 个前缀、产线用到的 `ItemList` 物品，以及卡 08–20 里仍是白方块的机器贴图，都留在源码 `6404ab69` 里。十张单方块配方图里，编程电路、数量为 0 的催化剂、激光概率和纯度粉循环也可以落到现有的 `AddonRecipes.Line` 上。
+`prefixList` 的 10 个前缀、`fluidPreInit` 的全部化工与石化流体、`SiliconeRubber` / `SBR` / `PEEK` 的板与箔、产线用到的 `ItemList` 物品，以及卡 08–20 机器与物品的贴图、全部 28 张配方图的源行，集中在这张卡里收口。
 
 ## 范围与设计
 
-### 1. 前缀
+### 1. 前缀、板箔形态与流体
 
-`Gt6KtfruMaterials.prefixes()` 登记飞轮、大型涡轮叶片、三态燃气涡轮、三态蒸汽涡轮，以及商业纯、分析纯、绝对纯粉。飞轮、叶片和六种涡轮沿用工具且可锻造的筛选。纯度粉列出提纯家族里的材料，条件集为空。涡轮源条件里的熔融、金属或合金、以及三种具名排除，记在卡 05。
+- `Gt6KtfruMaterials.prefixes()` 登记飞轮、大型涡轮叶片、三态燃气涡轮、三态蒸汽涡轮，以及商业纯、分析纯、绝对纯粉。贴图来自源 SHINY 套，放在 `textures/item/material_icons/`。
+- `Gt6KtfruMaterials.forms()` 声明 `SiliconeRubber`、`SBR`、`PEEK` 的 `plate` 与 `foil`。
+- `Gt6KtfruMaterials.materials()` 补齐 `fluidPreInit.java` 里所有自有材料的流体态（光刻胶、四氟乙烯、硅烷、一甲胺等）与独立 `flList` 流体（苯酚、冰醋酸、石脑油、裂解油气、铂族处理液、甲基吡咯烷酮、硫酸钡等）。
 
-贴图来自源 SHINY 套，放在 `textures/item/material_icons/`。GT 按前缀声明生成染色模型。
+### 2. 物品与全配方图提取
 
-### 2. 物品与配方
-
-`ItemList` 里普通产线物品登记为 496 个新物品，加上原有的 3 张膜和 4 根电池极，共 503 个。TFC、Advanced Rocketry、Applied Energistics 和 Twilight Forest 的条目不登记。源物品贴图按数字 meta 存放，模型暂时用纸张外观。
-
-提取器现在认识：
-
-- `ST.tag(0..24)`，消耗的编程电路
-- `ItemList` 与 `OP` 数量 0，堆叠数保持 1，并写入 `keptInputs`
-- `long[]` 概率，源里的 0 和 10000 视为必定产出；数组比物品输出更长的 5 行继续跳过
-- `prefixList` 的 10 个字段
-- `PurityRefining` 里两处带 `material` 变量的热混合：钨和钼的商业纯，以及阀金属、贵金属（含智金）、难熔金属、半导体的分析纯
-
-重新生成后十张图的落账行数：流体加热 4，光混合仍在 `Gt6KtfruRecipes`，组装 59，激光切割 22，热混合 88，晶圆测试 24。电子设计、探伤、涂布和超声混合这四张图没有新的可落账行。合计 197 行。光混合、硫、水和石墨烯三处原有断言保持通过。
-
-仍跳过的行包括 GT 元件、机器外壳、没有对应形态的导线、缺失流体、数量为 0 的流体、C 档，以及监听器 `recipePrefixItems` 里的飞轮和涡轮加工。那份监听器不在这十张图的扫描范围内。
+- `ItemList` 普通产线物品共登记 504 个（含 `IntelligentCore`），其中 374 个直接从 `kTFRUAddon/src/main/resources/assets/ktfruaddon/textures/items/<group>/<meta>.png` 拷入原版贴图。
+- `tools/extract_machine_recipes.py` 扩展到全部 28 张配方图和 18 个源配方文件（含 `CatalyticChemistry.java`、`QuantumObservation.java`、`listener/recipePrefixItems.java` 与 `tileEntityInit0.java`），支持：
+  - `ST.tag(0..24)` 编程电路
+  - 数量 0 的催化剂（写入 `keptInputs`）
+  - 概率数组（按输出槽数截取并把 0 归一为 10000）
+  - `.setSpecialNumber(...)` 特殊值（用于激光聚变脉冲与托卡马克）
+  - `aMat` 变量与 `kRegistry0.getItem(...)` 机器/结构方块物品映射
+  - `PurityRefining` 的商业纯、分析纯与 34 种绝对纯激光聚变展开，以及 `recipePrefixItems` 的蒸汽/燃气涡轮探伤展开
+- 重新生成后共落账 **483 行**源配方：
+  - 热混合 `HeatMixer`：150 行
+  - 电路组装 `Assembler`：76 行
+  - 激光惯性聚变 `LaserFusion` / `LaserFusionExperimental`：42 行
+  - 三轴 `CNC`：35 行
+  - 激光切割 `LaserCutter`：27 行
+  - 掩膜对准 `MaskAligner`：24 行
+  - 探伤仪 `FlawDetector`：24 行
+  - 晶圆测试 `WaferTester`：24 行
+  - 催化反应器 `CatalyticReactor`：17 行
+  - 蒸馏塔 `DistillTower` / `SmallDistillTower` / `TinyDistillTower`：16 / 13 / 5 行（另含 `Gt6KtfruRecipes` 的 3 行海水蒸馏）
+  - 晶圆涂胶 `WaferCoater`：4 行
+  - 研究组装 `ResearchAssembler`：4 行
+  - 托卡马克 `FusionTokamak` / `FusionTokamakExperimental`：4 行（另含 `Gt6KtfruRecipes` 的 1 行氘氚聚变）
+  - 流体加热 `FluidHeating`：4 行
+  - 超声混合 `UltrasonicMixer`：3 行
+  - 微重力晶体生长 `MicrogravityCrystalGrowth`：3 行
+  - 镜金合成 `MirrorGoldSynthesis`：2 行
+  - 量子观测 `QuantumObservation`：2 行
+  - 宇宙辐射 `CosmicRadiationResearch`：1 行
+  - 量金合成 `QuantumGoldSynthesis`：1 行
+  - 量子通讯 `QuantumCommunication`：1 行
+  - 研究反应釜 `ResearchReactor`：1 行
 
 ### 3. 机器贴图与配方 GUI
 
-130 台有源贴图的机器换成了 kTFRU 原图，包括飞轮、齿轮、变压器、掩膜、CNC、太阳炉、潮汐、油矿、地幔加热、脱燃、大型涡轮、扩展马达、流体锅炉、气体电池、压缩气罐、手摇马达、矿机、水车、研究监视器、研究组装、计算集群零件、无线接收器和托卡马克。白方块模型改名为 `sun_heater_placeholder`，没有源贴图的机器继续指向它：发电机、虚空漏斗、气体压缩机、激光聚变、除监视器以外的研究台、生物/量子/时空阵列、显微镜、AI 中心和无线算力控制器。卡 02–04 已经有自己模型的单方块机器没有改。
-
-配方界面补上了燃料电池、掩膜、CNC、脱燃、托卡马克和研究组装。研究组装的文件名是 `researchassembler.png`，避免 EMI 把名为 assembler 的界面改到默认图。仍用气体压缩机界面的配方图，另有一份 `textures/gui/recipes/gascompressor.png`。行为机器的界面继续用 `textures/gui/machines/gascompressor.png`。
+- 卡 08–20 的全部 **196 台**机器和零件方块都换上对应的 kTFRU 或 GT6 复合染色贴图模型，移除了 `sun_heater_placeholder.json`，不再有任何机器使用 `white_concrete` 占位。
+- 配方界面补齐 `fuelbattery.png`、`maskaligner.png`、`cnc.png`、`fueldeburner.png`、`fusiontokamak.png`、`researchassembler.png`、`mixer.png`、`fusion.png` 与 `gascompressor.png`。
 
 ## 步骤
 
 - [x] 登记 10 个前缀并拷入 SHINY 贴图。
-- [x] 登记产线用到的 `ItemList` 物品，创造栏改走 `BY_PATH`。
-- [x] 扩展配方提取器，重新生成 197 行，并保留硫、水、石墨烯断言。
-- [x] 给有源文件的卡 08–20 机器换贴图，并补上缺失的配方 GUI。
-- [x] 启动时检查铁飞轮、铁的商业纯粉和镍催化剂簇。
+- [x] 补齐 `SiliconeRubber` / `SBR` / `PEEK` 板箔与 `fluidPreInit` 流体。
+- [x] 登记 504 个 `ItemList` 产线物品并拷入 374 张物品贴图。
+- [x] 扩展提取器到全部 28 张配方图与 18 个源文件，落账 483 行源配方。
+- [x] 补齐卡 08–20 全部 196 台机器贴图与配方 GUI，清零白方块占位。
 
 ## 验收
 
 - [x] 编译：`compileJava --offline` 通过。
 - [ ] 开发客户端
-- [ ] 玩法：纯度热混合、激光切割概率、催化剂保留，以及换过贴图的机器外观
+- [ ] 玩法：纯度提纯、掩膜光刻、催化反应器、激光聚变脉冲与机器外观
 
 ## 日志
 
-- 2026-10-22：前缀 10 个，自有物品 503 个，十张配方图落账 197 行（组装 59、激光切割 22、热混合 88、晶圆测试 24、流体加热 4）。130 台机器换上源贴图。概率数组长于物品输出的 5 行，以及监听器里的飞轮和涡轮加工，仍留在跳过清单。
+- 2026-10-22：登记 10 个前缀、6 项板箔请求、`fluidPreInit` 流体与 504 个自有物品（374 张原图）。提取器扩至全部 28 张配方图与 18 个源文件，共落账 483 行配方。卡 08–20 全部 196 台机器贴图对正，移除全部白混凝土占位。

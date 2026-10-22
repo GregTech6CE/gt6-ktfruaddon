@@ -46,7 +46,7 @@ public final class Gt6KtfruLateMachines {
 
     public static void addMaps(List<RecipeTable> maps) {
         maps.add(Gt6KtfruMachines.map(LASER, "Laser Inertial Fusion", "gascompressor", 3, 3, 0, 3, 3, 0, 1));
-        maps.add(Gt6KtfruMachines.map(CATALYTIC, "Catalytic Reactor", "gascompressor", 6, 3, 0, 6, 3, 0, 1));
+        maps.add(Gt6KtfruMachines.map(CATALYTIC, "Catalytic Reactor", "mixer", 6, 3, 0, 6, 3, 0, 1));
         maps.add(Gt6KtfruMachines.map(MIRROR, "Mirror Gold Synthesis", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
         maps.add(Gt6KtfruMachines.map(MIRROR_QUANTUM, "Mirror Gold Quantumization", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
         maps.add(Gt6KtfruMachines.map(COSMIC, "Cosmic Radiation Research", "gascompressor", 1, 3, 0, 0, 0, 0, 1));
@@ -131,6 +131,7 @@ public final class Gt6KtfruLateMachines {
                         .build())
                 .gui(GUI)
                 .progress(88, 26)
+                .item(8, 26, BehaviorMachine.SlotRole.INPUT)
                 .item(26, 26, BehaviorMachine.SlotRole.INPUT)
                 .item(156, 26, BehaviorMachine.SlotRole.OUTPUT)
                 .fluid(8_000, 46, 8, BehaviorMachine.SlotRole.INPUT)
@@ -173,8 +174,8 @@ public final class Gt6KtfruLateMachines {
                 .progress(92, 26)
                 .item(26, 26, BehaviorMachine.SlotRole.INPUT)
                 .item(124, 26, BehaviorMachine.SlotRole.OUTPUT)
-                .fluid(16_000, 48, 8, BehaviorMachine.SlotRole.INPUT)
-                .fluid(16_000, 68, 8, BehaviorMachine.SlotRole.INPUT)
+                .fluid(64_000, 48, 8, BehaviorMachine.SlotRole.INPUT)
+                .fluid(64_000, 68, 8, BehaviorMachine.SlotRole.INPUT)
                 .recipeMaps(CRYSTAL)
                 .build();
     }

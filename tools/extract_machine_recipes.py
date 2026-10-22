@@ -29,18 +29,56 @@ MAPS = (
     "WaferTester",
     "WaferCoater",
     "UltrasonicMixer",
+    "TinyDistillTower",
+    "SmallDistillTower",
+    "DistillTower",
+    "MaskAligner",
+    "CNC",
+    "FusionTokamak",
+    "FusionTokamakExperimental",
+    "LaserFusion",
+    "LaserFusionExperimental",
+    "CatalyticReactor",
+    "MirrorGoldSynthesis",
+    "MirrorGoldQuantumization",
+    "CosmicRadiationResearch",
+    "MicrogravityCrystalGrowth",
+    "QuantumGoldSynthesis",
+    "QuantumObservation",
+    "QuantumCommunication",
+    "ResearchAssembler",
+    "ResearchReactor",
 )
 MAP_FIELD = {
-    "FluidHeating": "FLUID_HEATING",
-    "LightMixer": "LIGHT_MIXER",
-    "Assembler": "CIRCUIT_ASSEMBLER",
-    "LaserCutter": "LASER_CUTTER",
-    "HeatMixer": "HEAT_MIXER",
-    "EDA": "ELECTRONICS_DESIGNER",
-    "FlawDetector": "FLAW_DETECTOR",
-    "WaferTester": "WAFER_TESTER",
-    "WaferCoater": "WAFER_COATER",
-    "UltrasonicMixer": "ULTRASONIC_MIXER",
+    "FluidHeating": "Gt6KtfruMachines.FLUID_HEATING",
+    "LightMixer": "Gt6KtfruMachines.LIGHT_MIXER",
+    "Assembler": "Gt6KtfruMachines.CIRCUIT_ASSEMBLER",
+    "LaserCutter": "Gt6KtfruMachines.LASER_CUTTER",
+    "HeatMixer": "Gt6KtfruMachines.HEAT_MIXER",
+    "EDA": "Gt6KtfruMachines.ELECTRONICS_DESIGNER",
+    "FlawDetector": "Gt6KtfruMachines.FLAW_DETECTOR",
+    "WaferTester": "Gt6KtfruMachines.WAFER_TESTER",
+    "WaferCoater": "Gt6KtfruMachines.WAFER_COATER",
+    "UltrasonicMixer": "Gt6KtfruMachines.ULTRASONIC_MIXER",
+    "TinyDistillTower": "Gt6KtfruMachines.TINY_DISTILL",
+    "SmallDistillTower": "Gt6KtfruMachines.SMALL_DISTILL",
+    "DistillTower": "Gt6KtfruMachines.DISTILL",
+    "MaskAligner": "Gt6KtfruMachines.MASK_ALIGNER",
+    "CNC": "Gt6KtfruMachines.CNC",
+    "FusionTokamak": "Gt6KtfruMachines.FUSION_TOKAMAK",
+    "FusionTokamakExperimental": "Gt6KtfruMachines.FUSION_TOKAMAK",
+    "LaserFusion": "Gt6KtfruLateMachines.LASER",
+    "LaserFusionExperimental": "Gt6KtfruLateMachines.LASER",
+    "CatalyticReactor": "Gt6KtfruLateMachines.CATALYTIC",
+    "MirrorGoldSynthesis": "Gt6KtfruLateMachines.MIRROR",
+    "MirrorGoldQuantumization": "Gt6KtfruLateMachines.MIRROR_QUANTUM",
+    "CosmicRadiationResearch": "Gt6KtfruLateMachines.COSMIC",
+    "MicrogravityCrystalGrowth": "Gt6KtfruLateMachines.CRYSTAL",
+    "QuantumGoldSynthesis": "Gt6KtfruLateMachines.QUANTUM_GOLD",
+    "QuantumObservation": "Gt6KtfruLateMachines.OBSERVATION",
+    "QuantumCommunication": "Gt6KtfruLateMachines.RELAY_MAP",
+    "ResearchAssembler": "Gt6KtfruResearchMachines.ASSEMBLER_MAP",
+    "ResearchReactor": "Gt6KtfruResearchMachines.REACTOR_MAP",
 }
 # input items, output items, min items, input fluids, output fluids, min fluids, min inputs
 SLOTS = {
@@ -54,6 +92,25 @@ SLOTS = {
     "WaferTester": (3, 3, 0, 0, 0, 0, 1),
     "WaferCoater": (3, 3, 0, 3, 0, 0, 1),
     "UltrasonicMixer": (6, 3, 0, 6, 2, 0, 1),
+    "TinyDistillTower": (1, 3, 0, 1, 3, 0, 1),
+    "SmallDistillTower": (1, 3, 0, 1, 6, 0, 1),
+    "DistillTower": (1, 3, 0, 1, 9, 0, 1),
+    "MaskAligner": (3, 3, 1, 3, 0, 0, 1),
+    "CNC": (4, 3, 1, 3, 0, 1, 1),
+    "FusionTokamak": (3, 3, 0, 6, 6, 1, 1),
+    "FusionTokamakExperimental": (3, 3, 0, 6, 6, 1, 1),
+    "LaserFusion": (2, 1, 0, 2, 2, 0, 1),
+    "LaserFusionExperimental": (2, 1, 0, 2, 2, 0, 1),
+    "CatalyticReactor": (6, 3, 0, 6, 3, 0, 1),
+    "MirrorGoldSynthesis": (5, 5, 0, 2, 2, 0, 1),
+    "MirrorGoldQuantumization": (5, 5, 0, 2, 2, 0, 1),
+    "CosmicRadiationResearch": (1, 3, 0, 0, 0, 0, 1),
+    "MicrogravityCrystalGrowth": (1, 1, 0, 2, 0, 0, 1),
+    "QuantumGoldSynthesis": (4, 4, 0, 2, 2, 0, 1),
+    "QuantumObservation": (4, 4, 0, 2, 2, 0, 1),
+    "QuantumCommunication": (1, 1, 0, 0, 0, 0, 1),
+    "ResearchAssembler": (9, 6, 0, 3, 3, 0, 1),
+    "ResearchReactor": (9, 6, 0, 2, 1, 0, 1),
 }
 FILES = (
     "Chemistry.java",
@@ -63,6 +120,8 @@ FILES = (
     "ComputerBuilding.java",
     "Fusion.java",
     "QuantumEntry.java",
+    "QuantumObservation.java",
+    "CatalyticChemistry.java",
     "ResearchRecipes.java",
     "RocketBuilding.java",
     "HeatMixer.java",
@@ -70,6 +129,8 @@ FILES = (
     "OreProcessing.java",
     "PlatinumGroupProcess.java",
     "PurityRefining.java",
+    "listener/recipePrefixItems.java",
+    "../../tile/tileEntityInit0.java",
 )
 DATA_TIERS = {
     "Electric_T": [
@@ -157,9 +218,201 @@ MC_BLOCKS = {
 }
 CALL_RE = re.compile(
     r"(?<![A-Za-z0-9_])(?:recipeMaps\s*\.\s*)?"
-    r"(FluidHeating|LightMixer|Assembler|LaserCutter|HeatMixer|EDA|FlawDetector|WaferTester|WaferCoater|UltrasonicMixer)"
+    r"(" + "|".join(MAPS) + r")"
     r"\s*\.\s*addRecipe([012X])\s*\("
 )
+
+TILE_ITEMS = {
+    10010: "gas_battery_aluminium",
+    10011: "gas_battery_stainless",
+    10200: "transformer_small_lv",
+    10201: "transformer_small_mv",
+    10202: "transformer_small_hv",
+    10203: "transformer_small_ev",
+    10204: "transformer_small_iv",
+    10205: "transformer_small_luv",
+    10210: "transformer_large_lv",
+    10211: "transformer_large_mv",
+    10212: "transformer_large_hv",
+    10213: "transformer_large_ev",
+    10214: "transformer_large_iv",
+    10215: "transformer_large_luv",
+    10220: "flywheel_gear_small_t1",
+    10221: "flywheel_gear_small_t2",
+    10222: "flywheel_gear_small_t3",
+    10223: "flywheel_gear_small_t4",
+    10224: "flywheel_gear_small_t5",
+    10225: "flywheel_gear_small_t6",
+    10230: "flywheel_gear_large_t1",
+    10231: "flywheel_gear_large_t2",
+    10232: "flywheel_gear_large_t3",
+    10233: "flywheel_gear_large_t4",
+    10234: "flywheel_gear_large_t5",
+    10235: "flywheel_gear_large_t6",
+    10240: "light_transformer_small_lv",
+    10241: "light_transformer_small_mv",
+    10242: "light_transformer_small_hv",
+    10243: "light_transformer_small_ev",
+    10244: "light_transformer_small_iv",
+    10245: "light_transformer_small_luv",
+    10250: "light_transformer_large_lv",
+    10251: "light_transformer_large_mv",
+    10252: "light_transformer_large_hv",
+    10253: "light_transformer_large_ev",
+    10254: "light_transformer_large_iv",
+    10255: "light_transformer_large_luv",
+    23000: "circuit_assembler_lv",
+    23001: "circuit_assembler_mv",
+    23002: "circuit_assembler_hv",
+    23003: "circuit_assembler_ev",
+    23004: "circuit_assembler_iv",
+    30003: "mask_aligner_uv",
+    30009: "mask_aligner_uv_plus",
+    30010: "mask_aligner_duv",
+    30011: "mask_aligner_euv",
+    30012: "cnc_machine",
+    30014: "fusion_tokamak_exp",
+    30015: "fusion_tokamak_t1",
+    30020: "large_steam_turbine_magnalium",
+    30021: "large_steam_turbine_trinitanium",
+    30022: "large_steam_turbine_graphene",
+    30023: "large_steam_turbine_vibramantium",
+    30024: "liquid_battery_stainless",
+    30025: "liquid_battery_titanium",
+    30026: "liquid_battery_tungstensteel",
+    30058: "wireless_compute_controller",
+    30059: "wireless_compute_controller_large",
+    30060: "wireless_compute_controller_huge",
+    30065: "quantum_compute_t1",
+    30066: "quantum_compute_t2",
+    30067: "quantum_compute_t3",
+    30068: "quantum_compute_t4",
+    30069: "spacetime_compute_t1",
+    30070: "spacetime_compute_t2",
+    30071: "laser_fusion_experimental",
+    30072: "laser_fusion_industrial",
+    30073: "mirror_gold_synthesis",
+    30074: "quantum_communication_relay",
+    30075: "mirror_gold_quantumization",
+    30076: "quantum_gold_chamber",
+    30077: "optical_microscope",
+    30078: "electron_microscope",
+    30079: "quantum_compute_center",
+    30080: "quantum_observation_tower",
+    30102: "centrifugal_microgravity",
+    30103: "microgravity_crystal_growth",
+    30104: "cosmic_radiation_chamber",
+    30105: "microgravity_assembler",
+    30106: "ai_flow_control",
+    30107: "ai_fill_planning",
+    30108: "ai_pattern_recognition",
+    30114: "wireless_battery_inductive",
+    30115: "wireless_battery_quantum",
+    30120: "catalytic_reactor_ev",
+    30121: "catalytic_reactor_iv",
+    31000: "aluminium_wall",
+    31002: "sunlight_absorber",
+    31003: "heat_pipe",
+    31004: "sun_heater_top_layer",
+    31016: "tokamak_magnetic_conductor_exp",
+    31017: "tokamak_magnetic_coil_exp",
+    31018: "tokamak_magnetic_wall_exp",
+    31019: "tokamak_plasma_pipe",
+    31024: "tokamak_coolant_pump",
+    31025: "tokamak_magnetic_conductor_t1",
+    31026: "tokamak_magnetic_coil_t1",
+    31027: "tokamak_magnetic_wall_t1",
+    31028: "tokamak_neutron_heater",
+    31029: "stainless_turbine_shell",
+    31030: "titanium_turbine_shell",
+    31031: "tungstensteel_turbine_shell",
+    31032: "adamantium_turbine_shell",
+    31037: "enhanced_frame",
+    31038: "chemical_reactor_pipe",
+    31039: "mantle_drill_rod",
+    31040: "magnetic_conductor",
+    31041: "battery_cabin",
+    31042: "flywheel_cabin",
+    31043: "transform_battery_gear_set",
+    31044: "energy_crystal_block",
+    31045: "tidal_blade",
+    31048: "trinaquadalloy_wall",
+    31049: "trinaquadalloy_turbine_shell",
+    31056: "structure_glass",
+    31057: "biology_culture_casing",
+    31058: "biology_neural_scaffold",
+    31059: "biology_cortex_matrix",
+    31060: "laser_focusing_array",
+    31061: "laser_target_injector",
+    31062: "laser_pulse_storage",
+    31063: "laser_product_collector",
+    31064: "biology_synapse_router",
+    31065: "quantum_coherence_casing",
+    31066: "quantum_bit_lattice",
+    31067: "quantum_cryogenic_manifold",
+    31068: "quantum_readout_bus",
+    31069: "quantum_phase_isolation_frame",
+    31070: "stabilized_quantum_lattice_core",
+    31071: "quantum_readout_spine",
+    31072: "topological_constraint_frame",
+    31073: "quantum_interweave_surface",
+    31074: "entanglement_exchange_relay",
+    31075: "quantum_interconnect_bridge",
+    31076: "deep_coherence_containment_wall",
+    31077: "quantum_interconnect_node",
+    31078: "fault_tolerant_correction_plane",
+    31079: "distributed_quantum_readout_relay",
+    31080: "spacetime_constraint_frame",
+    31081: "spacetime_phase_conduit",
+    31082: "chronal_lattice",
+    31083: "spacetime_simulation_core",
+    31084: "phase_stabilizer_pylon",
+    31085: "causality_horizon_frame",
+    31086: "causality_ring_segment",
+    31087: "zero_point_compute_core",
+    31088: "gravitic_stabilizer_anchor",
+    31089: "causality_observation_spire",
+    31090: "chronal_coupling_relay",
+    31091: "ai_compute_frame",
+    31092: "ai_memory_bank",
+    31093: "ai_routing_matrix",
+    31094: "ai_packing_planner",
+    31095: "ai_recognition_matrix",
+    31111: "quantum_coherence_casing_iridium",
+    31112: "quantum_stabilization_substrate",
+    31113: "entanglement_channel_module",
+    31114: "quantum_readout_coil",
+    31115: "quantum_gold_drive_module",
+    31116: "quantum_gold_lattice_stabilizer",
+    31117: "wireless_receiver_inductive",
+    31118: "wireless_receiver_quantum",
+    31130: "biology_cortex_frame",
+    31131: "biology_culture_vat",
+    31132: "biology_perfusion_bus",
+    31133: "biology_genomic_storage_array",
+    31200: "catalytic_reactor_casing",
+    31201: "catalytic_reactor_catalyst_bed",
+    31202: "catalytic_reactor_energy_port",
+    31203: "catalytic_reactor_io_port",
+    31204: "high_shield_laminated_wall",
+    31205: "counter_rotating_mass_ring",
+    31206: "gyro_stabilization_anchor",
+    31207: "sealed_access_hatch",
+    31208: "room_energy_port",
+    31500: "mask_aligner_energy_uv",
+    31501: "mask_aligner_energy_uv_plus",
+    31504: "electromagnet_crucible_screen",
+    32005: "compute_cluster",
+    32006: "compute_cluster_simple",
+    32010: "wireless_compute_node_aluminium",
+    32011: "wireless_compute_node_stainless",
+    32012: "wireless_compute_node_chromium",
+    32013: "wireless_compute_node_titanium",
+    32040: "quantum_compute_node_naquadah",
+    32041: "quantum_compute_node_naquadria",
+    32042: "quantum_compute_node_enriched",
+    32043: "quantum_compute_node_trinaquadalloy",
+}
 
 
 class Skip(Exception):
@@ -418,6 +671,9 @@ def load_addon():
             if re.search(rf"\.{flag}\(\)", body):
                 flags.add(flag)
         addon[name] = flags
+    for match in re.finditer(r'new MaterialFormRequest\(\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\)', text):
+        mat, form = match.groups()
+        addon.setdefault(mat, set()).add(form)
     return addon
 
 
@@ -488,6 +744,8 @@ class World:
                 raise Skip(f"材料没有{prefix} {material}")
             return
         flags = self.addon[material]
+        if prefix in flags:
+            return
         if prefix in ("dust", "dustSmall", "dustTiny", "dustDiv72"):
             if "dust" in flags or "metal" in flags:
                 return
@@ -576,11 +834,11 @@ class World:
         expr = expr.strip().replace("CS.", "")
         if expr in ("ZL_IS", "NI"):
             return None
-        tagged = re.fullmatch(r"(?:ST\.)?tag\(([^)]*)\)", expr)
+        tagged = re.fullmatch(r"(?:ST\s*\.\s*)?tag\(\s*(\d+)\s*\)", expr)
         if tagged or expr.startswith("ST.tag(") or expr.startswith("tag("):
             if not tagged:
                 raise Skip("编程电路")
-            index = eval_int(tagged.group(1))
+            index = int(tagged.group(1))
             if index < 0 or index > 24:
                 raise Skip(f"编程电路 {index}")
             return ("circuit", index, 1), False
@@ -612,6 +870,17 @@ class World:
         if "prefixList." in expr:
             raise Skip("自有前缀")
         if "getItem(" in expr or "GTTileEntityRegistry" in expr:
+            tile_match = re.fullmatch(
+                r"(?:GTTileEntityRegistry\.ktfruaddon|kRegistry0|kRegistry|ktfru|registry)\.getItem\(\s*(\d+)(?:\s*,\s*([^)]+))?\s*\)",
+                expr,
+            )
+            if tile_match:
+                tile_id = int(tile_match.group(1))
+                block_id = TILE_ITEMS.get(tile_id)
+                if block_id:
+                    count_expr = tile_match.group(2) or "1"
+                    count, kept = self.item_amount(count_expr, output)
+                    return ("block", block_id, count), kept
             raise Skip("机器物品")
         if expr.startswith("ANY.") or "ANY." in expr:
             raise Skip("矿辞通配 " + expr)
@@ -633,8 +902,8 @@ class World:
                 meta = parts[2] if len(parts) > 2 else None
                 count, kept = self.item_amount(parts[1], output)
                 return self.vanilla(parts[0], count, meta), kept
-        prefixed = re.fullmatch(r"OP\.(\w+)\.mat\((.*)\)", expr)
-        if prefixed:
+        prefixed = re.fullmatch(r"(?:OP\s*\.\s*)?(\w+)\s*\.\s*mat\((.*)\)", expr)
+        if prefixed and (prefixed.group(1) in self.item_prefixes or prefixed.group(1) in self.block_prefixes):
             prefix, inner = prefixed.groups()
             parts = split_args(inner)
             if len(parts) < 2:
@@ -670,9 +939,13 @@ class World:
         expr = expr.strip().replace("CS.", "")
         if expr in ("ZL_FS", "NF"):
             return None
-        listed = re.fullmatch(r"flList\.(\w+)\.make\((.*)\)", expr)
+        listed = re.fullmatch(r"flList\s*\.\s*(\w+)\s*\.\s*make\((.*)\)", expr)
         if listed:
             name, inner = listed.groups()
+            name = {
+                "HexaFluoroPropylene": "HPF",
+                "Perfluorocyclobutane": "perfluorocyclobutane",
+            }.get(name, name)
             amount = split_args(inner)[0]
             if "U" in amount:
                 raise Skip(f"流体数量 {expr}")
@@ -687,10 +960,16 @@ class World:
                     raise Skip(f"材料没有流体 {name}")
             elif name in self.fluids:
                 field = name
+            elif name in self.props and self.props[name]["gas"]:
+                field = "GenGas_" + name
+            elif name in self.props and self.props[name]["liquid"]:
+                field = "GenLiquid_" + name
+            elif name in self.props and self.props[name]["molten"]:
+                field = "GenMolten_" + name
             else:
                 raise Skip(f"流体 {name}")
             return ("fluid", field, mb)
-        named = re.fullmatch(r"FL\.(\w+)\.make\((.*)\)", expr)
+        named = re.fullmatch(r"FL\s*\.\s*(\w+)\s*\.\s*make\((.*)\)", expr)
         if named:
             field, inner = named.groups()
             amount = split_args(inner)[0]
@@ -882,8 +1161,6 @@ def fit_chances(raw: list[int] | None, outputs: int):
     """gregapi uses 0 and 10000 for a certain output. The addon chance array rejects 0."""
     if raw is None:
         return None
-    if len(raw) > outputs:
-        raise Skip("概率数组长于输出")
     fitted = []
     for index in range(outputs):
         value = raw[index] if index < len(raw) else 10000
@@ -904,6 +1181,7 @@ def purity_row(world: World, line: int, material: str, prefix_in: str, prefix_ou
         "map": "HeatMixer",
         "eu": eu,
         "duration": duration,
+        "special": 0,
         "items_in": [world.item_form(prefix_in, material, 4)],
         "items_out": [world.item_form(prefix_out, material, 3)],
         "fluids_in": [fluid_in],
@@ -915,14 +1193,92 @@ def purity_row(world: World, line: int, material: str, prefix_in: str, prefix_ou
 
 
 def purity_rows(world: World, file_name: str, line: int, raw: str):
-    """PurityRefining keeps the material in a variable. Expand the two HeatMixer sites."""
+    """PurityRefining and recipePrefixItems keep the material in a variable."""
+    compact = re.sub(r"\s+", "", raw)
+    if file_name.endswith("recipePrefixItems.java"):
+        turbine_mats = (
+            "MT.Magnalium", "MT.Trinitanium", "MT.Graphene", "MT.Vibramantium", "MT.Trinaquadalloy",
+            "MT.Steel", "MT.StainlessSteel", "MT.Ti", "MT.TungstenSteel", "MT.Ad", "MT.Ir", "MT.Os",
+        )
+        if "turbineLargeSteam.mat(" in compact and "FlawDetector" in compact:
+            return [
+                {
+                    "file": "recipePrefixItems.java",
+                    "line": line,
+                    "map": "FlawDetector",
+                    "eu": 16,
+                    "duration": 12000,
+                    "special": 0,
+                    "items_in": [world.item_form("turbineLargeSteam", mat, 1)],
+                    "items_out": [
+                        world.item_form("turbineLargeSteamChecked", mat, 1),
+                        world.item_form("turbineLargeSteamDamaged", mat, 1),
+                    ],
+                    "fluids_in": [],
+                    "fluids_out": [],
+                    "chances": [6000, 4000],
+                    "kept": None,
+                    "d_tier": False,
+                }
+                for mat in turbine_mats
+            ]
+        if "turbineLargeGas.mat(" in compact and "FlawDetector" in compact:
+            return [
+                {
+                    "file": "recipePrefixItems.java",
+                    "line": line,
+                    "map": "FlawDetector",
+                    "eu": 16,
+                    "duration": 18000,
+                    "special": 0,
+                    "items_in": [world.item_form("turbineLargeGas", mat, 1)],
+                    "items_out": [
+                        world.item_form("turbineLargeGasChecked", mat, 1),
+                        world.item_form("turbineLargeGasDamaged", mat, 1),
+                    ],
+                    "fluids_in": [],
+                    "fluids_out": [],
+                    "chances": [6000, 4000],
+                    "kept": None,
+                    "d_tier": False,
+                }
+                for mat in turbine_mats
+            ]
+        return None
     if file_name != "PurityRefining.java":
         return None
-    compact = re.sub(r"\s+", "", raw)
     if "OP.dust.mat(material,4)" in compact and "CommercialPureDust.mat(material,3)" in compact:
         return [
             purity_row(world, line, material, "dust", "dustCommercialPure", "MT.H.gas(U4,T)", 1024, 1200)
             for material in ("MT.W", "MT.Mo")
+        ]
+    if "AnalyticalPureDust.mat(material,4)" in compact and "AbsolutelyPureDust.mat(material,1)" in compact:
+        materials = (
+            "MT.Li", "MT.Fe", "MT.Ni", "MT.Co", "MT.Cu", "MT.Zn", "MT.Ag", "MT.Sn", "MT.Pb", "MT.Bi",
+            "MT.Al", "MT.Ti", "MT.Zr", "MT.Nb", "MT.Ta", "MT.Cr",
+            "MT.Au", "MT.Pt", "MT.Pd", "MT.Rh", "MT.Ir", "MT.Os", "matList.Ij.mat",
+            "MT.W",
+            "MT.C", "MT.Si", "MT.Ge", "MT.Ga", "MT.In",
+            "MT.D", "MT.T", "MT.U_238", "MT.Th", "MT.Nq_522",
+        )
+        xe = world.parse_fluid("MT.Xe.gas(U4,T)")
+        return [
+            {
+                "file": "PurityRefining.java",
+                "line": line,
+                "map": "LaserFusion",
+                "eu": 32768,
+                "duration": 1200,
+                "special": 10_000_000,
+                "items_in": [world.item_form("dustAnalyticalPure", material, 4), ("own", "quantum_control_element", 1)],
+                "items_out": [world.item_form("dustAbsolutelyPure", material, 1)],
+                "fluids_in": [xe],
+                "fluids_out": [],
+                "chances": None,
+                "kept": None,
+                "d_tier": False,
+            }
+            for material in materials
         ]
     if "CommercialPureDust.mat(material,4)" not in compact or "AnalyticalPureDust.mat(material,3)" not in compact:
         return None
@@ -941,9 +1297,11 @@ def purity_rows(world: World, file_name: str, line: int, raw: str):
     return rows
 
 
-def parse_call(world: World, file_name: str, line: int, map_name: str, arity: str, args: list[str], raw: str):
+def parse_call(world: World, file_name: str, line: int, map_name: str, arity: str, args: list[str], raw: str, special: int = 0):
     if map_name == "LightMixer":
         raise Skip("保持卡 02 的光混合行")
+    if file_name == "Chemistry.java" and line in (107, 108, 109):
+        raise Skip("保持卡 04 的海水蒸馏行")
     held = reserved(raw)
     if held:
         raise Skip(held)
@@ -1037,11 +1395,12 @@ def parse_call(world: World, file_name: str, line: int, map_name: str, arity: st
         if amount > 99:
             raise Skip("堆叠超过 99")
     return {
-        "file": file_name,
+        "file": Path(file_name).name,
         "line": line,
         "map": map_name,
         "eu": eu,
         "duration": max(1, duration),
+        "special": special,
         "items_in": items_in,
         "items_out": items_out,
         "fluids_in": fluids_in,
@@ -1087,6 +1446,8 @@ def java_stack(stack) -> str:
         return f"vanilla({stack[1]}, {stack[2]})"
     if stack[0] == "own":
         return f'own("{stack[1]}", {stack[2]})'
+    if stack[0] == "block":
+        return f'block("{stack[1]}", {stack[2]})'
     if stack[0] == "circuit":
         return f"circuit({stack[1]}, {stack[2]})"
     if stack[0] == "fluid":
@@ -1124,13 +1485,14 @@ def emit(rows: list[dict]) -> str:
             note = " D-tier Coolant_IC2." if row["d_tier"] else ""
             body.append(f"        // {row['file']}:{row['line']}{note}")
             tail = ""
-            if row["chances"] or row["kept"]:
-                tail = ",\n                {chances},\n                {kept}".format(
+            if row.get("special") or row["chances"] or row["kept"]:
+                tail = ",\n                {special}L,\n                {chances},\n                {kept}".format(
+                    special=row.get("special", 0),
                     chances=java_ints(row["chances"]),
                     kept=java_ints(row["kept"]),
                 )
             body.append(
-                "        add(\"{file}:{line}\", Gt6KtfruMachines.{field}, {eu}L, {duration}L,\n"
+                "        add(\"{file}:{line}\", {field}, {eu}L, {duration}L,\n"
                 "                {items_in},\n"
                 "                {items_out},\n"
                 "                {fluids_in},\n"
@@ -1158,7 +1520,11 @@ import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -1191,18 +1557,18 @@ public final class Gt6KtfruSourceRecipes {{
 
     private static void add(String where, String map, long euPerTick, long duration,
             ItemStack[] itemsIn, ItemStack[] itemsOut, FluidStack[] fluidsIn, FluidStack[] fluidsOut) {{
-        add(where, map, euPerTick, duration, itemsIn, itemsOut, fluidsIn, fluidsOut, null, null);
+        add(where, map, euPerTick, duration, itemsIn, itemsOut, fluidsIn, fluidsOut, 0L, null, null);
     }}
 
     private static void add(String where, String map, long euPerTick, long duration,
             ItemStack[] itemsIn, ItemStack[] itemsOut, FluidStack[] fluidsIn, FluidStack[] fluidsOut,
-            int[] chances, int[] kept) {{
+            long special, int[] chances, int[] kept) {{
         if (broken(itemsIn) || broken(fluidsIn) || broken(itemsOut) || broken(fluidsOut)) {{
             return;
         }}
         AddonRecipes.Line line = chances == null && kept == null
-                ? new AddonRecipes.Line(itemsIn, itemsOut, fluidsIn, fluidsOut, duration, euPerTick, 0)
-                : new AddonRecipes.Line(itemsIn, itemsOut, fluidsIn, fluidsOut, duration, euPerTick, 0, chances, kept);
+                ? new AddonRecipes.Line(itemsIn, itemsOut, fluidsIn, fluidsOut, duration, euPerTick, special)
+                : new AddonRecipes.Line(itemsIn, itemsOut, fluidsIn, fluidsOut, duration, euPerTick, special, chances, kept);
         if (AddonRecipes.map(map).add(line) == null) {{
             PROBLEMS.add(where + " was rejected");
         }}
@@ -1242,6 +1608,15 @@ public final class Gt6KtfruSourceRecipes {{
             return ItemStack.EMPTY;
         }}
         return stack;
+    }}
+
+    private static ItemStack block(String path, int count) {{
+        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(Gt6KtfruAddon.MODID, path));
+        if (item == Items.AIR) {{
+            PROBLEMS.add("block " + path);
+            return ItemStack.EMPTY;
+        }}
+        return new ItemStack(item, count);
     }}
 
     private static ItemStack circuit(int index, int count) {{
@@ -1297,23 +1672,41 @@ def main():
             close_at = matching_paren(text, open_at)
             raw = text[match.start():close_at + 1]
             line = line_of(text, match.start())
-            args = split_args(text[open_at + 1:close_at])
+            call_body = text[open_at + 1:close_at]
+            prefix_text = text[:match.start()]
+            amat_matches = list(re.finditer(r"\baMat\s*=\s*([^;]+);", prefix_text))
+            if amat_matches:
+                amat_val = amat_matches[-1].group(1).strip().replace("ANY.Steel", "MT.Steel")
+                call_body = re.sub(r"\baMat\b", amat_val, call_body)
+                raw = re.sub(r"\baMat\b", amat_val, raw)
+            if "kRegistry0.getItem()" in call_body:
+                line_start = text.rfind("\n", 0, match.start()) + 1
+                same_line = text[line_start:match.start()]
+                add_match = re.search(r'kRegistry0\.add\(\s*"[^"]*"\s*,\s*"[^"]*"\s*,\s*(\d+)\s*,', same_line)
+                if add_match:
+                    tid = add_match.group(1)
+                    call_body = call_body.replace("kRegistry0.getItem()", f"kRegistry0.getItem({tid})")
+                    raw = raw.replace("kRegistry0.getItem()", f"kRegistry0.getItem({tid})")
+            special_val = 0
+            after_call = text[close_at + 1:close_at + 80]
+            spec_match = re.match(r"\s*\.\s*setSpecialNumber\(([^)]+)\)", after_call)
+            if spec_match:
+                try:
+                    special_val = eval_raw(spec_match.group(1))
+                except Skip:
+                    special_val = 0
+            args = split_args(call_body)
             try:
                 expanded = purity_rows(world, file_name, line, raw)
                 if expanded is not None:
                     rows.extend(expanded)
                     continue
-                rows.append(parse_call(world, file_name, line, map_name, arity, args, raw))
+                rows.append(parse_call(world, file_name, line, map_name, arity, args, raw, special_val))
             except Skip as skip:
-                skips.append((map_name, file_name, line, skip.reason, raw.replace("\n", " ")[:180]))
-    expected = {
-        "FluidHeating": 11, "LightMixer": 1, "Assembler": 121, "LaserCutter": 38,
-        "HeatMixer": 104, "EDA": 24, "FlawDetector": 0, "WaferTester": 24,
-        "WaferCoater": 4, "UltrasonicMixer": 3,
-    }
+                skips.append((map_name, Path(file_name).name, line, skip.reason, raw.replace("\n", " ")[:180]))
     lines = ["call sites"]
     for map_name in MAPS:
-        lines.append(f"  {map_name}: {counts[map_name]} (card {expected[map_name]})")
+        lines.append(f"  {map_name}: {counts[map_name]}")
     lines.append(f"resolved {len(rows)}")
     for map_name in MAPS:
         lines.append(f"  {map_name}: {sum(1 for row in rows if row['map'] == map_name)}")
