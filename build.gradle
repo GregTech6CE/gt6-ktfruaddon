@@ -72,8 +72,8 @@ configurations {
 }
 
 // Recipe machines, behavior machines, fuel generators, functional layout parts
-// and auxiliary energy are on the API 0 SDK built from addon/functional-parts
-// at 6eba3e1ed. The 0.8.0 SDK's recipe-machine builder does not have them.
+// and auxiliary energy are on the API 0 SDK built from addon/kubejs at
+// 9c67ceaa4. The 0.8.0 SDK's recipe-machine builder does not have them.
 def gtSdk = files('libs/gt6ce/gt6ce-addon-sdk-1.21.1-neoforge-0.0.0.jar')
 def gtMod = files('libs/gt6ce/gt6ce-1.21.1-neoforge.jar')
 

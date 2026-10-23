@@ -9,77 +9,83 @@
 
 这些条目在表面清单的 A/B 档里，所以不是 C 档那种「不要移植」。C 档本身不在任何实施卡里。
 
-只记 GT6CE 附属接口里没有的东西。对照的是 `addon/functional-parts` 的 `6eba3e1ed`。API 仍是 0，模组版本仍是 0.0.0。每一条都写清来源卡、源名字、试过的入口、缺的是什么，以及当前机器怎么落的。
+只记 GT6CE 附属接口里没有的东西。源码对照的是 `addon/kubejs` 的 `9c67ceaa4`（2026-10-22）。`6eba3e1ed` 之后的 13 个接口提交里，11 个已进 `origin/main`（PR #89–#91），`fd5f38381` 和 `9c67ceaa4` 只在本地和 fork 分支。附属现在编译用的是 `libs/gt6ce/gt6ce-addon-sdk-1.21.1-neoforge-0.0.0.jar`，已在 2026-10-23 按 `9c67ceaa4` 重打并用 `javap` 和附属 `compileJava` 核对过；旧包留在同目录的 `gt6ce-addon-sdk-1.21.1-neoforge-0.0.0-6eba3e1ed.jar`。运行用的 `gt6ce-1.21.1-neoforge.jar` 也已在 2026-10-23 按 `9c67ceaa4` 重打，`build-commit.txt` 和 `.sha256` 已同步。下面「已有入口」记的是源码和这份新 SDK 包都有的状态。API 仍是 0，模组版本仍是 0.0.0。每一条都写清来源卡、源名字、试过的入口、缺的是什么，以及当前机器怎么落的。
 
 ## 已有入口，不列缺口
 
 - 第二种输入能量。行为机用 `auxiliaryEnergy`：自己的面、正容量，以及包范围或 `anyPacket()`。这份缓存用 `energy(type)` 和 `consume(type, amount)` 读写。大型配方机用条件零件，`energyInput` 加 `condition`。掩膜对准机的灯收 LU、能量模块收 EU，脱燃工厂收 EU 和 HU，都走这两条。卡 04、11、12。
-- 功能零件和布局格。`LayoutPart` 可以写 `slots`、`tick`、`use`、`field`，也可以和能量输出或条件输入写在一起。普通方块和方块标签可以写成 `CASING` 格。布局坐标不再限制在 ±16。灯模块、平台、CNC 电机和刀头、钻头、吸热器、热管、镜架、镜子在源里是 `CommonPart`，按外壳声明。卡 04、11、12。
+- 功能零件和布局格。`LayoutPart` 可以写 `slots`、`tanks`、`gui`、`tick`、`use`、`field`，也可以和能量输出或条件输入写在一起。普通方块和方块标签可以写成 `CASING` 格。布局坐标不再限制在 ±16。灯模块、平台、CNC 电机和刀头、钻头、吸热器、热管、镜架、镜子在源里是 `CommonPart`，按外壳声明。卡 04、11、12。
 - 探伤仪。`RecipeMachine` 有 `searchOutputTanks(true)` 和 `exclusiveOutputs(true)`，对应输出储罐回退和两项物品输出二选一。卡 02。
-- 编程电路、保留物品和输出概率。编程电路是 `AddonItems.selectorTag(0..24)`。不消耗的物品输入按数量 1 写进 `Line.keptInputs`。物品输出概率在 `Line.outputChances`。卡 06、09。
-- **不消耗的流体输入没有入口。** 来源：卡 06（热混合 11 行数量 0 的流体催化剂）。本地运行包的 `AddonRecipes.Line` 只有 `keptInputs`，没有 `keptFluidInputs`；上游 `multiversion` 源码已经有这个字段，但 `6eba3e1ed` 打的 API 0 包里没有。数量 0 的流体在 `Line` 里会被当成空栈拒绝，所以这 11 行仍未落地。
+- 编程电路、保留物品和输出概率。编程电路是 `AddonItems.selectorTag(0..24)`。不消耗的物品输入按数量 1 写进 `Line.keptInputs`。物品输出概率在 `Line.outputChances`。流体的版本见下面「配方行没有 0 mB 的流体输入」。卡 06、09。
 - 单方块压缩气罐和管子。气罐是 `compressedGasTanks()`，灌气是 `pushCompressedGas`。管子是 `fluidPipes()` 和 `itemPipes()`。卡 07。
-- 研究、无线计算、无线能量、微重力房间、激光脉冲、量子中继和坩埚温度。科技树、算力网、房间包围盒、无线配对坐标、激光脉冲池、量子中继配对和坩埚温度都存在附属自己的方块状态或附属静态表里，GT 不负责保存或转发。卡 15–21。
-- 行为机的双缓存分流与宽包窗口。`6eba3e1ed` 的 `BehaviorMachine` 主 `energy` 仍保持标称值的一半到两倍，需要宽包窗口（如研究组装 64–524288、量子枢纽 1–32768、激光聚变 1–2097152）或异种能量转换（如量子中继收 EU 发 QU）时，用 `auxiliaryEnergy` 声明 `range(min, max)` 并和主缓存分在不同面。卡 14、20、21。
+- 研究、无线计算、无线能量、微重力房间、激光脉冲和量子中继。科技树、算力网、房间包围盒、无线配对坐标、激光脉冲池和量子中继配对都存在附属自己的方块状态或附属静态表里，GT 不负责保存或转发。坩埚温度和熔融物走下面的 `CrucibleContent` / `CrucibleMold` 入口。卡 15–21。
+- 异种能量转换与双缓存。行为机主 `energy` 和 `auxiliaryEnergy` 都能写 `range(min, max)` / `anyPacket()`；需要收另一种能量类型（如量子中继收 EU 发 QU）时，用 `auxiliaryEnergy` 声明第二种类型并和主缓存分在不同面。卡 14、20、21。
+- 纯发电行为机。`BehaviorMachine` 只写 `energyOutput`、不写 `energy` 就能建；`generate` 和 `emit` 用一份完整输出包作缓冲。研究方块、计算方块和两只计算零件不再需要凭空声明进电面。`0a910848b`。卡 08、09、15、16。
+- 行为机的物品和流体面。`io(MachineIo)` 对行为机开放，没点名的通道是关的，不是六面缺省；`canInsert` 和 `canFill` 有带 `MachineFace` 的重载，管子先看面再问行为。自动面和 `IoTarget` 仍拒绝。`0278fc5b8`。卡 07、09、14。
+- 行为机主输入的包规则。主 `energy` 可以写 `range(min, max)`、`anyPacket()`（要求正容量）和 `overload(false)`；`anyPacket` 不检查包大小，`overload(false)` 拒绝窗口外的包。`BehaviorEnergyRules.admitInput` 按绝对值判断大小。卡 07、08、10、14。
+- 行为机拒收注入。`MachineBehavior.acceptsEnergy(context, type, face, size, amount)` 在面检查和缓存检查之后被 `doInject` 调用，主缓存和附加缓存都问；返回 false 就拒收，不进缓存也不过载。卡 10、14。
+- 输出包下限与符号。`EnergyOutput.minSize` 缺省 1，`allowNegative()` 只给 KU 和 RU，`requireEmit` 按绝对值检查。燃料机用 `FuelGenerator.Builder.amperes(n)`，1–64。`77592cf59`。卡 08、13。
+- 双向能量零件和内部通道。`LayoutPart` 同时写 `energyOutput` 和 `energyInput` 时，`energyInput` 是不带 `faces`、不带 `condition` 的控制器→零件内部通道；控制器用 `pushToPart(part, type, size, amount)` 或 `emit(part, size, amount)` 充能，零件在自己的 tick 从 `energyOutput.faces()` 送出。`37dfaa566`。卡 10、14。
+- 结构外送能。`MachineBehaviorContext.emitTo(target, side, size, amount)` 把声明的输出类型和包上限送到任意已加载坐标的方块实体，不占用声明的面；目标不保留引用。`EnergyOutput.Builder.remote()` 允许输出不写 `faces`，这种输出不会自己发到相邻方块，只走 `emitTo`。`9c67ceaa4`。卡 12、13、17。
+- 布局的重复层和方块谓词。`LayoutRepeat` 支持向上/向下和 `max=-1` 自动重复（上限 64 份）；`CellMatch.anyFluid()`、`anyFluid(fluidTag)`、`anyOpaque()`、`block` 和 `tag` 都能写。数据包也能写 `repeats`。`37dfaa566`。卡 12、13、14。
+- GT 零件外观号。`LayoutCell.withDesign(int)`、`LayoutRepeat.Builder.cell(..., design)`，数据包和 KubeJS 的格子也能写 `design`；成形时写进 `gt.design`，拆开时还原。`654e797f6`。卡 04、12、13、14。
+- 材料统计与物品反查。`GregTechMaterials.Material` 有 `mass()`、`toolQuality()`、`toolSpeed()`、`toolDurability()`；`AddonItems.composition(ItemStack)` 按 GT 自己的物品数据反查前缀和材料单位，没有登记的物品仍是空。`e87273731`。卡 08、14、19。
+- 坩埚内容与浇铸。绑定零件用 `PartContext.crucible()` 读 `CrucibleContent`（材料、数量、温度），不取走；行为机实现 `MachineBehavior.getCrucibleMaterial` / `getCrucibleTemperature` / `getCrucibleContentAmount`，用 `fillMoldAtSide(context, mold, side, amount)` 把熔融物灌进 `CrucibleMold`。`fd5f38381`、`82694dacf`。卡 19。
+- 附属材料的额外形态与方块前缀。`MaterialDeclaration.Builder.polymer()` 打开 `plate` 和 `foil`，`wires()` 打开 `wireFine`；`PrefixDeclaration.block` 新建实心方块前缀并带 `forge:<oreDictionary>/<material>` 标签。核心材料仍不能走这两条。`fb48b4d3e`。卡 01、06。
+- 工具与点击顺序。`AddonTool` 有 `SPADE`、`UNIVERSAL_SPADE`、`MAGNIFYING_GLASS`、`SCREWDRIVER`、`SOFT_HAMMER`、`WRENCH`、`MONKEY_WRENCH`、`HARD_HAMMER`、`WIRE_CUTTER`、`SAW`；`onTool` 在扳手转向之前运行，返回 true 吃掉点击。`e1289c194`。卡 08、09、14、17。
+- 辅助能量同面。和主输入同类型又共用一个面才失败；类型不同可以共面。卡 13 的分激电机把激励 EU 放在正面，和 RU 共用。卡 13。
+- 压缩气体阀门。`BehaviorMachine.Builder.gasValve(MachineFace)` 让行为机在控制器的一个面上收 `pushCompressedGas`，也能从同一面送出；单方块气罐每一面都收。`654e797f6`。卡 03、07。
 
 ## 接口缺口
 
-### 行为机的能量与侧面
+### 结构零件与布局
 
-- **纯发电行为机仍要声明进电面。** 来源：卡 08（水车 `WaterMill` 9800、手摇 `ManualGenerator` 10021/10022/10026/10027）、卡 09（气体电池 `FuelBattery` 10010–10011）、卡 15（研究方块 9810–9815 和 1106，注册只写了送出 512 EU）、卡 16（计算方块 1100–1105 同样只写了送出 512 EU；计算零件 32005、32006 没有能量注册）。`BehaviorMachine.build` 要求 `energy` 非空，并且 `faces` 非空，否则抛 `Missing energy type` 或 `accepts energy on no face`。源机器只送电、不收电。现在水车把输入面放在顶面，手摇和气体电池放在底面。研究方块和计算方块的底面收 256–1024 EU，行为不凭空产生那 512 EU。两只计算零件的底面收 1 EU。
-- **行为机不能按面限制物品和流体。** 来源：卡 07（压缩机 `tankGasCompressedInputer` 只从顶面进气）、卡 09（`FuelBattery` 正面和背面不收流体）、卡 14（流体电池 `LiquidBattery` 只从底面排液）。`BehaviorMachine.build` 拒绝 `MachineIo`（`Behavior machines cannot declare item and fluid faces`）。`BehaviorMachineBlockEntity` 注册物品和流体能力时忽略方向，共用同一个 `PipeItems` / `PipeFluids`；`canInsert` 和 `canFill` 也没有面参数。现在各面都能灌抽。流体电池的储罐角色是 `ANY`。
-- **行为机主输入不能声明包范围或忽略包大小，过载也不能关闭。** 来源：卡 07（压缩机）、卡 08（飞轮箱 `FlywheelBox` / `FlywheelBoxElec` 15000–15055）、卡 10（变换零件 `TransformerPart` 10200–10255）、卡 14（流体电池和变换电池的输入都从 64 拉到注册上限，跨度超过四倍）。`BehaviorMachine.build` 对主 `energy` 拒绝 `range` 和 `anyPacket()`。它们只在 `auxiliaryEnergy` 上可用。主输入固定按标称值的一半到两倍收包，超过上限就走 `MachineOverload`。源飞轮和电动飞轮的钳制、满箱爆炸，以及变换零件从内部面收任意包，都对不上这条主输入规则。卡 14 把 64 到注册上限放在辅助输入上，底面 1 HU 只用来满足主输入。
-- **行为机不能从回调里拒绝外部注入。** 来源：卡 10（`TransformerPart` 的 `mStopped`）、卡 14（变换电池 `TransformBattery` 未封存时不收电）。`doInject` 只看声明的面和缓存空余，不回调 `MachineBehavior`。停机开关只能停掉 `emit`，挡不住背面继续收电。
-- **能量输出没有最小包和负包。** 来源：卡 08（飞轮输出下限 `VMIN[j]`、水车负扭矩、手摇 KU 正负交替）。`EnergyOutput` 只有 `maxSize` 和 `maxAmount`。`BehaviorEnergyRules.requireEmit` 要求 `size >= 1` 且 `amount >= 1`。
+- **`SharedLargeMachineParts.idForName` 认不全已有 GT 零件。** 来源：卡 14（流体电池池壁 31034–31036 三选一，变换电池 `T` 是卡 10 的 `TransformerPart` 或能量墙；钨钢壳 18023、EU 线圈 18041）、卡 17（感应塔的 `mCoil` 18041）。`OriginalMultiblockPartData` 已经有 `implosion_compressor_wall`（18023）、`large_niobium_titanium_coil`（18041）等 45 个零件，但 `SharedLargeMachineParts.idForName` 只查自己的 `DEFINITIONS` 和六个固定名字，查不到就返回 -1，`AddonMachines` 随即抛「uses unknown part」。所以布局里仍然写不出 18023 和 18041。现在池壁只用青铜墙，钢墙和塑料墙单独注册。钨钢流体电池的壳用 `tungstensteel_wall`。EU 变换电池的线圈用 `large_copper_coil`。感应塔的 18041 也仍是 `large_copper_coil`。
+- **一格只能写一个匹配。** 来源：卡 14（流体电池池壁三选一）、卡 16（`ComputePartPredicate`）、卡 18（托卡马克 H 格）。`CellMatch` 是 sealed interface，一格一个值。普通方块的多选可以用方块标签（`tag`）绕开，但需要绑定的 GT 零件、`part` 和 `block` 混写、以及「计算零件或储罐墙」这种组合仍然写不出来。托卡马克的 H 格固定成铝制无线节点。量子阵列、时空阵列和量子计算中心的计算格固定成 `quantum_compute_node_naquadah`。现在可扩展层只收了一层，计算格各写一种方块。
+- **重复段最多 64 份。** 来源：卡 12（地幔加热 `MantleHeater` 30028 从钻杆一直打到基岩）。`LayoutRepeat` 的 `max=-1` 会在 `LargeMachineLayouts.MAX_REPEATS`（64）处停，超过 64 层的结构表达不了。现在地幔加热的布局停在地上那四层，不包含往下的钻杆柱。
 
-### 多方块零件
+### 配方机器
 
-- **多方块没有「内部面」，结构零件也不能同时进电和出电。** 来源：卡 10（`TransformerPart`）、卡 14（`TransformBattery`）、卡 17（`WirelessEnergyReceiver` 31117–31118）。源类用 `SIDE_INSIDE` 表示控制器向零件内部注入，再从零件正面送出。`MachineFace` 只有上下前后左右六个朝向，`LayoutPart.build` 又拒绝同时设置 `energyOutput` 和 `energyInput`（`cannot both accept and emit`）。所以卡 10 的 36 件变换零件做成单方块行为机，用背面代替内部面。卡 14 同样没有内部面，回调里也推不进相邻的变换零件，见「不能把能量推进另一台机器」。
-- **GT 零件上的外观号（`NBT_DESIGN`）。** 来源：卡 04（矿处理系统 30041 的输出墙外观 7）、卡 12（脱燃工厂出口框架 G 的外观 7、油矿钻头 31014 的外观 7）、卡 13（涡轮壳和流体锅炉的外观 7）、卡 14（流体电池控制器外观）。这是写在 GT 零件上的贴图序号。`StructureLayout` 的格子只认方块和角色，不能给 GT 墙指定这套贴图；另声明一块 `layoutParts()` 又会变成别的方块。输出角色已经按格子生效，外观保持原墙。
-- **结构布局是一份固定格子，不能按高度重复，也不能写成「任意液体」或「任意不透明方块」。** 来源：卡 12（太阳炉 `SunHeater` 30007 的吸收层 1–16 层、地幔加热 `MantleHeater` 30028 从钻杆一直打到基岩、潮汐 `TidalWaveGenerater` 30033 的 `LiquidPredicate` / `OpaqueCubePredicate`）、卡 13（流体锅炉 `FluidBoiler` 30056 的中间层最多加到 8）、卡 14（流体电池 `LiquidBattery` 30024–30026 的池子，层数 16/32/64，边长 16/32/48）。`StructureLayout` 只收确定的 `LayoutCell`。`CellMatch` 有零件、空气、方块 id 和方块标签，没有「任何液体」或「任何不透明方块」。太阳炉现在固定成 1 层吸收层再加顶盖。地幔加热的布局停在地上那四层，不包含往下的钻杆柱。潮汐的液体格是 `minecraft:water`，不透明格是 `minecraft:stone`，角色都是 `CASING`。流体锅炉的中间层固定成 1 层。流体电池的池子固定成背后 1 格空气。
-- **能量只能从控制器声明的面送出，不能打到结构外的任意坐标。** 来源：卡 12（太阳炉库存超过 9 倍速率后，从结构顶上 3×3 向下送 HU；地幔加热从顶上五个位置送 HU）、卡 13（电机 EU 从背面 3 格外的能量口送出，蒸汽涡轮从背面能量口送 RU）。`MachineBehaviorContext.emit` 只走 `EnergyOutput` 声明的 `MachineFace`。太阳炉和地幔加热把热量留在缓存或方块状态里。电机的 EU 从控制器背面送出，蒸汽涡轮的 RU 从控制器正面送出。结构里的 `ENERGY_OUTPUT` 格子不转发这一包。燃气涡轮是燃料多方块，`FuelOutput.behind(4)` 能打到壳外面。
-- **功能零件没有流体储罐，也没有独立 GUI。** 来源：卡 04、卡 19（电磁坩埚屏 `DummyCrucibleScreen` 31504）。`LayoutPart` 有物品槽 `PartSlots`、服务端 `tick`、`use` 和 `field`，没有流体槽和菜单入口。放大镜文本走 `PartBehavior.describe`。
-- **大型压缩气罐阀门收不到 `pushCompressedGas`。** 来源：卡 03、卡 07（大型阀门 `steel_compressed_gas_tank` / `stainless_compressed_gas_tank`）。`MachineBehaviorContext.pushCompressedGas` 只往 `compressedGasTanks()` 注册的单罐里写。大型气罐是带 3×3×3 结构的行为机，压缩机推不过去，阀门往外推也只认那种单罐。
+- **配方机没有第二种能量，也没有启动能量。** 来源：卡 18（托卡马克 `FusionReactorTokamakExp` 30014、`FusionReactorTokamakT1` 30015 的第二种能量是 LU，并且 `NBT_SPECIAL_IS_START_ENERGY`）。`RecipeMachine.Builder` 只有 `energy`；行为机有 `auxiliaryEnergy`，配方机没有。`AddonRecipes.Line.special` 只是数值透传，没有启动能量语义。现在两台机器的结构已经收成布局，只收 EU，功率不恒定。启动充能、磁场和算力检查没有落。实验型的燃料图并进同一张托卡马克配方图。
 
-### 材料、前缀与物品反查
+### 材料与前缀
 
-- **材料读取接口没有质量、工具品质和工具速度。** 来源：卡 08（飞轮箱容量和损耗依赖飞轮材料的这三项）、卡 14（变换电池 RU 的飞轮物品，容量是最大库存乘堆叠数）。`GregTechMaterials.Material` 只有名字、id、颜色、熔点、沸点、密度、化学式、翻译键、组成和副产物。飞轮箱和这台变换电池的飞轮容量因此留在 0。
-- **核心材料不能通过 `forms()` 请求未开启的电线或 `casingMachine` 方块前缀。** 来源：卡 01、卡 06（石墨板，组装机里的 `casingMachine` 和缺失电线）。`MaterialFormRequest` 对附属自有材料开放了 `plate` 和 `foil`（`SiliconeRubber`、`SBR`、`PEEK` 已通过 `forms()` 注册），核心材料仍走 `MaterialPrefix.isValidFor`；新物品前缀走 `PrefixDeclaration`，方块前缀没有入口。
-- **前缀条件没有熔融、金属或合金，也不能按材料名排除。** 来源：卡 22（`prefixList` 的大型涡轮叶片和六种涡轮）。源条件是工具属性、可熔、金属或合金，再排除退火铜、熟铁、铝铁。`PrefixCondition` 只有工具属性、可锻造，以及木、煤、石、食物、肉的否定。叶片和涡轮按飞轮的工具属性加可锻造生成。纯度粉改用精炼家族的显式名单。
-- **不能从任意物品反查材料和前缀组成。** 来源：卡 19（电磁坩埚 `ElectromagnetCrucible` 30032）。源里用 `OM.anydata_` 把投入的物品折算成材料和单位数。附属接口能按名字查 `GregTechMaterials.find`，不能从任意 `ItemStack` 反查它含什么材料。卡 19 不写猜 NBT 的替代查询。坩埚只对一份已知的铁加热，温度跨过 `Iron` 的熔点就记成熔化。材料质量不在接口里，总质量保持自身的 3200。
+- **前缀条件没有熔融、金属或合金，也不能按材料名排除。** 来源：卡 22（`prefixList` 的大型涡轮叶片和六种涡轮）。源条件是工具属性、可熔、金属或合金，再排除退火铜、熟铁、铝铁。`PrefixCondition` 只有 `HAS_TOOL_STATS`、`SMITHABLE`、`NOT_WOOD`、`NOT_COAL`、`NOT_STONE`、`NOT_FOOD`、`NOT_MEAT`。现在叶片和涡轮按飞轮的工具属性加可锻造生成。纯度粉改用精炼家族的显式名单。
+- **核心材料不能通过 `forms()` 请求未开启的形态，也不能复用内置方块前缀。** 来源：卡 01、卡 06（石墨板，组装机里的 `casingMachine` 和缺失电线）。`AddonMaterials.explicitPlateOrFoil` 对核心材料直接返回 false；`polymer()` 和 `wires()` 只对附属自有材料生效。`PrefixDeclaration.block` 只能新建名字，撞上内置 `casingMachine` 会启动失败。现在附属自有材料的 `plate`、`foil`、`wireFine` 已能通过 `forms()`；核心材料仍走 `MaterialPrefix.isValidFor`。石墨板仍没有 `casingMachine` 方块。
 
-### 配方与工具
+### 配方与流体
 
-- **配方行没有「不消耗的流体输入」。** 来源：卡 09（气体电池 `Chemistry.java` 61–79 的 16 行，第三种流体是 0 mB 的氧化钇锆或硫酸）。`AddonRecipes.Line` 的 `copyFluids` 会把数量为 0 的流体变成空栈，随后 `RecipeMap.copyFluids` 把空栈删掉；`keptInputs` 只标记物品下标，`RecipeInputs.consume` 会扣掉所有非空流体输入。卡 09 把 0 mB 电解液从配方输入里拿掉，改在 `Gt6KtfruFuelBattery` 里按电极对检查电解液罐，并且不扣它。
-- **工具枚举只有三种，且工具点击在 `onUse` 之前不会交给行为机。** 来源：卡 08（虚空漏斗的螺丝刀和软锤、矿机的软锤）、卡 09（气体电池的猴扳手）、卡 14 和卡 17（变换电池与无线塔的活动扳手封存）。`AddonTool` 只有 `SPADE`、`UNIVERSAL_SPADE`、`MAGNIFYING_GLASS`。而且 `BehaviorMachineBlock` 对手持 GT 工具但 `onUse` 返回 false 的点击不会打开界面，扳手又在 `onUse` 之前先改朝向。所以这些切换都改成了界面里的 `toggle` 开关。
-- **燃料发电机只送出 1 安培。** 来源：卡 13（扩展马达 `ExpandedMotor` 30046–30051 的 `MAX_AMPERE` 4）。`FuelGeneratorBlockEntity` 送出时把安培写成 1。扩展马达的注册速率仍是这一包 RU。
-- **第二种能量不能和主输入用同一面。** 来源：卡 13（分激电机 `MultiSeparateExciteDynamo` 30055，RU 和激励 EU 都从正面进）。`BehaviorMachine.build` 拒绝辅助能量和主输入共用一面。激励 EU 放在顶面。那一面贴着结构，包进不去。
-- **一格只能写一个零件名，附属布局也认不全 GT 零件名。** 来源：卡 14（流体电池池壁 31034–31036 三选一，变换电池 `T` 是卡 10 的 `TransformerPart` 或能量墙；钨钢壳 18023、EU 线圈 18041）。`CellMatch` 一格一个名字。`SharedLargeMachineParts.idForName` 不认识 `implosion_compressor_wall` 和 `large_niobium_titanium_coil`，写进布局会在加载时抛未知零件。池壁布局只用青铜墙，钢墙和塑料墙仍单独注册。钨钢流体电池的壳用 `tungstensteel_wall`。EU 变换电池的线圈用 `large_copper_coil`。`T` 用这一档的能量墙。
-- **行为机不能把能量推进另一台机器。** 来源：卡 14（`TransformBattery` 封存后对每个 `TransformerPart` 调用 `doInject`，面是 `SIDE_INSIDE`）、卡 17（`WirelessBatteryBase` 对 `WirelessEnergyReceiver` 调用 `doInject`，面同样是 `SIDE_INSIDE`）。`MachineBehaviorContext` 没有按坐标注入。`EnergyPart.charge` 只对这份布局绑上的能量零件。封存后的变换电池把能量留在控制器里。未封存仍会收电，见上面「不能拒绝注入」。封存只让 `canInsert` 拒绝放入；`SlotRole.ANY` 的取出不看这个回调，物品仍能拿出来。卡 17 的塔把数量交给附属自己的投递表，接收器在自己的 tick 里用 `generate` 入账，再从正面 `emit`。
-- **配方机没有第二种能量，也没有启动能量。** 来源：卡 18（托卡马克 `FusionReactorTokamakExp` 30014、`FusionReactorTokamakT1` 30015 的第二种能量是 LU，并且 `NBT_SPECIAL_IS_START_ENERGY`）。`RecipeMachine` 只有一个 `energy`。两台机器的结构已经收成布局，只收 EU，功率不恒定。启动充能、磁场和算力检查没有落。实验型的燃料图并进同一张托卡马克配方图。
-- **行为机没有邻居状态读取入口，跨机器通信走附属自己的静态表。** 来源：卡 15、卡 16、卡 18、卡 21（研究监视器 9818 与研究组装机 30042 / 反应釜 30043 / 显微镜 30077–30078、算力网与三台 AI 中心 30106–30108、离心微重力房间 30102 与微重力机器 30103 / 30105、量子通讯中继器 30074）。`MachineBehaviorContext` 只暴露本机的 `state()`，拿不到另一台行为机的 `BehaviorState`。这些属于附属自己的子系统，不需要 GT6CE 提供业务接口，在卡 21 里统一用 `(维度, 坐标)` 静态表和 `BehaviorMachine` 内部状态机落地。
-- **行为机多方块只能从控制器本身进出物品和流体。** 来源：卡 12（脱燃厂）、卡 21（研究组装机 30042、研究反应釜 30043、激光聚变 30071–30072、微重力晶体生长 30103）。`MultiblockPortBlockEntity` 只对 `MultiblockPortOwner`（`LargeRecipeMachineBlockEntity` 与坩埚）转发结构墙上的物品、流体和能量；`BehaviorMachineBlockEntity` 只用结构布局做成型校验，物品、流体和能量都走控制器方块本身。
-- **不能沿 GT 电线把两台控制器判成连通。** 来源：卡 16（`ControllerElectric` 1100 顺着 `MultiTileEntityWireElectric` 走到另一台控制器）。行为机只能看 `level()` 里的方块。GT 电线没有附属能认的方块标签。1100、1102、1104 在源里是注释，没有恢复。无线控制器改认 512 格内的无线计算节点。
-- **结构里的计算格只能认一种方块。** 来源：卡 16（`ComputePartPredicate`）、卡 18（托卡马克 H 格）。`CellMatch` 一格一个零件或一个方块。无线控制器的 N 格固定为 `wireless_compute_node_aluminium`。量子阵列、时空阵列和量子计算中心的计算格固定为 `quantum_compute_node_naquadah`。托卡马克的 H 格同样固定成铝制无线节点，写不出「计算零件或储罐墙」。可扩展层只收了一层。
-- **量子枢纽只存 EU。** 来源：卡 17（`WirelessBatteryQuantum` 30115）。源可以按首包动态锁定任意能量类型。行为机的能量类型在注册时固定，这台机器的缓存定为 EU，窗口 1–32768。
-- **研究小游戏与任务树 UI 不搬。** 来源：卡 15、卡 18（研究台 9810–9817 的连线/装箱/识别 GUI）。显微镜按每件 EU 消耗样本并解锁对应物品到绑定的研究监视器；AI 中心向绑定的算力网申请 67,108,864 Normal 算力/tick 并产出 8 / 4 / 2 点研究进度。
-- **线圈 18041 仍用 `large_copper_coil`。** 来源：卡 17（感应塔的 `mCoil`）。共享零件表没有 18041，最近的线圈名是 18040。
-- **流体查询只有气体。** 来源：卡 14（`LiquidBattery` 倒掉气体和导电流体，酸、魔流体或温度高于 573 就爆炸）。`AddonFluids` 只有 `gas`。温度用流体类型自己的 `getTemperature`。气体和温度高于 573 的流体被倒掉。酸、魔流体和导电流体留在罐里。没有爆炸。
+- **配方行没有 0 mB 的流体输入。** 来源：卡 06（热混合 11 行数量 0 的流体催化剂）、卡 09（气体电池 `Chemistry.java` 61–79 的 16 行，第三种流体是 0 mB 的氧化钇锆或硫酸）。`Line.keptFluidInputs` 已经进了 `9c67ceaa4` 的源码和 2026-10-23 重打的 API 0 SDK 包（`98e28d39d`），可以用正数量做「检查而不扣」的流体输入。0 mB 本身仍被 `RecipeKeptInputs.requirePositiveFluid` 拒绝，`copyFluids` 也仍会把 0 数量变成空栈。现在 0 mB 电解液从配方输入里拿掉，改在 `Gt6KtfruFuelBattery` 里按电极对检查电解液罐，并且不扣它；要改成配方行，得把数量写成正数（例如 1 mB）。
+- **流体分类只有气体。** 来源：卡 14（`LiquidBattery` 倒掉气体和导电流体，酸、魔流体或温度高于 573 就爆炸）。`AddonFluids` 可以按名字拿 `still` / `flowing`，但只提供 `gas()` 分类；酸、魔流体和导电流体的判断没有入口。温度仍从流体类型自己的 `getTemperature` 读。现在气体和温度高于 573 的流体被倒掉。酸、魔流体和导电流体留在罐里。没有爆炸。
+- **大型压缩气罐阀门只到控制器面。** 来源：卡 03、卡 07（大型阀门 `steel_compressed_gas_tank` / `stainless_compressed_gas_tank`）。`BehaviorMachine.Builder.gasValve(MachineFace)` 现在让行为机在控制器自己的一个面上收/发压缩气体，`pushCompressedGas` 也能到达它。但阀门如果做成结构墙上的零件，仍然没有接收方入口。现在大型气罐是行为机时，把阀面放在控制器上就能用；阀门零件还没有接法。
+
+### 行为机多方块
+
+- **行为机多方块没有 GT 结构端口。** 来源：卡 12（脱燃厂）、卡 21（研究组装机 30042、研究反应釜 30043、激光聚变 30071–30072、微重力晶体生长 30103）。`MultiblockPortBlockEntity` 只对 `MultiblockPortOwner`（`LargeRecipeMachineBlockEntity` 与坩埚）转发结构墙上的物品、流体和能量；`BehaviorMachineBlockEntity` 不实现它，物品、流体和能量都走控制器方块本身。现在功能零件的 `PartSlots`/`PartTanks` 可以放在结构里当附属自己的端口，但不是 GT 的输入总线/仓。
+- **行为机的能量类型在注册时固定。** 来源：卡 17（`WirelessBatteryQuantum` 30115）。源可以按首包动态锁定任意能量类型。行为机的主输入和 `auxiliaryEnergy` 类型都是声明时写死的，没有运行时锁定入口。现在量子枢纽的缓存定为 EU，窗口 1–32768。
 
 ## 不做
 
 - 在附属里继承 GT 内部方块实体（例如 9970、9980、9990、涡轮、坩埚）来绕过接口。
 - 把 C 档内容（TFC、Advanced Rocketry、Botania、小行星、火箭、符文扫描、戴森球、TFC 坩埚模型）当成接口缺口。
 - 为卡 19 写一个扫物品名或 NBT 的假材料反查。
+- 读相邻行为机的 `BehaviorState`。卡 15、16、18、21 的跨机器通信已经在卡 21 里用 `(维度, 坐标)` 静态表和 `BehaviorMachine` 内部状态机落地；不把它做成 GT6CE 的通用业务接口。
+- 沿 GT 电线把两台控制器判成连通。卡 16 的 `ControllerElectric` 1100 顺着 `MultiTileEntityWireElectric` 走；行为机用 `level()` 自己检查方块就够，GT 电线没有附属能认的方块标签。
+- 研究小游戏与任务树 UI。卡 15、卡 18 的研究台连线/装箱/识别 GUI 不搬。
 
 ## 步骤
 
-- [ ] 卡 12–19 每碰到一条用不上 GT6CE 接口的，把来源卡、源名字、试过的入口、缺什么和当前落法补到上面。
+- [ ] 卡 12–19 每碰到一条仍然用不上 GT6CE 接口的，把来源卡、源名字、试过的入口、缺什么和当前落法补到上面。
 - [ ] 某条有了公开入口、并且附属用的 SDK 已经带上它之后，另开实施卡，不把实施写在这张卡里。
+- [ ] 先给 `idForName` 补上 `OriginalMultiblockPartData` 里已有的零件名，另开实施卡。
+- [x] 按 `9c67ceaa4` 重打 API 0 SDK 包，再逐条核对「已有入口」在包里是否真的能用。
+- [x] 重打运行 jar（`gt6ce-1.21.1-neoforge.jar`）到 `9c67ceaa4`，否则开发运行仍缺新入口。
 
 ## 验收
 
 - [ ] 列表和表面清单的 A/B 档对得上，没有把 C 档混进来
+- [x] 每条都按源码基线 `9c67ceaa4` 核过，已经能用接口的条目不在缺口里
+- [x] 「源码有、当前 SDK 包没带」的条目写清楚，不把它当成永久缺口
 
 ## 日志
 
@@ -99,3 +105,7 @@
 - 2026-10-22：卡 21 把不需要改 GT6CE 的附属自有子系统收进 `BehaviorMachine` 与附属静态表：微重力房间索引（30102/30103/30105）、研究监视器解锁表与研究组装/反应釜/显微镜联动（9818/30042/30043/30077/30078）、激光聚变脉冲蓄能与强制冷却（30071/30072）、量子通讯中继器双机配对与 128 QU/t 发射（30074）、以及算力网静态拓扑与 AI 中心算力分配（30058–30070/32010–32043/30106–30108）。
 - 2026-10-22：卡 22 补入涡轮前缀表达不了熔融、金属或合金和三个材料名排除。纯度粉用显式名单落地。
 - 2026-10-23：源配方重新提取后，GT6CE 本体物品不再走 `AddonItems.stack(前缀, 材料)`，而是按 `gt6ce:` 注册名查 `BuiltInRegistries`；`IL.*` 元件、`casingMachine`、`wireGtNN`、`pipe*`、细导线、GT6 数字电线/轴件 ID 都因此落地。剩余 59 次调用中，只有 11 次流体催化剂是接口本身缺口（上面的 `keptFluidInputs`）；其余是材料/流体没移植、物品形态没开、C 档、手写重复、非常数参数，或 `kTFRU` 自有物品/GT6 旧机器 ID 没有对照。明细见卡 06 和 `build/source-recipe-report.txt`。
+- 2026-10-23：按 `9c67ceaa4` 重核并重写这张卡。`6eba3e1ed` 之后的接口提交把纯发电行为机、按面限制物品和流体、主输入 `range`/`anyPacket`/`overload(false)`、`acceptsEnergy`、输出 `minSize`/`allowNegative`、双向能量零件与内部通道、`design` 外观号、`LayoutRepeat` 与 `anyFluid`/`anyOpaque`、`emitTo`、功能零件 `tanks`/`gui`、材料 `mass`/`toolQuality`/`toolSpeed`/`toolDurability`、`AddonItems.composition`、`onTool` 与扩大的 `AddonTool`、燃料机 `amperes`、辅助能量同面、`gasValve` 移入「已有入口」。缺口只留 `idForName` 认不全 GT 零件、一格一个匹配、重复段 64 份上限、配方机第二能量和启动能量、前缀条件、核心材料形态、API 0 包的 `keptFluidInputs`、`AddonFluids` 只有气体、结构端口、动态能量类型。邻居状态、GT 电线连通和研究 UI 移入「不做」。当时 SDK 包仍是 `6eba3e1ed` 打的；随后已按 `9c67ceaa4` 重打，见下一条。
+- 2026-10-23：按 `9c67ceaa4` 重打 NeoForge API 0 SDK 包。`gt6ce-addon-sdk-1.21.1-neoforge-0.0.0.jar` 从 120 个类涨到 131 个类，sha256 `c1d03a2dd8c3c6b2a3ec2e39854075947f0ec6abd1a38604bb734427bd154455`；旧包备份为 `libs/gt6ce/gt6ce-addon-sdk-1.21.1-neoforge-0.0.0-6eba3e1ed.jar`。`addonApiClosureCheck` 通过（131 个 API 类），`javap` 核对 107 项入口全部命中，附属 `compileJava` 用新包通过。`keptFluidInputs` 已进包，缺口缩为 0 mB。当时运行 jar 仍是 `6eba3e1ed`；随后已重打，见下一条。
+- 2026-10-23：按 `9c67ceaa4` 重打 NeoForge 运行 jar。`gt6ce-neoforge-1.21.1-0.0.0.jar` 复制为 `libs/gt6ce/gt6ce-1.21.1-neoforge.jar`，sha256 `d6dc2e2307a3616fb59ed164eef5b40ed0d56354ce0395e97cf5aa3f2e884625`；旧包备份为 `gt6ce-1.21.1-neoforge-6eba3e1ed.jar`。`build-commit.txt` 更新为 `9c67ceaa405ab5675306e074be2ae505c31701ab`，`.sha256` 同步。运行 jar 里确认有 `emitTo`、`pushToPart`、`keptFluidInputs` 和 `LayoutRepeat`。SDK 和运行包现在都来自 `9c67ceaa4`。
+- 2026-10-23：复核新 SDK 后补入坩埚入口。绑定零件可读 `PartContext.crucible()` 的 `CrucibleContent`，行为机可实现 `getCrucibleMaterial` / `getCrucibleTemperature` / `getCrucibleContentAmount` 和 `fillMoldAtSide`（`fd5f38381`、`82694dacf`）。`GAP.md` 同步到 `9c67ceaa4` 并删掉已不成立的「零件没有流体储罐/GUI、读不到物品组成、外观号写不进去」等旧话。剩余缺口仍是上面十条，没有新增永久缺口。
