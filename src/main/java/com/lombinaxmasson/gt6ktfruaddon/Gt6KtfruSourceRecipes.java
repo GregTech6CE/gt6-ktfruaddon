@@ -2129,6 +2129,12 @@ public final class Gt6KtfruSourceRecipes {
                 0L,
                 null,
                 new int[] {0});
+        // OreProcessing.java:40
+        add("OreProcessing.java:40", Gt6KtfruMachines.HEAT_MIXER, 320L, 160L,
+                new ItemStack[] {form("dust", "AmmoniumDichromate", 1)},
+                new ItemStack[] {form("dust", "ChromiumDioxide", 2)},
+                new FluidStack[] {field("Oxygen", 4000)},
+                new FluidStack[] {field("Nitrogen", 250)});
         // OreProcessing.java:45
         add("OreProcessing.java:45", Gt6KtfruMachines.HEAT_MIXER, 120L, 80L,
                 new ItemStack[] {form("dust", "Calcite", 1), form("dust", "SodiumCarbonate", 2), form("dust", "Bauxite", 1)},
@@ -4381,6 +4387,12 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {circuit(1, 1), form("plateGemTiny", "Silicon", 2), form("foil", "Copper", 1)},
                 new ItemStack[] {own("good_circuit_part_core", 2)},
                 NO_FLUIDS,
+                NO_FLUIDS);
+        // CompactItem.java:155
+        add("CompactItem.java:155", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 320L, 200L,
+                new ItemStack[] {form("bolt", "Cobalt60", 1), form("plateDense", "Lead", 2)},
+                new ItemStack[] {own("co60_flaw_detection_core", 1)},
+                new FluidStack[] {field("GenMolten_SolderingAlloy", 144)},
                 NO_FLUIDS);
         // ComputerBuilding.java:471
         add("ComputerBuilding.java:471", Gt6KtfruResearchMachines.ASSEMBLER_MAP, 16L, 80L,

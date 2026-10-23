@@ -156,7 +156,8 @@ CORE_PREFIX_FLAGS = {
     "ingotQuadruple": ("MULTIINGOTS", "INGOTS"), "ingotQuintuple": ("MULTIINGOTS", "INGOTS"),
     "nugget": ("INGOTS",), "gem": ("GEMS",),
     "gearGt": ("PARTS",), "gearGtSmall": ("PARTS",), "ring": ("PARTS",), "rotor": ("PARTS",),
-    "bolt": ("PARTS",), "screw": ("PARTS",), "spring": ("PARTS",), "springSmall": ("PARTS",),
+    # OP.java:205-208: stick = STICKS, bolt = stick, screw = bolt.
+    "bolt": ("STICKS",), "screw": ("STICKS",), "spring": ("PARTS",), "springSmall": ("PARTS",),
     "itemCasing": ("PARTS",), "round": ("PARTS",),
 }
 # prefixList field to the registry name passed to PrefixDeclaration.
@@ -708,6 +709,10 @@ def load_materials():
         symbol, field = match.groups()
         if field in names:
             symbols[symbol] = names[field]
+    # gregapi MT.java aliases no GT6Materials field spells out (`CrO2 = ChromiumDioxide`).
+    for alias, target in (("CrO2", "ChromiumDioxide"),):
+        if target in names:
+            symbols[alias] = names[target]
     forms = {}
     forms_text = (GT / "core" / "src" / "main" / "java" / "com" / "gregtech" / "gregtech" / "data" / "generated" / "MaterialForms.java").read_text(encoding="utf-8")
     for match in re.finditer(r"\"(\d+)\|([A-Z0-9_,]+)\"", forms_text):
