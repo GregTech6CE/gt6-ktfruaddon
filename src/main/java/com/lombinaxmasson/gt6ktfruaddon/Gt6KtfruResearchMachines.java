@@ -107,6 +107,7 @@ public final class Gt6KtfruResearchMachines {
                         .capacity(524288)
                         .build())
                 .gui(GUI)
+                .energyGauge(6, 8)
                 .progress(100, 26)
                 .item(22, 8, BehaviorMachine.SlotRole.INPUT)
                 .item(40, 8, BehaviorMachine.SlotRole.INPUT)

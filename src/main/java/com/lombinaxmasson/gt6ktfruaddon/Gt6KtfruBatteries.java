@@ -36,9 +36,9 @@ public final class Gt6KtfruBatteries {
     public static void addLayouts(List<StructureLayout> layouts) {
         layouts.add(Gt6KtfruBatteryLayouts.liquid("liquid_battery_stainless", "tank_wall_dense"));
         layouts.add(Gt6KtfruBatteryLayouts.liquid("liquid_battery_titanium", "dense_titanium_wall"));
-        layouts.add(Gt6KtfruBatteryLayouts.liquid("liquid_battery_tungstensteel", "tungstensteel_wall"));
+        layouts.add(Gt6KtfruBatteryLayouts.liquid("liquid_battery_tungstensteel", "implosion_compressor_wall"));
         layouts.add(Gt6KtfruBatteryLayouts.transform("transform_battery_eu",
-                "titanium_wall", "large_copper_coil", "magnetic_conductor", "battery_cabin"));
+                "titanium_wall", "large_niobium_titanium_coil", "magnetic_conductor", "battery_cabin"));
         layouts.add(Gt6KtfruBatteryLayouts.transform("transform_battery_ru",
                 "tungstensteel_wall", "tungsten_wall", "transform_battery_gear", "flywheel_cabin"));
         layouts.add(Gt6KtfruBatteryLayouts.transform("transform_battery_lu",

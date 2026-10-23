@@ -33,7 +33,7 @@ public final class Gt6KtfruCrucibleLayouts {
                     if (mark == 'P') {
                         layout.cell(right, up, back, CellMatch.part("crucible_screen"), StructureRole.CASING);
                     } else if (mark == 'C') {
-                        layout.cell(right, up, back, CellMatch.part("large_copper_coil"), StructureRole.CASING);
+                        layout.cell(right, up, back, CellMatch.part("large_niobium_titanium_coil"), StructureRole.CASING);
                     } else {
                         layout.cell(right, up, back, CellMatch.part("titanium_wall"), StructureRole.ITEM_FLUID_ENERGY_INPUT);
                     }

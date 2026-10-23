@@ -1,6 +1,7 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
 import com.gregtech.gregtech.api.addon.CellMatch;
+import com.gregtech.gregtech.api.addon.LayoutRepeat;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.StructureRole;
 
@@ -91,11 +92,16 @@ public final class Gt6KtfruHeatLayouts {
                 {"  W  ", " WTW ", "WTTTW", " WTW ", "  W  "}
         };
         layers(layout, grids, -2, -1, 0, Gt6KtfruHeatLayouts::mantleCell);
+        // The source keeps drilling the rod column down to bedrock; the first
+        // copy below the fixed drill cell repeats until the world stops it.
+        layout.repeat(LayoutRepeat.builder("drill_rod", -2, 1, -1).step(-1)
+                .cell(0, 0, 2, CellMatch.part("mantle_drill_rod"), StructureRole.CASING)
+                .build());
         return layout.build();
     }
 
     public static StructureLayout fuelDeburn() {
-        var layout = StructureLayout.builder(Gt6KtfruMachines.FUEL_DEBURN);
+        var layout = StructureLayout.builder(Gt6KtfruMachines.FUEL_DEBURN_TYPE);
         String[][] grids = {
                 layerA(), layerB(), layerC(), layerD(), layerC(), layerE(), layerF(), layerG(),
                 layerH(), layerI(), layerJ(), layerK(), layerL(), layerM(), layerN(), layerO(),

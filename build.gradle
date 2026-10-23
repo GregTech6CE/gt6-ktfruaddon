@@ -71,9 +71,10 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
-// Recipe machines, behavior machines, fuel generators, functional layout parts
-// and auxiliary energy are on the API 0 SDK built from addon/kubejs at
-// 9c67ceaa4. The 0.8.0 SDK's recipe-machine builder does not have them.
+// Recipe machines, behavior machines, fuel generators, functional layout parts,
+// auxiliary energy and the remaining addon API gaps are on the API 0 SDK built
+// from addon/remaining-api-gaps at 1d1f69fbb. The 0.8.0 SDK cannot register
+// the current declarations.
 def gtSdk = files('libs/gt6ce/gt6ce-addon-sdk-1.21.1-neoforge-0.0.0.jar')
 def gtMod = files('libs/gt6ce/gt6ce-1.21.1-neoforge.jar')
 

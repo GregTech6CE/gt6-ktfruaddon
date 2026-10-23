@@ -1,28 +1,27 @@
 # 接口缺口
 
-当前缺口以[卡 05](docs/card-plans/prep/05-api-gaps.md)为准，对照 `addon/kubejs` 的 `9c67ceaa4`（API 0，模组 0.0.0）。SDK 和运行包都已按这个提交重打：`libs/gt6ce/gt6ce-addon-sdk-1.21.1-neoforge-0.0.0.jar` 和 `gt6ce-1.21.1-neoforge.jar`。原仓库大约 412 个 Java 文件，主体是自己的方块实体。
+当前缺口以[卡 05](docs/card-plans/prep/05-api-gaps.md)为准，对照 `addon/remaining-api-gaps` 的 `1d1f69fbb`（API 0，模组 0.0.0）。SDK 和运行包都已按这个提交重打：`libs/gt6ce/gt6ce-addon-sdk-1.21.1-neoforge-0.0.0.jar` 和 `gt6ce-1.21.1-neoforge.jar`。原仓库大约 412 个 Java 文件，主体是自己的方块实体。
 
 ## 这一刀用上的
 
 - `AddonMaterialContributor`：按名字声明材料、已有形态、矿石和矿石副产物。`MaterialDeclaration.Builder.polymer()` / `wires()` 给附属自有材料打开 `plate`、`foil` 和 `wireFine`，`PrefixDeclaration.block` 可以新建方块前缀。
 - `AddonMachineContributor`：`RecipeTable`、`RecipeMachine` 的单方块和大型配方机、精确能量包范围、大型机结构 IO、燃料机、外壳、能量零件、条件零件和功能零件。布局支持 `LayoutRepeat` 重复层、`CellMatch.anyFluid` / `anyOpaque`、`LayoutCell.withDesign` 外观号，以及 `PartTanks` / `gui`。
 - `BehaviorMachine`：自定义 tick 行为、跨 tick 储能、纯发电、`io` 按面限制物品和流体、`auxiliaryEnergy`、`acceptsEnergy` 拒收注入、`emitTo` 结构外送能、`pushToPart` 内部通道、`gasValve`、坩埚内容读取与模具浇铸。
-- `AddonItems` / `AddonRecipes`：`selectorTag`、`composition` 物品反查，`Line.keptInputs` / `keptFluidInputs` / `outputChances`。
+- `AddonItems` / `AddonRecipes`：`selectorTag`、`composition` 物品反查，`Line.keptInputs` / `keptFluidInputs` / `outputChances`，以及 1 mB + kept 的存在性流体催化剂。
 - `fluidPipes()`、`itemPipes()`、`compressedGasTanks()` 和 `pushCompressedGas`。
 - `onRecipesReady` 里的 `AddonItems`、`AddonRecipes` 和 `gt6ce:machine` 数据包。
+- `1d1f69fbb` 新增：全部原零件名、`CellMatch.oneOf`、1024 份重复段、配方机 `auxiliaryEnergy` / `startupEnergy`、前缀 `MOLTEN` / `METAL` / `ALLOY` 与排除名单、`AddonFluids.acid` / `plasma` / `magic`、行为机结构端口、`EnergyInput.anyType()`。
 
 ## 仍不直接表达
 
-- **`SharedLargeMachineParts.idForName` 认不全已有 GT 零件。** 18023 的 `implosion_compressor_wall`、18041 的 `large_niobium_titanium_coil` 等仍解析成 -1，布局里写不出来；现在用最近的已有零件代替。
-- **一格只能写一个匹配。** `CellMatch` 没有「A 或 B」；绑定零件、`part` 和 `block` 混写、以及「计算零件或储罐墙」这种组合仍表达不了。
-- **重复段最多 64 份。** `LayoutRepeat` 的 `max=-1` 在 64 层处停，地幔加热那种一直打到基岩的钻杆柱仍表达不了。
-- **配方机没有第二种能量和启动能量。** `RecipeMachine.Builder` 只有 `energy`；托卡马克的 LU 和启动充能仍没有入口。
-- **前缀条件没有熔融、金属或合金，也不能按材料名排除。** 大型涡轮叶片和六种涡轮仍按飞轮的工具属性加可锻造生成。
 - **核心材料不能通过 `forms()` 请求未开启的形态，也不能复用内置方块前缀。** 石墨板、核心材料的 `casingMachine` 仍没有入口。
-- **0 mB 流体输入仍被拒绝。** `keptFluidInputs` 已经能用，但要写正数量（例如 1 mB）；热混合 11 行数量 0 的流体催化剂仍未落成配方行。
-- **流体分类只有气体。** `AddonFluids` 能按名字拿 still/flowing，但只提供 `gas()` 分类；液体电池需要的酸、魔流体和导电流体判断仍自己写。
-- **行为机多方块没有 GT 结构端口。** `BehaviorMachineBlockEntity` 不实现 `MultiblockPortOwner`，物品、流体和能量仍走控制器；功能零件可以作为附属自己的端口。
-- **行为机的能量类型在注册时固定。** 量子枢纽那种按首包动态锁定能量类型仍没有入口，现在固定为 EU。
+- **0 mB 流体输入在 NeoForge 上不可用。** `FluidStack.getFluid()` 对数量 ≤ 0 返回 `Fluids.EMPTY`，`Line` 会拒绝；催化剂写 1 mB + `keptFluidInputs`。
+- **大型压缩气罐阀门只到控制器面。** 阀门做成结构墙零件时仍没有接收方入口。
+- **配方机的结构端口不转发第二种能量。** 托卡马克的 LU 只能从控制器自己声明的面进。
+- **没有爆炸入口。** 液体电池的酸、魔流体和高温流体只能拒收并清空，不能像源那样爆炸。
+- **GT6CE 没有公开 `powerconducting`。** 导电流体用 `plasma` 近似。
+- **多选不能嵌套，重复段仍以 1024 份和世界高度为上限。**
+- **动态能量类型只到行为机主输入。** `auxiliaryEnergy` 仍必须写死类型。
 
 ## 这条探针自己的限度
 

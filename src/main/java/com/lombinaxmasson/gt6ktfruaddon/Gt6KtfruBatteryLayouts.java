@@ -32,11 +32,15 @@ public final class Gt6KtfruBatteryLayouts {
         layout.cell(0, 1, 0, CellMatch.part(shell), StructureRole.ENERGY_INPUT);
         layout.cell(-1, 1, 0, CellMatch.part(shell), StructureRole.ENERGY_INPUT);
         layout.cell(0, 0, 2, CellMatch.air(), StructureRole.AIR);
-        layout.cell(0, -1, 2, CellMatch.part("liquid_battery_wall_bronze"), StructureRole.FLUID_INPUT);
-        layout.cell(-1, 0, 2, CellMatch.part("liquid_battery_wall_bronze"), StructureRole.FLUID_INPUT);
-        layout.cell(1, 0, 2, CellMatch.part("liquid_battery_wall_bronze"), StructureRole.FLUID_INPUT);
-        layout.cell(0, 0, 1, CellMatch.part("liquid_battery_wall_bronze"), StructureRole.FLUID_INPUT);
-        layout.cell(0, 0, 3, CellMatch.part("liquid_battery_wall_bronze"), StructureRole.FLUID_INPUT);
+        CellMatch poolWall = CellMatch.oneOf(
+                CellMatch.part("liquid_battery_wall_bronze"),
+                CellMatch.part("liquid_battery_wall_steel"),
+                CellMatch.part("liquid_battery_wall_plastic"));
+        layout.cell(0, -1, 2, poolWall, StructureRole.FLUID_INPUT);
+        layout.cell(-1, 0, 2, poolWall, StructureRole.FLUID_INPUT);
+        layout.cell(1, 0, 2, poolWall, StructureRole.FLUID_INPUT);
+        layout.cell(0, 0, 1, poolWall, StructureRole.FLUID_INPUT);
+        layout.cell(0, 0, 3, poolWall, StructureRole.FLUID_INPUT);
         return layout.build();
     }
 

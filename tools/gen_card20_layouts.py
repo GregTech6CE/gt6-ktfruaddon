@@ -41,7 +41,7 @@ KNOWN = {
     18002: "tank_wall",
     18006: "titanium_wall",
     18009: "steel_wall",
-    18041: "large_copper_coil",
+    18041: "large_niobium_titanium_coil",
 }
 SHARED = {18002, 18006, 18009, 18041, 31000, 31200, 31040, 31041}
 
@@ -284,6 +284,12 @@ def cell(kind, args, compute, names, fields):
     if kind == "ComputePartPredicate":
         if not compute:
             raise SystemExit("compute cell without a node block")
+        if args.strip():
+            fallback = part_id(args, fields)
+            if fallback is None:
+                raise SystemExit(f"no fallback part in {args}")
+            return ("oneof", [("block", compute, "CASING"),
+                              ("part", names[fallback], "CASING")], "CASING")
         return ("block", compute, "CASING")
     if kind == "BlockPredicate":
         if "glass" not in args.lower():
@@ -333,6 +339,10 @@ def main():
             specs.append((mark, spec))
             if isinstance(spec, tuple) and spec[0] == "part":
                 used_ids.add(next(i for i, n in names.items() if n == spec[1]))
+            elif isinstance(spec, tuple) and spec[0] == "oneof":
+                for member, value, _ in spec[1]:
+                    if member == "part":
+                        used_ids.add(next(i for i, n in names.items() if n == value))
         chars = set()
         for layer in layers:
             for row in layer:
@@ -380,6 +390,7 @@ def main():
     a("")
     a("import java.util.List;")
     a("")
+    a("import com.gregtech.gregtech.api.addon.CellMatch;")
     a("import com.gregtech.gregtech.api.addon.LayoutPart;")
     a("import com.gregtech.gregtech.api.addon.StructureLayout;")
     a("import com.gregtech.gregtech.api.addon.StructureRole;")
@@ -387,7 +398,7 @@ def main():
     a("/**")
     a(" * Layouts transcribed from this repo's kTFRUAddon checkout.")
     a(" * An expandable layer is included once.")
-    a(" * A compute cell is one node block: the structure cannot accept every compute part.")
+    a(" * A compute cell accepts its node block or the source's wall fallback.")
     a(" */")
     a("public final class Gt6KtfruGeneratedLayouts {")
     a("    private Gt6KtfruGeneratedLayouts() {}")
@@ -422,6 +433,12 @@ def main():
                 kind, ident, role = spec
                 if kind == "part":
                     rendered.append(f"                Gt6KtfruLayerLayout.part('{mark}', \"{ident}\", StructureRole.{role})")
+                elif kind == "oneof":
+                    members = ", ".join(
+                        f'CellMatch.part("{value}")' if member == "part" else f'CellMatch.block("{value}")'
+                        for member, value, _ in ident
+                    )
+                    rendered.append(f"                Gt6KtfruLayerLayout.oneOf('{mark}', StructureRole.{role}, {members})")
                 else:
                     rendered.append(f"                Gt6KtfruLayerLayout.block('{mark}', \"{ident}\", StructureRole.{role})")
         a(",\n".join(rendered))

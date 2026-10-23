@@ -54,10 +54,14 @@ public final class Gt6KtfruWirelessMachines {
                 .build();
     }
 
-    /** Quantum hub accepts 1–32768 EU via auxiliary energy and 8192–32768 EU on the bottom. */
+    /**
+     * Quantum hub accepts 1–32768 EU via auxiliary energy and 8192–32768 EU on the bottom.
+     * The main buffer locks its type from the first packet, as the source does.
+     */
     private static BehaviorMachine quantumTower() {
         return BehaviorMachine.builder(MachineCasing.builder(QUANTUM, "Naquadria").machineType(QUANTUM).build())
-                .energy(EnergyInput.builder("EU", 16384).faces(MachineFace.BOTTOM).capacity(Gt6KtfruWireless.QUANTUM_CAPACITY).build())
+                .energy(EnergyInput.builder("EU", 16384).anyType().faces(MachineFace.BOTTOM)
+                        .capacity(Gt6KtfruWireless.QUANTUM_CAPACITY).build())
                 .auxiliaryEnergy(EnergyInput.builder("EU", 16384)
                         .range(1, 32768)
                         .faces(MachineFace.BACK, MachineFace.LEFT, MachineFace.RIGHT, MachineFace.TOP)

@@ -2,6 +2,7 @@ package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.List;
 
+import com.gregtech.gregtech.api.addon.CellMatch;
 import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.StructureRole;
@@ -9,7 +10,7 @@ import com.gregtech.gregtech.api.addon.StructureRole;
 /**
  * Layouts transcribed from this repo's kTFRUAddon checkout.
  * An expandable layer is included once.
- * A compute cell is one node block: the structure cannot accept every compute part.
+ * A compute cell accepts its node block or the source's wall fallback.
  */
 public final class Gt6KtfruGeneratedLayouts {
     private Gt6KtfruGeneratedLayouts() {}
@@ -152,7 +153,7 @@ public final class Gt6KtfruGeneratedLayouts {
             new String[] {"WWW", "WWW", "WWW"},
         },
                 Gt6KtfruLayerLayout.part('W', "tank_wall", StructureRole.CASING),
-                Gt6KtfruLayerLayout.block('N', "gt6ktfruaddon:wireless_compute_node_aluminium", StructureRole.CASING)
+                Gt6KtfruLayerLayout.oneOf('N', StructureRole.CASING, CellMatch.block("gt6ktfruaddon:wireless_compute_node_aluminium"), CellMatch.part("tank_wall"))
         );
     }
 
@@ -165,7 +166,7 @@ public final class Gt6KtfruGeneratedLayouts {
         },
                 Gt6KtfruLayerLayout.part('W', "tank_wall", StructureRole.CASING),
                 Gt6KtfruLayerLayout.part('G', "structure_glass", StructureRole.CASING),
-                Gt6KtfruLayerLayout.block('N', "gt6ktfruaddon:wireless_compute_node_aluminium", StructureRole.CASING)
+                Gt6KtfruLayerLayout.oneOf('N', StructureRole.CASING, CellMatch.block("gt6ktfruaddon:wireless_compute_node_aluminium"), CellMatch.part("tank_wall"))
         );
     }
 
@@ -178,7 +179,7 @@ public final class Gt6KtfruGeneratedLayouts {
         },
                 Gt6KtfruLayerLayout.part('W', "tank_wall", StructureRole.CASING),
                 Gt6KtfruLayerLayout.part('G', "structure_glass", StructureRole.CASING),
-                Gt6KtfruLayerLayout.block('N', "gt6ktfruaddon:wireless_compute_node_aluminium", StructureRole.CASING)
+                Gt6KtfruLayerLayout.oneOf('N', StructureRole.CASING, CellMatch.block("gt6ktfruaddon:wireless_compute_node_aluminium"), CellMatch.part("tank_wall"))
         );
     }
 
@@ -343,7 +344,7 @@ public final class Gt6KtfruGeneratedLayouts {
         },
                 Gt6KtfruLayerLayout.part('W', "tank_wall", StructureRole.CASING),
                 Gt6KtfruLayerLayout.part('G', "structure_glass", StructureRole.CASING),
-                Gt6KtfruLayerLayout.block('N', "gt6ktfruaddon:quantum_compute_node_naquadah", StructureRole.CASING)
+                Gt6KtfruLayerLayout.oneOf('N', StructureRole.CASING, CellMatch.block("gt6ktfruaddon:quantum_compute_node_naquadah"), CellMatch.part("tank_wall"))
         );
     }
 
@@ -491,7 +492,7 @@ public final class Gt6KtfruGeneratedLayouts {
                 Gt6KtfruLayerLayout.part('T', "magnetic_conductor", StructureRole.CASING),
                 Gt6KtfruLayerLayout.part('W', "titanium_wall", StructureRole.ENERGY_INPUT),
                 Gt6KtfruLayerLayout.part('C', "magnetic_conductor", StructureRole.CASING),
-                Gt6KtfruLayerLayout.part('O', "large_copper_coil", StructureRole.CASING),
+                Gt6KtfruLayerLayout.part('O', "large_niobium_titanium_coil", StructureRole.CASING),
                 Gt6KtfruLayerLayout.part('B', "battery_cabin", StructureRole.CASING)
         );
     }
@@ -534,7 +535,7 @@ public final class Gt6KtfruGeneratedLayouts {
                 Gt6KtfruLayerLayout.part('D', "tokamak_magnetic_wall_exp", StructureRole.CASING),
                 Gt6KtfruLayerLayout.part('F', "tokamak_plasma_pipe", StructureRole.ITEM_FLUID_INPUT),
                 Gt6KtfruLayerLayout.part('G', "tokamak_coolant_pump", StructureRole.CASING),
-                Gt6KtfruLayerLayout.block('H', "gt6ktfruaddon:wireless_compute_node_aluminium", StructureRole.CASING),
+                Gt6KtfruLayerLayout.oneOf('H', StructureRole.CASING, CellMatch.block("gt6ktfruaddon:wireless_compute_node_aluminium"), CellMatch.part("tank_wall")),
                 Gt6KtfruLayerLayout.part('W', "tank_wall", StructureRole.ENERGY_INPUT)
         );
     }
@@ -564,7 +565,7 @@ public final class Gt6KtfruGeneratedLayouts {
                 Gt6KtfruLayerLayout.part('E', "tokamak_magnetic_wall_t1", StructureRole.CASING),
                 Gt6KtfruLayerLayout.part('F', "tokamak_neutron_heator", StructureRole.CASING),
                 Gt6KtfruLayerLayout.part('G', "tokamak_coolant_pump", StructureRole.CASING),
-                Gt6KtfruLayerLayout.block('H', "gt6ktfruaddon:wireless_compute_node_aluminium", StructureRole.CASING),
+                Gt6KtfruLayerLayout.oneOf('H', StructureRole.CASING, CellMatch.block("gt6ktfruaddon:wireless_compute_node_aluminium"), CellMatch.part("tank_wall")),
                 Gt6KtfruLayerLayout.part('W', "tank_wall", StructureRole.ENERGY_INPUT)
         );
     }

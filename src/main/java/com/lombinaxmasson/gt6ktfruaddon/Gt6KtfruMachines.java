@@ -79,6 +79,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     public static final String CNC_MACHINE = "cnc_machine";
     public static final String FUEL_DEBURN = "gt6ktfruaddon.recipe.fuel_deburner";
     public static final String FUSION_TOKAMAK = "gt6ktfruaddon.recipe.fusion_tokamak";
+    public static final String FUSION_TOKAMAK_EXP = "gt6ktfruaddon.recipe.fusion_tokamak_experimental";
     public static final String SUN_HEATER = "sun_heater";
     public static final String SUN_MIRROR = "sun_heater_mirror_large";
     public static final String TIDAL = "tidal_wave_generator";
@@ -106,8 +107,12 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     public static final String GAS_COMPRESSOR = "gas_compressor";
     public static final String VOID_HOPPER = "void_hopper";
     public static final String MINER = "miner";
+    /** The source tin-alloy miner takes RF; the other three take EU. */
+    public static final String MINER_RF = "miner_rf";
     public static final String WATER_MILL = "water_mill";
     public static final String MANUAL_MOTOR = "manual_motor";
+    /** The source kinetic crank takes KU; the manual motor takes RU. */
+    public static final String MANUAL_KINETIC_MOTOR = "manual_kinetic_motor";
     public static final String FLYWHEEL = "flywheel";
     public static final String LARGE_FLYWHEEL = "large_flywheel";
     public static final String ELECTRIC_FLYWHEEL = "electric_flywheel";
@@ -182,6 +187,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         maps.add(map(CNC, "CNC", "cnc", 4, 3, 1, 3, 0, 1, 1));
         maps.add(map(FUEL_DEBURN, "Fuel Deburner", "fueldeburner", 3, 3, 0, 6, 6, 0, 1));
         maps.add(map(FUSION_TOKAMAK, "Fusion Tokamak", "fusiontokamak", 3, 3, 0, 6, 6, 1, 1));
+        maps.add(map(FUSION_TOKAMAK_EXP, "Experimental Fusion Tokamak", "fusiontokamak", 3, 3, 0, 6, 6, 1, 1));
         Gt6KtfruResearchMachines.addMaps(maps);
         Gt6KtfruLateMachines.addMaps(maps);
         return List.copyOf(maps);
@@ -325,7 +331,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     @Override
     public Set<String> machineTypes() {
         var types = new LinkedHashSet<>(Set.of(STEEL_GAS_TANK, STAINLESS_GAS_TANK, GAS_COMPRESSOR,
-                VOID_HOPPER, MINER, WATER_MILL, MANUAL_MOTOR,
+                VOID_HOPPER, MINER, MINER_RF, WATER_MILL, MANUAL_MOTOR, MANUAL_KINETIC_MOTOR,
                 FLYWHEEL, LARGE_FLYWHEEL, ELECTRIC_FLYWHEEL, LARGE_ELECTRIC_FLYWHEEL,
                 VACUUM_FLYWHEEL, LARGE_VACUUM_FLYWHEEL, GAS_BATTERY,
                 TRANSFORMER_SMALL, TRANSFORMER_LARGE,
@@ -349,9 +355,10 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
         }
         if (GAS_COMPRESSOR.equals(machineType)) return new Gt6KtfruGasCompressor();
         if (VOID_HOPPER.equals(machineType)) return new Gt6KtfruVoidHopper();
-        if (MINER.equals(machineType)) return new Gt6KtfruMiner();
+        if (MINER.equals(machineType) || MINER_RF.equals(machineType)) return new Gt6KtfruMiner();
         if (WATER_MILL.equals(machineType)) return new Gt6KtfruWaterMill();
-        if (MANUAL_MOTOR.equals(machineType)) return new Gt6KtfruManualMotor();
+        if (MANUAL_MOTOR.equals(machineType) || MANUAL_KINETIC_MOTOR.equals(machineType))
+            return new Gt6KtfruManualMotor();
         if (FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(4, 0.1);
         if (LARGE_FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(16, 0.15);
         if (ELECTRIC_FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(4, 0.07);
@@ -1017,7 +1024,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     /** Horizontal square stays on the tier. The declared cube is 32 so the dig can go down. */
     private static BehaviorMachine miner(String id, String material, int tier, String energy, long input) {
         var builder = BehaviorMachine.builder(MachineCasing.builder(id, material)
-                        .machineType(MINER).tier(tier).build())
+                        .machineType("RF".equals(energy) ? MINER_RF : MINER).tier(tier).build())
                 .energy(EnergyInput.builder(energy, input).capacity(input * 2).build())
                 .gui(KINETIC_GUI)
                 .item(26, 8, BehaviorMachine.SlotRole.INPUT)
@@ -1046,7 +1053,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     /** Bottom input is required by the behavior machine. The crank emits on the front. */
     private static BehaviorMachine manualMotor(String id, String material, int tier, String energy, long outputMax) {
         return BehaviorMachine.builder(MachineCasing.builder(id, material)
-                        .machineType(MANUAL_MOTOR).tier(tier).build())
+                        .machineType("KU".equals(energy) ? MANUAL_KINETIC_MOTOR : MANUAL_MOTOR).tier(tier).build())
                 .energy(EnergyInput.builder(energy, outputMax).faces(MachineFace.BOTTOM)
                         .capacity(outputMax).build())
                 .energyOutput(EnergyOutput.builder(energy, outputMax, 1).faces(MachineFace.FRONT).build())

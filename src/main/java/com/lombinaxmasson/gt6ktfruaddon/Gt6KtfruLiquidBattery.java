@@ -63,8 +63,20 @@ public final class Gt6KtfruLiquidBattery implements MachineBehavior {
         context.drain(0, fluid.getAmount(), false);
     }
 
+    /**
+     * Source voids gas and power-conducting fluids; acid, magic and hot fluids explode.
+     * The behavior context has no explosion, so every unsafe fluid is refused and voided.
+     */
     private static boolean unsafe(FluidStack stack) {
-        return AddonFluids.gas(stack) || temperature(stack) > HOT;
+        return conductive(stack) || corrosive(stack);
+    }
+
+    private static boolean conductive(FluidStack stack) {
+        return AddonFluids.gas(stack) || AddonFluids.plasma(stack);
+    }
+
+    private static boolean corrosive(FluidStack stack) {
+        return AddonFluids.acid(stack) || AddonFluids.magic(stack) || temperature(stack) > HOT;
     }
 
     /** Layer 0 of one 8000 mB cell. Density at or below 10 uses 0.01. */

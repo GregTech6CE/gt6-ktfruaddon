@@ -18,9 +18,9 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 /**
- * Gas battery. Poles stay in the slots. The electrolyte tank has to be full and is not drained.
+ * Gas battery. Poles stay in the slots. The electrolyte tank has to hold its amount and is not drained.
  * Nickel with CaTiO3 requires yttrium-zirconium oxide. Carbon with platinum requires sulfuric acid.
- * A zero-amount fluid cannot be stored on a recipe row, so the electrolyte is this check instead.
+ * Each recipe row names that fluid as a 0 mB presence-only catalyst.
  * Toggle 0 stops processing. Toggle 1 opens the electrolyte tank and closes the fuel tanks.
  */
 public final class Gt6KtfruFuelBattery implements MachineBehavior {

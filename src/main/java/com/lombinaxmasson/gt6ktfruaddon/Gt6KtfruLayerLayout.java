@@ -52,6 +52,11 @@ public final class Gt6KtfruLayerLayout {
         return new Spec(mark, CellMatch.block(id), role);
     }
 
+    /** Any one of {@code matches}; parts and plain blocks may be mixed. */
+    public static Spec oneOf(char mark, StructureRole role, CellMatch... matches) {
+        return new Spec(mark, CellMatch.oneOf(matches), role);
+    }
+
     public static Spec air(char mark) {
         return new Spec(mark, CellMatch.air(), StructureRole.AIR);
     }

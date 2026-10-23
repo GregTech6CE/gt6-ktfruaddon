@@ -23,6 +23,7 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  */
 public final class Gt6KtfruLateMachines {
     static final String LASER = "gt6ktfruaddon.recipe.laser_fusion";
+    static final String LASER_EXP_MAP = "gt6ktfruaddon.recipe.laser_fusion_experimental";
     static final String CATALYTIC = "gt6ktfruaddon.recipe.catalytic_reactor";
     static final String MIRROR = "gt6ktfruaddon.recipe.mirror_gold_synthesis";
     static final String MIRROR_QUANTUM = "gt6ktfruaddon.recipe.mirror_gold_quantumization";
@@ -46,6 +47,7 @@ public final class Gt6KtfruLateMachines {
 
     public static void addMaps(List<RecipeTable> maps) {
         maps.add(Gt6KtfruMachines.map(LASER, "Laser Inertial Fusion", "gascompressor", 3, 3, 0, 3, 3, 0, 1));
+        maps.add(Gt6KtfruMachines.map(LASER_EXP_MAP, "Experimental Laser Fusion", "gascompressor", 3, 3, 0, 3, 3, 0, 1));
         maps.add(Gt6KtfruMachines.map(CATALYTIC, "Catalytic Reactor", "mixer", 6, 3, 0, 6, 3, 0, 1));
         maps.add(Gt6KtfruMachines.map(MIRROR, "Mirror Gold Synthesis", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
         maps.add(Gt6KtfruMachines.map(MIRROR_QUANTUM, "Mirror Gold Quantumization", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
@@ -57,10 +59,10 @@ public final class Gt6KtfruLateMachines {
     }
 
     public static void add(List<AddonMachine> machines) {
-        machines.add(tokamak("fusion_tokamak_exp", 2048));
-        machines.add(tokamak("fusion_tokamak_t1", 16384));
-        machines.add(laser(LASER_EXP, "Tungstensteel", 131_072L, 2L * 8L * 1024L * 1024L));
-        machines.add(laser(LASER_IND, "Osmium", 2_097_152L, 8L * 134_217_728L));
+        machines.add(tokamak("fusion_tokamak_exp", 2048, Gt6KtfruMachines.FUSION_TOKAMAK_EXP));
+        machines.add(tokamak("fusion_tokamak_t1", 16384, Gt6KtfruMachines.FUSION_TOKAMAK));
+        machines.add(laser(LASER_EXP, LASER_EXP_MAP, "Tungstensteel", 131_072L, 2L * 8L * 1024L * 1024L));
+        machines.add(laser(LASER_IND, LASER, "Osmium", 2_097_152L, 8L * 134_217_728L));
         machines.add(catalytic("catalytic_reactor_ev", "StainlessSteel", 2048, 256, 4096));
         machines.add(catalytic("catalytic_reactor_iv", "Tungstensteel", 8192, 1024, 16384));
         machines.add(basic("mirror_gold_synthesis", "Iridium", 8192, 8192, 8192, MIRROR, true));
@@ -108,17 +110,25 @@ public final class Gt6KtfruLateMachines {
         };
     }
 
-    private static RecipeMachine tokamak(String id, long eu) {
+    private static RecipeMachine tokamak(String id, long eu, String map) {
+        // Source: NBT_ENERGY_ACCEPTED_2 is LU with NBT_SPECIAL_IS_START_ENERGY.
+        // Each recipe's special value is charged from that buffer before progress.
         return RecipeMachine.builder(MachineCasing.builder(id, "StainlessSteel").machineType(id).build())
-                .recipeMap(Gt6KtfruMachines.FUSION_TOKAMAK)
+                .recipeMap(map)
                 .largeRecipe()
                 .constantEnergy(false)
                 .energy(EnergyInput.builder("EU", eu).faces().build())
+                .auxiliaryEnergy(EnergyInput.builder("LU", eu)
+                        .anyPacket()
+                        .faces(MachineFace.all())
+                        .capacity(4_194_304L)
+                        .build())
+                .startupEnergy(true)
                 .structureKeys(List.of("gt6ktfruaddon.structure." + id + ".1"))
                 .build();
     }
 
-    private static BehaviorMachine laser(String id, String material, long maxPacket, long pulseCapacity) {
+    private static BehaviorMachine laser(String id, String map, String material, long maxPacket, long pulseCapacity) {
         return BehaviorMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
                 .energy(EnergyInput.builder("LU", maxPacket / 2)
                         .faces(MachineFace.TOP)
@@ -130,7 +140,8 @@ public final class Gt6KtfruLateMachines {
                         .capacity(pulseCapacity)
                         .build())
                 .gui(GUI)
-                .progress(88, 26)
+                .energyGauge(84, 8)
+                .progress(84, 64)
                 .item(8, 26, BehaviorMachine.SlotRole.INPUT)
                 .item(26, 26, BehaviorMachine.SlotRole.INPUT)
                 .item(156, 26, BehaviorMachine.SlotRole.OUTPUT)
@@ -138,7 +149,7 @@ public final class Gt6KtfruLateMachines {
                 .fluid(8_000, 66, 8, BehaviorMachine.SlotRole.INPUT)
                 .fluid(8_000, 116, 8, BehaviorMachine.SlotRole.OUTPUT)
                 .fluid(8_000, 136, 8, BehaviorMachine.SlotRole.OUTPUT)
-                .recipeMaps(LASER)
+                .recipeMaps(map)
                 .build();
     }
 

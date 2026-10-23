@@ -48,51 +48,57 @@ public final class Gt6KtfruRecipes {
     }
 
     /**
-     * Chemistry.java:61–79. The source electrolyte amount is 0, so it is not a recipe fluid.
-     * Poles stay in the machine. Chemistry.java:58 makes the yttrium-zirconium oxide they check for.
+     * Chemistry.java:61–79. The electrolyte is a 0 mB presence-only catalyst, so each
+     * row names its tank fluid without draining it. Poles stay in the machine.
      */
     private static void fuelBattery() {
         ItemStack nickel = new ItemStack(Gt6KtfruItems.BATTERY_POLE_NICKEL.get());
         ItemStack catio3 = new ItemStack(Gt6KtfruItems.BATTERY_POLE_CATIO3.get());
         ItemStack carbon = new ItemStack(Gt6KtfruItems.BATTERY_POLE_CARBON.get());
         ItemStack platinum = new ItemStack(Gt6KtfruItems.BATTERY_POLE_PLATINUM.get());
-        battery(nickel, catio3, -384, 9, two("Methane", 20, "Air", 80), two("CarbonDioxide", 20, "DistW", 40));
-        battery(nickel, catio3, -166, 9, two("GenGas_CarbonMonoxide", 20, "Air", 20), one("CarbonDioxide", 20));
-        battery(nickel, catio3, -16, 9, two("Hydrogen", 20, "Air", 20), one("DistW", 20));
-        battery(nickel, catio3, -180, 9, two("GenLiquid_Methanol", 20, "Air", 60), two("CarbonDioxide", 20, "DistW", 40));
-        battery(nickel, catio3, -288, 9, two("BioEthanol", 20, "Air", 120), two("CarbonDioxide", 40, "DistW", 60));
-        battery(nickel, catio3, -384, 13, two("Methane", 20, "Oxygen", 40), two("CarbonDioxide", 20, "DistW", 40));
-        battery(nickel, catio3, -166, 13, two("GenGas_CarbonMonoxide", 20, "Oxygen", 10), one("CarbonDioxide", 20));
-        battery(nickel, catio3, -16, 13, two("Hydrogen", 20, "Oxygen", 10), one("DistW", 20));
-        battery(nickel, catio3, -180, 13, two("GenLiquid_Methanol", 20, "Oxygen", 30), two("CarbonDioxide", 20, "DistW", 40));
-        battery(nickel, catio3, -288, 13, two("BioEthanol", 20, "Oxygen", 60), two("CarbonDioxide", 40, "DistW", 60));
-        battery(carbon, platinum, -16, 7, two("Hydrogen", 20, "Air", 10), one("DistW", 20));
-        battery(carbon, platinum, -180, 7, two("GenLiquid_Methanol", 20, "Air", 30), two("CarbonDioxide", 20, "DistW", 40));
-        battery(carbon, platinum, -288, 7, two("BioEthanol", 20, "Air", 60), two("CarbonDioxide", 40, "DistW", 60));
-        battery(carbon, platinum, -16, 10, two("Hydrogen", 20, "Oxygen", 10), one("DistW", 20));
-        battery(carbon, platinum, -180, 10, two("GenLiquid_Methanol", 20, "Oxygen", 30), two("CarbonDioxide", 20, "DistW", 40));
-        battery(carbon, platinum, -288, 10, two("BioEthanol", 20, "Oxygen", 60), two("CarbonDioxide", 40, "DistW", 60));
-        add(Gt6KtfruMachines.HEAT_MIXER,
-                new ItemStack[] {dust("Yttrium", 4), dust("Zirconium", 4)}, NO_ITEMS,
-                new FluidStack[] {fluid("Oxygen", 4000)},
-                new FluidStack[] {fluid("GenLiquid_YttriumZirconiumOxide", 1000)},
-                800, 500);
+        String yzo = "GenLiquid_YttriumZirconiumOxide";
+        String sulfuric = "GenLiquid_SulfuricAcid";
+        battery(yzo, nickel, catio3, -384, 9, two("Methane", 20, "Air", 80), two("CarbonDioxide", 20, "DistW", 40));
+        battery(yzo, nickel, catio3, -166, 9, two("GenGas_CarbonMonoxide", 20, "Air", 20), one("CarbonDioxide", 20));
+        battery(yzo, nickel, catio3, -16, 9, two("Hydrogen", 20, "Air", 20), one("DistW", 20));
+        battery(yzo, nickel, catio3, -180, 9, two("GenLiquid_Methanol", 20, "Air", 60), two("CarbonDioxide", 20, "DistW", 40));
+        battery(yzo, nickel, catio3, -288, 9, two("BioEthanol", 20, "Air", 120), two("CarbonDioxide", 40, "DistW", 60));
+        battery(yzo, nickel, catio3, -384, 13, two("Methane", 20, "Oxygen", 40), two("CarbonDioxide", 20, "DistW", 40));
+        battery(yzo, nickel, catio3, -166, 13, two("GenGas_CarbonMonoxide", 20, "Oxygen", 10), one("CarbonDioxide", 20));
+        battery(yzo, nickel, catio3, -16, 13, two("Hydrogen", 20, "Oxygen", 10), one("DistW", 20));
+        battery(yzo, nickel, catio3, -180, 13, two("GenLiquid_Methanol", 20, "Oxygen", 30), two("CarbonDioxide", 20, "DistW", 40));
+        battery(yzo, nickel, catio3, -288, 13, two("BioEthanol", 20, "Oxygen", 60), two("CarbonDioxide", 40, "DistW", 60));
+        battery(sulfuric, carbon, platinum, -16, 7, two("Hydrogen", 20, "Air", 10), one("DistW", 20));
+        battery(sulfuric, carbon, platinum, -180, 7, two("GenLiquid_Methanol", 20, "Air", 30), two("CarbonDioxide", 20, "DistW", 40));
+        battery(sulfuric, carbon, platinum, -288, 7, two("BioEthanol", 20, "Air", 60), two("CarbonDioxide", 40, "DistW", 60));
+        battery(sulfuric, carbon, platinum, -16, 10, two("Hydrogen", 20, "Oxygen", 10), one("DistW", 20));
+        battery(sulfuric, carbon, platinum, -180, 10, two("GenLiquid_Methanol", 20, "Oxygen", 30), two("CarbonDioxide", 20, "DistW", 40));
+        battery(sulfuric, carbon, platinum, -288, 10, two("BioEthanol", 20, "Oxygen", 60), two("CarbonDioxide", 40, "DistW", 60));
         require(AddonRecipes.map(Gt6KtfruMachines.FUEL_BATTERY).find(
-                List.of(nickel, catio3), List.of(fluid("Methane", 20), fluid("Air", 80)), true, 2, 0),
+                List.of(nickel, catio3), List.of(fluid("Methane", 20), fluid("Air", 80), fluid(yzo, 1)), true, 2, 0),
                 "fuel battery methane row");
         require(AddonRecipes.map(Gt6KtfruMachines.FUEL_BATTERY).find(
-                List.of(carbon, platinum), List.of(fluid("Hydrogen", 20), fluid("Oxygen", 10)), true, 2, 0),
+                List.of(carbon, platinum), List.of(fluid("Hydrogen", 20), fluid("Oxygen", 10), fluid(sulfuric, 1)), true, 2, 0),
                 "fuel battery sulfuric row");
         require(AddonRecipes.map(Gt6KtfruMachines.HEAT_MIXER).find(
                 List.of(dust("Yttrium", 4), dust("Zirconium", 4)), List.of(fluid("Oxygen", 4000)), true, 6, 3),
                 "heat mixer yttrium zirconium oxide");
     }
 
-    private static void battery(ItemStack a, ItemStack b, long euPerTick, long duration,
+    private static void battery(String electrolyte, ItemStack a, ItemStack b, long euPerTick, long duration,
             FluidStack[] fluidsIn, FluidStack[] fluidsOut) {
+        FluidStack[] inputs = new FluidStack[fluidsIn.length + 1];
+        System.arraycopy(fluidsIn, 0, inputs, 0, fluidsIn.length);
+        inputs[fluidsIn.length] = catalyst(electrolyte);
         require(AddonRecipes.map(Gt6KtfruMachines.FUEL_BATTERY).add(new AddonRecipes.Line(
-                new ItemStack[] {a, b}, NO_ITEMS, fluidsIn, fluidsOut, duration, euPerTick, 0, null, new int[] {0, 1})),
+                new ItemStack[] {a, b}, NO_ITEMS, inputs, fluidsOut, duration, euPerTick, 0, null,
+                new int[] {0, 1}, new int[] {fluidsIn.length})),
                 Gt6KtfruMachines.FUEL_BATTERY);
+    }
+
+    /** A 1 mB kept input: the tank must hold the fluid, nothing is drained. */
+    private static FluidStack catalyst(String field) {
+        return fluid(field, 1);
     }
 
     private static FluidStack[] one(String field, int amount) {
@@ -158,10 +164,11 @@ public final class Gt6KtfruRecipes {
     }
 
     private static void fusionTokamak() {
-        add(Gt6KtfruMachines.FUSION_TOKAMAK, NO_ITEMS, NO_ITEMS,
+        require(AddonRecipes.map(Gt6KtfruMachines.FUSION_TOKAMAK).add(new AddonRecipes.Line(
+                NO_ITEMS, NO_ITEMS,
                 new FluidStack[] {fluid("Deuterium", 144), fluid("Tritium", 144)},
                 new FluidStack[] {fluid("Helium", 144)},
-                400, 2048);
+                400, 2048, 1_048_576L)), Gt6KtfruMachines.FUSION_TOKAMAK);
     }
 
     private static void add(String map, ItemStack[] itemsIn, ItemStack[] itemsOut,

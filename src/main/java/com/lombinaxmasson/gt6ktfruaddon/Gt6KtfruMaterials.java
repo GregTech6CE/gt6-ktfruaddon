@@ -69,7 +69,7 @@ public final class Gt6KtfruMaterials implements AddonMaterialContributor {
                 MaterialDeclaration.builder("MethylmagnesiumChloride").displayName("MethylmagnesiumChloride").color(0xFFFFFF).chemicalFormula("CH₃ClMg").meltingPointKelvin(243).boilingPointKelvin(339).density(1F).liquid().build(),
                 MaterialDeclaration.builder("Methyltrichlorosilane").displayName("Methyltrichlorosilane").color(0xFFFFFF).chemicalFormula("CH₃Cl₃Si").meltingPointKelvin(196).boilingPointKelvin(339).density(1F).liquid().build(),
                 MaterialDeclaration.builder("Dichlorodimethylsilane").displayName("Dichlorodimethylsilane").color(0xFFFFFF).chemicalFormula("(CH₃)₂Cl₂Si").meltingPointKelvin(197).boilingPointKelvin(333).density(1F).liquid().build(),
-                MaterialDeclaration.builder("SiliconeRubber").displayName("SiliconeRubber").color(0xFFFFFF).chemicalFormula("").meltingPointKelvin(371).boilingPointKelvin(510).density(1F).dust().liquid().build(),
+                MaterialDeclaration.builder("SiliconeRubber").displayName("SiliconeRubber").color(0xFFFFFF).chemicalFormula("").meltingPointKelvin(371).boilingPointKelvin(510).density(1F).dust().liquid().polymer().build(),
                 MaterialDeclaration.builder("MercuryIIChloride").displayName("MercuryIIChloride").color(0xFFFFFF).chemicalFormula("Cl₂Hg₂").meltingPointKelvin(550).boilingPointKelvin(575).density(1F).dust().build(),
                 MaterialDeclaration.builder("DichloroEthane").displayName("DichloroEthane").color(0xFFFFFF).chemicalFormula("CH₂ClCH₂Cl").meltingPointKelvin(238).boilingPointKelvin(355).density(1F).liquid().build(),
                 MaterialDeclaration.builder("DichloroPropane").displayName("DichloroPropane").color(0xFFFFFF).chemicalFormula("CH₃CH₂Cl=CH₂Cl").meltingPointKelvin(173).boilingPointKelvin(368).density(1F).liquid().build(),
@@ -77,7 +77,7 @@ public final class Gt6KtfruMaterials implements AddonMaterialContributor {
                 MaterialDeclaration.builder("Ethylbenzene").displayName("Ethylbenzene").color(0xFFFFFF).chemicalFormula("PhCH₂CH₃").meltingPointKelvin(178).boilingPointKelvin(409).density(1F).liquid().build(),
                 MaterialDeclaration.builder("ChloroPhenylethane").displayName("ChloroPhenylethane").color(0xFFFFFF).chemicalFormula("PhCHClCH₃").meltingPointKelvin(231).boilingPointKelvin(363).density(1F).liquid().build(),
                 MaterialDeclaration.builder("Styrene").displayName("Styrene").color(0xFFFFFF).chemicalFormula("PhCH=CH₂").meltingPointKelvin(242).boilingPointKelvin(418).density(1F).liquid().build(),
-                MaterialDeclaration.builder("SBR").displayName("SBR").color(0x191520).chemicalFormula("").meltingPointKelvin(332).boilingPointKelvin(663).density(1F).dust().liquid().build(),
+                MaterialDeclaration.builder("SBR").displayName("SBR").color(0x191520).chemicalFormula("").meltingPointKelvin(332).boilingPointKelvin(663).density(1F).dust().liquid().polymer().build(),
                 MaterialDeclaration.builder("Isoprene").displayName("Isoprene").color(0xFFFFFF).chemicalFormula("CH₂=CCH₃CHCH₂").meltingPointKelvin(128).boilingPointKelvin(305).density(1F).liquid().build(),
                 MaterialDeclaration.builder("Chloroethanol").displayName("Chloroethanol").color(0xFFFFFF).chemicalFormula("C₂H₅ClO").meltingPointKelvin(206).boilingPointKelvin(402).density(1F).liquid().build(),
                 MaterialDeclaration.builder("EthyleneGlycol").displayName("EthyleneGlycol").color(0xFFFFFF).chemicalFormula("(CH₂OH)₂").meltingPointKelvin(260).boilingPointKelvin(470).density(1F).liquid().build(),
@@ -158,7 +158,7 @@ public final class Gt6KtfruMaterials implements AddonMaterialContributor {
                 MaterialDeclaration.builder("FluorobenzoylChloride").displayName("4-Fluorobenzoyl Chloride").color(0xEBF5D2).chemicalFormula("C₇H₄ClFO").meltingPointKelvin(263).boilingPointKelvin(467).density(1F).liquid().build(),
                 MaterialDeclaration.builder("Difluorobenzophenone").displayName("4,4'-Difluorobenzophenone").color(0xF0EBDC).chemicalFormula("C₁₃H₈F₂O").meltingPointKelvin(380).boilingPointKelvin(648).density(1F).dust().build(),
                 MaterialDeclaration.builder("Hydroquinone").displayName("Hydroquinone").color(0xF0F0F0).chemicalFormula("C₆H₆O₂").meltingPointKelvin(445).boilingPointKelvin(560).density(1F).dust().build(),
-                MaterialDeclaration.builder("PEEK").displayName("Polyether Ether Ketone").color(0xD2BEA0).chemicalFormula("(C₁₉H₁₂O₃)n").meltingPointKelvin(616).boilingPointKelvin(873).density(1F).dust().build(),
+                MaterialDeclaration.builder("PEEK").displayName("Polyether Ether Ketone").color(0xD2BEA0).chemicalFormula("(C₁₉H₁₂O₃)n").meltingPointKelvin(616).boilingPointKelvin(873).density(1F).dust().polymer().build(),
                 // flList.YttriumZirconiumOxide. The source register call sets no color or formula.
                 // Its fluid temperature is 2700 and is not a melting point, so those stay at the builder defaults.
                 MaterialDeclaration.builder("YttriumZirconiumOxide").displayName("Yttrium-Zirconium Oxide").liquid().build(),
@@ -271,14 +271,23 @@ public final class Gt6KtfruMaterials implements AddonMaterialContributor {
     }
 
     /**
-     * prefixList at 6404ab69. Flywheel, blades and the six turbine prefixes use the
-     * tool-and-smithable filter. Turbine molten, metal-or-alloy and the three named
-     * exclusions are not prefix conditions, so those prefixes share the flywheel filter.
-     * Purity dusts list the refining families; an empty list cannot carry only negative
-     * conditions.
+     * prefixList at 6404ab69. Flywheel uses the tool-and-smithable filter. Blades and
+     * the six turbine prefixes use the source's large-turbine condition: tool stats,
+     * molten, and metal (all GT alloys also carry METAL), minus annealed copper,
+     * wrought iron and alumite. Purity dusts list the refining families; the source
+     * condition is negative-only, which an empty material list cannot express.
      */
     @Override public List<PrefixDeclaration> prefixes() {
         Set<PrefixCondition> tool = Set.of(PrefixCondition.HAS_TOOL_STATS, PrefixCondition.SMITHABLE);
+        Set<PrefixCondition> turbine = Set.of(PrefixCondition.HAS_TOOL_STATS, PrefixCondition.MOLTEN,
+                PrefixCondition.METAL);
+        List<String> turbineExcluded = List.of("AnnealedCopper", "WroughtIron", "Alumite");
+        // These six materials already name a flywheel machine block, so the prefix
+        // item would register a second item under the same id.
+        List<String> flywheelExcluded = List.of(
+                "Wood", "Bronze", "Steel", "Titanium", "Tungstensteel", "Adamantium");
+        // GT6CE does not flag these two as tool-statted metal, but the source turbine rows use them.
+        List<String> turbineMaterials = List.of("Graphene", "Adamantium");
         List<String> purity = List.of(
                 "Lithium", "Iron", "Nickel", "Cobalt", "Copper", "Zinc", "Silver", "Tin", "Lead", "Bismuth",
                 "Aluminium", "Titanium", "Zirconium", "Niobium", "Tantalum", "Chromium",
@@ -287,14 +296,14 @@ public final class Gt6KtfruMaterials implements AddonMaterialContributor {
                 "Carbon", "Silicon", "Germanium", "Gallium", "Indium",
                 "Deuterium", "Tritium", "Uranium", "Thorium", "Naquadria");
         return List.of(
-                prefix("flywheel", "", " Flywheel", 8, "item/material_icons/flywheel", List.of(), tool),
-                prefix("bladeLargeTurbine", "Large ", " Turbine Blade", 2, "item/material_icons/blade_large_turbine", List.of(), tool),
-                prefix("turbineLargeGas", "Large ", " Gas Turbine", 72, "item/material_icons/turbine_large", List.of(), tool),
-                prefix("turbineLargeGasChecked", "Checked Large ", " Gas Turbine", 72, "item/material_icons/turbine_large", List.of(), tool),
-                prefix("turbineLargeGasDamaged", "Used Large ", " Gas Turbine", 72, "item/material_icons/turbine_large", List.of(), tool),
-                prefix("turbineLargeSteam", "Large ", " Steam Turbine", 48, "item/material_icons/turbine_large", List.of(), tool),
-                prefix("turbineLargeSteamChecked", "Checked Large ", " Steam Turbine", 48, "item/material_icons/turbine_large", List.of(), tool),
-                prefix("turbineLargeSteamDamaged", "Used Large ", " Steam Turbine", 48, "item/material_icons/turbine_large", List.of(), tool),
+                prefix("flywheel", "", " Flywheel", 8, "item/material_icons/flywheel", List.of(), tool, flywheelExcluded),
+                prefix("bladeLargeTurbine", "Large ", " Turbine Blade", 2, "item/material_icons/blade_large_turbine", turbineMaterials, turbine, turbineExcluded),
+                prefix("turbineLargeGas", "Large ", " Gas Turbine", 72, "item/material_icons/turbine_large", turbineMaterials, turbine, turbineExcluded),
+                prefix("turbineLargeGasChecked", "Checked Large ", " Gas Turbine", 72, "item/material_icons/turbine_large", turbineMaterials, turbine, turbineExcluded),
+                prefix("turbineLargeGasDamaged", "Used Large ", " Gas Turbine", 72, "item/material_icons/turbine_large", turbineMaterials, turbine, turbineExcluded),
+                prefix("turbineLargeSteam", "Large ", " Steam Turbine", 48, "item/material_icons/turbine_large", turbineMaterials, turbine, turbineExcluded),
+                prefix("turbineLargeSteamChecked", "Checked Large ", " Steam Turbine", 48, "item/material_icons/turbine_large", turbineMaterials, turbine, turbineExcluded),
+                prefix("turbineLargeSteamDamaged", "Used Large ", " Steam Turbine", 48, "item/material_icons/turbine_large", turbineMaterials, turbine, turbineExcluded),
                 prefix("dustCommercialPure", "Commercial Pure ", " Dust", 1, "item/material_icons/dust_commercial_pure", purity, Set.of()),
                 prefix("dustAnalyticalPure", "Analytical Pure ", " Dust", 1, "item/material_icons/dust_analytical_pure", purity, Set.of()),
                 prefix("dustAbsolutelyPure", "Absolutely Pure ", " Dust", 1, "item/material_icons/dust_absolutely_pure", purity, Set.of()));
@@ -303,5 +312,10 @@ public final class Gt6KtfruMaterials implements AddonMaterialContributor {
     private static PrefixDeclaration prefix(String name, String displayPrefix, String displaySuffix, long units,
             String texture, List<String> materials, Set<PrefixCondition> conditions) {
         return new PrefixDeclaration(name, displayPrefix, displaySuffix, units, texture, materials, conditions);
+    }
+
+    private static PrefixDeclaration prefix(String name, String displayPrefix, String displaySuffix, long units,
+            String texture, List<String> materials, Set<PrefixCondition> conditions, List<String> excluded) {
+        return new PrefixDeclaration(name, displayPrefix, displaySuffix, units, texture, materials, conditions, excluded);
     }
 }

@@ -68,9 +68,9 @@ MAP_FIELD = {
     "MaskAligner": "Gt6KtfruMachines.MASK_ALIGNER",
     "CNC": "Gt6KtfruMachines.CNC",
     "FusionTokamak": "Gt6KtfruMachines.FUSION_TOKAMAK",
-    "FusionTokamakExperimental": "Gt6KtfruMachines.FUSION_TOKAMAK",
+    "FusionTokamakExperimental": "Gt6KtfruMachines.FUSION_TOKAMAK_EXP",
     "LaserFusion": "Gt6KtfruLateMachines.LASER",
-    "LaserFusionExperimental": "Gt6KtfruLateMachines.LASER",
+    "LaserFusionExperimental": "Gt6KtfruLateMachines.LASER_EXP_MAP",
     "CatalyticReactor": "Gt6KtfruLateMachines.CATALYTIC",
     "MirrorGoldSynthesis": "Gt6KtfruLateMachines.MIRROR",
     "MirrorGoldQuantumization": "Gt6KtfruLateMachines.MIRROR_QUANTUM",
@@ -546,15 +546,16 @@ def unwrap(text: str) -> str:
     return text[open_at + 1:-1]
 
 
-def eval_raw(expr: str) -> int:
+def eval_raw(expr: str, allow_zero: bool = False) -> int:
     """Java long arithmetic. ``U`` is one material unit; ``U10`` is ``U/10``; a bare ``10`` is ten raw units."""
     expr = expr.strip().replace("CS.", "")
     expr = re.sub(r"\bU(\d+)\b", lambda match: str(U // int(match.group(1))), expr)
     expr = re.sub(r"\bU\b", str(U), expr)
+    expr = re.sub(r"\b(\d+)[Ll]\b", r"\1", expr)
     if not re.fullmatch(r"[0-9+\-*/().\s]+", expr):
         raise Skip(f"数量表达式 {expr}")
     value = _eval_long(ast.parse(expr, mode="eval").body)
-    if value <= 0:
+    if value < 0 or (value == 0 and not allow_zero):
         raise Skip("催化剂数量 0")
     return value
 
@@ -579,8 +580,8 @@ def _eval_long(node):
     raise Skip("数量表达式")
 
 
-def eval_int(expr: str) -> int:
-    value = eval_raw(expr)
+def eval_int(expr: str, allow_zero: bool = False) -> int:
+    value = eval_raw(expr, allow_zero)
     if value > 2_000_000_000:
         raise Skip(f"数量过大 {expr}")
     return value
@@ -602,7 +603,7 @@ def units_mb(raw: int, per_unit: int, round_up: bool) -> int:
     amount, remainder = divmod(raw, divisor)
     if round_up and remainder:
         amount += 1
-    if amount <= 0:
+    if amount < 0:
         raise Skip("流体不足 1 mB")
     if amount > 2_000_000_000:
         raise Skip("流体数量过大")
@@ -1108,7 +1109,7 @@ class World:
             amount = split_args(inner)[0]
             if "U" in amount:
                 raise Skip(f"流体数量 {expr}")
-            mb = eval_int(amount)
+            mb = eval_int(amount, allow_zero=True)
             if name in self.addon:
                 flags = self.addon[name]
                 if "liquid" in flags:
@@ -1136,13 +1137,13 @@ class World:
                 raise Skip(f"流体数量 {expr}")
             if field not in self.fluids and not field.startswith("Gen"):
                 raise Skip(f"流体 {field}")
-            return ("fluid", field, eval_int(amount))
+            return ("fluid", field, eval_int(amount, allow_zero=True))
         made = re.fullmatch(r"FL\.make\(\s*\"([^\"]+)\"\s*,(.*)\)", expr)
         if made:
             field, amount = made.groups()
             if field not in self.fluids:
                 raise Skip(f"流体 {field}")
-            return ("fluid", field, eval_int(amount))
+            return ("fluid", field, eval_int(amount, allow_zero=True))
         material = re.fullmatch(
             r"(MT\.(?:(?:OREMATS|STONES|WOODS)\.\w+|\w+))\.(gas|liquid|fluid)\((.*)\)", expr
         )
@@ -1150,7 +1151,7 @@ class World:
             material_expr, method, inner = material.groups()
             name = self.material_name(material_expr)
             parts = split_args(inner)
-            field, mb = self.fluid_amount_mb(name, method, eval_raw(parts[0]), round_up(parts))
+            field, mb = self.fluid_amount_mb(name, method, eval_raw(parts[0], allow_zero=True), round_up(parts))
             return ("fluid", field, mb)
         raise Skip(f"流体 {expr[:120]}")
 
@@ -1269,7 +1270,7 @@ def optimize(duration, items_in, kept_in, items_out, kept_out, fluids_in, fluids
         if item_count(item) > 0:
             next_out.append(tuple(item))
             kept_outs.append(kept)
-    fins = [tuple(fluid) for fluid in fins if fluid[2] > 0]
+    fins = [tuple(fluid) for fluid in fins if fluid[2] >= 0]
     fouts = [tuple(fluid) for fluid in fouts if fluid[2] > 0]
     if not next_in and not fins:
         raise Skip("优化后没有输入")
@@ -1542,6 +1543,7 @@ def parse_call(world: World, file_name: str, line: int, map_name: str, arity: st
         )
     chances = fit_chances(raw_chances, len(items_out))
     kept = [index for index, flag in enumerate(kept_in) if flag] or None
+    kept_fluids = [index for index, fluid in enumerate(fluids_in) if fluid[2] == 0] or None
     slots = SLOTS[map_name]
     if len(items_in) > slots[0] or len(fluids_in) > slots[3]:
         raise Skip("输入超过配方图槽位")
@@ -1568,6 +1570,7 @@ def parse_call(world: World, file_name: str, line: int, map_name: str, arity: st
         "fluids_out": fluids_out,
         "chances": chances,
         "kept": kept,
+        "kept_fluids": kept_fluids,
         "d_tier": "Coolant_IC2" in raw,
     }
 
@@ -1614,7 +1617,10 @@ def java_stack(stack) -> str:
     if stack[0] == "circuit":
         return f"circuit({stack[1]}, {stack[2]})"
     if stack[0] == "fluid":
-        return f'field("{stack[1]}", {stack[2]})'
+        # NeoForge exposes Fluids.EMPTY for amount <= 0, so a presence-only
+        # catalyst is emitted as 1 mB and marked in keptFluidInputs.
+        amount = stack[2] if stack[2] > 0 else 1
+        return f'field("{stack[1]}", {amount})'
     raise AssertionError(stack)
 
 
@@ -1644,15 +1650,19 @@ def emit(rows: list[dict]) -> str:
         method = map_name[0].lower() + map_name[1:]
         calls.append(f"        {method}();")
         body = [f"    private static void {method}() {{"]
+        # RecipeMap rejects a new recipe whose inputs are a superset of an existing
+        # recipe's inputs. Register the more specific rows first so both coexist.
+        group = sorted(group, key=lambda row: -(len(row["items_in"]) + len(row["fluids_in"])))
         for row in group:
             note = " D-tier Coolant_IC2." if row["d_tier"] else ""
             body.append(f"        // {row['file']}:{row['line']}{note}")
             tail = ""
-            if row.get("special") or row["chances"] or row["kept"]:
-                tail = ",\n                {special}L,\n                {chances},\n                {kept}".format(
+            if row.get("special") or row["chances"] or row["kept"] or row.get("kept_fluids"):
+                tail = ",\n                {special}L,\n                {chances},\n                {kept},\n                {kept_fluids}".format(
                     special=row.get("special", 0),
                     chances=java_ints(row["chances"]),
                     kept=java_ints(row["kept"]),
+                    kept_fluids=java_ints(row.get("kept_fluids")),
                 )
             body.append(
                 "        add(\"{file}:{line}\", {field}, {eu}L, {duration}L,\n"
@@ -1720,18 +1730,19 @@ public final class Gt6KtfruSourceRecipes {{
 
     private static void add(String where, String map, long euPerTick, long duration,
             ItemStack[] itemsIn, ItemStack[] itemsOut, FluidStack[] fluidsIn, FluidStack[] fluidsOut) {{
-        add(where, map, euPerTick, duration, itemsIn, itemsOut, fluidsIn, fluidsOut, 0L, null, null);
+        add(where, map, euPerTick, duration, itemsIn, itemsOut, fluidsIn, fluidsOut, 0L, null, null, null);
     }}
 
     private static void add(String where, String map, long euPerTick, long duration,
             ItemStack[] itemsIn, ItemStack[] itemsOut, FluidStack[] fluidsIn, FluidStack[] fluidsOut,
-            long special, int[] chances, int[] kept) {{
-        if (broken(itemsIn) || broken(fluidsIn) || broken(itemsOut) || broken(fluidsOut)) {{
+            long special, int[] chances, int[] kept, int[] keptFluids) {{
+        if (broken(itemsIn) || brokenFluidInputs(fluidsIn) || broken(itemsOut) || broken(fluidsOut)) {{
             return;
         }}
-        AddonRecipes.Line line = chances == null && kept == null
+        AddonRecipes.Line line = chances == null && kept == null && keptFluids == null
                 ? new AddonRecipes.Line(itemsIn, itemsOut, fluidsIn, fluidsOut, duration, euPerTick, special)
-                : new AddonRecipes.Line(itemsIn, itemsOut, fluidsIn, fluidsOut, duration, euPerTick, special, chances, kept);
+                : new AddonRecipes.Line(itemsIn, itemsOut, fluidsIn, fluidsOut, duration, euPerTick, special,
+                        chances, kept, keptFluids);
         if (AddonRecipes.map(map).add(line) == null) {{
             PROBLEMS.add(where + " was rejected");
         }}
@@ -1751,7 +1762,20 @@ public final class Gt6KtfruSourceRecipes {{
         return false;
     }}
 
+    /** An input keeps a 0 mB presence-only catalyst: its fluid must exist, its amount may be zero. */
+    private static boolean brokenFluidInputs(FluidStack[] stacks) {{
+        for (FluidStack stack : stacks) {{
+            if (stack == null || stack.getFluid() == net.minecraft.world.level.material.Fluids.EMPTY) return true;
+        }}
+        return false;
+    }}
+
     private static ItemStack form(String prefix, String material, int count) {{
+        // GT6CE does not generate these source forms; the vanilla item keeps the row usable.
+        if ("plate".equals(prefix) && "Paper".equals(material)) return new ItemStack(Items.PAPER, count);
+        if ("plate".equals(prefix) && "Glass".equals(material)) return new ItemStack(Items.GLASS, count);
+        if ("paneGlass".equals(prefix) && "Black".equals(material))
+            return new ItemStack(Items.BLACK_STAINED_GLASS_PANE, count);
         ItemStack stack = AddonItems.stack(prefix, material, count);
         if (stack == null || stack.isEmpty()) {{
             PROBLEMS.add(prefix + " " + material);
@@ -1774,7 +1798,23 @@ public final class Gt6KtfruSourceRecipes {{
     }}
 
     private static ItemStack block(String path, int count) {{
-        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(Gt6KtfruAddon.MODID, path));
+        String id = switch (path) {{
+            case "laser_focusing_array" -> "laser_fusion_focusing_array";
+            case "laser_target_injector" -> "laser_fusion_target_injector";
+            case "laser_pulse_storage" -> "laser_fusion_pulse_storage_module";
+            case "laser_product_collector" -> "laser_fusion_neutron_product_collector";
+            case "sun_heater_top_layer" -> "heat_pipe_top";
+            case "ai_memory_bank" -> "ai_high_bandwidth_memory_bank";
+            case "room_energy_port" -> "room_energy_and_status_port";
+            case "quantum_coherence_casing" -> "quantum_coherence_chamber_wall";
+            case "quantum_coherence_casing_iridium" -> "quantum_coherence_chamber_wall_31111";
+            case "titanium_turbine_shell" -> "turbine_shell_titanium";
+            case "tungstensteel_turbine_shell" -> "turbine_shell_tungstensteel";
+            case "adamantium_turbine_shell" -> "turbine_shell_adamantium";
+            case "trinaquadalloy_turbine_shell" -> "turbine_shell_trinaquadalloy";
+            default -> path;
+        }};
+        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(Gt6KtfruAddon.MODID, id));
         if (item == Items.AIR) {{
             PROBLEMS.add("block " + path);
             return ItemStack.EMPTY;
@@ -1783,7 +1823,13 @@ public final class Gt6KtfruSourceRecipes {{
     }}
 
     private static ItemStack gt(String path, int count) {{
-        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("gt6ce", path));
+        // GT6CE gives Naquadria no casing form; use the alloy that carries the same chain.
+        String id = switch (path) {{
+            case "casing_machine_naquadria" -> "casing_machine_trinaquadalloy";
+            case "casing_machine_double_naquadria" -> "casing_machine_double_tungstensteel";
+            default -> path;
+        }};
+        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("gt6ce", id));
         if (item == null || item == Items.AIR) {{
             PROBLEMS.add("gt6ce " + path);
             return ItemStack.EMPTY;
@@ -1801,6 +1847,14 @@ public final class Gt6KtfruSourceRecipes {{
     }}
 
     private static FluidStack field(String name, int amount) {{
+        if (amount <= 0) {{
+            FluidStack sample = AddonFluids.still(name, 1);
+            if (sample == null || sample.isEmpty()) {{
+                PROBLEMS.add("fluid " + name);
+                return FluidStack.EMPTY;
+            }}
+            return new FluidStack(sample.getFluid(), 0);
+        }}
         FluidStack stack = AddonFluids.still(name, amount);
         if (stack == null || stack.isEmpty()) {{
             PROBLEMS.add("fluid " + name);
