@@ -251,14 +251,17 @@ CASING_PREFIX = {
 }
 # GT6 numeric registry ids that the port keeps under a gt6ce block/item name.
 GT_REGISTRY_ITEMS = {
+    6007: "logistics_mass_storage_electrum",
     10102: "co2_laser_mv",
     10112: "electric_dynamo_mv",
+    18002: "tank_wall",
     18003: "tungstensteel_wall",
     18005: "adamantium_wall",
     18006: "titanium_wall",
     24823: "axle_steel_4",
     24833: "axle_titanium_4",
     24843: "axle_tungstensteel_4",
+    29251: "cable_02_platinum",
 }
 
 CALL_RE = re.compile(
@@ -267,7 +270,10 @@ CALL_RE = re.compile(
     r"\s*\.\s*addRecipe([012X])\s*\("
 )
 
+FORCED_LIQUIDS = {"LithiumChloride", "LithiumChlorate"}
+
 TILE_ITEMS = {
+    2: "pipe_medium_teflon",
     10010: "gas_battery_aluminium",
     10011: "gas_battery_stainless",
     10200: "transformer_small_lv",
@@ -728,6 +734,24 @@ def load_materials():
             "kind": kind,
             "flags": flags,
         }
+    for path in generated.glob("*.java"):
+        for line in path.read_text(encoding="utf-8").splitlines():
+            match = re.search(r"GTMaterial\s+(\w+)\s*=.*?setToolStats\(([^)]*)\)", line)
+            if not match:
+                continue
+            parts = split_args(match.group(2))
+            if len(parts) < 4:
+                continue
+            registry = names.get(match.group(1))
+            if not registry:
+                continue
+            try:
+                durability = int(re.sub(r"[LlFf]$", "", parts[2].strip()))
+                quality = int(re.sub(r"[LlFf]$", "", parts[3].strip()))
+            except ValueError:
+                continue
+            props[registry]["toolQuality"] = quality
+            props[registry]["toolDurability"] = durability
     return symbols, props
 
 
@@ -810,7 +834,7 @@ class World:
             return self.symbols[symbol]
         listed = re.fullmatch(r"matList\.(\w+)\.(?:mat|get\(\))", expr)
         if listed:
-            name = {"Ij": "intellite"}.get(listed.group(1), listed.group(1))
+            name = {"Ij": "intellite", "Zincoxide": "ZincOxide"}.get(listed.group(1), listed.group(1))
             if name not in self.addon:
                 raise Skip(f"未移植材料 {name}")
             return name
@@ -853,6 +877,7 @@ class World:
         raise Skip(f"形态 {prefix} {material}")
 
     def item_form(self, prefix: str, material_expr: str, count: int):
+        prefix = PREFIX_FIELDS.get(prefix, prefix)
         if count <= 0:
             raise Skip("催化剂数量 0")
         if count > 99:
@@ -867,6 +892,8 @@ class World:
         if count > 99:
             raise Skip("堆叠超过 99")
         if meta is not None and eval_int(meta) != 0:
+            if expr.strip() == "Items.skull" and eval_int(meta) == 3:
+                return ("vanilla", "Items.PLAYER_HEAD", count)
             raise Skip(f"原版元数据 {expr}")
         expr = expr.strip()
         if expr.startswith("Items."):
@@ -894,8 +921,8 @@ class World:
         props = self.props.get(material, {"gas": False, "liquid": False, "molten": False})
         addon = self.addon.get(material, set())
         gas = props["gas"] or "gas" in addon
-        liquid = props["liquid"] or "liquid" in addon
-        molten = props["molten"] or "metal" in addon
+        liquid = props["liquid"] or "liquid" in addon or material in FORCED_LIQUIDS
+        molten = (props["molten"] or "metal" in addon) and material not in FORCED_LIQUIDS
         if method == "gas":
             if not gas:
                 raise Skip(f"材料没有气体 {material}")
@@ -1110,6 +1137,12 @@ class World:
             if "U" in amount:
                 raise Skip(f"流体数量 {expr}")
             mb = eval_int(amount, allow_zero=True)
+            aliases = {
+                "MoltenNaK": "GenMolten_PotassiumSodium",
+                "HotMoltenNaK": "GenLiquid_HotPotassiumSodium",
+            }
+            if name in aliases:
+                return ("fluid", aliases[name], mb)
             if name in self.addon:
                 flags = self.addon[name]
                 if "liquid" in flags:
@@ -1132,20 +1165,26 @@ class World:
         named = re.fullmatch(r"FL\s*\.\s*(\w+)\s*\.\s*make\((.*)\)", expr)
         if named:
             field, inner = named.groups()
+            field = {"lube": "Lubricant"}.get(field, field)
             amount = split_args(inner)[0]
-            if "U" in amount:
-                raise Skip(f"流体数量 {expr}")
             if field not in self.fluids and not field.startswith("Gen"):
                 raise Skip(f"流体 {field}")
-            return ("fluid", field, eval_int(amount, allow_zero=True))
+            return ("fluid", field, eval_raw(amount, allow_zero=True))
         made = re.fullmatch(r"FL\.make\(\s*\"([^\"]+)\"\s*,(.*)\)", expr)
         if made:
             field, amount = made.groups()
             if field not in self.fluids:
                 raise Skip(f"流体 {field}")
-            return ("fluid", field, eval_int(amount, allow_zero=True))
+            return ("fluid", field, eval_raw(amount, allow_zero=True))
+        direct = re.fullmatch(r"FL\s*\.\s*(\w+)\s*\((.*)\)", expr)
+        if direct:
+            field, amount = direct.groups()
+            field = {"lube": "Lubricant"}.get(field, field)
+            if field not in self.fluids:
+                raise Skip(f"流体 {field}")
+            return ("fluid", field, eval_raw(amount, allow_zero=True))
         material = re.fullmatch(
-            r"(MT\.(?:(?:OREMATS|STONES|WOODS)\.\w+|\w+))\.(gas|liquid|fluid)\((.*)\)", expr
+            r"(MT\.(?:(?:OREMATS|STONES|WOODS)\.\w+|\w+))\s*\.\s*(gas|liquid|fluid)\s*\((.*)\)", expr
         )
         if material:
             material_expr, method, inner = material.groups()
@@ -1163,8 +1202,9 @@ class World:
             if parsed is None:
                 continue
             stack, keep = parsed
-            stacks.append(stack)
-            kept.append(keep)
+            for part in split_stack(stack):
+                stacks.append(part)
+                kept.append(keep)
         return stacks, kept
 
     def parse_many(self, kind: str, exprs: list[str]):
@@ -1192,6 +1232,8 @@ def classify_arg(expr: str):
         return ("fluids", split_args(unwrap(bare)))
     if bare.startswith("ST.array("):
         return ("items", split_args(unwrap(bare)))
+    if bare.startswith("ST.make("):
+        return ("items", [bare])
     if bare.startswith("new long[") or bare.startswith("long["):
         return ("chances", bare)
     if re.fullmatch(r"[0-9+\-*/().\s]+", bare):
@@ -1210,6 +1252,21 @@ def set_item_count(stack, value: int) -> None:
         stack[3] = value
     else:
         stack[2] = value
+
+
+def split_stack(stack, limit: int = 99):
+    """One item type may need more than one input slot; split it into 99-count stacks."""
+    count = item_count(stack)
+    if count <= limit:
+        return [stack]
+    parts = []
+    left = count
+    while left > 0:
+        part = list(stack)
+        set_item_count(part, min(limit, left))
+        parts.append(tuple(part))
+        left -= min(limit, left)
+    return parts
 
 
 def same_item(left, right) -> bool:
@@ -1280,21 +1337,7 @@ def optimize(duration, items_in, kept_in, items_out, kept_out, fluids_in, fluids
 
 
 def reserved(text: str) -> str | None:
-    checks = (
-        ("LiClO3", "保留缺口 液态氯酸锂"),
-        ("MoltenNaK", "保留缺口 熔融钠钾"),
-        ("HotMoltenNaK", "保留缺口 熔融钠钾"),
-        ("Hot_Molten_", "保留缺口 热熔融金属"),
-        ("MT.D2O", "保留缺口 重水"),
-        ("MT.HDO", "保留缺口 重水"),
-        ("MT.T2O", "保留缺口 重水"),
-        ("Hot_Heavy_Water", "保留缺口 重水"),
-        ("Hot_Semi_Heavy_Water", "保留缺口 重水"),
-        ("Hot_Tritiated_Water", "保留缺口 重水"),
-    )
-    for token, reason in checks:
-        if token in text:
-            return reason
+    # Kept for rows that a later change has to hold back again.
     return None
 
 
@@ -1360,6 +1403,40 @@ def purity_rows(world: World, file_name: str, line: int, raw: str):
             "MT.Magnalium", "MT.Trinitanium", "MT.Graphene", "MT.Vibramantium", "MT.Trinaquadalloy",
             "MT.Steel", "MT.StainlessSteel", "MT.Ti", "MT.TungstenSteel", "MT.Ad", "MT.Ir", "MT.Os",
         )
+        if "recipeMaps.CNC.addRecipe2" in compact and "bouleGt.mat" in compact:
+            rows = []
+            for mat in turbine_mats:
+                try:
+                    registry = world.material_name(mat)
+                    props = world.props.get(registry, {})
+                    quality = props.get("toolQuality", 0)
+                    durability = props.get("toolDurability", 0)
+                    duration = max(quality, 1) * durability // 2
+                    rows.append({
+                        "file": "recipePrefixItems.java",
+                        "line": line,
+                        "map": "CNC",
+                        "eu": 32,
+                        "duration": max(1, duration),
+                        "special": 0,
+                        "items_in": [
+                            ("circuit", 1, 1),
+                            # GT6CE has no boule form for these metals; use the ingot.
+                            world.item_form("ingot", mat, 1),
+                        ],
+                        "items_out": [
+                            world.item_form("largeTurbineBlade", mat, 1),
+                            world.item_form("dust", mat, 2),
+                        ],
+                        "fluids_in": [world.parse_fluid("FL.DistW.make(2000)")],
+                        "fluids_out": [],
+                        "chances": None,
+                        "kept": None,
+                        "d_tier": False,
+                    })
+                except Skip:
+                    continue
+            return rows
         if "turbineLargeSteam.mat(" in compact and "FlawDetector" in compact:
             return [
                 {
@@ -1808,6 +1885,7 @@ public final class Gt6KtfruSourceRecipes {{
             case "room_energy_port" -> "room_energy_and_status_port";
             case "quantum_coherence_casing" -> "quantum_coherence_chamber_wall";
             case "quantum_coherence_casing_iridium" -> "quantum_coherence_chamber_wall_31111";
+            case "stainless_turbine_shell" -> "turbine_shell_stainless";
             case "titanium_turbine_shell" -> "turbine_shell_titanium";
             case "tungstensteel_turbine_shell" -> "turbine_shell_tungstensteel";
             case "adamantium_turbine_shell" -> "turbine_shell_adamantium";
@@ -1956,6 +2034,9 @@ def main():
     lines.append("skip groups")
     for (map_name, bucket), count in sorted(grouped.items()):
         lines.append(f"  {map_name} {bucket} {count}")
+    lines.append("skipped rows")
+    for map_name, file_name, line, reason, raw in skips:
+        lines.append(f"  {file_name}:{line} {map_name} {reason} :: {raw}")
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     REPORT.write_text("\n".join(lines), encoding="utf-8")
     print("\n".join(lines[:80]))

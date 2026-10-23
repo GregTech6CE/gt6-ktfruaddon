@@ -136,6 +136,23 @@ SDK 的 `BehaviorMachine.Builder` 会检查能量条、进度条、槽、罐和�
 
 量子枢纽 30115 的主输入改成 `EnergyInput.anyType()`；空缓存时接受任意 GT 能量类型，首包锁定后只收同类型。辅助 EU 输入不变。
 
+### 16. 源配方补齐（非 C 档）
+
+在 `1d1f69fbb` 的接口落地之后，把配方报告里除 C 档外的行继续补齐：
+
+- **机器物品**：`6007` 映射到 `gt6ce:logistics_mass_storage_electrum`，`18002` 到 `tank_wall`，`29251` 到 `cable_02_platinum`，`kRegistry0.getItem(2)` 到 `pipe_medium_teflon`。
+- **热流体**：GT6CE 已有 `Hot_Molten_Sodium` / `Hot_Molten_Tin` / `Hot_Molten_LiCl` / `Hot_Heavy_Water` / `Hot_Semi_Heavy_Water` / `Hot_Tritiated_Water`，去掉旧保留。`MoltenNaK` 用现有的 `GenMolten_PotassiumSodium`；`HotMoltenNaK` 新增附属材料 `HotPotassiumSodium`。
+- **重水输入**：`D2O/HDO/T2O` 通过 GT6CE 的 `HeavyWater` / `SemiheavyWater` / `TritiatedWater` 映射。
+- **氯酸锂**：`LiClO3` 走 GT6CE 的 `LithiumChlorate` 液体，不再跳过。
+- **氧化锌**：源 `Zincoxide` 映射到已有的 `ZincOxide` 材料，不重复声明。
+- **润滑脂**：`FL.lube` 映射到 `Lubricant`。
+- **MatterNeutral / MT.D**：生成器允许 `FL.make` 里带 `U` 的数量表达式，并允许 `MT.D .gas (U, T)` 这种空格写法。
+- **超过 99 的堆叠**：拆成多个 99 的输入槽。
+- **玩家头颅**：`ST.make(Items.skull, 1, 3, ...)` 映射到 `Items.PLAYER_HEAD`，自定义皮肤不携带。
+- **涡轮 CNC**：`recipePrefixItems` 的 `bouleGt -> largeTurbineBlade` 按 11 个材料展开，时间用 GT6CE 的工具属性算；GT6CE 这些金属没有 boule 形态，输入用同类锭代替。
+
+提取结果从 652 行涨到 689 行。剩余 skip 19 行：9 行 C 档；3 行海水蒸馏和 1 行光混合已经在手写配方里；2 行是 `ResearchRecipes` 的辅助方法定义，不是实际配方；4 行是 GT6CE 形态/流体缺口（石墨板、Naquadria 细导线、铝酸钠/铝酸钾液体）。
+
 ## 步骤
 
 - [x] 按 `1d1f69fbb` 重打 SDK 和运行包，更新基线和 sha256。
@@ -146,18 +163,19 @@ SDK 的 `BehaviorMachine.Builder` 会检查能量条、进度条、槽、罐和�
 - [x] 前缀条件、流体危险判定、动态能量类型落地。
 - [x] `compileJava` 和 `build` 通过。
 - [x] 开发服务端启动到 `Done`，确认注册和配方没有报错。
+- [x] 补齐非 C 档的源配方行，报告从 652 涨到 689。
 - [ ] 界面里搭一台托卡马克，确认 LU 充能后进度才开始。
 
 ## 验收
 
 - [x] `compileJava` 通过
 - [x] `build` 通过
-- [x] 启动日志没有 `source stacks did not resolve`、`uses unknown part` 或配方被拒；服务端到达 `Done (9.589s)`
+- [x] 启动日志没有 `source stacks did not resolve`、`uses unknown part` 或配方被拒；补齐源配方后服务端到达 `Done (16.693s)`
 - [ ] 玩法：托卡马克启动能量、流体电池危险流体、计算格二选一各跑一次
 
 ## 接口缺口（本卡之后仍存在的）
 
-- 核心材料仍不能通过 `forms()` 请求未开启的形态，也不能复用内置方块前缀（石墨板 `casingMachine`）。
+- 核心材料仍不能通过 `forms()` 请求未开启的形态，也不能复用内置方块前缀（石墨板 `casingMachine`）。GT6CE 也没有 Sodium/PotassiumAluminate 的液体形态，对应两行 HeatMixer 仍在缺口里。
 - 大型压缩气罐的阀门如果做成结构墙零件，仍没有接收方入口；当前只能放在控制器面。
 - 配方机的结构端口只转发主能量类型，不转发 `auxiliaryEnergy`；托卡马克的 LU 只能从控制器面进。
 - 没有爆炸入口；液体电池的酸/魔/高温只能拒收和清空。
@@ -170,3 +188,5 @@ SDK 的 `BehaviorMachine.Builder` 会检查能量条、进度条、槽、罐和�
 - 2026-10-23：建立本卡。GT6CE `1d1f69fbb` 的接口提交正好覆盖卡 05 的十条缺口；本卡把 SDK/运行包切到这个提交，并把附属能用的入口逐条落地。
 
 - 2026-10-23：开发服务端冒烟。依次修掉旧问题：聚合物材料缺 `.polymer()`、行为机 GUI 矩形重叠、布局名带点、同一机器类型下混用能量类型、前缀物品和机器方块重名、实验/普通配方共图、源方块名映射、子集配方碰撞、手写与生成行重复。最终服务端到达 `Done (9.589s)`，没有 `source stacks did not resolve`、`uses unknown part` 或配方被拒。GT6CE 的 0 mB 输入在 NeoForge 上实际不可用，催化剂改为 1 mB + `keptFluidInputs`。
+
+- 2026-10-23：补非 C 档源配方。报告从 652 涨到 689；新增 EDA 8 行、气体电池组装 2 行、CNC 18002 1 行、涡轮 CNC 11 行、热流体 7 行、氯酸锂/氧化锌/润滑脂/头颅/超 99 堆叠/MatterNeutral 等。剩余 19 行 skip：9 C 档、4 行手写保留、2 行辅助方法定义、4 行 GT6CE 形态或流体缺口。服务端到达 `Done (16.693s)`。

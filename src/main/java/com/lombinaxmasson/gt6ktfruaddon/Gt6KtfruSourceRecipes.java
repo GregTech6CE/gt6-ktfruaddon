@@ -80,6 +80,48 @@ public final class Gt6KtfruSourceRecipes {
                 NO_ITEMS,
                 new FluidStack[] {field("Coolant_IC2", 10)},
                 new FluidStack[] {field("Coolant_IC2_Hot", 10)});
+        // Chemistry.java:31
+        add("Chemistry.java:31", Gt6KtfruMachines.FLUID_HEATING, 72L, 10L,
+                NO_ITEMS,
+                NO_ITEMS,
+                new FluidStack[] {field("GenMolten_PotassiumSodium", 10)},
+                new FluidStack[] {field("GenLiquid_HotPotassiumSodium", 10)});
+        // Chemistry.java:32
+        add("Chemistry.java:32", Gt6KtfruMachines.FLUID_HEATING, 30L, 10L,
+                NO_ITEMS,
+                NO_ITEMS,
+                new FluidStack[] {field("GenMolten_Sodium", 10)},
+                new FluidStack[] {field("Hot_Molten_Sodium", 10)});
+        // Chemistry.java:33
+        add("Chemistry.java:33", Gt6KtfruMachines.FLUID_HEATING, 40L, 10L,
+                NO_ITEMS,
+                NO_ITEMS,
+                new FluidStack[] {field("GenMolten_Tin", 10)},
+                new FluidStack[] {field("Hot_Molten_Tin", 10)});
+        // Chemistry.java:34
+        add("Chemistry.java:34", Gt6KtfruMachines.FLUID_HEATING, 15L, 10L,
+                NO_ITEMS,
+                NO_ITEMS,
+                new FluidStack[] {field("GenLiquid_LithiumChloride", 69)},
+                new FluidStack[] {field("Hot_Molten_LiCl", 10)});
+        // Chemistry.java:35
+        add("Chemistry.java:35", Gt6KtfruMachines.FLUID_HEATING, 50L, 10L,
+                NO_ITEMS,
+                NO_ITEMS,
+                new FluidStack[] {field("GenLiquid_HeavyWater", 10)},
+                new FluidStack[] {field("Hot_Heavy_Water", 10)});
+        // Chemistry.java:36
+        add("Chemistry.java:36", Gt6KtfruMachines.FLUID_HEATING, 40L, 10L,
+                NO_ITEMS,
+                NO_ITEMS,
+                new FluidStack[] {field("GenLiquid_SemiheavyWater", 10)},
+                new FluidStack[] {field("Hot_Semi_Heavy_Water", 10)});
+        // Chemistry.java:37
+        add("Chemistry.java:37", Gt6KtfruMachines.FLUID_HEATING, 60L, 10L,
+                NO_ITEMS,
+                NO_ITEMS,
+                new FluidStack[] {field("GenLiquid_TritiatedWater", 10)},
+                new FluidStack[] {field("Hot_Tritiated_Water", 10)});
         // Chemistry.java:38
         add("Chemistry.java:38", Gt6KtfruMachines.FLUID_HEATING, 20L, 10L,
                 NO_ITEMS,
@@ -106,6 +148,12 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {gt("casing_machine_double_naquadria", 1), form("plate", "MirrorGold", 2), form("dustAbsolutelyPure", "intellite", 4), form("dustAbsolutelyPure", "Naquadria", 2), block("entanglement_channel_module", 2), block("quantum_readout_coil", 1), gt("compact_signal_emitter_luv", 2), gt("circuit_ultimate", 2)},
                 new ItemStack[] {block("wireless_receiver_quantum", 1)},
                 new FluidStack[] {field("GenMolten_SolderingAlloy", 18)},
+                NO_FLUIDS);
+        // Circuits.java:111
+        add("Circuits.java:111", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 1482L, 120L,
+                new ItemStack[] {gt("circuit_part_ultimate", 8), gt("circuit_plate_platinum", 1), own("coil_t4", 8), own("capacitor_t3", 64), own("resistance_t4", 99), own("resistance_t4", 29), own("diode_t3", 16)},
+                new ItemStack[] {gt("circuit_board_ultimate", 1)},
+                new FluidStack[] {field("GenLiquid_MoltenTeflon", 144)},
                 NO_FLUIDS);
         // Circuits.java:109
         add("Circuits.java:109", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 384L, 120L,
@@ -293,6 +341,18 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {gt("circuit_board_advanced", 1)},
                 new FluidStack[] {field("GenLiquid_MoltenBakelite", 72)},
                 NO_FLUIDS);
+        // tileEntityInit0.java:167
+        add("tileEntityInit0.java:167", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 64L, 20L,
+                new ItemStack[] {gt("casing_machine_aluminium", 1), own("proton_exchange_membrane", 2), block("pipe_medium_teflon", 1), gt("cable_02_platinum", 1), form("plate", "Glass", 1), form("plate", "Teflon", 8)},
+                new ItemStack[] {block("gas_battery_aluminium", 1)},
+                NO_FLUIDS,
+                NO_FLUIDS);
+        // tileEntityInit0.java:168
+        add("tileEntityInit0.java:168", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 64L, 20L,
+                new ItemStack[] {gt("casing_machine_stainlesssteel", 1), own("proton_exchange_membrane", 8), block("pipe_medium_teflon", 1), gt("cable_02_platinum", 4), form("plate", "Glass", 4), form("plate", "Teflon", 24)},
+                new ItemStack[] {block("gas_battery_stainless", 1)},
+                NO_FLUIDS,
+                NO_FLUIDS);
         // tileEntityInit0.java:658
         add("tileEntityInit0.java:658", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 8192L, 1200L,
                 new ItemStack[] {form("plateDouble", "Tungstensteel", 4), form("plate", "PEEK", 1), form("wireFine", "Graphene", 2), form("dustAnalyticalPure", "Silicon", 1), gt("circuit_ultimate", 1)},
@@ -454,6 +514,12 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {form("plateTiny", "Gallium", 4), form("dust", "Arsenic", 2), form("dust", "Aluminium", 1), form("foil", "Silver", 4)},
                 new ItemStack[] {own("led_set", 2)},
                 new FluidStack[] {field("GenLiquid_MoltenTeflon", 144)},
+                NO_FLUIDS);
+        // CompactItem.java:44
+        add("CompactItem.java:44", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 16384L, 16384L,
+                new ItemStack[] {form("nugget", "DraconiumAwakened", 2), form("plateTiny", "Adamantium", 2), form("wireFine", "Terrasteel", 64), form("plate", "VibraniumSteel", 1), form("plateGem", "NetherStar", 1)},
+                new ItemStack[] {vanilla(Items.PLAYER_HEAD, 1)},
+                NO_FLUIDS,
                 NO_FLUIDS);
         // ComputerBuilding.java:423
         add("ComputerBuilding.java:423", Gt6KtfruMachines.CIRCUIT_ASSEMBLER, 700L, 7800L,
@@ -2199,6 +2265,12 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {form("dust", "SodiumAcetate", 2)},
                 new FluidStack[] {field("GenLiquid_GlacialAceticAcid", 100)},
                 new FluidStack[] {field("CarbonDioxide", 1000)});
+        // Plastic.java:48
+        add("Plastic.java:48", Gt6KtfruMachines.HEAT_MIXER, 64L, 80L,
+                new ItemStack[] {form("dust", "Zinc", 1)},
+                new ItemStack[] {form("dust", "ZincOxide", 1)},
+                new FluidStack[] {field("Oxygen", 1000)},
+                NO_FLUIDS);
         // Plastic.java:52
         add("Plastic.java:52", Gt6KtfruMachines.HEAT_MIXER, 100L, 110L,
                 new ItemStack[] {form("dust", "DiphenylCarbonate", 1), form("dust", "BPA", 1)},
@@ -2319,6 +2391,12 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {form("dust", "Cryolite", 1)},
                 new FluidStack[] {field("GenGas_SiliconTetrafluoride", 1000)},
                 new FluidStack[] {field("GenGas_Silane", 1000)});
+        // HeatMixer.java:27
+        add("HeatMixer.java:27", Gt6KtfruMachines.HEAT_MIXER, 16L, 177L,
+                new ItemStack[] {form("dust", "LithiumHydroxide", 9)},
+                new ItemStack[] {form("dust", "LithiumChloride", 5)},
+                new FluidStack[] {field("GenGas_Chlorine", 3000)},
+                new FluidStack[] {field("Water", 4500), field("GenLiquid_LithiumChlorate", 2500)});
         // HeatMixer.java:28
         add("HeatMixer.java:28", Gt6KtfruMachines.HEAT_MIXER, 16L, 48L,
                 new ItemStack[] {form("dust", "Sulfur", 1)},
@@ -2774,6 +2852,16 @@ public final class Gt6KtfruSourceRecipes {
                 null,
                 new int[] {0, 1, 2},
                 null);
+        // ComputerBuilding.java:90
+        add("ComputerBuilding.java:90", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 2700L,
+                new ItemStack[] {gt("circuit_good", 1), own("tech_research_data19", 1), gt("logistics_mass_storage_electrum", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("ram_photomask_t1", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2},
+                null);
         // ComputerBuilding.java:91
         add("ComputerBuilding.java:91", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 1800L,
                 new ItemStack[] {gt("circuit_good", 1), own("tech_research_data19", 1), form("dust", "Silicon", 1), form("paneGlass", "Black", 1)},
@@ -2788,6 +2876,16 @@ public final class Gt6KtfruSourceRecipes {
         add("ComputerBuilding.java:94", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 3600L,
                 new ItemStack[] {gt("circuit_advanced", 1), own("tech_research_data25", 1), gt("circuit_part_good", 1), form("paneGlass", "Black", 1)},
                 new ItemStack[] {own("circuit_part_photomask_t4", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2},
+                null);
+        // ComputerBuilding.java:95
+        add("ComputerBuilding.java:95", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 5400L,
+                new ItemStack[] {gt("circuit_advanced", 1), own("tech_research_data25", 1), gt("logistics_mass_storage_electrum", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("ram_photomask_t2", 1)},
                 new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
                 NO_FLUIDS,
                 0L,
@@ -2814,10 +2912,70 @@ public final class Gt6KtfruSourceRecipes {
                 null,
                 new int[] {0, 1, 2},
                 null);
+        // ComputerBuilding.java:100
+        add("ComputerBuilding.java:100", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 10800L,
+                new ItemStack[] {gt("circuit_elite", 1), own("tech_research_data29", 1), gt("logistics_mass_storage_electrum", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("ram_photomask_t3", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2},
+                null);
         // ComputerBuilding.java:103
         add("ComputerBuilding.java:103", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 14400L,
                 new ItemStack[] {gt("circuit_master", 1), own("tech_research_data33", 1), gt("circuit_part_good", 1), form("paneGlass", "Black", 1)},
                 new ItemStack[] {own("circuit_part_photomask_t6", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2},
+                null);
+        // ComputerBuilding.java:104
+        add("ComputerBuilding.java:104", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 21600L,
+                new ItemStack[] {gt("circuit_master", 1), own("tech_research_data33", 1), gt("logistics_mass_storage_electrum", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("ram_photomask_t4", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2},
+                null);
+        // ComputerBuilding.java:107
+        add("ComputerBuilding.java:107", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 21600L,
+                new ItemStack[] {own("computer_gt2090", 1), own("tech_research_data33", 1), gt("logistics_mass_storage_electrum", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("ram_photomask_t5", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2},
+                null);
+        // ComputerBuilding.java:110
+        add("ComputerBuilding.java:110", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 21600L,
+                new ItemStack[] {own("computer_gt3699", 1), own("tech_research_data36", 1), gt("logistics_mass_storage_electrum", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("ram_photomask_t6", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2},
+                null);
+        // ComputerBuilding.java:113
+        add("ComputerBuilding.java:113", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 21600L,
+                new ItemStack[] {own("computer_gt3699_v2", 1), own("tech_research_data40", 1), gt("logistics_mass_storage_electrum", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("ram_photomask_t7", 1)},
+                new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
+                NO_FLUIDS,
+                0L,
+                null,
+                new int[] {0, 1, 2},
+                null);
+        // ComputerBuilding.java:116
+        add("ComputerBuilding.java:116", Gt6KtfruMachines.ELECTRONICS_DESIGNER, 16L, 21600L,
+                new ItemStack[] {own("computer_gt3699_v3", 1), own("tech_research_data43", 1), gt("logistics_mass_storage_electrum", 1), form("paneGlass", "Black", 1)},
+                new ItemStack[] {own("ram_photomask_t8", 1)},
                 new FluidStack[] {field("GenGas_HydrogenFluoride", 10)},
                 NO_FLUIDS,
                 0L,
@@ -3447,6 +3605,16 @@ public final class Gt6KtfruSourceRecipes {
                 NO_ITEMS,
                 new FluidStack[] {field("BiomassIC2", 80)},
                 new FluidStack[] {field("Reikanol", 20), field("GenLiquid_Glycerol", 20), field("Methane", 4), field("DistW", 50)});
+        // OilProcessing.java:84
+        add("OilProcessing.java:84", Gt6KtfruMachines.DISTILL, 64L, 64L,
+                NO_ITEMS,
+                new ItemStack[] {form("dustTiny", "WaxParaffin", 1), form("dustTiny", "Asphalt", 1), form("dustTiny", "PetroleumCoke", 1)},
+                new FluidStack[] {field("Oil_Soulsand", 25)},
+                new FluidStack[] {field("Diesel", 5), field("Kerosine", 5), field("Petrol", 5), field("Propane", 5), field("Butane", 5), field("Lubricant", 40)},
+                0L,
+                new int[] {1000, 1000, 1000},
+                null,
+                null);
         // OilProcessing.java:133
         add("OilProcessing.java:133", Gt6KtfruMachines.DISTILL, 256L, 40L,
                 NO_ITEMS,
@@ -3945,6 +4113,78 @@ public final class Gt6KtfruSourceRecipes {
                 new ItemStack[] {block("quantum_coherence_casing_iridium", 1)},
                 new FluidStack[] {field("DistW", 1000)},
                 NO_FLUIDS);
+        // recipePrefixItems.java:47
+        add("recipePrefixItems.java:47", Gt6KtfruMachines.CNC, 32L, 256L,
+                new ItemStack[] {circuit(1, 1), form("ingot", "Magnalium", 1)},
+                new ItemStack[] {form("bladeLargeTurbine", "Magnalium", 1), form("dust", "Magnalium", 2)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
+        // recipePrefixItems.java:47
+        add("recipePrefixItems.java:47", Gt6KtfruMachines.CNC, 32L, 10240L,
+                new ItemStack[] {circuit(1, 1), form("ingot", "Trinitanium", 1)},
+                new ItemStack[] {form("bladeLargeTurbine", "Trinitanium", 1), form("dust", "Trinitanium", 2)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
+        // recipePrefixItems.java:47
+        add("recipePrefixItems.java:47", Gt6KtfruMachines.CNC, 32L, 38400L,
+                new ItemStack[] {circuit(1, 1), form("ingot", "Vibramantium", 1)},
+                new ItemStack[] {form("bladeLargeTurbine", "Vibramantium", 1), form("dust", "Vibramantium", 2)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
+        // recipePrefixItems.java:47
+        add("recipePrefixItems.java:47", Gt6KtfruMachines.CNC, 32L, 51200L,
+                new ItemStack[] {circuit(1, 1), form("ingot", "Trinaquadalloy", 1)},
+                new ItemStack[] {form("bladeLargeTurbine", "Trinaquadalloy", 1), form("dust", "Trinaquadalloy", 2)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
+        // recipePrefixItems.java:47
+        add("recipePrefixItems.java:47", Gt6KtfruMachines.CNC, 32L, 512L,
+                new ItemStack[] {circuit(1, 1), form("ingot", "Steel", 1)},
+                new ItemStack[] {form("bladeLargeTurbine", "Steel", 1), form("dust", "Steel", 2)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
+        // recipePrefixItems.java:47
+        add("recipePrefixItems.java:47", Gt6KtfruMachines.CNC, 32L, 480L,
+                new ItemStack[] {circuit(1, 1), form("ingot", "StainlessSteel", 1)},
+                new ItemStack[] {form("bladeLargeTurbine", "StainlessSteel", 1), form("dust", "StainlessSteel", 2)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
+        // recipePrefixItems.java:47
+        add("recipePrefixItems.java:47", Gt6KtfruMachines.CNC, 32L, 3840L,
+                new ItemStack[] {circuit(1, 1), form("ingot", "Titanium", 1)},
+                new ItemStack[] {form("bladeLargeTurbine", "Titanium", 1), form("dust", "Titanium", 2)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
+        // recipePrefixItems.java:47
+        add("recipePrefixItems.java:47", Gt6KtfruMachines.CNC, 32L, 10240L,
+                new ItemStack[] {circuit(1, 1), form("ingot", "Tungstensteel", 1)},
+                new ItemStack[] {form("bladeLargeTurbine", "Tungstensteel", 1), form("dust", "Tungstensteel", 2)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
+        // recipePrefixItems.java:47
+        add("recipePrefixItems.java:47", Gt6KtfruMachines.CNC, 32L, 12800L,
+                new ItemStack[] {circuit(1, 1), form("ingot", "Adamantium", 1)},
+                new ItemStack[] {form("bladeLargeTurbine", "Adamantium", 1), form("dust", "Adamantium", 2)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
+        // recipePrefixItems.java:47
+        add("recipePrefixItems.java:47", Gt6KtfruMachines.CNC, 32L, 10240L,
+                new ItemStack[] {circuit(1, 1), form("ingot", "Iridium", 1)},
+                new ItemStack[] {form("bladeLargeTurbine", "Iridium", 1), form("dust", "Iridium", 2)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
+        // recipePrefixItems.java:47
+        add("recipePrefixItems.java:47", Gt6KtfruMachines.CNC, 32L, 2560L,
+                new ItemStack[] {circuit(1, 1), form("ingot", "OsmiumElemental", 1)},
+                new ItemStack[] {form("bladeLargeTurbine", "OsmiumElemental", 1), form("dust", "OsmiumElemental", 2)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
+        // tileEntityInit0.java:590
+        add("tileEntityInit0.java:590", Gt6KtfruMachines.CNC, 200L, 8000L,
+                new ItemStack[] {circuit(0, 1), gt("tank_wall", 1)},
+                new ItemStack[] {block("stainless_turbine_shell", 1)},
+                new FluidStack[] {field("DistW", 2000)},
+                NO_FLUIDS);
         // tileEntityInit0.java:591
         add("tileEntityInit0.java:591", Gt6KtfruMachines.CNC, 200L, 8000L,
                 new ItemStack[] {circuit(0, 1), gt("titanium_wall", 1)},
@@ -3972,6 +4212,16 @@ public final class Gt6KtfruSourceRecipes {
     }
 
     private static void fusionTokamak() {
+        // Fusion.java:34
+        add("Fusion.java:34", Gt6KtfruMachines.FUSION_TOKAMAK, 2048L, 400L,
+                new ItemStack[] {circuit(0, 1)},
+                NO_ITEMS,
+                new FluidStack[] {field("Deuterium", 1000), field("Tritium", 1000)},
+                new FluidStack[] {field("Helium", 230), field("MatterNeutral", 64864800)},
+                1048576L,
+                null,
+                null,
+                null);
         // Fusion.java:43
         add("Fusion.java:43", Gt6KtfruMachines.FUSION_TOKAMAK, 8192L, 400L,
                 NO_ITEMS,
@@ -3995,6 +4245,26 @@ public final class Gt6KtfruSourceRecipes {
     }
 
     private static void fusionTokamakExperimental() {
+        // Fusion.java:35
+        add("Fusion.java:35", Gt6KtfruMachines.FUSION_TOKAMAK_EXP, 2048L, 400L,
+                new ItemStack[] {circuit(0, 1)},
+                new ItemStack[] {own("tokamak_neutron_data", 1)},
+                new FluidStack[] {field("Deuterium", 1000), field("Tritium", 1000)},
+                new FluidStack[] {field("Helium", 230), field("MatterNeutral", 64864800)},
+                1048576L,
+                new int[] {5000},
+                null,
+                null);
+        // Fusion.java:38
+        add("Fusion.java:38", Gt6KtfruMachines.FUSION_TOKAMAK_EXP, 2048L, 400L,
+                new ItemStack[] {circuit(0, 1)},
+                new ItemStack[] {own("tokamak_plasma_data", 1)},
+                new FluidStack[] {field("Deuterium", 2000)},
+                new FluidStack[] {field("GenGas_Helium3", 10), field("MatterNeutral", 6486480)},
+                1048576L,
+                new int[] {5000},
+                null,
+                null);
         // Fusion.java:50
         add("Fusion.java:50", Gt6KtfruMachines.FUSION_TOKAMAK_EXP, 8192L, 400L,
                 NO_ITEMS,
@@ -4963,6 +5233,7 @@ public final class Gt6KtfruSourceRecipes {
             case "room_energy_port" -> "room_energy_and_status_port";
             case "quantum_coherence_casing" -> "quantum_coherence_chamber_wall";
             case "quantum_coherence_casing_iridium" -> "quantum_coherence_chamber_wall_31111";
+            case "stainless_turbine_shell" -> "turbine_shell_stainless";
             case "titanium_turbine_shell" -> "turbine_shell_titanium";
             case "tungstensteel_turbine_shell" -> "turbine_shell_tungstensteel";
             case "adamantium_turbine_shell" -> "turbine_shell_adamantium";
