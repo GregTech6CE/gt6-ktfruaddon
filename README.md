@@ -1,6 +1,8 @@
 # gt6-ktfruaddon
 
-GT6CE 的 NeoForge 1.21.1 附属，用来试现在的附属接口能接住多少。仓库名和显示名是 gt6-ktfruaddon，游戏里的模组 id 是 `gt6ktfruaddon`（模组 id 不能带连字符）。这是一条新写的探针，不是 [kuzuanpa/kTFRUAddon](https://github.com/kuzuanpa/kTFRUAddon) 1.7.10 源码的移植。项目协议是 AGPL-3.0-only，与上游相同。上游检出在仓库根的 `kTFRUAddon/`，已忽略，不进版本库。
+这是 [kuzuanpa](https://github.com/kuzuanpa) 的 [kTFRUAddon](https://github.com/kuzuanpa/kTFRUAddon) 在 GT6CE（NeoForge 1.21.1）上的适配，同时是 GT6CE 附属接口的探针：用来试现在的附属接口能接住多少。上游协议是 AGPL-3.0，本项目同样是 AGPL-3.0-only；对照的上游提交是 `6404ab69`。从上游搬过来的有配方行、物品条目、材料表、多方块布局、物品名和材料中文名、贴图；机器行为是在 GT6CE 的附属接口上写的，不是 1.7.10 源码的逐类移植。每一类的来源、数量和许可证见 [`NOTICE`](NOTICE)。
+
+仓库名和显示名是 gt6-ktfruaddon，游戏里的模组 id 是 `gt6ktfruaddon`（模组 id 不能带连字符）。上游检出在仓库根的 `kTFRUAddon/`，git 忽略，不进版本库，生成脚本从那里读数据。
 
 可移植范围在 [`docs/ktfruaddon-gt6-surface.md`](docs/ktfruaddon-gt6-surface.md)，从 CrucibleCraft 拷来。阶段卡在 [`docs/card-plans/README.md`](docs/card-plans/README.md)。表面材料卡已关。单方块配方机器在卡 02，流体燃料机在卡 03。占位氢燃烧器已撤。
 

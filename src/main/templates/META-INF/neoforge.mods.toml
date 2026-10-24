@@ -8,9 +8,9 @@ modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 displayURL="https://github.com/lombinaxmasson/gt6-ktfruaddon"
-authors="lombinaxmasson"
+authors="kuzuanpa, lombinaxmasson"
 description='''
-API probe for GT6CE. Single-block recipe machines and fluid fuel generators from the kTFRU surface. Not a class-for-class port of the 1.7.10 addon.
+Adapts kuzuanpa's kTFRUAddon (https://github.com/kuzuanpa/kTFRUAddon, AGPL-3.0) to GregTech 6 Community Edition on NeoForge 1.21.1, and probes GT6CE's addon API. Recipes, items, materials, structures and machine art come from the upstream mod; the machine behavior is written against GT6CE's addon API and is not a class-for-class port. Work in progress.
 '''
 
 [[dependencies.${mod_id}]]

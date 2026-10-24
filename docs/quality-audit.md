@@ -282,6 +282,19 @@
 
 完成标准：任何打开仓库的人，一分钟内能看出哪些内容来自哪里。
 
+**2026-10-24 进展：**
+
+- README 首段：改成"kTFRUAddon 的 GT6CE 适配，同时是附属接口的探针"，链接上游，写明协议、对照提交 `6404ab69`，列出搬过来的内容（配方行、物品条目、材料表、多方块布局、物品名和材料中文名、贴图），并指向 `NOTICE`。原来那句"不是移植"改成"机器行为不是 1.7.10 源码的逐类移植"。README 其余过期的条目（R1）留给 WP7。
+- `NOTICE`（新）：上游的作者、仓库、协议和对照提交；每一类搬来的内容在哪里、有多少、用哪个脚本进来的；没有逐项记录来源的部分；GT6CE 的协议和资源说明；原版 GregTech 6 只读一个文件。数字都核对过：689 行（`tools/README.md` 的复现记录）、504 个物品、230 个材料声明、31 个布局，上游 412 个 Java 文件里 359 个带"This class was created by <kuzuanpa>"文件头。
+- 贴图按字节哈希比对：974 个文件里，940 个与上游检出相同（其中 384 个同时与 GT6CE core 相同），28 个只与 GT6CE core 相同，6 个两边都没有。比对脚本是 `tools/texture_provenance.py`（只读），数字可以复算。
+- `neoforge.mods.toml`：`authors` 写 `kuzuanpa, lombinaxmasson`（§8 第 5 条，你定的）；描述改成如实的版本，原来还写着"单方块配方机器和流体燃料机"。生成的 toml 用 `tomllib` 解析过；`gradlew build` 通过，冒烟 79 秒通过。
+- 顺带发现：`displayURL` 和 `issueTrackerURL` 指向 `lombinaxmasson/gt6-ktfruaddon`，GitHub 重定向到 `GregTech6CE/gt6-ktfruaddon`（仓库已转移），能用，没改。GitHub 上仓库的简介还写着"a silicon crystal puller and a hydrogen burner"，是过期的；改它是公开动作，等你定。
+
+没做的：
+
+- 生成文件头写来源（M9 的最后一项），在 WP5。
+- `NOTICE` 不随 jar 发布，jar 里只有 AGPL 全文；要不要放进去，等你定。
+
 ### WP2 安全网：契约测试和登记表推导的自检（M）
 
 依赖：WP0（要有 SDK jar 才能编译测试）。
@@ -433,7 +446,7 @@ com.lombinaxmasson.gt6ktfruaddon
 | 2 | 分包后是否去掉 `Gt6Ktfru` 前缀 | 去掉；保留 | 去掉：包名已经承担命名空间；单独一个提交，历史卡片里的文件名不改 | 待定 |
 | 3 | 689 行配方继续放 Java，还是改成数据文件 | 保持；数据化 | 先保持，WP5 评估后再定，不阻塞最低线 | 待定 |
 | 4 | 失败策略 | 一律抛；一律跳过；开关 | 开关：开发和 CI 严格，发行版记录并跳过 | 待定 |
-| 5 | 署名措辞；`authors` 要不要写上游作者；展示前要不要让上游作者看 §6 | — | README 和 `NOTICE` 先到位；`authors` 等她的意见；§6 清单在 WP8 时给她看 | 待定 |
+| 5 | 署名措辞；`authors` 要不要写上游作者；展示前要不要让上游作者看 §6 | — | README 和 `NOTICE` 先到位；`authors` 等她的意见；§6 清单在 WP8 时给她看 | `authors` 已定（2026-10-24）：写 kuzuanpa；README 和 `NOTICE` 已按这个写好；§6 给不给她看留到 WP8 |
 | 6 | 实施卡位："同时只开一张实施卡"，卡 23 还是 `active` | 先关卡 23；整改独立于卡 | 整改独立于卡：它不是表面条目的移植，不占卡位；卡 23 的两项玩法验收记入"未验收清单" | 待定 |
 | 7 | 这份文档是否进版本库；仓库若公开，要不要等首批修复落地后再提交 | — | 你定 | 待定 |
 | 8 | GT6CE 构建用的 JDK | 装 Temurin 17；验证 21 能否单独构建 NeoForge 节点 | 已定（2026-10-24）：GT6CE `core` 要求 17 工具链，21 单独不够；脚本会找已有的 17，缺时加 `-AutoDownloadJdk` | 已定 |
@@ -443,7 +456,7 @@ com.lombinaxmasson.gt6ktfruaddon
 ## 9. 进度跟踪
 
 - [x] WP0 本地可构建、可复现（B2、B5；G2 的路径部分）。2026-10-24 做完；全新克隆和 `-AutoDownloadJdk` 还没验证
-- [ ] WP1 署名与定位（R4）
+- [x] WP1 署名与定位（R4）。2026-10-24 做完：README 首段、`NOTICE`、`mods.toml` 的作者和描述；剩生成文件头写来源（WP5）、README 其余过期的条目（WP7）
 - [ ] WP2 契约测试与自检（B1、B3、S8；S2 的自检部分）。2026-10-24 做了测试、自检推导和冒烟脚本；剩文件头检查（等 WP5）、失败策略开关、CI 里的冒烟
 - [ ] WP3 包结构与登记表（S1、S2、S3、S7）
 - [ ] WP4 行为层公共件与生命周期（S4、D1、D2、D3、D5）
