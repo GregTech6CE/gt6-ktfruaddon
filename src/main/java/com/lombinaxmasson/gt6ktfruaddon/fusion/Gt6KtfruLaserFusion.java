@@ -1,4 +1,4 @@
-package com.lombinaxmasson.gt6ktfruaddon;
+package com.lombinaxmasson.gt6ktfruaddon.fusion;
 
 import java.util.List;
 
