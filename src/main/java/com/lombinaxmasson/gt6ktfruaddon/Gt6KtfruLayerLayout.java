@@ -19,6 +19,12 @@ public final class Gt6KtfruLayerLayout {
 
     public static StructureLayout build(String name, int offsetX, int offsetY, int offsetZ,
             String[][] layers, Spec... specs) {
+        return builder(name, offsetX, offsetY, offsetZ, layers, specs).build();
+    }
+
+    /** The cells of {@code layers} in a builder that is not built yet, for a layout that adds more to it. */
+    public static StructureLayout.Builder builder(String name, int offsetX, int offsetY, int offsetZ,
+            String[][] layers, Spec... specs) {
         Map<Character, Spec> roles = new HashMap<>();
         for (Spec spec : specs) roles.put(spec.mark(), spec);
         var layout = StructureLayout.builder(name);
@@ -41,7 +47,7 @@ public final class Gt6KtfruLayerLayout {
                 }
             }
         }
-        return layout.build();
+        return layout;
     }
 
     public static Spec part(char mark, String name, StructureRole role) {
