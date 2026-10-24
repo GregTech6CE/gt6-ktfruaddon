@@ -47,7 +47,6 @@ public final class Gt6KtfruLateMachines implements Feature {
     @Override
     public List<RecipeTable> recipeTables() {
         List<RecipeTable> maps = new ArrayList<>();
-        maps.add(RecipeMaps.table(RecipeMaps.CATALYTIC_REACTOR, "Catalytic Reactor", "mixer", 6, 3, 0, 6, 3, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.MIRROR_GOLD_SYNTHESIS, "Mirror Gold Synthesis", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.MIRROR_GOLD_QUANTUMIZATION, "Mirror Gold Quantumization", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.COSMIC_RADIATION, "Cosmic Radiation Research", "gascompressor", 1, 3, 0, 0, 0, 0, 1));
@@ -61,8 +60,6 @@ public final class Gt6KtfruLateMachines implements Feature {
     @Override
     public List<AddonMachine> machines() {
         List<AddonMachine> machines = new ArrayList<>();
-        machines.add(catalytic("catalytic_reactor_ev", "StainlessSteel", 2048, 256, 4096));
-        machines.add(catalytic("catalytic_reactor_iv", "Tungstensteel", 8192, 1024, 16384));
         machines.add(basic("mirror_gold_synthesis", "Iridium", 8192, 8192, 8192, RecipeMaps.MIRROR_GOLD_SYNTHESIS, true));
         machines.add(basic("mirror_gold_quantumization", "Naquadria", 16384, 16384, 16384, RecipeMaps.MIRROR_GOLD_QUANTUMIZATION, true));
         machines.add(basic("cosmic_radiation_chamber", "Tungstensteel", 8192, 2048, 16384, RecipeMaps.COSMIC_RADIATION, false));
@@ -141,16 +138,6 @@ public final class Gt6KtfruLateMachines implements Feature {
                 .item(44, 26, BehaviorMachine.SlotRole.INPUT)
                 .item(112, 26, BehaviorMachine.SlotRole.OUTPUT)
                 .recipeMaps(RecipeMaps.QUANTUM_COMMUNICATION)
-                .build();
-    }
-
-    private static RecipeMachine catalytic(String id, String material, long eu, long min, long max) {
-        return RecipeMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
-                .recipeMap(RecipeMaps.CATALYTIC_REACTOR)
-                .largeRecipe()
-                .cheapOverclocking(true)
-                .energy(EnergyInput.builder("EU", eu).range(min, max).faces().build())
-                .structureKeys(List.of("gt6ktfruaddon.structure." + id + ".1"))
                 .build();
     }
 
