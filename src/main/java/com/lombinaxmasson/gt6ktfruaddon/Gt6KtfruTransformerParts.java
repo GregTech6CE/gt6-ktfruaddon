@@ -35,6 +35,22 @@ public final class Gt6KtfruTransformerParts implements Feature {
             .add(LIGHT_TRANSFORMER_LARGE, () -> new Gt6KtfruTransformerPart(16))
             .build();
 
+    private static final List<Tier> TIERS = List.of(
+            new Tier(1, "SteelGalvanized", "lv", "t1"),
+            new Tier(2, "Aluminium", "mv", "t2"),
+            new Tier(3, "StainlessSteel", "hv", "t3"),
+            new Tier(4, "Chromium", "ev", "t4"),
+            new Tier(5, "Titanium", "iv", "t5"),
+            new Tier(6, "Iridium", "luv", "t6"));
+
+    private static final List<Kind> KINDS = List.of(
+            new Kind(TRANSFORMER_SMALL, "EU", 4, false),
+            new Kind(TRANSFORMER_LARGE, "EU", 16, false),
+            new Kind(FLYWHEEL_GEAR_SMALL, "RU", 4, true),
+            new Kind(FLYWHEEL_GEAR_LARGE, "RU", 16, true),
+            new Kind(LIGHT_TRANSFORMER_SMALL, "LU", 4, false),
+            new Kind(LIGHT_TRANSFORMER_LARGE, "LU", 16, false));
+
     @Override
     public List<AddonMachine> machines() {
         List<AddonMachine> machines = new ArrayList<>();
@@ -52,28 +68,11 @@ public final class Gt6KtfruTransformerParts implements Feature {
      * holds ampere packets and the front emits that packet size.
      */
     private static void transformerParts(List<AddonMachine> machines) {
-        String[] material = {
-                "SteelGalvanized", "Aluminium", "StainlessSteel", "Chromium", "Titanium", "Iridium"
-        };
-        String[] electric = {"lv", "mv", "hv", "ev", "iv", "luv"};
-        String[] gear = {"t1", "t2", "t3", "t4", "t5", "t6"};
-        String[] type = {
-                TRANSFORMER_SMALL, TRANSFORMER_LARGE,
-                FLYWHEEL_GEAR_SMALL, FLYWHEEL_GEAR_LARGE,
-                LIGHT_TRANSFORMER_SMALL, LIGHT_TRANSFORMER_LARGE
-        };
-        String[] id = {
-                "transformer_small", "transformer_large",
-                "flywheel_gear_small", "flywheel_gear_large",
-                "light_transformer_small", "light_transformer_large"
-        };
-        String[] energy = {"EU", "EU", "RU", "RU", "LU", "LU"};
-        int[] ampere = {4, 16, 4, 16, 4, 16};
-        for (int kind = 0; kind < type.length; kind++) {
-            String[] suffix = "RU".equals(energy[kind]) ? gear : electric;
-            for (int tier = 0; tier < material.length; tier++) {
-                machines.add(transformerPart(id[kind] + "_" + suffix[tier], material[tier],
-                        type[kind], tier + 1, energy[kind], ampere[kind]));
+        for (Kind kind : KINDS) {
+            for (Tier tier : TIERS) {
+                String suffix = kind.gear() ? tier.gear() : tier.electric();
+                machines.add(transformerPart(kind.type() + "_" + suffix, tier.material(), kind.type(), tier.number(),
+                        kind.energy(), kind.ampere()));
             }
         }
     }
@@ -89,4 +88,10 @@ public final class Gt6KtfruTransformerParts implements Feature {
                 .toggle("gt6ktfruaddon.transformer.stopped", 152, 8, false)
                 .build();
     }
+
+    /** One tier: its number, its material, and the id suffix of the electric parts and of the flywheel gears. */
+    private record Tier(int number, String material, String electric, String gear) {}
+
+    /** The type of a part, its energy type and ampere, and whether its ids end in a gear tier, not a voltage. */
+    private record Kind(String type, String energy, int ampere, boolean gear) {}
 }
