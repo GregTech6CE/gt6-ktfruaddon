@@ -1065,5 +1065,7 @@
   "item.gt6ktfruaddon.tech_research_data69": "研究数据-商用激光聚变",
   "item.gt6ktfruaddon.tech_research_data70": "研究数据-感应无线输电",
   "item.gt6ktfruaddon.tech_research_data71": "研究数据-量子无线输电",
-  "item.gt6ktfruaddon.intelligent_core": "Intelligent Core"
+  "item.gt6ktfruaddon.intelligent_core": "Intelligent Core",
+  "gt6ktfruaddon.structure.quantum_gold_chamber.1": "3×3×3。控制器在底层的空位上。EU 65536。",
+  "gt6ktfruaddon.structure.quantum_observation_tower.1": "3×3×5。控制器在中间一层。EU 16384。"
 }

@@ -1065,5 +1065,7 @@
   "item.gt6ktfruaddon.tech_research_data69": "Tech Research Data69",
   "item.gt6ktfruaddon.tech_research_data70": "Tech Research Data70",
   "item.gt6ktfruaddon.tech_research_data71": "Tech Research Data71",
-  "item.gt6ktfruaddon.intelligent_core": "Intelligent Core"
+  "item.gt6ktfruaddon.intelligent_core": "Intelligent Core",
+  "gt6ktfruaddon.structure.quantum_gold_chamber.1": "3x3x3. Controller in the blank spot of the bottom layer. EU 65536.",
+  "gt6ktfruaddon.structure.quantum_observation_tower.1": "3x3x5. Controller in the middle layer. EU 16384."
 }
