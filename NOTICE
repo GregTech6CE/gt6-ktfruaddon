@@ -1,0 +1,57 @@
+gt6-ktfruaddon
+SPDX-License-Identifier: AGPL-3.0-only
+
+这个项目是 kuzuanpa 的 kTFRUAddon 在 GT6CE（NeoForge 1.21.1）上的适配，同时是 GT6CE 附属接口的探针。
+下面写明哪些内容来自哪里。这份文件不是法律意见，各许可证的具体义务请自行核实。
+
+本项目：lombinaxmasson 和贡献者。协议 AGPL-3.0-only，全文见 LICENSE，随 jar 发布的副本在
+META-INF/licenses/AGPL-3.0.txt。
+
+上游：kTFRUAddon
+  作者：kuzuanpa
+  仓库：https://github.com/kuzuanpa/kTFRUAddon
+  协议：AGPL-3.0（上游 LICENSE.txt）。上游 412 个 Java 文件里有 359 个带这样的文件头：
+        "This class was created by <kuzuanpa>. It is distributed as part of the kTFRUAddon Mod."
+        并写明按 AGPLv3 发布。
+  对照提交：6404ab6979de9fce832ce0c41171000decf00e69
+            ("rename pure dusts; unify burn&fuel output to exhaust gas")
+
+从上游进来的内容，以及它们怎么进来的（脚本在 tools/，输入位置见 tools/README.md）：
+
+  配方行      Gt6KtfruSourceRecipes。上游 recipe/recipe/ 里的配方代码，按 29 张配方图归类，解析出 689 行；
+              输入输出都能对到 GT6CE 物品和流体的写进这个文件，其余记在跳过账本里。
+              tools/extract_machine_recipes.py
+  物品        Gt6KtfruItems、物品模型、语言名。上游 api/item/ItemList.java 里的普通物品，504 个，不含
+              集成类物品；显示名取自 addItem 的标签。
+              tools/gen_card22_items.py
+  材料        Gt6KtfruMaterials，230 个声明。大部分由脚本从上游 api/material/materialPreInit.java 生成，
+              中文名取自上游 zh_CN.lang；生成之后手改过，所以不再由脚本重新生成。
+              tools/gen_materials.py
+  多方块布局  Gt6KtfruGeneratedLayouts，31 个布局，每个的注释写着上游类和偏移。
+              tools/gen_card20_layouts.py
+  贴图        assets/gt6ktfruaddon/textures/ 下的 974 个文件（含 .mcmeta）：940 个与上游检出里的文件
+              逐字节相同，其中 384 个同时也与 GT6CE core 里的文件相同；28 个只与 GT6CE core 里的文件
+              相同；6 个两边都找不到（wafertester 的两张覆盖层，gascompressor 和 gastank 的界面图），
+              来源没有记录。
+              tools/port_block_textures.py、tools/gen_card22_items.py；数字由
+              tools/texture_provenance.py 复算。
+  语言        物品名和材料的中文名见上。其余机器名、零件名是移植时手写的（一部分写在
+              tools/gen_card20_assets.py 里），没有逐条核对是否与上游一致。
+
+没有逐项记录来源的部分：
+
+  机器行为类（动能、气体电池、研究、算力、聚变等）是在 GT6CE 的附属接口上写的，不是上游代码的逐类
+  移植；其中的数值表和常量有可能直接取自上游，没有逐处标记。上面没有列出的手写布局类同样没有逐项
+  记录。上游资源里哪些是 kuzuanpa 自己画的，哪些来自 GregTech 6 的默认资源，也没有核对。
+
+GT6CE
+  仓库：https://github.com/GregTech6CE/GregTech6，固定提交 1d1f69fbb267ad31548b1fcb1ec1168435b67bf3
+  协议：代码 LGPL-3.0-or-later。它的 NOTICE 写着：GT6 默认资源是 CC0-1.0（另有说明的除外），
+        GregTech 标志及衍生物是 CC-BY-NC-4.0。
+  编译只用 GT6CE 的加载器 SDK jar，开发运行用它的运行包 jar；两个 jar 都不进本仓库，也不打进成品。
+  上面贴图里与 GT6CE core 相同的文件来自这个固定提交；逐文件的许可证以 GT6CE 的记录为准，没有逐个
+  核对。
+
+原版 GregTech 6（1.7.10）
+  源码只在运行 tools/extract_machine_recipes.py 时读一个文件（Loader_MultiTileEntities.java），
+  用来把配方里电线、电缆的数字 id 对到 GT6CE 的名字；没有拷贝它的代码。

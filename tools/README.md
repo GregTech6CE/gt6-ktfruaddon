@@ -24,7 +24,7 @@ GT6CE 构建脚本和代码、资源生成脚本。生成脚本只通过 [`paths
 | 输入 | 环境变量 | 默认位置 | 需要它的脚本 |
 | --- | --- | --- | --- |
 | kTFRUAddon 检出，停在 `6404ab69` | `KTFRU_UPSTREAM` | `<仓库>/kTFRUAddon`（git 忽略） | 除 `gen_card20_assets.py` 外的全部 |
-| GT6CE 源码，停在 `build-commit.txt` 的提交 | `GT6CE_SOURCE` | `<仓库>/.gt6ce-src` | `extract_machine_recipes.py`、`gen_materials.py`、`port_block_textures.py` |
+| GT6CE 源码，停在 `build-commit.txt` 的提交 | `GT6CE_SOURCE` | `<仓库>/.gt6ce-src` | `extract_machine_recipes.py`、`gen_materials.py`、`port_block_textures.py`、`texture_provenance.py` |
 | 原版 GregTech 6（1.7.10）源码的本地副本 | `GT6_REF` | `<仓库上级>/gt6_source_code`，没有再找 `<GT6CE_SOURCE>/work/gt6-ref` | `extract_machine_recipes.py` |
 | GT6CE 运行包 jar | 无 | `libs/gt6ce/gt6ce-1.21.1-neoforge.jar` | `extract_machine_recipes.py` |
 
@@ -50,6 +50,10 @@ git -C kTFRUAddon checkout 6404ab6979de9fce832ce0c41171000decf00e69
 5. `gen_card20_layouts.py` 会扫描 `src/main/java` 里已有的零件声明（跳过 `Gt6KtfruGeneratedLayouts.java` 本身），避免重复声明。
 
 产物都写进 `src/main/`；`extract_machine_recipes.py` 另外把跳过账本写到 `build/source-recipe-report.txt`。
+
+## 来源核对
+
+`texture_provenance.py` 只读：按字节哈希，把 `assets/gt6ktfruaddon/textures/` 里的文件和 kTFRUAddon 检出、GT6CE core 的资源比对，按目录打印有多少文件与哪一边相同，以及哪些两边都找不到。`NOTICE` 里贴图那一行的数字出自这里（2026-10-24：974 个文件，940 个在上游，其中 384 个同时在 GT6CE core，28 个只在 GT6CE core，6 个两边都没有）。
 
 ## 复现性核对（2026-10-24）
 
