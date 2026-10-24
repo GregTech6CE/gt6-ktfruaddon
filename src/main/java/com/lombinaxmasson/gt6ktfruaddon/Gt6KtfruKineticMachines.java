@@ -50,6 +50,29 @@ public final class Gt6KtfruKineticMachines implements Feature {
             .add(LARGE_VACUUM_FLYWHEEL, () -> new Gt6KtfruFlywheel(16, 0.00012))
             .build();
 
+    private static final Tier WOOD = new Tier(1, "wood", "Wood", 8);
+    private static final Tier BRONZE = new Tier(2, "bronze", "Bronze", 32);
+    private static final Tier STEEL = new Tier(3, "steel", "Steel", 128);
+    private static final Tier TITANIUM = new Tier(4, "titanium", "Titanium", 512);
+    private static final Tier TUNGSTENSTEEL = new Tier(5, "tungstensteel", "Tungstensteel", 2048);
+    private static final Tier ADAMANTIUM = new Tier(6, "adamantium", "Adamantium", 8192);
+    private static final List<Tier> TIERS = List.of(WOOD, BRONZE, STEEL, TITANIUM, TUNGSTENSTEEL, ADAMANTIUM);
+
+    /** Source 21010 to 21013: wood takes 64 and bronze 32, then 128 and 512. Those are the source's numbers. */
+    private static final List<Hopper> HOPPERS = List.of(
+            new Hopper(WOOD, 64, 4),
+            new Hopper(BRONZE, 32, 8),
+            new Hopper(STEEL, 128, 16),
+            new Hopper(TITANIUM, 512, 24));
+
+    private static final List<FlywheelKind> FLYWHEELS = List.of(
+            new FlywheelKind(FLYWHEEL, 1, 4),
+            new FlywheelKind(LARGE_FLYWHEEL, 4, 16),
+            new FlywheelKind(ELECTRIC_FLYWHEEL, 1, 4),
+            new FlywheelKind(LARGE_ELECTRIC_FLYWHEEL, 4, 16),
+            new FlywheelKind(VACUUM_FLYWHEEL, 1, 4),
+            new FlywheelKind(LARGE_VACUUM_FLYWHEEL, 4, 16));
+
     @Override
     public List<AddonMachine> machines() {
         List<AddonMachine> machines = new ArrayList<>();
@@ -67,13 +90,10 @@ public final class Gt6KtfruKineticMachines implements Feature {
      * 15000–15055. Tier on a shared machine type selects the row.
      */
     private static void kineticBehaviors(List<AddonMachine> machines) {
-        String[] kinetic = {"Wood", "Bronze", "Steel", "Titanium", "Tungstensteel", "Adamantium"};
-        String[] kineticId = {"wood", "bronze", "steel", "titanium", "tungstensteel", "adamantium"};
-        int[] hopperInput = {64, 32, 128, 512};
-        int[] hopperRange = {4, 8, 16, 24};
-        for (int i = 0; i < 4; i++) {
-            machines.add(voidHopper("void_hopper_" + kineticId[i], kinetic[i], i + 1,
-                    hopperInput[i], hopperRange[i]));
+        for (Hopper hopper : HOPPERS) {
+            Tier tier = hopper.tier();
+            machines.add(voidHopper("void_hopper_" + tier.id(), tier.material(), tier.number(),
+                    hopper.input(), hopper.range()));
         }
         machines.add(miner("miner_tin_alloy", "TinAlloy", 1, "RF", 128));
         machines.add(miner("miner_lv", "SteelGalvanized", 2, "EU", 32));
@@ -84,21 +104,10 @@ public final class Gt6KtfruKineticMachines implements Feature {
         machines.add(manualMotor("manual_motor_bronze", "Bronze", 2, "RU", 22));
         machines.add(manualMotor("manual_kinetic_motor_wood", "WoodTreated", 3, "KU", 8));
         machines.add(manualMotor("manual_kinetic_motor_bronze", "Bronze", 4, "KU", 16));
-        long[] vmax = {8, 32, 128, 512, 2048, 8192};
-        String[] kind = {
-                FLYWHEEL, LARGE_FLYWHEEL, ELECTRIC_FLYWHEEL,
-                LARGE_ELECTRIC_FLYWHEEL, VACUUM_FLYWHEEL, LARGE_VACUUM_FLYWHEEL
-        };
-        String[] kindId = {
-                "flywheel", "large_flywheel", "electric_flywheel",
-                "large_electric_flywheel", "vacuum_flywheel", "large_vacuum_flywheel"
-        };
-        int[] slots = {1, 4, 1, 4, 1, 4};
-        int[] ampere = {4, 16, 4, 16, 4, 16};
-        for (int kindIndex = 0; kindIndex < kind.length; kindIndex++) {
-            for (int material = 0; material < kinetic.length; material++) {
-                machines.add(flywheel(kindId[kindIndex] + "_" + kineticId[material], kinetic[material],
-                        kind[kindIndex], material + 1, vmax[material], slots[kindIndex], ampere[kindIndex]));
+        for (FlywheelKind kind : FLYWHEELS) {
+            for (Tier tier : TIERS) {
+                machines.add(flywheel(kind.type() + "_" + tier.id(), tier.material(), kind.type(), tier.number(),
+                        tier.vmax(), kind.slots(), kind.ampere()));
             }
         }
     }
@@ -172,4 +181,13 @@ public final class Gt6KtfruKineticMachines implements Feature {
         }
         return builder.build();
     }
+
+    /** One tier of the kinetic ladder: its number, the suffix of its ids, its material and the packet a flywheel takes. */
+    private record Tier(int number, String id, String material, long vmax) {}
+
+    /** The tier a void hopper comes in, what it takes in per tick and how far it reaches. */
+    private record Hopper(Tier tier, long input, int range) {}
+
+    /** The type of a flywheel, how many items it holds and how many amperes it passes. */
+    private record FlywheelKind(String type, int slots, int ampere) {}
 }
