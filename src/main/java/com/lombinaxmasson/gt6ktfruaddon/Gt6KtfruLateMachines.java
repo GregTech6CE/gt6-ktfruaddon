@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.BehaviorMachine;
 import com.gregtech.gregtech.api.addon.EnergyInput;
-import com.gregtech.gregtech.api.addon.EnergyOutput;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.MachineIo;
@@ -22,13 +21,11 @@ import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 /**
  * Late recipe machines and the addon-side subsystem behavior machines:
  * - Microgravity room (30102), crystal growth (30103) and microgravity assembler (30105): room index check.
- * - Quantum communication relay (30074): paired EU-to-QU recipe runner emitting 128 QU/tick from the top face.
  * - AI research centers (30106–30108): 67,108,864 Normal compute/tick allocation and monitor point progress.
  */
 public final class Gt6KtfruLateMachines implements Feature {
     static final String MICROGRAVITY_ASSEMBLER = "microgravity_assembler";
     static final String MICROGRAVITY_CRYSTAL = "microgravity_crystal_growth";
-    static final String QUANTUM_RELAY = "quantum_communication_relay";
     static final String ROOM = "centrifugal_microgravity";
     static final String FLOW = "ai_flow_control";
     static final String FILL = "ai_fill_planning";
@@ -37,7 +34,6 @@ public final class Gt6KtfruLateMachines implements Feature {
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
             .add(MICROGRAVITY_ASSEMBLER, () -> new Gt6KtfruRooms(RecipeMaps.COSMIC_RADIATION, false, 0))
             .add(MICROGRAVITY_CRYSTAL, () -> new Gt6KtfruRooms(RecipeMaps.MICROGRAVITY_CRYSTAL, true, 2))
-            .add(QUANTUM_RELAY, Gt6KtfruQuantumRelay::new)
             .add(ROOM, () -> new Gt6KtfruLateBehavior(true, 0))
             .add(FLOW, () -> new Gt6KtfruLateBehavior(false, 8))
             .add(FILL, () -> new Gt6KtfruLateBehavior(false, 4))
@@ -47,27 +43,17 @@ public final class Gt6KtfruLateMachines implements Feature {
     @Override
     public List<RecipeTable> recipeTables() {
         List<RecipeTable> maps = new ArrayList<>();
-        maps.add(RecipeMaps.table(RecipeMaps.MIRROR_GOLD_SYNTHESIS, "Mirror Gold Synthesis", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
-        maps.add(RecipeMaps.table(RecipeMaps.MIRROR_GOLD_QUANTUMIZATION, "Mirror Gold Quantumization", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.COSMIC_RADIATION, "Cosmic Radiation Research", "gascompressor", 1, 3, 0, 0, 0, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.MICROGRAVITY_CRYSTAL, "Microgravity Crystal Growth", "heatmixer", 1, 1, 0, 2, 0, 0, 1));
-        maps.add(RecipeMaps.table(RecipeMaps.QUANTUM_GOLD, "Quantum Gold Synthesis", "gascompressor", 4, 4, 0, 2, 2, 0, 1));
-        maps.add(RecipeMaps.table(RecipeMaps.QUANTUM_OBSERVATION, "Quantum Observation", "gascompressor", 4, 4, 0, 2, 2, 0, 1));
-        maps.add(RecipeMaps.table(RecipeMaps.QUANTUM_COMMUNICATION, "Quantum Communication", "gascompressor", 1, 1, 0, 0, 0, 0, 1));
         return List.copyOf(maps);
     }
 
     @Override
     public List<AddonMachine> machines() {
         List<AddonMachine> machines = new ArrayList<>();
-        machines.add(basic("mirror_gold_synthesis", "Iridium", 8192, 8192, 8192, RecipeMaps.MIRROR_GOLD_SYNTHESIS, true));
-        machines.add(basic("mirror_gold_quantumization", "Naquadria", 16384, 16384, 16384, RecipeMaps.MIRROR_GOLD_QUANTUMIZATION, true));
         machines.add(basic("cosmic_radiation_chamber", "Tungstensteel", 8192, 2048, 16384, RecipeMaps.COSMIC_RADIATION, false));
         machines.add(microgravityAssembler());
-        machines.add(large("quantum_gold_chamber", "Naquadria", 65536, 65536, 65536, RecipeMaps.QUANTUM_GOLD));
-        machines.add(large("quantum_observation_tower", "Trinaquadalloy", 16384, 16384, 16384, RecipeMaps.QUANTUM_OBSERVATION));
         machines.add(microgravityCrystal());
-        machines.add(quantumRelay());
         machines.add(room());
         machines.add(ai(FLOW));
         machines.add(ai(FILL));
@@ -115,40 +101,6 @@ public final class Gt6KtfruLateMachines implements Feature {
                 .fluid(64_000, 48, 8, BehaviorMachine.SlotRole.INPUT)
                 .fluid(64_000, 68, 8, BehaviorMachine.SlotRole.INPUT)
                 .recipeMaps(RecipeMaps.MICROGRAVITY_CRYSTAL)
-                .build();
-    }
-
-    private static BehaviorMachine quantumRelay() {
-        return BehaviorMachine.builder(MachineCasing.builder(QUANTUM_RELAY, "Iridium")
-                        .machineType(QUANTUM_RELAY).build())
-                .energy(EnergyInput.builder("QU", Gt6KtfruQuantumRelay.QU_PER_TICK)
-                        .faces(MachineFace.BOTTOM)
-                        .capacity(Gt6KtfruQuantumRelay.ENERGY_CAPACITY)
-                        .build())
-                .auxiliaryEnergy(EnergyInput.builder("EU", 8192)
-                        .range(2048, 32768)
-                        .faces(MachineFace.BACK, MachineFace.LEFT, MachineFace.RIGHT)
-                        .capacity(Gt6KtfruQuantumRelay.ENERGY_CAPACITY)
-                        .build())
-                .energyOutput(EnergyOutput.builder("QU", Gt6KtfruQuantumRelay.QU_PER_TICK, 1)
-                        .faces(MachineFace.TOP)
-                        .build())
-                .gui(Ktfru.PLACEHOLDER_GUI)
-                .progress(76, 26)
-                .item(44, 26, BehaviorMachine.SlotRole.INPUT)
-                .item(112, 26, BehaviorMachine.SlotRole.OUTPUT)
-                .recipeMaps(RecipeMaps.QUANTUM_COMMUNICATION)
-                .build();
-    }
-
-    private static RecipeMachine large(String id, String material, long eu, long min, long max, String map) {
-        var energy = EnergyInput.builder("EU", eu);
-        if (min != max) energy.range(min, max);
-        return RecipeMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
-                .recipeMap(map)
-                .largeRecipe()
-                .energy(energy.faces().build())
-                .structureKeys(List.of("gt6ktfruaddon.structure." + id + ".1"))
                 .build();
     }
 

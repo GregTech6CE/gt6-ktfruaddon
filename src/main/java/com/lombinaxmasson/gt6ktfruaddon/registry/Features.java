@@ -31,6 +31,7 @@ import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruHeatMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruKineticMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruLateMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruOreProcessing;
+import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruQuantumMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruResearchMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruSemiconductorMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruSingleBlockMachines;
@@ -84,6 +85,7 @@ public final class Features {
                     new Gt6KtfruWirelessMachines(),
                     new Gt6KtfruFusionMachines(),
                     new Gt6KtfruCatalyticMachines(),
+                    new Gt6KtfruQuantumMachines(),
                     new Gt6KtfruLateMachines(),
                     new Gt6KtfruCrucibleMachines(),
                     new Gt6KtfruGeneratedStructures()));
