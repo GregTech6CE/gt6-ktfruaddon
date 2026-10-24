@@ -2,14 +2,10 @@ package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
-import com.gregtech.gregtech.api.addon.BehaviorMachine;
 import com.gregtech.gregtech.api.addon.CellMatch;
 import com.gregtech.gregtech.api.addon.EnergyInput;
-import com.gregtech.gregtech.api.addon.EnergyOutput;
 import com.gregtech.gregtech.api.addon.FuelGenerator;
 import com.gregtech.gregtech.api.addon.FuelOutput;
 import com.gregtech.gregtech.api.addon.LayoutPart;
@@ -20,8 +16,6 @@ import com.gregtech.gregtech.api.addon.RecipeMachine;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.StructureRole;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
-import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
 import com.lombinaxmasson.gt6ktfruaddon.core.layout.Parts;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
@@ -54,21 +48,6 @@ public final class Gt6KtfruBaseMachines implements Feature {
     public static final String MASK_ALIGNER_DUV = "mask_aligner_duv";
     public static final String MASK_ALIGNER_EUV = "mask_aligner_euv";
     public static final String CNC_MACHINE = "cnc_machine";
-    public static final String TRANSFORMER_SMALL = "transformer_small";
-    public static final String TRANSFORMER_LARGE = "transformer_large";
-    public static final String FLYWHEEL_GEAR_SMALL = "flywheel_gear_small";
-    public static final String FLYWHEEL_GEAR_LARGE = "flywheel_gear_large";
-    public static final String LIGHT_TRANSFORMER_SMALL = "light_transformer_small";
-    public static final String LIGHT_TRANSFORMER_LARGE = "light_transformer_large";
-
-    private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
-            .add(TRANSFORMER_SMALL, () -> new Gt6KtfruTransformerPart(4))
-            .add(TRANSFORMER_LARGE, () -> new Gt6KtfruTransformerPart(16))
-            .add(FLYWHEEL_GEAR_SMALL, () -> new Gt6KtfruTransformerPart(4))
-            .add(FLYWHEEL_GEAR_LARGE, () -> new Gt6KtfruTransformerPart(16))
-            .add(LIGHT_TRANSFORMER_SMALL, () -> new Gt6KtfruTransformerPart(4))
-            .add(LIGHT_TRANSFORMER_LARGE, () -> new Gt6KtfruTransformerPart(16))
-            .build();
 
     @Override
     public List<RecipeTable> recipeTables() {
@@ -84,7 +63,6 @@ public final class Gt6KtfruBaseMachines implements Feature {
     @Override
     public List<AddonMachine> machines() {
         List<AddonMachine> machines = new ArrayList<>();
-        transformerParts(machines);
         machines.add(maskAligner(MASK_ALIGNER_UV, "Aluminium", 2, 128, 64, 256,
                 MachineFace.TOP, MachineFace.BACK, null, false));
         machines.add(maskAligner(MASK_ALIGNER_UV_PLUS, "StainlessSteel", 3, 512, 256, 1024,
@@ -154,11 +132,6 @@ public final class Gt6KtfruBaseMachines implements Feature {
                 Parts.casing("mask_aligner_io_uv_plus", "StainlessSteel", 6.0F),
                 energyModule("mask_aligner_energy_uv", "Aluminium", 192, 64, 256),
                 energyModule("mask_aligner_energy_uv_plus", "StainlessSteel", 768, 256, 1024));
-    }
-
-    @Override
-    public Map<String, Supplier<MachineBehavior>> behaviors() {
-        return BEHAVIORS;
     }
 
     private static void gas(List<AddonMachine> out, String suffix, String material, long perTick) {
@@ -346,49 +319,6 @@ public final class Gt6KtfruBaseMachines implements Feature {
                 .energyInput(EnergyInput.builder("EU", nominal).range(min, max)
                         .capacity(max).faces(MachineFace.all()).build())
                 .condition(nominal)
-                .build();
-    }
-
-    /**
-     * Source 10200–10255. The back stands in for the inside face. The buffer
-     * holds ampere packets and the front emits that packet size.
-     */
-    private static void transformerParts(List<AddonMachine> machines) {
-        String[] material = {
-                "SteelGalvanized", "Aluminium", "StainlessSteel", "Chromium", "Titanium", "Iridium"
-        };
-        String[] electric = {"lv", "mv", "hv", "ev", "iv", "luv"};
-        String[] gear = {"t1", "t2", "t3", "t4", "t5", "t6"};
-        String[] type = {
-                TRANSFORMER_SMALL, TRANSFORMER_LARGE,
-                FLYWHEEL_GEAR_SMALL, FLYWHEEL_GEAR_LARGE,
-                LIGHT_TRANSFORMER_SMALL, LIGHT_TRANSFORMER_LARGE
-        };
-        String[] id = {
-                "transformer_small", "transformer_large",
-                "flywheel_gear_small", "flywheel_gear_large",
-                "light_transformer_small", "light_transformer_large"
-        };
-        String[] energy = {"EU", "EU", "RU", "RU", "LU", "LU"};
-        int[] ampere = {4, 16, 4, 16, 4, 16};
-        for (int kind = 0; kind < type.length; kind++) {
-            String[] suffix = "RU".equals(energy[kind]) ? gear : electric;
-            for (int tier = 0; tier < material.length; tier++) {
-                machines.add(transformerPart(id[kind] + "_" + suffix[tier], material[tier],
-                        type[kind], tier + 1, energy[kind], ampere[kind]));
-            }
-        }
-    }
-
-    private static BehaviorMachine transformerPart(String id, String material, String type, int tier,
-                                                   String energy, int ampere) {
-        long packet = Gt6KtfruTransformerPart.packet(tier);
-        return BehaviorMachine.builder(MachineCasing.builder(id, material).machineType(type).tier(tier).build())
-                .energy(EnergyInput.builder(energy, packet).faces(MachineFace.BACK)
-                        .capacity(packet * ampere).build())
-                .energyOutput(EnergyOutput.builder(energy, packet, ampere).faces(MachineFace.FRONT).build())
-                .gui(Ktfru.PLACEHOLDER_GUI)
-                .toggle("gt6ktfruaddon.transformer.stopped", 152, 8, false)
                 .build();
     }
 
