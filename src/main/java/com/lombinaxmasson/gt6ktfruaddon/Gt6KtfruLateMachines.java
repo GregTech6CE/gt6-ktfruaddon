@@ -13,6 +13,7 @@ import com.gregtech.gregtech.api.addon.MachineIo;
 import com.gregtech.gregtech.api.addon.RecipeMachine;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
  * Late recipe machines and the addon-side subsystem behavior machines:
@@ -22,16 +23,6 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  * - AI research centers (30106–30108): 67,108,864 Normal compute/tick allocation and monitor point progress.
  */
 public final class Gt6KtfruLateMachines {
-    static final String LASER = "gt6ktfruaddon.recipe.laser_fusion";
-    static final String LASER_EXP_MAP = "gt6ktfruaddon.recipe.laser_fusion_experimental";
-    static final String CATALYTIC = "gt6ktfruaddon.recipe.catalytic_reactor";
-    static final String MIRROR = "gt6ktfruaddon.recipe.mirror_gold_synthesis";
-    static final String MIRROR_QUANTUM = "gt6ktfruaddon.recipe.mirror_gold_quantumization";
-    static final String COSMIC = "gt6ktfruaddon.recipe.cosmic_radiation";
-    static final String CRYSTAL = "gt6ktfruaddon.recipe.microgravity_crystal";
-    static final String QUANTUM_GOLD = "gt6ktfruaddon.recipe.quantum_gold";
-    static final String OBSERVATION = "gt6ktfruaddon.recipe.quantum_observation";
-    static final String RELAY_MAP = "gt6ktfruaddon.recipe.quantum_communication";
     static final String LASER_EXP = "laser_fusion_experimental";
     static final String LASER_IND = "laser_fusion_industrial";
     static final String MICROGRAVITY_ASSEMBLER = "microgravity_assembler";
@@ -46,31 +37,31 @@ public final class Gt6KtfruLateMachines {
     private Gt6KtfruLateMachines() {}
 
     public static void addMaps(List<RecipeTable> maps) {
-        maps.add(Gt6KtfruMachines.map(LASER, "Laser Inertial Fusion", "gascompressor", 3, 3, 0, 3, 3, 0, 1));
-        maps.add(Gt6KtfruMachines.map(LASER_EXP_MAP, "Experimental Laser Fusion", "gascompressor", 3, 3, 0, 3, 3, 0, 1));
-        maps.add(Gt6KtfruMachines.map(CATALYTIC, "Catalytic Reactor", "mixer", 6, 3, 0, 6, 3, 0, 1));
-        maps.add(Gt6KtfruMachines.map(MIRROR, "Mirror Gold Synthesis", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
-        maps.add(Gt6KtfruMachines.map(MIRROR_QUANTUM, "Mirror Gold Quantumization", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
-        maps.add(Gt6KtfruMachines.map(COSMIC, "Cosmic Radiation Research", "gascompressor", 1, 3, 0, 0, 0, 0, 1));
-        maps.add(Gt6KtfruMachines.map(CRYSTAL, "Microgravity Crystal Growth", "heatmixer", 1, 1, 0, 2, 0, 0, 1));
-        maps.add(Gt6KtfruMachines.map(QUANTUM_GOLD, "Quantum Gold Synthesis", "gascompressor", 4, 4, 0, 2, 2, 0, 1));
-        maps.add(Gt6KtfruMachines.map(OBSERVATION, "Quantum Observation", "gascompressor", 4, 4, 0, 2, 2, 0, 1));
-        maps.add(Gt6KtfruMachines.map(RELAY_MAP, "Quantum Communication", "gascompressor", 1, 1, 0, 0, 0, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.LASER_FUSION, "Laser Inertial Fusion", "gascompressor", 3, 3, 0, 3, 3, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.LASER_FUSION_EXPERIMENTAL, "Experimental Laser Fusion", "gascompressor", 3, 3, 0, 3, 3, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.CATALYTIC_REACTOR, "Catalytic Reactor", "mixer", 6, 3, 0, 6, 3, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.MIRROR_GOLD_SYNTHESIS, "Mirror Gold Synthesis", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.MIRROR_GOLD_QUANTUMIZATION, "Mirror Gold Quantumization", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.COSMIC_RADIATION, "Cosmic Radiation Research", "gascompressor", 1, 3, 0, 0, 0, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.MICROGRAVITY_CRYSTAL, "Microgravity Crystal Growth", "heatmixer", 1, 1, 0, 2, 0, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.QUANTUM_GOLD, "Quantum Gold Synthesis", "gascompressor", 4, 4, 0, 2, 2, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.QUANTUM_OBSERVATION, "Quantum Observation", "gascompressor", 4, 4, 0, 2, 2, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.QUANTUM_COMMUNICATION, "Quantum Communication", "gascompressor", 1, 1, 0, 0, 0, 0, 1));
     }
 
     public static void add(List<AddonMachine> machines) {
-        machines.add(tokamak("fusion_tokamak_exp", 2048, Gt6KtfruMachines.FUSION_TOKAMAK_EXP));
-        machines.add(tokamak("fusion_tokamak_t1", 16384, Gt6KtfruMachines.FUSION_TOKAMAK));
-        machines.add(laser(LASER_EXP, LASER_EXP_MAP, "Tungstensteel", 131_072L, 2L * 8L * 1024L * 1024L));
-        machines.add(laser(LASER_IND, LASER, "Osmium", 2_097_152L, 8L * 134_217_728L));
+        machines.add(tokamak("fusion_tokamak_exp", 2048, RecipeMaps.FUSION_TOKAMAK_EXPERIMENTAL));
+        machines.add(tokamak("fusion_tokamak_t1", 16384, RecipeMaps.FUSION_TOKAMAK));
+        machines.add(laser(LASER_EXP, RecipeMaps.LASER_FUSION_EXPERIMENTAL, "Tungstensteel", 131_072L, 2L * 8L * 1024L * 1024L));
+        machines.add(laser(LASER_IND, RecipeMaps.LASER_FUSION, "Osmium", 2_097_152L, 8L * 134_217_728L));
         machines.add(catalytic("catalytic_reactor_ev", "StainlessSteel", 2048, 256, 4096));
         machines.add(catalytic("catalytic_reactor_iv", "Tungstensteel", 8192, 1024, 16384));
-        machines.add(basic("mirror_gold_synthesis", "Iridium", 8192, 8192, 8192, MIRROR, true));
-        machines.add(basic("mirror_gold_quantumization", "Naquadria", 16384, 16384, 16384, MIRROR_QUANTUM, true));
-        machines.add(basic("cosmic_radiation_chamber", "Tungstensteel", 8192, 2048, 16384, COSMIC, false));
+        machines.add(basic("mirror_gold_synthesis", "Iridium", 8192, 8192, 8192, RecipeMaps.MIRROR_GOLD_SYNTHESIS, true));
+        machines.add(basic("mirror_gold_quantumization", "Naquadria", 16384, 16384, 16384, RecipeMaps.MIRROR_GOLD_QUANTUMIZATION, true));
+        machines.add(basic("cosmic_radiation_chamber", "Tungstensteel", 8192, 2048, 16384, RecipeMaps.COSMIC_RADIATION, false));
         machines.add(microgravityAssembler());
-        machines.add(large("quantum_gold_chamber", "Naquadria", 65536, 65536, 65536, QUANTUM_GOLD));
-        machines.add(large("quantum_observation_tower", "Trinaquadalloy", 16384, 16384, 16384, OBSERVATION));
+        machines.add(large("quantum_gold_chamber", "Naquadria", 65536, 65536, 65536, RecipeMaps.QUANTUM_GOLD));
+        machines.add(large("quantum_observation_tower", "Trinaquadalloy", 16384, 16384, 16384, RecipeMaps.QUANTUM_OBSERVATION));
         machines.add(microgravityCrystal());
         machines.add(quantumRelay());
         machines.add(room());
@@ -100,8 +91,8 @@ public final class Gt6KtfruLateMachines {
         return switch (machineType) {
             case LASER_EXP -> Gt6KtfruLaserFusion.experimental();
             case LASER_IND -> Gt6KtfruLaserFusion.industrial();
-            case MICROGRAVITY_ASSEMBLER -> new Gt6KtfruRooms(COSMIC, false, 0);
-            case MICROGRAVITY_CRYSTAL -> new Gt6KtfruRooms(CRYSTAL, true, 2);
+            case MICROGRAVITY_ASSEMBLER -> new Gt6KtfruRooms(RecipeMaps.COSMIC_RADIATION, false, 0);
+            case MICROGRAVITY_CRYSTAL -> new Gt6KtfruRooms(RecipeMaps.MICROGRAVITY_CRYSTAL, true, 2);
             case QUANTUM_RELAY -> new Gt6KtfruQuantumRelay();
             case ROOM -> new Gt6KtfruLateBehavior(true, 0);
             case FLOW -> new Gt6KtfruLateBehavior(false, 8);
@@ -168,7 +159,7 @@ public final class Gt6KtfruLateMachines {
                 .item(102, 26, BehaviorMachine.SlotRole.OUTPUT)
                 .item(120, 26, BehaviorMachine.SlotRole.OUTPUT)
                 .item(138, 26, BehaviorMachine.SlotRole.OUTPUT)
-                .recipeMaps(COSMIC)
+                .recipeMaps(RecipeMaps.COSMIC_RADIATION)
                 .build();
     }
 
@@ -187,7 +178,7 @@ public final class Gt6KtfruLateMachines {
                 .item(124, 26, BehaviorMachine.SlotRole.OUTPUT)
                 .fluid(64_000, 48, 8, BehaviorMachine.SlotRole.INPUT)
                 .fluid(64_000, 68, 8, BehaviorMachine.SlotRole.INPUT)
-                .recipeMaps(CRYSTAL)
+                .recipeMaps(RecipeMaps.MICROGRAVITY_CRYSTAL)
                 .build();
     }
 
@@ -210,13 +201,13 @@ public final class Gt6KtfruLateMachines {
                 .progress(76, 26)
                 .item(44, 26, BehaviorMachine.SlotRole.INPUT)
                 .item(112, 26, BehaviorMachine.SlotRole.OUTPUT)
-                .recipeMaps(RELAY_MAP)
+                .recipeMaps(RecipeMaps.QUANTUM_COMMUNICATION)
                 .build();
     }
 
     private static RecipeMachine catalytic(String id, String material, long eu, long min, long max) {
         return RecipeMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
-                .recipeMap(CATALYTIC)
+                .recipeMap(RecipeMaps.CATALYTIC_REACTOR)
                 .largeRecipe()
                 .cheapOverclocking(true)
                 .energy(EnergyInput.builder("EU", eu).range(min, max).faces().build())

@@ -7,6 +7,7 @@ import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -102,7 +103,7 @@ public final class Gt6KtfruFuelDeburner implements MachineBehavior {
 
     private static AddonRecipes.Line find(MachineBehaviorContext context) {
         if (context.item(0).isEmpty()) return null;
-        return AddonRecipes.map(Gt6KtfruMachines.FUEL_DEBURN).find(
+        return AddonRecipes.map(RecipeMaps.FUEL_DEBURN).find(
                 List.of(context.item(0)),
                 List.of(context.fluid(0), context.fluid(1), context.fluid(2)),
                 true, 1, 0);

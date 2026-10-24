@@ -5,6 +5,7 @@ import java.util.List;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -24,24 +25,24 @@ public final class Gt6KtfruRecipes {
         fuelBattery();
         fuelDeburn();
         lightMixer();
-        distillationTower(Gt6KtfruMachines.TINY_DISTILL, 40);
-        distillationTower(Gt6KtfruMachines.SMALL_DISTILL, 30);
-        distillationTower(Gt6KtfruMachines.DISTILL, 20);
+        distillationTower(RecipeMaps.TINY_DISTILL, 40);
+        distillationTower(RecipeMaps.SMALL_DISTILL, 30);
+        distillationTower(RecipeMaps.DISTILL, 20);
         fusionTokamak();
-        require(AddonRecipes.map(Gt6KtfruMachines.HEAT_MIXER).find(
+        require(AddonRecipes.map(RecipeMaps.HEAT_MIXER).find(
                 List.of(dust("Sulfur", 1)), List.of(fluid("Hydrogen", 2000)), true, 6, 3),
                 "heat mixer sulfur row");
-        require(AddonRecipes.map(Gt6KtfruMachines.FLUID_HEATING).find(
+        require(AddonRecipes.map(RecipeMaps.FLUID_HEATING).find(
                 List.of(), List.of(fluid("DistW", 10)), true, 0, 0),
                 "fluid heating distilled water");
-        require(AddonRecipes.map(Gt6KtfruMachines.LIGHT_MIXER).find(
+        require(AddonRecipes.map(RecipeMaps.LIGHT_MIXER).find(
                 List.of(), List.of(fluid("Methane", 300), fluid("GenGas_Chlorine", 600)), true, 6, 3),
                 "light mixer chloromethane row");
-        if (AddonRecipes.map(Gt6KtfruMachines.CIRCUIT_ASSEMBLER).find(
+        if (AddonRecipes.map(RecipeMaps.CIRCUIT_ASSEMBLER).find(
                 List.of(new ItemStack(Items.IRON_INGOT)), List.of(), true, 9, 3) != null) {
             throw new IllegalStateException("temporary assembler row is still present");
         }
-        if (AddonRecipes.map(Gt6KtfruMachines.FLAW_DETECTOR).find(
+        if (AddonRecipes.map(RecipeMaps.FLAW_DETECTOR).find(
                 List.of(new ItemStack(Items.COAL)), List.of(), true, 3, 3) != null) {
             throw new IllegalStateException("temporary flaw detector row is still present");
         }
@@ -74,13 +75,13 @@ public final class Gt6KtfruRecipes {
         battery(sulfuric, carbon, platinum, -16, 10, two("Hydrogen", 20, "Oxygen", 10), one("DistW", 20));
         battery(sulfuric, carbon, platinum, -180, 10, two("GenLiquid_Methanol", 20, "Oxygen", 30), two("CarbonDioxide", 20, "DistW", 40));
         battery(sulfuric, carbon, platinum, -288, 10, two("BioEthanol", 20, "Oxygen", 60), two("CarbonDioxide", 40, "DistW", 60));
-        require(AddonRecipes.map(Gt6KtfruMachines.FUEL_BATTERY).find(
+        require(AddonRecipes.map(RecipeMaps.FUEL_BATTERY).find(
                 List.of(nickel, catio3), List.of(fluid("Methane", 20), fluid("Air", 80), fluid(yzo, 1)), true, 2, 0),
                 "fuel battery methane row");
-        require(AddonRecipes.map(Gt6KtfruMachines.FUEL_BATTERY).find(
+        require(AddonRecipes.map(RecipeMaps.FUEL_BATTERY).find(
                 List.of(carbon, platinum), List.of(fluid("Hydrogen", 20), fluid("Oxygen", 10), fluid(sulfuric, 1)), true, 2, 0),
                 "fuel battery sulfuric row");
-        require(AddonRecipes.map(Gt6KtfruMachines.HEAT_MIXER).find(
+        require(AddonRecipes.map(RecipeMaps.HEAT_MIXER).find(
                 List.of(dust("Yttrium", 4), dust("Zirconium", 4)), List.of(fluid("Oxygen", 4000)), true, 6, 3),
                 "heat mixer yttrium zirconium oxide");
     }
@@ -90,10 +91,10 @@ public final class Gt6KtfruRecipes {
         FluidStack[] inputs = new FluidStack[fluidsIn.length + 1];
         System.arraycopy(fluidsIn, 0, inputs, 0, fluidsIn.length);
         inputs[fluidsIn.length] = catalyst(electrolyte);
-        require(AddonRecipes.map(Gt6KtfruMachines.FUEL_BATTERY).add(new AddonRecipes.Line(
+        require(AddonRecipes.map(RecipeMaps.FUEL_BATTERY).add(new AddonRecipes.Line(
                 new ItemStack[] {a, b}, NO_ITEMS, inputs, fluidsOut, duration, euPerTick, 0, null,
                 new int[] {0, 1}, new int[] {fluidsIn.length})),
-                Gt6KtfruMachines.FUEL_BATTERY);
+                RecipeMaps.FUEL_BATTERY);
     }
 
     /** A 1 mB kept input: the tank must hold the fluid, nothing is drained. */
@@ -120,7 +121,7 @@ public final class Gt6KtfruRecipes {
         deburn(3, 800, 12800, 1464, new FluidStack[] {fluid("Water", 6000), fluid("CarbonDioxide", 20000), fluid("Nitrogen", 4000)}, "GenLiquid_RecycledFuel3");
         deburn(4, 1800, 51200, 2192, new FluidStack[] {fluid("Water", 16000), fluid("CarbonDioxide", 30000), fluid("Nitrogen", 8000)}, "GenLiquid_RecycledFuel4");
         require(AddonFluids.still("GenLiquid_AqueousOilHeavy", 1), "aqueous heavy oil");
-        require(AddonRecipes.map(Gt6KtfruMachines.FUEL_DEBURN).find(
+        require(AddonRecipes.map(RecipeMaps.FUEL_DEBURN).find(
                 List.of(AddonItems.selectorTag(0)),
                 List.of(fluid("Water", 1000), fluid("CarbonDioxide", 2000)),
                 true, 1, 0),
@@ -130,7 +131,7 @@ public final class Gt6KtfruRecipes {
     private static void deburn(int circuit, long eu, long duration, long special, FluidStack[] inputs, String output) {
         ItemStack tag = AddonItems.selectorTag(circuit);
         if (tag == null || tag.isEmpty()) throw new IllegalStateException("missing selector circuit " + circuit);
-        require(AddonRecipes.map(Gt6KtfruMachines.FUEL_DEBURN).add(new AddonRecipes.Line(
+        require(AddonRecipes.map(RecipeMaps.FUEL_DEBURN).add(new AddonRecipes.Line(
                 new ItemStack[] {tag}, NO_ITEMS, inputs,
                 new FluidStack[] {fluid(output, 100)},
                 duration, eu, special)), "fuel deburner circuit " + circuit);
@@ -138,7 +139,7 @@ public final class Gt6KtfruRecipes {
 
     /** Plastic.java. The only LightMixer row. */
     private static void lightMixer() {
-        add(Gt6KtfruMachines.LIGHT_MIXER, NO_ITEMS, NO_ITEMS,
+        add(RecipeMaps.LIGHT_MIXER, NO_ITEMS, NO_ITEMS,
                 new FluidStack[] {fluid("Methane", 300), fluid("GenGas_Chlorine", 600)},
                 new FluidStack[] {
                         fluid("GenLiquid_Chloromethane", 100),
@@ -164,11 +165,11 @@ public final class Gt6KtfruRecipes {
     }
 
     private static void fusionTokamak() {
-        require(AddonRecipes.map(Gt6KtfruMachines.FUSION_TOKAMAK).add(new AddonRecipes.Line(
+        require(AddonRecipes.map(RecipeMaps.FUSION_TOKAMAK).add(new AddonRecipes.Line(
                 NO_ITEMS, NO_ITEMS,
                 new FluidStack[] {fluid("Deuterium", 144), fluid("Tritium", 144)},
                 new FluidStack[] {fluid("Helium", 144)},
-                400, 2048, 1_048_576L)), Gt6KtfruMachines.FUSION_TOKAMAK);
+                400, 2048, 1_048_576L)), RecipeMaps.FUSION_TOKAMAK);
     }
 
     private static void add(String map, ItemStack[] itemsIn, ItemStack[] itemsOut,

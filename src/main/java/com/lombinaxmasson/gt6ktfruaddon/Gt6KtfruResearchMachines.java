@@ -12,6 +12,7 @@ import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
  * Research blocks from {@code tileEntityInit0}. The assembler and reactor check
@@ -23,15 +24,13 @@ public final class Gt6KtfruResearchMachines {
     static final String REACTOR = "research_reactor";
     static final String OPTICAL = "optical_microscope";
     static final String ELECTRON = "electron_microscope";
-    static final String ASSEMBLER_MAP = "gt6ktfruaddon.recipe.research_assembler";
-    static final String REACTOR_MAP = "gt6ktfruaddon.recipe.research_reactor";
     private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
 
     private Gt6KtfruResearchMachines() {}
 
     public static void addMaps(List<RecipeTable> maps) {
-        maps.add(Gt6KtfruMachines.map(ASSEMBLER_MAP, "Research Assembler", "researchassembler", 9, 6, 0, 3, 3, 0, 1));
-        maps.add(Gt6KtfruMachines.map(REACTOR_MAP, "Research Reactor", "fusion", 9, 6, 0, 6, 6, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.RESEARCH_ASSEMBLER, "Research Assembler", "researchassembler", 9, 6, 0, 3, 3, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.RESEARCH_REACTOR, "Research Reactor", "fusion", 9, 6, 0, 6, 6, 0, 1));
     }
 
     public static void add(List<AddonMachine> machines) {
@@ -44,8 +43,8 @@ public final class Gt6KtfruResearchMachines {
         table(machines, "research_table_identify");
         table(machines, "research_table_compute");
         table(machines, "research_table_current_control");
-        machines.add(researchMachine(ASSEMBLER, "Aluminium", ASSEMBLER_MAP, "gt.recipe.assembler"));
-        machines.add(researchMachine(REACTOR, "StainlessSteel", REACTOR_MAP));
+        machines.add(researchMachine(ASSEMBLER, "Aluminium", RecipeMaps.RESEARCH_ASSEMBLER, "gt.recipe.assembler"));
+        machines.add(researchMachine(REACTOR, "StainlessSteel", RecipeMaps.RESEARCH_REACTOR));
         machines.add(microscope(OPTICAL, "Aluminium", 128, 16, 512, 16384));
         machines.add(microscope(ELECTRON, "StainlessSteel", 512, 16, 4096, 131072));
     }
@@ -78,10 +77,10 @@ public final class Gt6KtfruResearchMachines {
 
     public static MachineBehavior create(String machineType) {
         if (ASSEMBLER.equals(machineType)) {
-            return new Gt6KtfruResearchAssembler(ASSEMBLER_MAP, "gt.recipe.assembler");
+            return new Gt6KtfruResearchAssembler(RecipeMaps.RESEARCH_ASSEMBLER, "gt.recipe.assembler");
         }
         if (REACTOR.equals(machineType)) {
-            return new Gt6KtfruResearchAssembler(REACTOR_MAP);
+            return new Gt6KtfruResearchAssembler(RecipeMaps.RESEARCH_REACTOR);
         }
         if (OPTICAL.equals(machineType)) return new Gt6KtfruMicroscope(256);
         if (ELECTRON.equals(machineType)) return new Gt6KtfruMicroscope(4096);

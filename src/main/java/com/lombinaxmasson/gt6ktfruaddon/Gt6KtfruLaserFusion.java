@@ -6,6 +6,7 @@ import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -122,7 +123,7 @@ public final class Gt6KtfruLaserFusion implements MachineBehavior {
     }
 
     private boolean tryFirePulse(MachineBehaviorContext context, long pulse) {
-        AddonRecipes.Line line = AddonRecipes.map(Gt6KtfruLateMachines.LASER).find(
+        AddonRecipes.Line line = AddonRecipes.map(RecipeMaps.LASER_FUSION).find(
                 List.of(context.item(0), context.item(1)),
                 List.of(context.fluid(0), context.fluid(1)),
                 true, 1, 2);

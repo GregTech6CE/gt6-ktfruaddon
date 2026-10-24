@@ -26,6 +26,7 @@ import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.StructureRole;
 import com.gregtech.gregtech.api.addon.platform.BehaviorMachineContributor;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
  * Single-block machines from {@code tileEntityInit0}. Recipe machines are
@@ -49,43 +50,22 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  * Card 19 adds the electromagnetic crucible and its screen.
  */
 public final class Gt6KtfruMachines implements AddonMachineContributor, BehaviorMachineContributor {
-    public static final String FLUID_HEATING = "gt6ktfruaddon.recipe.fluid_heating";
-    public static final String LIGHT_MIXER = "gt6ktfruaddon.recipe.light_mixer";
-    public static final String CIRCUIT_ASSEMBLER = "gt6ktfruaddon.recipe.circuit_assembler";
-    public static final String LASER_CUTTER = "gt6ktfruaddon.recipe.laser_cutter";
-    public static final String HEAT_MIXER = "gt6ktfruaddon.recipe.heat_mixer";
-    public static final String ELECTRONICS_DESIGNER = "gt6ktfruaddon.recipe.electronics_designer";
-    public static final String FLAW_DETECTOR = "gt6ktfruaddon.recipe.flaw_detector";
-    public static final String WAFER_TESTER = "gt6ktfruaddon.recipe.wafer_tester";
-    public static final String WAFER_COATER = "gt6ktfruaddon.recipe.wafer_coater";
-    public static final String ULTRASONIC_MIXER = "gt6ktfruaddon.recipe.ultrasonic_mixer";
-    public static final String TINY_DISTILL = "gt6ktfruaddon.recipe.tiny_distill_tower";
-    public static final String SMALL_DISTILL = "gt6ktfruaddon.recipe.small_distill_tower";
-    public static final String DISTILL = "gt6ktfruaddon.recipe.distill_tower";
     /** Layout name and machine type. The controller id uses the same string. */
     public static final String TINY_DISTILL_TYPE = "tiny_distillation_tower";
     public static final String SMALL_DISTILL_TYPE = "small_distillation_tower";
     public static final String DISTILL_TYPE = "distillation_tower";
-    public static final String ORE_PROCESS = "gt6ktfruaddon.recipe.ore_processing_system";
-    /** Source {@code ktfru.recipe.fuelbattery}. No rows are added. */
-    public static final String FUEL_BATTERY = "gt6ktfruaddon.recipe.fuel_battery";
     public static final String GAS_BATTERY = "gas_battery";
-    public static final String MASK_ALIGNER = "gt6ktfruaddon.recipe.mask_aligner";
-    public static final String CNC = "gt6ktfruaddon.recipe.cnc";
     public static final String MASK_ALIGNER_UV = "mask_aligner_uv";
     public static final String MASK_ALIGNER_UV_PLUS = "mask_aligner_uv_plus";
     public static final String MASK_ALIGNER_DUV = "mask_aligner_duv";
     public static final String MASK_ALIGNER_EUV = "mask_aligner_euv";
     public static final String CNC_MACHINE = "cnc_machine";
-    public static final String FUEL_DEBURN = "gt6ktfruaddon.recipe.fuel_deburner";
-    public static final String FUSION_TOKAMAK = "gt6ktfruaddon.recipe.fusion_tokamak";
-    public static final String FUSION_TOKAMAK_EXP = "gt6ktfruaddon.recipe.fusion_tokamak_experimental";
     public static final String SUN_HEATER = "sun_heater";
     public static final String SUN_MIRROR = "sun_heater_mirror_large";
     public static final String TIDAL = "tidal_wave_generator";
     public static final String OIL_MINER = "oil_miner";
     public static final String MANTLE = "mantle_heater";
-    /** Layout name, machine type and block id. The recipe map is {@link #FUEL_DEBURN}. */
+    /** Layout name, machine type and block id. The recipe map is {@link RecipeMaps#FUEL_DEBURN}. */
     public static final String FUEL_DEBURN_TYPE = "fuel_deburn_factory";
     public static final String TRANSFORMER_SMALL = "transformer_small";
     public static final String TRANSFORMER_LARGE = "transformer_large";
@@ -95,10 +75,6 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     public static final String LIGHT_TRANSFORMER_LARGE = "light_transformer_large";
     /** Layout name and machine type. The controller id uses the same string. */
     public static final String ORE_PROCESS_TYPE = "ore_processing_system";
-    /** Built-in GT fuel map behind {@code FM.Gas}. Already contains hydrogen. */
-    public static final String GAS_FUEL = "gt.recipe.fuels.gas";
-    /** Built-in GT fuel map behind {@code FM.Engine}. Already contains diesel. */
-    public static final String ENGINE_FUEL = "gt.recipe.fuels.engine";
     /** Source 30100. Layout name, machine type and block id. */
     public static final String STEEL_GAS_TANK = "steel_compressed_gas_tank";
     /** Source 30101. */
@@ -168,26 +144,26 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     @Override
     public List<RecipeTable> recipeTables() {
         List<RecipeTable> maps = new ArrayList<>();
-        maps.add(map(FLUID_HEATING, "Fluid Heating", "fluidheating", 0, 0, 0, 1, 1, 1, 1));
-        maps.add(map(LIGHT_MIXER, "Light Mixer", "lightmixer", 6, 3, 0, 6, 6, 0, 1));
-        maps.add(map(CIRCUIT_ASSEMBLER, "Circuit Assembler", "circuitassembler", 9, 3, 1, 1, 0, 0, 1));
-        maps.add(map(LASER_CUTTER, "Laser Cutter", "lasercutter", 2, 3, 1, 1, 0, 0, 1));
-        maps.add(map(HEAT_MIXER, "Heat Mixer", "heatmixer", 6, 3, 0, 6, 3, 0, 1));
-        maps.add(map(ELECTRONICS_DESIGNER, "Electronics Designer", "electronicsdesigner", 6, 3, 1, 3, 0, 0, 1));
-        maps.add(map(FLAW_DETECTOR, "Flaw Detector", "flawdetector", 3, 3, 1, 0, 0, 0, 1));
-        maps.add(map(WAFER_TESTER, "Wafer Tester", "wafertester", 3, 3, 0, 0, 0, 0, 1));
-        maps.add(map(WAFER_COATER, "Wafer Coater", "wafercoater", 3, 3, 0, 3, 0, 0, 1));
-        maps.add(map(ULTRASONIC_MIXER, "Ultrasonic Mixer", "ultrasonicmixer", 6, 3, 0, 6, 2, 0, 1));
-        maps.add(map(TINY_DISTILL, "Tiny Distillation Tower", "tinydistillationtower", 1, 3, 0, 1, 3, 0, 1));
-        maps.add(map(SMALL_DISTILL, "Small Distillation Tower", "smalldistillationtower", 1, 3, 0, 1, 6, 0, 1));
-        maps.add(map(DISTILL, "Distillation Tower", "distillationtower", 1, 3, 0, 1, 9, 0, 1));
-        maps.add(map(ORE_PROCESS, "Ore Process System", "oreprocesssystem", 3, 9, 1, 3, 3, 0, 1));
-        maps.add(map(FUEL_BATTERY, "Fuel Battery", "fuelbattery", 2, 0, 2, 3, 2, 2, 4));
-        maps.add(map(MASK_ALIGNER, "Mask Aligner", "maskaligner", 3, 3, 1, 3, 0, 0, 1));
-        maps.add(map(CNC, "CNC", "cnc", 4, 3, 1, 3, 0, 1, 1));
-        maps.add(map(FUEL_DEBURN, "Fuel Deburner", "fueldeburner", 3, 3, 0, 6, 6, 0, 1));
-        maps.add(map(FUSION_TOKAMAK, "Fusion Tokamak", "fusiontokamak", 3, 3, 0, 6, 6, 1, 1));
-        maps.add(map(FUSION_TOKAMAK_EXP, "Experimental Fusion Tokamak", "fusiontokamak", 3, 3, 0, 6, 6, 1, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.FLUID_HEATING, "Fluid Heating", "fluidheating", 0, 0, 0, 1, 1, 1, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.LIGHT_MIXER, "Light Mixer", "lightmixer", 6, 3, 0, 6, 6, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.CIRCUIT_ASSEMBLER, "Circuit Assembler", "circuitassembler", 9, 3, 1, 1, 0, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.LASER_CUTTER, "Laser Cutter", "lasercutter", 2, 3, 1, 1, 0, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.HEAT_MIXER, "Heat Mixer", "heatmixer", 6, 3, 0, 6, 3, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.ELECTRONICS_DESIGNER, "Electronics Designer", "electronicsdesigner", 6, 3, 1, 3, 0, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.FLAW_DETECTOR, "Flaw Detector", "flawdetector", 3, 3, 1, 0, 0, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.WAFER_TESTER, "Wafer Tester", "wafertester", 3, 3, 0, 0, 0, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.WAFER_COATER, "Wafer Coater", "wafercoater", 3, 3, 0, 3, 0, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.ULTRASONIC_MIXER, "Ultrasonic Mixer", "ultrasonicmixer", 6, 3, 0, 6, 2, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.TINY_DISTILL, "Tiny Distillation Tower", "tinydistillationtower", 1, 3, 0, 1, 3, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.SMALL_DISTILL, "Small Distillation Tower", "smalldistillationtower", 1, 3, 0, 1, 6, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.DISTILL, "Distillation Tower", "distillationtower", 1, 3, 0, 1, 9, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.ORE_PROCESS, "Ore Process System", "oreprocesssystem", 3, 9, 1, 3, 3, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.FUEL_BATTERY, "Fuel Battery", "fuelbattery", 2, 0, 2, 3, 2, 2, 4));
+        maps.add(RecipeMaps.table(RecipeMaps.MASK_ALIGNER, "Mask Aligner", "maskaligner", 3, 3, 1, 3, 0, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.CNC, "CNC", "cnc", 4, 3, 1, 3, 0, 1, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.FUEL_DEBURN, "Fuel Deburner", "fueldeburner", 3, 3, 0, 6, 6, 0, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.FUSION_TOKAMAK, "Fusion Tokamak", "fusiontokamak", 3, 3, 0, 6, 6, 1, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.FUSION_TOKAMAK_EXPERIMENTAL, "Experimental Fusion Tokamak", "fusiontokamak", 3, 3, 0, 6, 6, 1, 1));
         Gt6KtfruResearchMachines.addMaps(maps);
         Gt6KtfruLateMachines.addMaps(maps);
         return List.copyOf(maps);
@@ -196,23 +172,23 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     @Override
     public List<AddonMachine> addonMachines() {
         List<AddonMachine> machines = new ArrayList<>();
-        heat(machines, "fluid_heater", "fluidheater", "HU", FLUID_HEATING,
+        heat(machines, "fluid_heater", "fluidheater", "HU", RecipeMaps.FLUID_HEATING,
                 "Steel", "Invar", "Titanium", "TungstenCarbide");
-        kinetic(machines, "light_mixer", "lightmixer", LIGHT_MIXER, new int[] {4, 8, 16, 32},
+        kinetic(machines, "light_mixer", "lightmixer", RecipeMaps.LIGHT_MIXER, new int[] {4, 8, 16, 32},
                 "Bronze", "Steel", "Titanium", "Tungstensteel");
-        electric(machines, "circuit_assembler", "circuitassembler", "LU", CIRCUIT_ASSEMBLER, 1, 5, null);
-        electric(machines, "laser_cutter", "lasercutter", "LU", LASER_CUTTER, 1, 5, null);
-        electric(machines, "heat_mixer", "heatmixer", "EU", HEAT_MIXER, 1, 5, null);
-        electric(machines, "electronics_designer", "eda", "EU", ELECTRONICS_DESIGNER, 1, 5, null);
-        electric(machines, "flaw_detector", "flawdetector", "EU", FLAW_DETECTOR, 1, 5, null);
-        electric(machines, "electric_light_mixer", "lightmixerelectric", "EU", LIGHT_MIXER, 1, 5,
+        electric(machines, "circuit_assembler", "circuitassembler", "LU", RecipeMaps.CIRCUIT_ASSEMBLER, 1, 5, null);
+        electric(machines, "laser_cutter", "lasercutter", "LU", RecipeMaps.LASER_CUTTER, 1, 5, null);
+        electric(machines, "heat_mixer", "heatmixer", "EU", RecipeMaps.HEAT_MIXER, 1, 5, null);
+        electric(machines, "electronics_designer", "eda", "EU", RecipeMaps.ELECTRONICS_DESIGNER, 1, 5, null);
+        electric(machines, "flaw_detector", "flawdetector", "EU", RecipeMaps.FLAW_DETECTOR, 1, 5, null);
+        electric(machines, "electric_light_mixer", "lightmixerelectric", "EU", RecipeMaps.LIGHT_MIXER, 1, 5,
                 new int[] {4, 8, 16, 32, 64});
-        electric(machines, "wafer_tester", "wafertester", "EU", WAFER_TESTER, 1, 5, null);
-        electric(machines, "wafer_coater", "wafercoater", "EU", WAFER_COATER, 1, 5, null);
-        electric(machines, "ultrasonic_mixer", "ultrasonicmixer", "EU", ULTRASONIC_MIXER, 3, 5, null);
-        machines.add(distillationTower(TINY_DISTILL_TYPE, TINY_DISTILL, 1024));
-        machines.add(distillationTower(SMALL_DISTILL_TYPE, SMALL_DISTILL, 2048));
-        machines.add(distillationTower(DISTILL_TYPE, DISTILL, 4096));
+        electric(machines, "wafer_tester", "wafertester", "EU", RecipeMaps.WAFER_TESTER, 1, 5, null);
+        electric(machines, "wafer_coater", "wafercoater", "EU", RecipeMaps.WAFER_COATER, 1, 5, null);
+        electric(machines, "ultrasonic_mixer", "ultrasonicmixer", "EU", RecipeMaps.ULTRASONIC_MIXER, 3, 5, null);
+        machines.add(distillationTower(TINY_DISTILL_TYPE, RecipeMaps.TINY_DISTILL, 1024));
+        machines.add(distillationTower(SMALL_DISTILL_TYPE, RecipeMaps.SMALL_DISTILL, 2048));
+        machines.add(distillationTower(DISTILL_TYPE, RecipeMaps.DISTILL, 4096));
         machines.add(oreProcessingSystem());
         machines.add(gasTank(STEEL_GAS_TANK, "Steel"));
         machines.add(gasTank(STAINLESS_GAS_TANK, "StainlessSteel"));
@@ -398,25 +374,6 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 drum(TUNGSTENSTEEL_GAS_DRUM, "Tungstensteel", 51_200_000, false, false, true));
     }
 
-    static RecipeTable map(String name, String title, String gui,
-            int inputItems, int outputItems, int minimalInputItems,
-            int inputFluids, int outputFluids, int minimalInputFluids, int minimalInputs) {
-        return RecipeTable.machine(name)
-                .title(title)
-                .gui("gt6ktfruaddon:textures/gui/machines/" + gui)
-                .inputItems(inputItems)
-                .outputItems(outputItems)
-                .minimalInputItems(minimalInputItems)
-                .inputFluids(inputFluids)
-                .outputFluids(outputFluids)
-                .minimalInputFluids(minimalInputFluids)
-                .minimalInputs(minimalInputs)
-                .needsOutputs(true)
-                .bucketIn(true)
-                .bucketOut(true)
-                .build();
-    }
-
     private static void heat(List<AddonMachine> out, String prefix, String type, String energy, String recipeMap,
             String... materials) {
         String[] suffix = {"steel", "invar", "titanium", "tungsten_carbide"};
@@ -442,13 +399,13 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     }
 
     private static void gas(List<AddonMachine> out, String suffix, String material, long perTick) {
-        out.add(fuel("gas_turbine_" + suffix, material, "gas_turbine_" + suffix, GAS_FUEL, 3500, perTick));
+        out.add(fuel("gas_turbine_" + suffix, material, "gas_turbine_" + suffix, RecipeMaps.GAS_FUEL, 3500, perTick));
     }
 
     private static void diesel(List<AddonMachine> out, String prefix, String suffix, String material,
             int efficiency, long perTick) {
         String id = prefix + "_" + suffix;
-        out.add(fuel(id, material, id, ENGINE_FUEL, efficiency, perTick));
+        out.add(fuel(id, material, id, RecipeMaps.ENGINE_FUEL, efficiency, perTick));
     }
 
     private static FuelGenerator fuel(String id, String material, String type, String fuelMap,
@@ -566,7 +523,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 .energy(energy.build())
                 .io(io.build())
                 .parallel(1)
-                .recipeMap(MASK_ALIGNER)
+                .recipeMap(RecipeMaps.MASK_ALIGNER)
                 .largeRecipe()
                 .structureKeys(structureLines(id, 4))
                 .build();
@@ -581,7 +538,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                         .itemOutputs(MachineFace.BOTTOM).itemAutoOutput(MachineFace.BOTTOM)
                         .build())
                 .parallel(1)
-                .recipeMap(CNC)
+                .recipeMap(RecipeMaps.CNC)
                 .largeRecipe()
                 .structureKeys(structureLines(CNC_MACHINE, 4))
                 .build();
@@ -787,7 +744,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                         .fluidOutputs()
                         .build())
                 .parallel(64)
-                .recipeMap(ORE_PROCESS)
+                .recipeMap(RecipeMaps.ORE_PROCESS)
                 .largeRecipe()
                 .structureKeys(List.copyOf(keys))
                 .build();
@@ -1002,7 +959,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 .fluid(8000, 116, 8, BehaviorMachine.SlotRole.OUTPUT)
                 .fluid(8000, 134, 8, BehaviorMachine.SlotRole.OUTPUT)
                 .fluid(electrolyte, 152, 8, BehaviorMachine.SlotRole.INPUT)
-                .recipeMaps(FUEL_BATTERY)
+                .recipeMaps(RecipeMaps.FUEL_BATTERY)
                 .build();
     }
 

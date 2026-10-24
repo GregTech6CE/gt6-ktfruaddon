@@ -9,6 +9,7 @@ import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -59,7 +60,7 @@ public final class Gt6KtfruQuantumRelay implements MachineBehavior {
             context.progress(0);
             return;
         }
-        AddonRecipes.Line line = AddonRecipes.map(Gt6KtfruLateMachines.RELAY_MAP).find(
+        AddonRecipes.Line line = AddonRecipes.map(RecipeMaps.QUANTUM_COMMUNICATION).find(
                 List.of(context.item(0)),
                 List.of(),
                 true, 1, 0);

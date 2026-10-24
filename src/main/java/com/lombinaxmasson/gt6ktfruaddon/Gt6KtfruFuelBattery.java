@@ -7,6 +7,7 @@ import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -142,7 +143,7 @@ public final class Gt6KtfruFuelBattery implements MachineBehavior {
     }
 
     private static AddonRecipes.Line find(MachineBehaviorContext context) {
-        return AddonRecipes.map(Gt6KtfruMachines.FUEL_BATTERY).find(
+        return AddonRecipes.map(RecipeMaps.FUEL_BATTERY).find(
                 List.of(context.item(0), context.item(1)),
                 List.of(context.fluid(FUEL_A), context.fluid(FUEL_B), context.fluid(ELECTROLYTE)),
                 true, 2, 0);

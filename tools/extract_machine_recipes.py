@@ -54,35 +54,35 @@ MAPS = (
     "ResearchReactor",
 )
 MAP_FIELD = {
-    "FluidHeating": "Gt6KtfruMachines.FLUID_HEATING",
-    "LightMixer": "Gt6KtfruMachines.LIGHT_MIXER",
-    "Assembler": "Gt6KtfruMachines.CIRCUIT_ASSEMBLER",
-    "LaserCutter": "Gt6KtfruMachines.LASER_CUTTER",
-    "HeatMixer": "Gt6KtfruMachines.HEAT_MIXER",
-    "EDA": "Gt6KtfruMachines.ELECTRONICS_DESIGNER",
-    "FlawDetector": "Gt6KtfruMachines.FLAW_DETECTOR",
-    "WaferTester": "Gt6KtfruMachines.WAFER_TESTER",
-    "WaferCoater": "Gt6KtfruMachines.WAFER_COATER",
-    "UltrasonicMixer": "Gt6KtfruMachines.ULTRASONIC_MIXER",
-    "TinyDistillTower": "Gt6KtfruMachines.TINY_DISTILL",
-    "SmallDistillTower": "Gt6KtfruMachines.SMALL_DISTILL",
-    "DistillTower": "Gt6KtfruMachines.DISTILL",
-    "MaskAligner": "Gt6KtfruMachines.MASK_ALIGNER",
-    "CNC": "Gt6KtfruMachines.CNC",
-    "FusionTokamak": "Gt6KtfruMachines.FUSION_TOKAMAK",
-    "FusionTokamakExperimental": "Gt6KtfruMachines.FUSION_TOKAMAK_EXP",
-    "LaserFusion": "Gt6KtfruLateMachines.LASER",
-    "LaserFusionExperimental": "Gt6KtfruLateMachines.LASER_EXP_MAP",
-    "CatalyticReactor": "Gt6KtfruLateMachines.CATALYTIC",
-    "MirrorGoldSynthesis": "Gt6KtfruLateMachines.MIRROR",
-    "MirrorGoldQuantumization": "Gt6KtfruLateMachines.MIRROR_QUANTUM",
-    "CosmicRadiationResearch": "Gt6KtfruLateMachines.COSMIC",
-    "MicrogravityCrystalGrowth": "Gt6KtfruLateMachines.CRYSTAL",
-    "QuantumGoldSynthesis": "Gt6KtfruLateMachines.QUANTUM_GOLD",
-    "QuantumObservation": "Gt6KtfruLateMachines.OBSERVATION",
-    "QuantumCommunication": "Gt6KtfruLateMachines.RELAY_MAP",
-    "ResearchAssembler": "Gt6KtfruResearchMachines.ASSEMBLER_MAP",
-    "ResearchReactor": "Gt6KtfruResearchMachines.REACTOR_MAP",
+    "FluidHeating": "RecipeMaps.FLUID_HEATING",
+    "LightMixer": "RecipeMaps.LIGHT_MIXER",
+    "Assembler": "RecipeMaps.CIRCUIT_ASSEMBLER",
+    "LaserCutter": "RecipeMaps.LASER_CUTTER",
+    "HeatMixer": "RecipeMaps.HEAT_MIXER",
+    "EDA": "RecipeMaps.ELECTRONICS_DESIGNER",
+    "FlawDetector": "RecipeMaps.FLAW_DETECTOR",
+    "WaferTester": "RecipeMaps.WAFER_TESTER",
+    "WaferCoater": "RecipeMaps.WAFER_COATER",
+    "UltrasonicMixer": "RecipeMaps.ULTRASONIC_MIXER",
+    "TinyDistillTower": "RecipeMaps.TINY_DISTILL",
+    "SmallDistillTower": "RecipeMaps.SMALL_DISTILL",
+    "DistillTower": "RecipeMaps.DISTILL",
+    "MaskAligner": "RecipeMaps.MASK_ALIGNER",
+    "CNC": "RecipeMaps.CNC",
+    "FusionTokamak": "RecipeMaps.FUSION_TOKAMAK",
+    "FusionTokamakExperimental": "RecipeMaps.FUSION_TOKAMAK_EXPERIMENTAL",
+    "LaserFusion": "RecipeMaps.LASER_FUSION",
+    "LaserFusionExperimental": "RecipeMaps.LASER_FUSION_EXPERIMENTAL",
+    "CatalyticReactor": "RecipeMaps.CATALYTIC_REACTOR",
+    "MirrorGoldSynthesis": "RecipeMaps.MIRROR_GOLD_SYNTHESIS",
+    "MirrorGoldQuantumization": "RecipeMaps.MIRROR_GOLD_QUANTUMIZATION",
+    "CosmicRadiationResearch": "RecipeMaps.COSMIC_RADIATION",
+    "MicrogravityCrystalGrowth": "RecipeMaps.MICROGRAVITY_CRYSTAL",
+    "QuantumGoldSynthesis": "RecipeMaps.QUANTUM_GOLD",
+    "QuantumObservation": "RecipeMaps.QUANTUM_OBSERVATION",
+    "QuantumCommunication": "RecipeMaps.QUANTUM_COMMUNICATION",
+    "ResearchAssembler": "RecipeMaps.RESEARCH_ASSEMBLER",
+    "ResearchReactor": "RecipeMaps.RESEARCH_REACTOR",
 }
 # input items, output items, min items, input fluids, output fluids, min fluids, min inputs
 SLOTS = {
@@ -1771,6 +1771,7 @@ import java.util.Set;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

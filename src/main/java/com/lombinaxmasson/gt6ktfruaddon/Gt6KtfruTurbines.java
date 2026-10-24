@@ -14,6 +14,7 @@ import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
  * Card 13. Gas turbines and expanded motors are fuel multiblocks: the fuel map
@@ -132,11 +133,11 @@ public final class Gt6KtfruTurbines {
     }
 
     private static void gas(List<AddonMachine> machines, String id, String material, long rate) {
-        machines.add(fuel(id, material, Gt6KtfruMachines.GAS_FUEL, rate, true));
+        machines.add(fuel(id, material, RecipeMaps.GAS_FUEL, rate, true));
     }
 
     private static void motor(List<AddonMachine> machines, String id, String material, long rate) {
-        machines.add(fuel(id, material, Gt6KtfruMachines.ENGINE_FUEL, rate, false));
+        machines.add(fuel(id, material, RecipeMaps.ENGINE_FUEL, rate, false));
     }
 
     /**

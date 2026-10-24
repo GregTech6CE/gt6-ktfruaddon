@@ -10,6 +10,7 @@ import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
  * Card 12 controllers. Each layout name is the machine type.
@@ -143,7 +144,7 @@ public final class Gt6KtfruHeatMachines {
                 .fluid(64000, 66, 8, BehaviorMachine.SlotRole.INPUT)
                 .fluid(64000, 84, 8, BehaviorMachine.SlotRole.INPUT)
                 .fluid(16000, 102, 8, BehaviorMachine.SlotRole.OUTPUT)
-                .recipeMaps(Gt6KtfruMachines.FUEL_DEBURN)
+                .recipeMaps(RecipeMaps.FUEL_DEBURN)
                 .build();
     }
 
