@@ -52,6 +52,8 @@ public final class Gt6KtfruLateMachines implements Feature {
     @Override
     public List<RecipeTable> recipeTables() {
         List<RecipeTable> maps = new ArrayList<>();
+        maps.add(RecipeMaps.table(RecipeMaps.FUSION_TOKAMAK, "Fusion Tokamak", "fusiontokamak", 3, 3, 0, 6, 6, 1, 1));
+        maps.add(RecipeMaps.table(RecipeMaps.FUSION_TOKAMAK_EXPERIMENTAL, "Experimental Fusion Tokamak", "fusiontokamak", 3, 3, 0, 6, 6, 1, 1));
         maps.add(RecipeMaps.table(RecipeMaps.LASER_FUSION, "Laser Inertial Fusion", "gascompressor", 3, 3, 0, 3, 3, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.LASER_FUSION_EXPERIMENTAL, "Experimental Laser Fusion", "gascompressor", 3, 3, 0, 3, 3, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.CATALYTIC_REACTOR, "Catalytic Reactor", "mixer", 6, 3, 0, 6, 3, 0, 1));

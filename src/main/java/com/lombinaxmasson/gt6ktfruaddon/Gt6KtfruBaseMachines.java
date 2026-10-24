@@ -7,7 +7,6 @@ import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.FuelGenerator;
 import com.gregtech.gregtech.api.addon.FuelOutput;
 import com.gregtech.gregtech.api.addon.MachineCasing;
-import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
@@ -34,15 +33,6 @@ import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
  * Card 19 adds the electromagnetic crucible and its screen.
  */
 public final class Gt6KtfruBaseMachines implements Feature {
-    @Override
-    public List<RecipeTable> recipeTables() {
-        List<RecipeTable> maps = new ArrayList<>();
-        maps.add(RecipeMaps.table(RecipeMaps.FUEL_DEBURN, "Fuel Deburner", "fueldeburner", 3, 3, 0, 6, 6, 0, 1));
-        maps.add(RecipeMaps.table(RecipeMaps.FUSION_TOKAMAK, "Fusion Tokamak", "fusiontokamak", 3, 3, 0, 6, 6, 1, 1));
-        maps.add(RecipeMaps.table(RecipeMaps.FUSION_TOKAMAK_EXPERIMENTAL, "Experimental Fusion Tokamak", "fusiontokamak", 3, 3, 0, 6, 6, 1, 1));
-        return List.copyOf(maps);
-    }
-
     @Override
     public List<AddonMachine> machines() {
         List<AddonMachine> machines = new ArrayList<>();

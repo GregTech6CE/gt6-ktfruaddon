@@ -12,6 +12,7 @@ import com.gregtech.gregtech.api.addon.EnergyOutput;
 import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
+import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
@@ -41,6 +42,13 @@ public final class Gt6KtfruHeatMachines implements Feature {
             .add(MANTLE, Gt6KtfruMantleHeater::new)
             .add(FUEL_DEBURN_TYPE, Gt6KtfruFuelDeburner::new)
             .build();
+
+    @Override
+    public List<RecipeTable> recipeTables() {
+        List<RecipeTable> maps = new ArrayList<>();
+        maps.add(RecipeMaps.table(RecipeMaps.FUEL_DEBURN, "Fuel Deburner", "fueldeburner", 3, 3, 0, 6, 6, 0, 1));
+        return List.copyOf(maps);
+    }
 
     @Override
     public List<AddonMachine> machines() {
