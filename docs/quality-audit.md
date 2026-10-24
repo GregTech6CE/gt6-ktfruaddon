@@ -387,6 +387,28 @@ com.lombinaxmasson.gt6ktfruaddon
 - 移动类不改变注册 id，存档不受影响；任何 id 重命名（S7 的点号 id）才需要别名。
 - 历史卡片里的文件名引用不改。
 
+**2026-10-24 进展：**
+
+决定（§8 第 1、2 条）：阈值你交给我定，我沿用 §6 的数字：根包不超过 2 个类，包级无环（第 6 步用 ArchUnit 在测试里卡死），手写类不超过 400 行。生成文件不算，例外在类注释里写明理由，不放宽数字：现在最大的手写类是 `Machines` 1,107 行和 `HeatLayouts` 529 行，按特性切完预计都能压到 400 行以内。去前缀也定了，做第 5 步。
+
+第 1 步（拆枢纽）：
+
+- 三处叶子类：`Ktfru`（`MODID`）；`recipe.RecipeMaps`（34 个名字：本仓库声明的 32 张配方图，加两张 GT 内置燃料图 `GAS_FUEL`、`ENGINE_FUEL`；原来的 `Machines.map(...)` 改名 `RecipeMaps.table(...)` 放在这里）；`core.behavior.DimPos` 和 `PosCodec`（`Research` 里的 `Key`、`formatPos`、`parsePos`，`Compute` 里重复的 `Key` 并进来）。
+- `LateMachines`、`ResearchMachines` 里的配方图常量也搬进 `RecipeMaps`，其中 12 个换了更清楚的名字（`LASER` 变 `LASER_FUSION`，`RELAY_MAP` 变 `QUANTUM_COMMUNICATION`，`FUSION_TOKAMAK_EXP` 变 `FUSION_TOKAMAK_EXPERIMENTAL` 等）。字符串值一个没变，脚本改之前逐个比对过。
+- 原计划把"机器类型常量"也放进 `RecipeMaps`，实际没放：机器类型不是配方图。六个热机类型（`SUN_HEATER` 等）搬进了 `HeatMachines`，`machineTypes()` 也改成像别的特性一样调 `HeatMachines.behaviorTypes()`。
+- 生成脚本同步：`extract_machine_recipes.py` 的 `MAP_FIELD` 和模板，`gen_card22_items.py`、`gen_materials.py` 的 `MODID`。`Items` 和 `SourceRecipes` 用脚本重新生成，与替换后的文件逐字节一致（`SourceRecipes` 里 689 处配方图引用，另有 10 处 `MODID` 引用）。
+
+验证（本机）：
+
+| 项 | 结果 |
+| --- | --- |
+| 声明快照，改前改后 | 逐字节相同（SHA-256 一致）。做法：临时测试把三个 Contributor 返回的全部声明（278 台机器、80 个布局、112 个零件、32 张配方表、230 个材料等）和工厂对 99 种机器类型造出的行为类（含字段值）转成文本，977 行；临时测试不入库 |
+| `gradlew build` | 成功；22 个测试，0 失败 |
+| `smoke-boot.ps1` | 通过，83 秒 |
+| 类级依赖分析 | 依赖边 82 条变 61 条；强连通分量从 20 个类变成 `Wireless` 和 `WirelessMachines` 一对（同一特性，WP4 拆 `Wireless` 时消除）；引用 `Machines` 的类从 12 个变 3 个（`Addon`、`MachineColors`、`StructureBuild`，都是 `new Gt6KtfruMachines()`，第 2 步的登记表解决）；跨类用到的包级成员从 33 个变 22 个 |
+
+附录 B 的分包试算要等第 3 步切完 `Machines` 之后再按最终划分重跑，现在 `Machines` 里还混着五个特性的声明。
+
 ### WP4 行为层公共件和生命周期（L）
 
 依赖：WP3 的 `core`。
@@ -442,8 +464,8 @@ com.lombinaxmasson.gt6ktfruaddon
 
 | # | 问题 | 选项 | 建议 | 决定 |
 | --- | --- | --- | --- | --- |
-| 1 | 最低线的阈值合不合适（手写类 ≤ 400 行、根包 ≤ 2 个类、包级无环） | 调数字；增删条目 | 先按 §6，做完 WP3 再看实际 | 待定 |
-| 2 | 分包后是否去掉 `Gt6Ktfru` 前缀 | 去掉；保留 | 去掉：包名已经承担命名空间；单独一个提交，历史卡片里的文件名不改 | 待定 |
+| 1 | 最低线的阈值合不合适（手写类 ≤ 400 行、根包 ≤ 2 个类、包级无环） | 调数字；增删条目 | 先按 §6，做完 WP3 再看实际 | 已定（2026-10-24，你交给我判断）：沿用 §6 的数字；生成文件不算，例外在类注释里写明，不放宽数字 |
+| 2 | 分包后是否去掉 `Gt6Ktfru` 前缀 | 去掉；保留 | 去掉：包名已经承担命名空间；单独一个提交，历史卡片里的文件名不改 | 已定（2026-10-24）：去掉，WP3 第 5 步 |
 | 3 | 689 行配方继续放 Java，还是改成数据文件 | 保持；数据化 | 先保持，WP5 评估后再定，不阻塞最低线 | 待定 |
 | 4 | 失败策略 | 一律抛；一律跳过；开关 | 开关：开发和 CI 严格，发行版记录并跳过 | 待定 |
 | 5 | 署名措辞；`authors` 要不要写上游作者；展示前要不要让上游作者看 §6 | — | README 和 `NOTICE` 先到位；`authors` 等她的意见；§6 清单在 WP8 时给她看 | `authors` 已定（2026-10-24）：写 kuzuanpa；README 和 `NOTICE` 已按这个写好；§6 给不给她看留到 WP8 |
@@ -458,7 +480,7 @@ com.lombinaxmasson.gt6ktfruaddon
 - [x] WP0 本地可构建、可复现（B2、B5；G2 的路径部分）。2026-10-24 做完；全新克隆和 `-AutoDownloadJdk` 还没验证
 - [x] WP1 署名与定位（R4）。2026-10-24 做完：README 首段、`NOTICE`、`mods.toml` 的作者和描述；剩生成文件头写来源（WP5）、README 其余过期的条目（WP7）
 - [ ] WP2 契约测试与自检（B1、B3、S8；S2 的自检部分）。2026-10-24 做了测试、自检推导和冒烟脚本；剩文件头检查（等 WP5）、失败策略开关、CI 里的冒烟
-- [ ] WP3 包结构与登记表（S1、S2、S3、S7）
+- [ ] WP3 包结构与登记表（S1、S2、S3、S7）。2026-10-24 做了第 1 步（拆枢纽）；第 2 至 6 步还没做
 - [ ] WP4 行为层公共件与生命周期（S4、D1、D2、D3、D5）
 - [ ] WP5 生成代码卫生（G1、G2、G3；G4 可选）
 - [ ] WP6 缺陷与细节（D4、D6、D7、D8、D9；S6 的飞轮）
