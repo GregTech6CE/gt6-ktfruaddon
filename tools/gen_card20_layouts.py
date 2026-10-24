@@ -8,7 +8,7 @@ import paths
 
 ROOT = paths.ROOT
 SRC = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon"
-OUT = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "Gt6KtfruGeneratedLayouts.java"
+OUT = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "generated" / "Gt6KtfruGeneratedLayouts.java"
 
 MATERIALS = {
     "Al": "Aluminium",
@@ -388,7 +388,7 @@ def main():
         parts[names[ident]] = (material, hardness, title)
     lines = []
     a = lines.append
-    a("package com.lombinaxmasson.gt6ktfruaddon;")
+    a("package com.lombinaxmasson.gt6ktfruaddon.generated;")
     a("")
     a("import java.util.List;")
     a("")
@@ -396,6 +396,7 @@ def main():
     a("import com.gregtech.gregtech.api.addon.LayoutPart;")
     a("import com.gregtech.gregtech.api.addon.StructureLayout;")
     a("import com.gregtech.gregtech.api.addon.StructureRole;")
+    a("import com.lombinaxmasson.gt6ktfruaddon.core.layout.Gt6KtfruLayerLayout;")
     a("")
     a("/**")
     a(" * Layouts transcribed from this repo's kTFRUAddon checkout.")

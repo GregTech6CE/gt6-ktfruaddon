@@ -5,6 +5,8 @@ import java.util.List;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
+import com.lombinaxmasson.gt6ktfruaddon.generated.Gt6KtfruItems;
+import com.lombinaxmasson.gt6ktfruaddon.generated.Gt6KtfruSourceRecipes;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.world.item.ItemStack;

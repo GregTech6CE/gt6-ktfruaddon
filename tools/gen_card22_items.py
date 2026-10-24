@@ -16,7 +16,7 @@ import paths
 ROOT = paths.ROOT
 ENUM = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "api" / "item" / "ItemList.java"
 ITEM_SRC = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "item"
-JAVA = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "Gt6KtfruItems.java"
+JAVA = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "generated" / "Gt6KtfruItems.java"
 LANGS = (
     ROOT / "src" / "main" / "resources" / "assets" / "gt6ktfruaddon" / "lang" / "en_us.json",
     ROOT / "src" / "main" / "resources" / "assets" / "gt6ktfruaddon" / "lang" / "zh_cn.json",
@@ -138,11 +138,13 @@ def upsert_lang(path: Path, pairs: list[tuple[str, str]]) -> None:
 
 def write_java(extra: list[str]) -> None:
     rows = ",\n".join(f'            "{path}"' for path in extra)
-    JAVA.write_text(f"""package com.lombinaxmasson.gt6ktfruaddon;
+    JAVA.write_text(f"""package com.lombinaxmasson.gt6ktfruaddon.generated;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

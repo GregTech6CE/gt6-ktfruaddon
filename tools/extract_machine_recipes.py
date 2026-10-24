@@ -18,7 +18,7 @@ import paths
 ROOT = paths.ROOT
 SOURCE = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "recipe" / "recipe"
 GT = paths.GT6_ROOT
-OUT_JAVA = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "Gt6KtfruSourceRecipes.java"
+OUT_JAVA = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "generated" / "Gt6KtfruSourceRecipes.java"
 REPORT = ROOT / "build" / "source-recipe-report.txt"
 RUNTIME_JAR = paths.RUNTIME_JAR
 
@@ -1763,7 +1763,7 @@ def emit(rows: list[dict]) -> str:
             )
         body.append("    }")
         methods.append("\n".join(body))
-    return """package com.lombinaxmasson.gt6ktfruaddon;
+    return """package com.lombinaxmasson.gt6ktfruaddon.generated;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -1771,6 +1771,7 @@ import java.util.Set;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
+import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -1788,7 +1789,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * one unit of molten metal is 144 mB, and {{@code FL.make}} stays millibuckets.
  * A leftover that does not fill one millibucket rounds up only when the source
  * call asks for it. Rows with the source optimize flag are divided the way
- * GregTech divides them. The light mixer row stays in {{@link Gt6KtfruRecipes}}.
+ * GregTech divides them. The light mixer row stays in {{@code Gt6KtfruRecipes}}.
  */
 public final class Gt6KtfruSourceRecipes {{
     private static final ItemStack[] NO_ITEMS = new ItemStack[0];

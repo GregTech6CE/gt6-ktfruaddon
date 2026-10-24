@@ -1,8 +1,10 @@
-package com.lombinaxmasson.gt6ktfruaddon;
+package com.lombinaxmasson.gt6ktfruaddon.generated;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
