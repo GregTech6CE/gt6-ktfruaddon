@@ -413,14 +413,14 @@ com.lombinaxmasson.gt6ktfruaddon
 第 2 步（登记表）分三个提交：
 
 - 每个特性类把"机器类型对行为"写成一张 `Behaviors` 表，`behaviorTypes`、`owns`、`create` 都读这张表。原来 `create` 里 switch 的默认分支（计算发射器、研究台、模式识别中心、感应接收器）现在逐个写出类型；`Machines` 自己的 22 个类型也一样。
-- `Feature` 接口（`core.feature`）和登记表 `registry.Features`：特性只写自己有的（配方表、机器、布局、零件、气体鼓、管道、行为），登记表合并，每张列表只构建一次。八个特性类和原来 `Machines` 的内容（现在叫 `Gt6KtfruBaseMachines`，第 3 步切开）都成了 `Feature`；生成的布局由很薄的 `Gt6KtfruGeneratedStructures` 接进来。ServiceLoader 入口 `Gt6KtfruMachines` 只剩转发。`Addon` 的创造栏和自检、`MachineColors`、`StructureBuild` 都问登记表，`new Gt6KtfruMachines()` 一个不剩。
+- `Feature` 接口（`core.feature`）和登记表 `registry.Features`：特性只写自己有的（配方表、机器、布局、零件、气体鼓、管道、行为），登记表合并，每张列表只构建一次。八个特性类和原来 `Machines` 的内容（当时叫 `Gt6KtfruBaseMachines`，第 3 步切开了）都成了 `Feature`；生成的布局由很薄的 `Gt6KtfruGeneratedStructures` 接进来。ServiceLoader 入口 `Gt6KtfruMachines` 只剩转发。`Addon` 的创造栏和自检、`MachineColors`、`StructureBuild` 都问登记表，`new Gt6KtfruMachines()` 一个不剩。
 - 材料声明只构建一次（`Gt6KtfruMaterials` 里缓存）。
 
 和计划不同的地方：
 
 - 登记表放在 `registry`，不在 `core.feature`：它要认得所有特性，放进 `core` 就违反"`core` 不依赖任何特性"。`Feature` 接口留在 `core.feature`。
-- `Feature` 比计划多了气体鼓、两种管道和 `derivedBlockIds()`（管道的块 id，自检和创造栏用）。这些声明现在在基础特性里，第 3 步会跟着 `gas` 特性走；自检因此不再需要知道管道尺寸。
-- 顺序：登记表里特性的顺序就是每张列表的顺序。GT6CE 按位置给结构零件编号（`AddonMachines` 里从 1,000,000 起顺序分配），所以零件、机器、配方表的顺序必须不变，实际上也没变，第 3 步切开基础特性时同样要保持。只有布局的顺序变了一处：坩埚的布局现在排在生成布局之前（原来在之后）。GT6CE 按名字登记布局（`SharedLargeMachineLayouts` 是按名字的 `LinkedHashMap`），没有依赖顺序的地方。
+- `Feature` 比计划多了气体鼓、两种管道和 `derivedBlockIds()`（管道的块 id，自检和创造栏用）。这些声明当时在基础特性里，第 3 步跟着 `gas` 特性走了；自检因此不再需要知道管道尺寸。
+- 顺序：登记表里特性的顺序就是每张列表的顺序。GT6CE 按位置给结构零件编号（`AddonMachines` 里从 1,000,000 起顺序分配），所以零件的顺序必须不变；机器的顺序也保持了。配方表的顺序不影响编号，第 3 步核对过（见下），当时也没变。只有布局的顺序变了一处：坩埚的布局现在排在生成布局之前（原来在之后）。GT6CE 按名字登记布局（`SharedLargeMachineLayouts` 是按名字的 `LinkedHashMap`），没有依赖顺序的地方。
 
 验证（本机）：
 
@@ -430,6 +430,46 @@ com.lombinaxmasson.gt6ktfruaddon
 | `gradlew build` | 33 个测试，0 失败（原来 22 个，加登记表 10 个、材料 1 个） |
 | 故意破坏 | 3 处都变红：坩埚特性没进登记表；一个机器类型有两个行为；一台行为机没有行为。`FeaturesTest` 还会在写了 `Feature` 类却没登记时变红，以前没有东西能发现这种遗漏 |
 | `smoke-boot.ps1` | 通过，104 秒 |
+
+第 3 步（切 `Machines`）。计划里的第 3 步有三件事：按特性切 `Machines`；`sides()` 和平行数组改成数据表；`LateMachines` 按领域拆开。这一轮只做了第一件，另外两件和一个新发现的环写在下面"还没做的"里。切 `Machines` 分十二个提交，每个都在干净克隆里单独构建、跑测试：
+
+- 提交 0：先把两处重复收成一处。九个类各有一份占位 GUI 的路径常量（`gascompressor.png`），四个类各有一份"只带材料和硬度的结构零件"帮手方法，现在是 `Ktfru.PLACEHOLDER_GUI` 和 `core.layout.Parts.casing`。不先收的话，切出去的新特性会把它们抄到第五份和第十份。
+- 提交 1 至 8：每个提交把基础特性最前面的一个特性切进新类。登记表把新类排在基础特性前面，所以机器、零件、布局的顺序都和切之前一样。
+- 提交 9：基础特性里剩下的三张配方表各回各家：脱燃配方表去 `HeatMachines`（脱燃厂在那里），两张托卡马克配方表去 `LateMachines`（托卡马克在那里）。
+- 提交 10：剩下的只有 7 台燃气轮机和 20 台柴油机，类改名 `Gt6KtfruFuelGenerators`，类注释改成说它是什么（原来写的是"还不是独立特性"）。
+- 提交 11：这份记录。
+
+切出来的九个类，按登记表里的顺序：
+
+| 类（省略 `Gt6Ktfru`） | 行数 | 内容 | 第 4 步去的包 |
+| --- | --- | --- | --- |
+| `SingleBlockMachines` | 171 | 单方块配方机（来源 20000 至 27542）及其 10 张配方表 | `processing` |
+| `DistillationMachines` | 102 | 微型、小型和完整三座蒸馏塔：机器、配方表、布局 | `processing` |
+| `OreProcessing` | 126 | 矿处理系统 | `processing` |
+| `GasMachines` | 185 | 两个大型气罐阀及其结构、5 台压缩机、5 个压缩气鼓、特氟龙流体管道、PVC 物品管道 | `gas` |
+| `KineticMachines` | 175 | 虚空漏斗、矿机、水车、手摇电机、飞轮箱 | `kinetic` |
+| `GasBatteries` | 78 | 两个气体电池 | `power` |
+| `TransformerParts` | 92 | 变压器、飞轮齿轮、光变压器零件（36 个，来源 10200 至 10255） | `power` |
+| `SemiconductorMachines` | 250 | 4 台掩膜对准机、CNC、它们的结构和 17 个结构零件 | `semiconductor` |
+| `FuelGenerators` | 73 | 7 台燃气轮机、20 台柴油机 | `power` |
+
+配方表的顺序变了一处。第 2 步原来写的"配方表的顺序必须不变"说重了，那一句已经改掉。核对 GT6CE 源码：配方表按名字登记（`AddonMachines.install` 里的 `mapOwner`），没有任何东西按它们的位置编号；`RecipeMap.RECIPE_MAP_LIST` 只被遍历（JEI 和 EMI 的插件按它的顺序登记类别），按下标取的只有 GT6CE 自己的一个测试。所以两张托卡马克配方表现在排在研究的两张后面（32 张里第 19 至 22 条换了位置），影响的只是 JEI 和 EMI 里这四个类别的先后。零件的顺序没动，那个是真有编号的。
+
+还没做的：
+
+- `HeatLayouts` 还是 529 行，是现在唯一超过 400 行的手写类。进展开头"决定"一段里写的"按特性切完预计都能压到 400 行以内"对它不成立，因为它本来就不在 `Machines` 里。它的 `sides()` 和平行数组就是计划第 3 步里"改成数据表"的那一半，还没动。
+- `LateMachines`（256 行）按领域拆开也没动。附录 B 的映射把它拆给 `processing`、`research`、`network`、`fusion` 四个包，所以第 4 步之前要拆，否则分包时一个类横跨四个包。
+- 类级依赖分析现在有两对环：`Wireless`↔`WirelessMachines`（已知，WP4 处理）和 `HeatLayouts`↔`HeatMachines`（新发现）。后一对第 2 步就有了：`HeatMachines.layouts()` 调 `HeatLayouts`，`HeatLayouts` 用 `HeatMachines` 的六个类型常量；我第 2 步没重跑类级分析，当时没看到。两对都在同一个特性里，不违反"包级无环"，和 `HeatLayouts` 的改造放在一起解决最省事。
+- 附录 B 的分包试算等 `LateMachines` 拆完再重跑：现在跑，它得整个塞进一个包，结果会误导。
+
+验证（本机）：
+
+| 项 | 结果 |
+| --- | --- |
+| 声明快照 | 每个提交都和第 2 步结束时的快照比对：提交 0 至 8 和提交 10 是 21 段全部逐段相同；提交 9 是 20 段相同，`recipeTables` 一段内容相同、第 19 至 22 条换了位置，就是上面说的两张表。机器 278 台、零件 112 个（顺序不变）、配方表 32 张、99 种机器类型和造出的行为类及字段都在内 |
+| `gradlew build` | 每个提交在干净克隆里单独构建，33 个测试，0 失败 |
+| 类大小 | 第 2 步结束时基础特性是 997 行（审计时的 `Machines` 是 1,107 行）；现在基础特性已经没有了，最大的新类是 `SemiconductorMachines`，250 行 |
+| `smoke-boot.ps1` | 通过，89 秒 |
 
 ### WP4 行为层公共件和生命周期（L）
 
@@ -502,7 +542,7 @@ com.lombinaxmasson.gt6ktfruaddon
 - [x] WP0 本地可构建、可复现（B2、B5；G2 的路径部分）。2026-10-24 做完；全新克隆和 `-AutoDownloadJdk` 还没验证
 - [x] WP1 署名与定位（R4）。2026-10-24 做完：README 首段、`NOTICE`、`mods.toml` 的作者和描述；剩生成文件头写来源（WP5）、README 其余过期的条目（WP7）
 - [ ] WP2 契约测试与自检（B1、B3、S8；S2 的自检部分）。2026-10-24 做了测试、自检推导和冒烟脚本；剩文件头检查（等 WP5）、失败策略开关、CI 里的冒烟
-- [ ] WP3 包结构与登记表（S1、S2、S3、S7）。2026-10-24 做了第 1、2 步（拆枢纽、登记表）；第 3 至 6 步还没做
+- [ ] WP3 包结构与登记表（S1、S2、S3、S7）。2026-10-24 做了第 1、2 步（拆枢纽、登记表）和第 3 步的前半（切 `Machines`）；第 3 步的后半（`HeatLayouts` 的数据表、`LateMachines` 按领域拆开）和第 4 至 6 步还没做
 - [ ] WP4 行为层公共件与生命周期（S4、D1、D2、D3、D5）
 - [ ] WP5 生成代码卫生（G1、G2、G3；G4 可选）
 - [ ] WP6 缺陷与细节（D4、D6、D7、D8、D9；S6 的飞轮）
@@ -590,3 +630,5 @@ EOF
 | `fusion` | `LaserFusion`；`LateMachines` 中的激光聚变和托卡马克 | |
 | `client` | `MachineColors` | |
 | `event` | `StructureBuild` | |
+
+表里说的 `Machines`，现在是第 3 步切出的九个类：`processing` 对应 `SingleBlockMachines`、`DistillationMachines`、`OreProcessing`；`gas` 对应 `GasMachines`；`kinetic` 对应 `KineticMachines`；`power` 对应 `GasBatteries`、`TransformerParts`、`FuelGenerators`；`semiconductor` 对应 `SemiconductorMachines`。
