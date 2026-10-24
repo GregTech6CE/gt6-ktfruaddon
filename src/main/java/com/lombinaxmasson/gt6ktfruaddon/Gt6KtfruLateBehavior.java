@@ -3,6 +3,8 @@ package com.lombinaxmasson.gt6ktfruaddon;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -70,13 +72,13 @@ public final class Gt6KtfruLateBehavior implements MachineBehavior {
             return true;
         }
         String dim = context.level().dimension().location().toString();
-        Gt6KtfruCompute.Key pendingController = Gt6KtfruCompute.takePendingController(player.getUUID(), dim);
+        DimPos pendingController = Gt6KtfruCompute.takePendingController(player.getUUID(), dim);
         if (pendingController != null) {
-            context.state().setString("controller", Gt6KtfruResearch.formatPos(pendingController.pos()));
+            context.state().setString("controller", PosCodec.format(pendingController.pos()));
         }
-        Gt6KtfruResearch.Key pendingMonitor = Gt6KtfruResearch.takePendingMonitor(player.getUUID(), dim);
+        DimPos pendingMonitor = Gt6KtfruResearch.takePendingMonitor(player.getUUID(), dim);
         if (pendingMonitor != null) {
-            context.state().setString("monitor", Gt6KtfruResearch.formatPos(pendingMonitor.pos()));
+            context.state().setString("monitor", PosCodec.format(pendingMonitor.pos()));
         }
         String status = context.state().getString("status");
         if (status.isEmpty()) status = STATUS_IDLE;
@@ -113,7 +115,7 @@ public final class Gt6KtfruLateBehavior implements MachineBehavior {
             context.working(false);
             return;
         }
-        BlockPos controller = Gt6KtfruResearch.parsePos(context.state().getString("controller"));
+        BlockPos controller = PosCodec.parse(context.state().getString("controller"));
         if (controller == null) {
             context.state().setString("status", STATUS_UNBOUND);
             context.working(false);
@@ -135,13 +137,13 @@ public final class Gt6KtfruLateBehavior implements MachineBehavior {
     }
 
     private static BlockPos resolveMonitor(MachineBehaviorContext context) {
-        BlockPos saved = Gt6KtfruResearch.parsePos(context.state().getString("monitor"));
+        BlockPos saved = PosCodec.parse(context.state().getString("monitor"));
         if (saved != null && Gt6KtfruResearch.isMonitorOnline(context.level(), saved)) {
             return saved;
         }
         BlockPos adjacent = Gt6KtfruResearch.findAdjacentMonitor(context.level(), context.pos());
         if (adjacent != null) {
-            context.state().setString("monitor", Gt6KtfruResearch.formatPos(adjacent));
+            context.state().setString("monitor", PosCodec.format(adjacent));
             return adjacent;
         }
         return saved;

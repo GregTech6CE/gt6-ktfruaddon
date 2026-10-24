@@ -10,6 +10,7 @@ import java.util.UUID;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,8 +34,8 @@ public final class Gt6KtfruResearch implements MachineBehavior {
             Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST
     };
 
-    private static final Map<Key, MonitorEntry> MONITORS = new HashMap<>();
-    private static final Map<UUID, Key> PENDING_MONITOR = new HashMap<>();
+    private static final Map<DimPos, MonitorEntry> MONITORS = new HashMap<>();
+    private static final Map<UUID, DimPos> PENDING_MONITOR = new HashMap<>();
 
     private final boolean monitor;
 
@@ -42,8 +43,8 @@ public final class Gt6KtfruResearch implements MachineBehavior {
         this.monitor = monitor;
     }
 
-    public static synchronized Key takePendingMonitor(UUID player, String dim) {
-        Key key = PENDING_MONITOR.get(player);
+    public static synchronized DimPos takePendingMonitor(UUID player, String dim) {
+        DimPos key = PENDING_MONITOR.get(player);
         if (key != null && dim.equals(key.dim())) {
             PENDING_MONITOR.remove(player);
             return key;
@@ -57,7 +58,7 @@ public final class Gt6KtfruResearch implements MachineBehavior {
         long now = level.getGameTime();
         for (Direction side : HORIZONTAL) {
             BlockPos neighbor = pos.relative(side);
-            MonitorEntry entry = MONITORS.get(new Key(dim, neighbor));
+            MonitorEntry entry = MONITORS.get(new DimPos(dim, neighbor));
             if (entry != null && now - entry.lastTick <= EXPIRY_TICKS) {
                 return neighbor;
             }
@@ -68,14 +69,14 @@ public final class Gt6KtfruResearch implements MachineBehavior {
     public static synchronized boolean isMonitorOnline(Level level, BlockPos monitorPos) {
         if (level == null || monitorPos == null) return false;
         String dim = level.dimension().location().toString();
-        MonitorEntry entry = MONITORS.get(new Key(dim, monitorPos));
+        MonitorEntry entry = MONITORS.get(new DimPos(dim, monitorPos));
         return entry != null && level.getGameTime() - entry.lastTick <= EXPIRY_TICKS;
     }
 
     public static synchronized boolean isUnlocked(Level level, BlockPos monitorPos, String itemId) {
         if (level == null || monitorPos == null || itemId == null || itemId.isEmpty()) return false;
         String dim = level.dimension().location().toString();
-        MonitorEntry entry = MONITORS.get(new Key(dim, monitorPos));
+        MonitorEntry entry = MONITORS.get(new DimPos(dim, monitorPos));
         if (entry == null || level.getGameTime() - entry.lastTick > EXPIRY_TICKS) return false;
         return entry.unlocked.contains(itemId);
     }
@@ -83,7 +84,7 @@ public final class Gt6KtfruResearch implements MachineBehavior {
     public static synchronized boolean unlockItem(Level level, BlockPos monitorPos, String itemId) {
         if (level == null || monitorPos == null || itemId == null || itemId.isEmpty()) return false;
         String dim = level.dimension().location().toString();
-        MonitorEntry entry = MONITORS.get(new Key(dim, monitorPos));
+        MonitorEntry entry = MONITORS.get(new DimPos(dim, monitorPos));
         if (entry == null || level.getGameTime() - entry.lastTick > EXPIRY_TICKS) return false;
         entry.unlocked.add(itemId);
         entry.dirty = true;
@@ -93,7 +94,7 @@ public final class Gt6KtfruResearch implements MachineBehavior {
     public static synchronized boolean addPoints(Level level, BlockPos monitorPos, long points) {
         if (level == null || monitorPos == null || points <= 0) return false;
         String dim = level.dimension().location().toString();
-        MonitorEntry entry = MONITORS.get(new Key(dim, monitorPos));
+        MonitorEntry entry = MONITORS.get(new DimPos(dim, monitorPos));
         if (entry == null || level.getGameTime() - entry.lastTick > EXPIRY_TICKS) return false;
         entry.points += points;
         entry.dirty = true;
@@ -109,7 +110,7 @@ public final class Gt6KtfruResearch implements MachineBehavior {
                 context.state().setString("tree", raw);
             }
             String dim = context.level().dimension().location().toString();
-            Key key = new Key(dim, context.pos().immutable());
+            DimPos key = new DimPos(dim, context.pos().immutable());
             long now = context.level().getGameTime();
             synchronized (Gt6KtfruResearch.class) {
                 MonitorEntry entry = MONITORS.get(key);
@@ -135,7 +136,7 @@ public final class Gt6KtfruResearch implements MachineBehavior {
         if (!monitor) return;
         String dim = context.level().dimension().location().toString();
         synchronized (Gt6KtfruResearch.class) {
-            MONITORS.remove(new Key(dim, context.pos().immutable()));
+            MONITORS.remove(new DimPos(dim, context.pos().immutable()));
         }
     }
 
@@ -155,7 +156,7 @@ public final class Gt6KtfruResearch implements MachineBehavior {
         String dim = context.level().dimension().location().toString();
         BlockPos here = context.pos().immutable();
         synchronized (Gt6KtfruResearch.class) {
-            PENDING_MONITOR.put(player.getUUID(), new Key(dim, here));
+            PENDING_MONITOR.put(player.getUUID(), new DimPos(dim, here));
         }
         player.displayClientMessage(Component.translatable(
                 "gt6ktfruaddon.research.tree", context.state().getString("tree")), false);
@@ -171,23 +172,6 @@ public final class Gt6KtfruResearch implements MachineBehavior {
                 .forEach(set::add);
         return set;
     }
-
-    static String formatPos(BlockPos pos) {
-        return pos.getX() + "," + pos.getY() + "," + pos.getZ();
-    }
-
-    static BlockPos parsePos(String raw) {
-        if (raw == null || raw.isEmpty()) return null;
-        String[] parts = raw.split(",");
-        if (parts.length != 3) return null;
-        try {
-            return new BlockPos(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
-        } catch (NumberFormatException ignored) {
-            return null;
-        }
-    }
-
-    record Key(String dim, BlockPos pos) {}
 
     private static final class MonitorEntry {
         final Set<String> unlocked;

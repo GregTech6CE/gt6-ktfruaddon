@@ -9,6 +9,8 @@ import java.util.UUID;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -31,10 +33,10 @@ public final class Gt6KtfruCompute implements MachineBehavior {
     static final long REACH = 512L;
     private static final long EXPIRY_TICKS = 20L;
 
-    private static final Map<Key, NodeEntry> NODES = new HashMap<>();
-    private static final Map<Key, ControllerEntry> CONTROLLERS = new HashMap<>();
+    private static final Map<DimPos, NodeEntry> NODES = new HashMap<>();
+    private static final Map<DimPos, ControllerEntry> CONTROLLERS = new HashMap<>();
     private static final Map<UUID, Mark> PENDING_NODE = new HashMap<>();
-    private static final Map<UUID, Key> PENDING_CONTROLLER = new HashMap<>();
+    private static final Map<UUID, DimPos> PENDING_CONTROLLER = new HashMap<>();
 
     enum Kind { PLAIN, CLUSTER, NODE, WIRELESS, ARRAY }
 
@@ -50,8 +52,8 @@ public final class Gt6KtfruCompute implements MachineBehavior {
         this.unit = unit;
     }
 
-    public static synchronized Key takePendingController(UUID player, String dim) {
-        Key key = PENDING_CONTROLLER.get(player);
+    public static synchronized DimPos takePendingController(UUID player, String dim) {
+        DimPos key = PENDING_CONTROLLER.get(player);
         if (key != null && dim.equals(key.dim())) {
             PENDING_CONTROLLER.remove(player);
             return key;
@@ -62,7 +64,7 @@ public final class Gt6KtfruCompute implements MachineBehavior {
     public static synchronized boolean isControllerOnline(Level level, BlockPos pos) {
         if (level == null || pos == null) return false;
         String dim = level.dimension().location().toString();
-        ControllerEntry entry = CONTROLLERS.get(new Key(dim, pos));
+        ControllerEntry entry = CONTROLLERS.get(new DimPos(dim, pos));
         return entry != null && entry.formed && level.getGameTime() - entry.lastTick <= EXPIRY_TICKS;
     }
 
@@ -70,7 +72,7 @@ public final class Gt6KtfruCompute implements MachineBehavior {
         if (level == null || controllerPos == null || amount <= 0) return false;
         String dim = level.dimension().location().toString();
         long now = level.getGameTime();
-        ControllerEntry entry = CONTROLLERS.get(new Key(dim, controllerPos));
+        ControllerEntry entry = CONTROLLERS.get(new DimPos(dim, controllerPos));
         if (entry == null || !entry.formed || now - entry.lastTick > EXPIRY_TICKS) return false;
         if (!entry.unit.equalsIgnoreCase(neededUnit)) return false;
         if (entry.allocatedTick != now) {
@@ -86,7 +88,7 @@ public final class Gt6KtfruCompute implements MachineBehavior {
     public void tick(MachineBehaviorContext context) {
         String dim = context.level().dimension().location().toString();
         BlockPos here = context.pos().immutable();
-        Key self = new Key(dim, here);
+        DimPos self = new DimPos(dim, here);
         long now = context.level().getGameTime();
 
         if (kind == Kind.NODE) {
@@ -104,7 +106,7 @@ public final class Gt6KtfruCompute implements MachineBehavior {
                 synchronized (Gt6KtfruCompute.class) {
                     for (BlockPos nodePos : linked) {
                         if (!reachable(here, nodePos)) continue;
-                        NodeEntry node = NODES.get(new Key(dim, nodePos));
+                        NodeEntry node = NODES.get(new DimPos(dim, nodePos));
                         if (node != null && now - node.lastTick <= EXPIRY_TICKS && "Normal".equals(node.unit)) {
                             total += node.power;
                         }
@@ -127,7 +129,7 @@ public final class Gt6KtfruCompute implements MachineBehavior {
                 if (required <= 0L) {
                     active = true;
                 } else {
-                    BlockPos upstream = Gt6KtfruResearch.parsePos(context.state().getString("controller"));
+                    BlockPos upstream = PosCodec.parse(context.state().getString("controller"));
                     if (upstream != null && allocate(context.level(), upstream, "Normal", required)) {
                         active = true;
                     }
@@ -146,7 +148,7 @@ public final class Gt6KtfruCompute implements MachineBehavior {
     @Override
     public void beforeBreak(MachineBehaviorContext context) {
         String dim = context.level().dimension().location().toString();
-        Key self = new Key(dim, context.pos().immutable());
+        DimPos self = new DimPos(dim, context.pos().immutable());
         synchronized (Gt6KtfruCompute.class) {
             NODES.remove(self);
             CONTROLLERS.remove(self);
@@ -180,7 +182,7 @@ public final class Gt6KtfruCompute implements MachineBehavior {
             Mark pending;
             synchronized (Gt6KtfruCompute.class) {
                 pending = PENDING_NODE.remove(player.getUUID());
-                PENDING_CONTROLLER.put(player.getUUID(), new Key(dim, here));
+                PENDING_CONTROLLER.put(player.getUUID(), new DimPos(dim, here));
             }
             if (pending != null && dim.equals(pending.dim()) && reachable(here, pending.pos())
                     && node(context, pending.pos(), "wireless_compute_node")) {
@@ -196,12 +198,12 @@ public final class Gt6KtfruCompute implements MachineBehavior {
         }
         if (kind == Kind.ARRAY) {
             synchronized (Gt6KtfruCompute.class) {
-                Key upstream = PENDING_CONTROLLER.get(player.getUUID());
+                DimPos upstream = PENDING_CONTROLLER.get(player.getUUID());
                 if (upstream != null && dim.equals(upstream.dim()) && !upstream.pos().equals(here)) {
                     PENDING_CONTROLLER.remove(player.getUUID());
-                    context.state().setString("controller", Gt6KtfruResearch.formatPos(upstream.pos()));
+                    context.state().setString("controller", PosCodec.format(upstream.pos()));
                 } else {
-                    PENDING_CONTROLLER.put(player.getUUID(), new Key(dim, here));
+                    PENDING_CONTROLLER.put(player.getUUID(), new DimPos(dim, here));
                 }
             }
             player.displayClientMessage(Component.translatable("gt6ktfruaddon.compute.array",
@@ -212,7 +214,7 @@ public final class Gt6KtfruCompute implements MachineBehavior {
         return true;
     }
 
-    private static void updateController(Key key, boolean formed, String unit, long available, long now) {
+    private static void updateController(DimPos key, boolean formed, String unit, long available, long now) {
         ControllerEntry entry = CONTROLLERS.get(key);
         if (entry == null) {
             entry = new ControllerEntry();
@@ -260,7 +262,6 @@ public final class Gt6KtfruCompute implements MachineBehavior {
         context.state().setString("links", text.toString());
     }
 
-    record Key(String dim, BlockPos pos) {}
     private record Mark(String dim, BlockPos pos, String unit) {}
     private record NodeEntry(long power, String unit, long lastTick) {}
 

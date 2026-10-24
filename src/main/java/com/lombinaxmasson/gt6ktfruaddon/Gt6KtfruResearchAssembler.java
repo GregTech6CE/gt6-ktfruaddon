@@ -7,6 +7,8 @@ import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -84,15 +86,15 @@ public final class Gt6KtfruResearchAssembler implements MachineBehavior {
     public boolean onUse(MachineBehaviorContext context, Player player, InteractionHand hand) {
         if (!AddonTools.isMagnifyingGlass(player.getItemInHand(hand))) return false;
         String dim = context.level().dimension().location().toString();
-        Gt6KtfruResearch.Key pending = Gt6KtfruResearch.takePendingMonitor(player.getUUID(), dim);
+        DimPos pending = Gt6KtfruResearch.takePendingMonitor(player.getUUID(), dim);
         if (pending != null) {
-            context.state().setString("monitor", Gt6KtfruResearch.formatPos(pending.pos()));
+            context.state().setString("monitor", PosCodec.format(pending.pos()));
         }
         BlockPos db = databasePos(context);
         boolean online = Gt6KtfruResearch.isMonitorOnline(context.level(), db);
         player.displayClientMessage(Component.translatable("gt6ktfruaddon.research_assembler.status",
                 context.structureFormed() ? 1 : 0,
-                Gt6KtfruResearch.formatPos(db),
+                PosCodec.format(db),
                 online ? 1 : 0), false);
         return true;
     }
@@ -121,7 +123,7 @@ public final class Gt6KtfruResearchAssembler implements MachineBehavior {
         if (Gt6KtfruResearch.isMonitorOnline(context.level(), behindTwo)) {
             return behindTwo;
         }
-        BlockPos saved = Gt6KtfruResearch.parsePos(context.state().getString("monitor"));
+        BlockPos saved = PosCodec.parse(context.state().getString("monitor"));
         return saved != null ? saved : behindTwo;
     }
 

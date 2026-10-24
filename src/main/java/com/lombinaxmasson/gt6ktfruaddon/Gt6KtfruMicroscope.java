@@ -3,6 +3,8 @@ package com.lombinaxmasson.gt6ktfruaddon;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -79,25 +81,25 @@ public final class Gt6KtfruMicroscope implements MachineBehavior {
     public boolean onUse(MachineBehaviorContext context, Player player, InteractionHand hand) {
         if (!AddonTools.isMagnifyingGlass(player.getItemInHand(hand))) return false;
         String dim = context.level().dimension().location().toString();
-        Gt6KtfruResearch.Key pending = Gt6KtfruResearch.takePendingMonitor(player.getUUID(), dim);
+        DimPos pending = Gt6KtfruResearch.takePendingMonitor(player.getUUID(), dim);
         if (pending != null) {
-            context.state().setString("monitor", Gt6KtfruResearch.formatPos(pending.pos()));
+            context.state().setString("monitor", PosCodec.format(pending.pos()));
         }
         BlockPos monitor = resolveMonitor(context);
-        String label = monitor == null ? "none" : Gt6KtfruResearch.formatPos(monitor);
+        String label = monitor == null ? "none" : PosCodec.format(monitor);
         player.displayClientMessage(Component.translatable("gt6ktfruaddon.microscope.status",
                 context.structureFormed() ? 1 : 0, label, perItem), false);
         return true;
     }
 
     private static BlockPos resolveMonitor(MachineBehaviorContext context) {
-        BlockPos saved = Gt6KtfruResearch.parsePos(context.state().getString("monitor"));
+        BlockPos saved = PosCodec.parse(context.state().getString("monitor"));
         if (saved != null && Gt6KtfruResearch.isMonitorOnline(context.level(), saved)) {
             return saved;
         }
         BlockPos adjacent = Gt6KtfruResearch.findAdjacentMonitor(context.level(), context.pos());
         if (adjacent != null) {
-            context.state().setString("monitor", Gt6KtfruResearch.formatPos(adjacent));
+            context.state().setString("monitor", PosCodec.format(adjacent));
             return adjacent;
         }
         return saved;
