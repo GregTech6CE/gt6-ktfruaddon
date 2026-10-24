@@ -1,7 +1,9 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.BehaviorMachine;
@@ -11,6 +13,7 @@ import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 
 /**
  * Card 19. The crucible heats a known iron charge. Item composition stays unread.
@@ -18,6 +21,10 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 public final class Gt6KtfruCrucibleMachines {
     static final String CRUCIBLE = "electromagnet_crucible";
     private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
+
+    private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
+            .add(CRUCIBLE, Gt6KtfruCrucible::new)
+            .build();
 
     private Gt6KtfruCrucibleMachines() {}
 
@@ -38,14 +45,16 @@ public final class Gt6KtfruCrucibleMachines {
     }
 
     public static Set<String> behaviorTypes() {
-        return Set.of(CRUCIBLE);
+        return BEHAVIORS.keySet();
     }
 
     public static boolean owns(String machineType) {
-        return CRUCIBLE.equals(machineType);
+        return BEHAVIORS.containsKey(machineType);
     }
 
     public static MachineBehavior create(String machineType) {
-        return new Gt6KtfruCrucible();
+        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
+        if (behavior == null) throw new IllegalArgumentException(machineType);
+        return behavior.get();
     }
 }

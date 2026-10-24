@@ -1,7 +1,9 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.BehaviorMachine;
@@ -13,6 +15,7 @@ import com.gregtech.gregtech.api.addon.MachineIo;
 import com.gregtech.gregtech.api.addon.RecipeMachine;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
@@ -33,6 +36,18 @@ public final class Gt6KtfruLateMachines {
     static final String FILL = "ai_fill_planning";
     static final String PATTERN = "ai_pattern_recognition";
     private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
+
+    private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
+            .add(LASER_EXP, Gt6KtfruLaserFusion::experimental)
+            .add(LASER_IND, Gt6KtfruLaserFusion::industrial)
+            .add(MICROGRAVITY_ASSEMBLER, () -> new Gt6KtfruRooms(RecipeMaps.COSMIC_RADIATION, false, 0))
+            .add(MICROGRAVITY_CRYSTAL, () -> new Gt6KtfruRooms(RecipeMaps.MICROGRAVITY_CRYSTAL, true, 2))
+            .add(QUANTUM_RELAY, Gt6KtfruQuantumRelay::new)
+            .add(ROOM, () -> new Gt6KtfruLateBehavior(true, 0))
+            .add(FLOW, () -> new Gt6KtfruLateBehavior(false, 8))
+            .add(FILL, () -> new Gt6KtfruLateBehavior(false, 4))
+            .add(PATTERN, () -> new Gt6KtfruLateBehavior(false, 2))
+            .build();
 
     private Gt6KtfruLateMachines() {}
 
@@ -71,34 +86,17 @@ public final class Gt6KtfruLateMachines {
     }
 
     public static Set<String> behaviorTypes() {
-        return Set.of(
-                LASER_EXP,
-                LASER_IND,
-                MICROGRAVITY_ASSEMBLER,
-                MICROGRAVITY_CRYSTAL,
-                QUANTUM_RELAY,
-                ROOM,
-                FLOW,
-                FILL,
-                PATTERN);
+        return BEHAVIORS.keySet();
     }
 
     public static boolean owns(String machineType) {
-        return behaviorTypes().contains(machineType);
+        return BEHAVIORS.containsKey(machineType);
     }
 
     public static MachineBehavior create(String machineType) {
-        return switch (machineType) {
-            case LASER_EXP -> Gt6KtfruLaserFusion.experimental();
-            case LASER_IND -> Gt6KtfruLaserFusion.industrial();
-            case MICROGRAVITY_ASSEMBLER -> new Gt6KtfruRooms(RecipeMaps.COSMIC_RADIATION, false, 0);
-            case MICROGRAVITY_CRYSTAL -> new Gt6KtfruRooms(RecipeMaps.MICROGRAVITY_CRYSTAL, true, 2);
-            case QUANTUM_RELAY -> new Gt6KtfruQuantumRelay();
-            case ROOM -> new Gt6KtfruLateBehavior(true, 0);
-            case FLOW -> new Gt6KtfruLateBehavior(false, 8);
-            case FILL -> new Gt6KtfruLateBehavior(false, 4);
-            default -> new Gt6KtfruLateBehavior(false, 2);
-        };
+        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
+        if (behavior == null) throw new IllegalArgumentException(machineType);
+        return behavior.get();
     }
 
     private static RecipeMachine tokamak(String id, long eu, String map) {

@@ -3,7 +3,9 @@ package com.lombinaxmasson.gt6ktfruaddon;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.AddonMachineContributor;
@@ -26,6 +28,7 @@ import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.StructureRole;
 import com.gregtech.gregtech.api.addon.platform.BehaviorMachineContributor;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
@@ -128,6 +131,31 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     };
     private static final long[] VOLTAGE = {0, 32, 128, 512, 2048, 8192};
     private static final String[] TIER = {"", "lv", "mv", "hv", "ev", "iv"};
+
+    private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
+            .add(STEEL_GAS_TANK, Gt6KtfruGasTank::new)
+            .add(STAINLESS_GAS_TANK, Gt6KtfruGasTank::new)
+            .add(GAS_COMPRESSOR, Gt6KtfruGasCompressor::new)
+            .add(VOID_HOPPER, Gt6KtfruVoidHopper::new)
+            .add(MINER, Gt6KtfruMiner::new)
+            .add(MINER_RF, Gt6KtfruMiner::new)
+            .add(WATER_MILL, Gt6KtfruWaterMill::new)
+            .add(MANUAL_MOTOR, Gt6KtfruManualMotor::new)
+            .add(MANUAL_KINETIC_MOTOR, Gt6KtfruManualMotor::new)
+            .add(FLYWHEEL, () -> new Gt6KtfruFlywheel(4, 0.1))
+            .add(LARGE_FLYWHEEL, () -> new Gt6KtfruFlywheel(16, 0.15))
+            .add(ELECTRIC_FLYWHEEL, () -> new Gt6KtfruFlywheel(4, 0.07))
+            .add(LARGE_ELECTRIC_FLYWHEEL, () -> new Gt6KtfruFlywheel(16, 0.1))
+            .add(VACUUM_FLYWHEEL, () -> new Gt6KtfruFlywheel(4, 0.0001))
+            .add(LARGE_VACUUM_FLYWHEEL, () -> new Gt6KtfruFlywheel(16, 0.00012))
+            .add(GAS_BATTERY, Gt6KtfruFuelBattery::new)
+            .add(TRANSFORMER_SMALL, () -> new Gt6KtfruTransformerPart(4))
+            .add(TRANSFORMER_LARGE, () -> new Gt6KtfruTransformerPart(16))
+            .add(FLYWHEEL_GEAR_SMALL, () -> new Gt6KtfruTransformerPart(4))
+            .add(FLYWHEEL_GEAR_LARGE, () -> new Gt6KtfruTransformerPart(16))
+            .add(LIGHT_TRANSFORMER_SMALL, () -> new Gt6KtfruTransformerPart(4))
+            .add(LIGHT_TRANSFORMER_LARGE, () -> new Gt6KtfruTransformerPart(16))
+            .build();
 
     @Override
     public String addonId() {
@@ -299,13 +327,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
 
     @Override
     public Set<String> machineTypes() {
-        var types = new LinkedHashSet<>(Set.of(STEEL_GAS_TANK, STAINLESS_GAS_TANK, GAS_COMPRESSOR,
-                VOID_HOPPER, MINER, MINER_RF, WATER_MILL, MANUAL_MOTOR, MANUAL_KINETIC_MOTOR,
-                FLYWHEEL, LARGE_FLYWHEEL, ELECTRIC_FLYWHEEL, LARGE_ELECTRIC_FLYWHEEL,
-                VACUUM_FLYWHEEL, LARGE_VACUUM_FLYWHEEL, GAS_BATTERY,
-                TRANSFORMER_SMALL, TRANSFORMER_LARGE,
-                FLYWHEEL_GEAR_SMALL, FLYWHEEL_GEAR_LARGE,
-                LIGHT_TRANSFORMER_SMALL, LIGHT_TRANSFORMER_LARGE));
+        var types = new LinkedHashSet<>(BEHAVIORS.keySet());
         types.addAll(Gt6KtfruHeatMachines.behaviorTypes());
         types.addAll(Gt6KtfruTurbines.behaviorTypes());
         types.addAll(Gt6KtfruBatteries.behaviorTypes());
@@ -319,23 +341,8 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
 
     @Override
     public MachineBehavior create(String machineType) {
-        if (STEEL_GAS_TANK.equals(machineType) || STAINLESS_GAS_TANK.equals(machineType)) {
-            return new Gt6KtfruGasTank();
-        }
-        if (GAS_COMPRESSOR.equals(machineType)) return new Gt6KtfruGasCompressor();
-        if (VOID_HOPPER.equals(machineType)) return new Gt6KtfruVoidHopper();
-        if (MINER.equals(machineType) || MINER_RF.equals(machineType)) return new Gt6KtfruMiner();
-        if (WATER_MILL.equals(machineType)) return new Gt6KtfruWaterMill();
-        if (MANUAL_MOTOR.equals(machineType) || MANUAL_KINETIC_MOTOR.equals(machineType))
-            return new Gt6KtfruManualMotor();
-        if (FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(4, 0.1);
-        if (LARGE_FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(16, 0.15);
-        if (ELECTRIC_FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(4, 0.07);
-        if (LARGE_ELECTRIC_FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(16, 0.1);
-        if (VACUUM_FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(4, 0.0001);
-        if (LARGE_VACUUM_FLYWHEEL.equals(machineType)) return new Gt6KtfruFlywheel(16, 0.00012);
-        if (GAS_BATTERY.equals(machineType)) return new Gt6KtfruFuelBattery();
-        if (transformerType(machineType)) return new Gt6KtfruTransformerPart(transformerAmpere(machineType));
+        Supplier<MachineBehavior> own = BEHAVIORS.get(machineType);
+        if (own != null) return own.get();
         if (Gt6KtfruHeatMachines.owns(machineType)) return Gt6KtfruHeatMachines.create(machineType);
         if (Gt6KtfruTurbines.owns(machineType)) return Gt6KtfruTurbines.create(machineType);
         if (Gt6KtfruBatteries.owns(machineType)) return Gt6KtfruBatteries.create(machineType);
@@ -913,18 +920,6 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 .gui(KINETIC_GUI)
                 .toggle("gt6ktfruaddon.transformer.stopped", 152, 8, false)
                 .build();
-    }
-
-    private static boolean transformerType(String machineType) {
-        return TRANSFORMER_SMALL.equals(machineType) || TRANSFORMER_LARGE.equals(machineType)
-                || FLYWHEEL_GEAR_SMALL.equals(machineType) || FLYWHEEL_GEAR_LARGE.equals(machineType)
-                || LIGHT_TRANSFORMER_SMALL.equals(machineType) || LIGHT_TRANSFORMER_LARGE.equals(machineType);
-    }
-
-    private static int transformerAmpere(String machineType) {
-        if (TRANSFORMER_LARGE.equals(machineType) || FLYWHEEL_GEAR_LARGE.equals(machineType)
-                || LIGHT_TRANSFORMER_LARGE.equals(machineType)) return 16;
-        return 4;
     }
 
     /**

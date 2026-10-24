@@ -1,7 +1,9 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.BehaviorMachine;
@@ -10,6 +12,7 @@ import com.gregtech.gregtech.api.addon.EnergyOutput;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 
 /**
  * Live compute blocks. 1100, 1102 and 1104 stay commented out in the source.
@@ -20,6 +23,35 @@ public final class Gt6KtfruComputeMachines {
     static final String NODE = "wireless_compute_node_aluminium";
     static final String QUANTUM_NODE = "quantum_compute_node_naquadah";
     private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
+
+    private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
+            .add("compute_user", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.PLAIN, 512, 0, ""))
+            .add("dream_brain", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.PLAIN, 512, 0, ""))
+            .add("compute_cluster", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.CLUSTER, 0, 0, ""))
+            .add("compute_cluster_simple", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.CLUSTER, 0, 0, ""))
+            .add(WIRELESS, () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.WIRELESS, 0, 0, ""))
+            .add("wireless_compute_controller_large", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.WIRELESS, 0, 0, ""))
+            .add("wireless_compute_controller_huge", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.WIRELESS, 0, 0, ""))
+            .add("biology_compute_t1", () -> arrayBehavior(262144, 65536, "Biology"))
+            .add("biology_compute_t2", () -> arrayBehavior(2_097_152, 524288, "Biology"))
+            .add("biology_compute_t3", () -> arrayBehavior(16_777_216, 4_194_304, "Biology"))
+            .add("biology_compute_t4", () -> arrayBehavior(67_108_864, 16_777_216, "Biology"))
+            .add("quantum_compute_t1", () -> arrayBehavior(16_777_216, 65536, "Quantum"))
+            .add("quantum_compute_t2", () -> arrayBehavior(134_217_728, 262144, "Quantum"))
+            .add("quantum_compute_t3", () -> arrayBehavior(1_073_741_824, 1_048_576, "Quantum"))
+            .add("quantum_compute_t4", () -> arrayBehavior(8_589_934_592L, 16_777_216, "Quantum"))
+            .add("spacetime_compute_t1", () -> arrayBehavior(2_097_152, 2000, "Spacetime"))
+            .add("spacetime_compute_t2", () -> arrayBehavior(67_108_864, 200000, "Spacetime"))
+            .add("quantum_compute_center", () -> arrayBehavior(0, 0, "Quantum"))
+            .add(NODE, () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 2000, 0, "Normal"))
+            .add("wireless_compute_node_stainless", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 20000, 0, "Normal"))
+            .add("wireless_compute_node_chromium", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 200000, 0, "Normal"))
+            .add("wireless_compute_node_titanium", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 2000000, 0, "Normal"))
+            .add(QUANTUM_NODE, () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 65536, 0, "Quantum"))
+            .add("quantum_compute_node_naquadria", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 262144, 0, "Quantum"))
+            .add("quantum_compute_node_enriched", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 1048576, 0, "Quantum"))
+            .add("quantum_compute_node_trinaquadalloy", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 16777216, 0, "Quantum"))
+            .build();
 
     private Gt6KtfruComputeMachines() {}
 
@@ -53,67 +85,17 @@ public final class Gt6KtfruComputeMachines {
     }
 
     public static Set<String> behaviorTypes() {
-        return Set.of(
-                "compute_user",
-                "dream_brain",
-                "compute_cluster",
-                "compute_cluster_simple",
-                WIRELESS,
-                "wireless_compute_controller_large",
-                "wireless_compute_controller_huge",
-                "biology_compute_t1",
-                "biology_compute_t2",
-                "biology_compute_t3",
-                "biology_compute_t4",
-                "quantum_compute_t1",
-                "quantum_compute_t2",
-                "quantum_compute_t3",
-                "quantum_compute_t4",
-                "spacetime_compute_t1",
-                "spacetime_compute_t2",
-                "quantum_compute_center",
-                NODE,
-                "wireless_compute_node_stainless",
-                "wireless_compute_node_chromium",
-                "wireless_compute_node_titanium",
-                QUANTUM_NODE,
-                "quantum_compute_node_naquadria",
-                "quantum_compute_node_enriched",
-                "quantum_compute_node_trinaquadalloy");
+        return BEHAVIORS.keySet();
     }
 
     public static boolean owns(String machineType) {
-        return behaviorTypes().contains(machineType);
+        return BEHAVIORS.containsKey(machineType);
     }
 
     public static MachineBehavior create(String machineType) {
-        return switch (machineType) {
-            case WIRELESS, "wireless_compute_controller_large", "wireless_compute_controller_huge" ->
-                    new Gt6KtfruCompute(Gt6KtfruCompute.Kind.WIRELESS, 0, 0, "");
-            case "biology_compute_t1" -> arrayBehavior(262144, 65536, "Biology");
-            case "biology_compute_t2" -> arrayBehavior(2_097_152, 524288, "Biology");
-            case "biology_compute_t3" -> arrayBehavior(16_777_216, 4_194_304, "Biology");
-            case "biology_compute_t4" -> arrayBehavior(67_108_864, 16_777_216, "Biology");
-            case "quantum_compute_t1" -> arrayBehavior(16_777_216, 65536, "Quantum");
-            case "quantum_compute_t2" -> arrayBehavior(134_217_728, 262144, "Quantum");
-            case "quantum_compute_t3" -> arrayBehavior(1_073_741_824, 1_048_576, "Quantum");
-            case "quantum_compute_t4" -> arrayBehavior(8_589_934_592L, 16_777_216, "Quantum");
-            case "spacetime_compute_t1" -> arrayBehavior(2_097_152, 2000, "Spacetime");
-            case "spacetime_compute_t2" -> arrayBehavior(67_108_864, 200000, "Spacetime");
-            case "quantum_compute_center" -> arrayBehavior(0, 0, "Quantum");
-            case NODE -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 2000, 0, "Normal");
-            case "wireless_compute_node_stainless" -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 20000, 0, "Normal");
-            case "wireless_compute_node_chromium" -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 200000, 0, "Normal");
-            case "wireless_compute_node_titanium" -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 2000000, 0, "Normal");
-            case QUANTUM_NODE -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 65536, 0, "Quantum");
-            case "quantum_compute_node_naquadria" -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 262144, 0, "Quantum");
-            case "quantum_compute_node_enriched" -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 1048576, 0, "Quantum");
-            case "quantum_compute_node_trinaquadalloy" ->
-                    new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 16777216, 0, "Quantum");
-            case "compute_cluster", "compute_cluster_simple" ->
-                    new Gt6KtfruCompute(Gt6KtfruCompute.Kind.CLUSTER, 0, 0, "");
-            default -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.PLAIN, 512, 0, "");
-        };
+        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
+        if (behavior == null) throw new IllegalArgumentException(machineType);
+        return behavior.get();
     }
 
     private static MachineBehavior arrayBehavior(long required, long provided, String unit) {

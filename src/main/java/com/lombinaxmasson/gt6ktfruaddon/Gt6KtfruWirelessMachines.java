@@ -1,7 +1,9 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.BehaviorMachine;
@@ -10,6 +12,7 @@ import com.gregtech.gregtech.api.addon.EnergyOutput;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 
 /** Inductive tower 30114, quantum hub 30115, and receivers 31117 and 31118. */
 public final class Gt6KtfruWirelessMachines {
@@ -18,6 +21,13 @@ public final class Gt6KtfruWirelessMachines {
     static final String INDUCTIVE_RECEIVER = "wireless_receiver_inductive";
     static final String QUANTUM_RECEIVER = "wireless_receiver_quantum";
     private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
+
+    private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
+            .add(INDUCTIVE, () -> new Gt6KtfruWireless(Gt6KtfruWireless.Kind.INDUCTIVE))
+            .add(QUANTUM, () -> new Gt6KtfruWireless(Gt6KtfruWireless.Kind.QUANTUM))
+            .add(INDUCTIVE_RECEIVER, () -> new Gt6KtfruWireless(Gt6KtfruWireless.Kind.INDUCTIVE_RECEIVER))
+            .add(QUANTUM_RECEIVER, () -> new Gt6KtfruWireless(Gt6KtfruWireless.Kind.QUANTUM_RECEIVER))
+            .build();
 
     private Gt6KtfruWirelessMachines() {}
 
@@ -29,20 +39,17 @@ public final class Gt6KtfruWirelessMachines {
     }
 
     public static Set<String> behaviorTypes() {
-        return Set.of(INDUCTIVE, QUANTUM, INDUCTIVE_RECEIVER, QUANTUM_RECEIVER);
+        return BEHAVIORS.keySet();
     }
 
     public static boolean owns(String machineType) {
-        return behaviorTypes().contains(machineType);
+        return BEHAVIORS.containsKey(machineType);
     }
 
     public static MachineBehavior create(String machineType) {
-        return switch (machineType) {
-            case INDUCTIVE -> new Gt6KtfruWireless(Gt6KtfruWireless.Kind.INDUCTIVE);
-            case QUANTUM -> new Gt6KtfruWireless(Gt6KtfruWireless.Kind.QUANTUM);
-            case QUANTUM_RECEIVER -> new Gt6KtfruWireless(Gt6KtfruWireless.Kind.QUANTUM_RECEIVER);
-            default -> new Gt6KtfruWireless(Gt6KtfruWireless.Kind.INDUCTIVE_RECEIVER);
-        };
+        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
+        if (behavior == null) throw new IllegalArgumentException(machineType);
+        return behavior.get();
     }
 
     /** Nominal 4096 accepts 2048–8192 on the main input. */

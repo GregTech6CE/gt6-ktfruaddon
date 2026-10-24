@@ -1,7 +1,9 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.BehaviorMachine;
@@ -14,6 +16,7 @@ import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
@@ -27,6 +30,21 @@ public final class Gt6KtfruTurbines {
     static final String EXCITE = "separate_excite_dynamo";
     private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
     private static final int AMPERE = 16;
+
+    private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
+            .add("large_steam_turbine_magnalium", () -> new Gt6KtfruSteamTurbine(1024))
+            .add("large_steam_turbine_trinitanium", () -> new Gt6KtfruSteamTurbine(4096))
+            .add("large_steam_turbine_graphene", () -> new Gt6KtfruSteamTurbine(16384))
+            .add("large_steam_turbine_trinaquadalloy", () -> new Gt6KtfruSteamTurbine(131072))
+            .add("large_steam_turbine_vibramantium", () -> new Gt6KtfruSteamTurbine(524288))
+            .add("dynamo_stainless", () -> new Gt6KtfruDynamo(4096, 3686, AMPERE, 0))
+            .add("dynamo_titanium", () -> new Gt6KtfruDynamo(16384, 15400, AMPERE, 0))
+            .add("dynamo_tungstensteel", () -> new Gt6KtfruDynamo(65536, 61603, AMPERE, 0))
+            .add("dynamo_trinaquadalloy", () -> new Gt6KtfruDynamo(262144, 246415, AMPERE, 0))
+            .add("dynamo_adamantium", () -> new Gt6KtfruDynamo(1048576, 985660, AMPERE, 0))
+            .add(EXCITE, () -> new Gt6KtfruDynamo(1024, 870, AMPERE, 5))
+            .add(BOILER, Gt6KtfruFluidBoiler::new)
+            .build();
 
     private Gt6KtfruTurbines() {}
 
@@ -95,41 +113,17 @@ public final class Gt6KtfruTurbines {
     }
 
     public static Set<String> behaviorTypes() {
-        return Set.of(
-                "large_steam_turbine_magnalium",
-                "large_steam_turbine_trinitanium",
-                "large_steam_turbine_graphene",
-                "large_steam_turbine_trinaquadalloy",
-                "large_steam_turbine_vibramantium",
-                "dynamo_stainless",
-                "dynamo_titanium",
-                "dynamo_tungstensteel",
-                "dynamo_trinaquadalloy",
-                "dynamo_adamantium",
-                EXCITE,
-                BOILER);
+        return BEHAVIORS.keySet();
     }
 
     public static boolean owns(String machineType) {
-        return behaviorTypes().contains(machineType);
+        return BEHAVIORS.containsKey(machineType);
     }
 
     public static MachineBehavior create(String machineType) {
-        return switch (machineType) {
-            case "large_steam_turbine_magnalium" -> new Gt6KtfruSteamTurbine(1024);
-            case "large_steam_turbine_trinitanium" -> new Gt6KtfruSteamTurbine(4096);
-            case "large_steam_turbine_graphene" -> new Gt6KtfruSteamTurbine(16384);
-            case "large_steam_turbine_trinaquadalloy" -> new Gt6KtfruSteamTurbine(131072);
-            case "large_steam_turbine_vibramantium" -> new Gt6KtfruSteamTurbine(524288);
-            case "dynamo_stainless" -> new Gt6KtfruDynamo(4096, 3686, AMPERE, 0);
-            case "dynamo_titanium" -> new Gt6KtfruDynamo(16384, 15400, AMPERE, 0);
-            case "dynamo_tungstensteel" -> new Gt6KtfruDynamo(65536, 61603, AMPERE, 0);
-            case "dynamo_trinaquadalloy" -> new Gt6KtfruDynamo(262144, 246415, AMPERE, 0);
-            case "dynamo_adamantium" -> new Gt6KtfruDynamo(1048576, 985660, AMPERE, 0);
-            case EXCITE -> new Gt6KtfruDynamo(1024, 870, AMPERE, 5);
-            case BOILER -> new Gt6KtfruFluidBoiler();
-            default -> throw new IllegalArgumentException(machineType);
-        };
+        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
+        if (behavior == null) throw new IllegalArgumentException(machineType);
+        return behavior.get();
     }
 
     private static void gas(List<AddonMachine> machines, String id, String material, long rate) {

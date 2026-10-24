@@ -1,7 +1,9 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.BehaviorMachine;
@@ -11,6 +13,7 @@ import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
@@ -27,6 +30,15 @@ public final class Gt6KtfruHeatMachines {
     /** Layout name, machine type and block id. The recipe map is {@link RecipeMaps#FUEL_DEBURN}. */
     static final String FUEL_DEBURN_TYPE = "fuel_deburn_factory";
     private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
+
+    private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
+            .add(SUN_HEATER, Gt6KtfruSunHeater::new)
+            .add(SUN_MIRROR, Gt6KtfruSunMirror::new)
+            .add(TIDAL, Gt6KtfruTidalGenerator::new)
+            .add(OIL_MINER, Gt6KtfruOilMiner::new)
+            .add(MANTLE, Gt6KtfruMantleHeater::new)
+            .add(FUEL_DEBURN_TYPE, Gt6KtfruFuelDeburner::new)
+            .build();
 
     private Gt6KtfruHeatMachines() {}
 
@@ -52,21 +64,17 @@ public final class Gt6KtfruHeatMachines {
     }
 
     public static Set<String> behaviorTypes() {
-        return Set.of(SUN_HEATER, SUN_MIRROR, TIDAL, OIL_MINER, MANTLE, FUEL_DEBURN_TYPE);
+        return BEHAVIORS.keySet();
     }
 
     public static boolean owns(String machineType) {
-        return behaviorTypes().contains(machineType);
+        return BEHAVIORS.containsKey(machineType);
     }
 
     public static MachineBehavior create(String machineType) {
-        if (SUN_HEATER.equals(machineType)) return new Gt6KtfruSunHeater();
-        if (SUN_MIRROR.equals(machineType)) return new Gt6KtfruSunMirror();
-        if (TIDAL.equals(machineType)) return new Gt6KtfruTidalGenerator();
-        if (OIL_MINER.equals(machineType)) return new Gt6KtfruOilMiner();
-        if (MANTLE.equals(machineType)) return new Gt6KtfruMantleHeater();
-        if (FUEL_DEBURN_TYPE.equals(machineType)) return new Gt6KtfruFuelDeburner();
-        throw new IllegalArgumentException(machineType);
+        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
+        if (behavior == null) throw new IllegalArgumentException(machineType);
+        return behavior.get();
     }
 
     /**

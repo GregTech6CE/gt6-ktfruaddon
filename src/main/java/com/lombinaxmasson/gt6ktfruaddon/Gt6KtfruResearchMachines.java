@@ -1,7 +1,9 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.BehaviorMachine;
@@ -12,6 +14,7 @@ import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
@@ -26,6 +29,19 @@ public final class Gt6KtfruResearchMachines {
     static final String ELECTRON = "electron_microscope";
     private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
 
+    private static final String[] TABLES = {
+            "research_monitor",
+            "research_table_circuit",
+            "research_table_item",
+            "research_table_printer",
+            "research_database_item",
+            "research_database_online",
+            "research_table_identify",
+            "research_table_compute",
+            "research_table_current_control"
+    };
+    private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = behaviors();
+
     private Gt6KtfruResearchMachines() {}
 
     public static void addMaps(List<RecipeTable> maps) {
@@ -34,15 +50,7 @@ public final class Gt6KtfruResearchMachines {
     }
 
     public static void add(List<AddonMachine> machines) {
-        table(machines, "research_monitor");
-        table(machines, "research_table_circuit");
-        table(machines, "research_table_item");
-        table(machines, "research_table_printer");
-        table(machines, "research_database_item");
-        table(machines, "research_database_online");
-        table(machines, "research_table_identify");
-        table(machines, "research_table_compute");
-        table(machines, "research_table_current_control");
+        for (String id : TABLES) table(machines, id);
         machines.add(researchMachine(ASSEMBLER, "Aluminium", RecipeMaps.RESEARCH_ASSEMBLER, "gt.recipe.assembler"));
         machines.add(researchMachine(REACTOR, "StainlessSteel", RecipeMaps.RESEARCH_REACTOR));
         machines.add(microscope(OPTICAL, "Aluminium", 128, 16, 512, 16384));
@@ -55,36 +63,28 @@ public final class Gt6KtfruResearchMachines {
     }
 
     public static Set<String> behaviorTypes() {
-        return Set.of(
-                "research_monitor",
-                "research_table_circuit",
-                "research_table_item",
-                "research_table_printer",
-                "research_database_item",
-                "research_database_online",
-                "research_table_identify",
-                "research_table_compute",
-                "research_table_current_control",
-                ASSEMBLER,
-                REACTOR,
-                OPTICAL,
-                ELECTRON);
+        return BEHAVIORS.keySet();
     }
 
     public static boolean owns(String machineType) {
-        return behaviorTypes().contains(machineType);
+        return BEHAVIORS.containsKey(machineType);
     }
 
     public static MachineBehavior create(String machineType) {
-        if (ASSEMBLER.equals(machineType)) {
-            return new Gt6KtfruResearchAssembler(RecipeMaps.RESEARCH_ASSEMBLER, "gt.recipe.assembler");
-        }
-        if (REACTOR.equals(machineType)) {
-            return new Gt6KtfruResearchAssembler(RecipeMaps.RESEARCH_REACTOR);
-        }
-        if (OPTICAL.equals(machineType)) return new Gt6KtfruMicroscope(256);
-        if (ELECTRON.equals(machineType)) return new Gt6KtfruMicroscope(4096);
-        return new Gt6KtfruResearch("research_monitor".equals(machineType));
+        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
+        if (behavior == null) throw new IllegalArgumentException(machineType);
+        return behavior.get();
+    }
+
+    private static Map<String, Supplier<MachineBehavior>> behaviors() {
+        Behaviors behaviors = new Behaviors();
+        for (String id : TABLES) behaviors.add(id, () -> new Gt6KtfruResearch("research_monitor".equals(id)));
+        return behaviors
+                .add(ASSEMBLER, () -> new Gt6KtfruResearchAssembler(RecipeMaps.RESEARCH_ASSEMBLER, "gt.recipe.assembler"))
+                .add(REACTOR, () -> new Gt6KtfruResearchAssembler(RecipeMaps.RESEARCH_REACTOR))
+                .add(OPTICAL, () -> new Gt6KtfruMicroscope(256))
+                .add(ELECTRON, () -> new Gt6KtfruMicroscope(4096))
+                .build();
     }
 
     /** Bottom EU satisfies the required behavior input; front emits one 512 EU packet. */

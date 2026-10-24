@@ -1,7 +1,9 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.BehaviorMachine;
@@ -12,6 +14,7 @@ import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 
 /**
  * Card 14. Liquid batteries store RU from the fluid in a one-cell sink.
@@ -21,6 +24,15 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
  */
 public final class Gt6KtfruBatteries {
     private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
+
+    private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
+            .add("liquid_battery_stainless", () -> new Gt6KtfruLiquidBattery(512, 1024, 64, 0.1))
+            .add("liquid_battery_titanium", () -> new Gt6KtfruLiquidBattery(2048, 4096, 128, 0.1))
+            .add("liquid_battery_tungstensteel", () -> new Gt6KtfruLiquidBattery(8192, 16384, 256, 0.1))
+            .add("transform_battery_eu", () -> new Gt6KtfruTransformBattery("EU", 0.1, false))
+            .add("transform_battery_ru", () -> new Gt6KtfruTransformBattery("RU", 0.04, false))
+            .add("transform_battery_lu", () -> new Gt6KtfruTransformBattery("LU", 0.0002, true))
+            .build();
 
     private Gt6KtfruBatteries() {}
 
@@ -57,29 +69,17 @@ public final class Gt6KtfruBatteries {
     }
 
     public static Set<String> behaviorTypes() {
-        return Set.of(
-                "liquid_battery_stainless",
-                "liquid_battery_titanium",
-                "liquid_battery_tungstensteel",
-                "transform_battery_eu",
-                "transform_battery_ru",
-                "transform_battery_lu");
+        return BEHAVIORS.keySet();
     }
 
     public static boolean owns(String machineType) {
-        return behaviorTypes().contains(machineType);
+        return BEHAVIORS.containsKey(machineType);
     }
 
     public static MachineBehavior create(String machineType) {
-        return switch (machineType) {
-            case "liquid_battery_stainless" -> new Gt6KtfruLiquidBattery(512, 1024, 64, 0.1);
-            case "liquid_battery_titanium" -> new Gt6KtfruLiquidBattery(2048, 4096, 128, 0.1);
-            case "liquid_battery_tungstensteel" -> new Gt6KtfruLiquidBattery(8192, 16384, 256, 0.1);
-            case "transform_battery_eu" -> new Gt6KtfruTransformBattery("EU", 0.1, false);
-            case "transform_battery_ru" -> new Gt6KtfruTransformBattery("RU", 0.04, false);
-            case "transform_battery_lu" -> new Gt6KtfruTransformBattery("LU", 0.0002, true);
-            default -> throw new IllegalArgumentException(machineType);
-        };
+        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
+        if (behavior == null) throw new IllegalArgumentException(machineType);
+        return behavior.get();
     }
 
     private static void liquid(List<AddonMachine> machines, String id, String material,
