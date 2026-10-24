@@ -17,11 +17,8 @@ import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
-import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruAiCenters;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruFusionMachines;
-import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruMicrogravityMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruQuantumMachines;
-import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruResearchMachines;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
 import com.lombinaxmasson.gt6ktfruaddon.gas.Gt6KtfruGasMachines;
 import com.lombinaxmasson.gt6ktfruaddon.heat.Gt6KtfruCrucibleMachines;
@@ -38,6 +35,9 @@ import com.lombinaxmasson.gt6ktfruaddon.processing.Gt6KtfruCatalyticMachines;
 import com.lombinaxmasson.gt6ktfruaddon.processing.Gt6KtfruDistillationMachines;
 import com.lombinaxmasson.gt6ktfruaddon.processing.Gt6KtfruOreProcessing;
 import com.lombinaxmasson.gt6ktfruaddon.processing.Gt6KtfruSingleBlockMachines;
+import com.lombinaxmasson.gt6ktfruaddon.research.Gt6KtfruAiCenters;
+import com.lombinaxmasson.gt6ktfruaddon.research.Gt6KtfruMicrogravityMachines;
+import com.lombinaxmasson.gt6ktfruaddon.research.Gt6KtfruResearchMachines;
 import com.lombinaxmasson.gt6ktfruaddon.semiconductor.Gt6KtfruSemiconductorMachines;
 
 /**

@@ -1,4 +1,4 @@
-package com.lombinaxmasson.gt6ktfruaddon;
+package com.lombinaxmasson.gt6ktfruaddon.research;
 
 import java.util.Arrays;
 import java.util.HashMap;
