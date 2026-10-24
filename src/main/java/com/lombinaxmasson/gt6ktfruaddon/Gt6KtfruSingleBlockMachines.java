@@ -26,11 +26,8 @@ import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
  * detectors and wafer testers and coaters, each in its material tiers.
  */
 public final class Gt6KtfruSingleBlockMachines implements Feature {
-    private static final String[] ELECTRIC = {
-            "", "SteelGalvanized", "Aluminium", "StainlessSteel", "Chromium", "Titanium"
-    };
-    private static final long[] VOLTAGE = {0, 32, 128, 512, 2048, 8192};
-    private static final String[] TIER = {"", "lv", "mv", "hv", "ev", "iv"};
+    /** The voltage of tiers 1 to 5, from the first entry. */
+    private static final long[] VOLTAGE = {32, 128, 512, 2048, 8192};
 
     // The faces of each family. They follow the tileEntityInit0 names, not the raw GT6 bit index: SBIT_I and
     // SIDE_INSIDE are no external face, LEFT is the machine's left, and a channel with no face is closed.
@@ -60,6 +57,43 @@ public final class Gt6KtfruSingleBlockMachines implements Feature {
             on(TOP, LEFT).auto(TOP), on(RIGHT, BOTTOM).auto(BOTTOM), BACK);
     private static final SideProfile WAFER_TESTER = WAFER.cheap();
 
+    /** The tiers most electric families run in. */
+    private static final List<Tier> ELECTRIC = List.of(
+            new Tier(1, "lv", "SteelGalvanized"),
+            new Tier(2, "mv", "Aluminium"),
+            new Tier(3, "hv", "StainlessSteel"),
+            new Tier(4, "ev", "Chromium"),
+            new Tier(5, "iv", "Titanium"));
+
+    /** The families in the order their machines are declared. */
+    private static final List<Family> FAMILIES = List.of(
+            new Family("fluid_heater", "fluidheater", "HU", RecipeMaps.FLUID_HEATING, FLUID_HEATER, List.of(
+                    new Tier(1, "steel", "Steel"),
+                    new Tier(2, "invar", "Invar"),
+                    new Tier(3, "titanium", "Titanium"),
+                    new Tier(4, "tungsten_carbide", "TungstenCarbide"))),
+            new Family("light_mixer", "lightmixer", "RU", RecipeMaps.LIGHT_MIXER, KINETIC_LIGHT_MIXER, List.of(
+                    new Tier(1, "bronze", "Bronze", 4),
+                    new Tier(2, "steel", "Steel", 8),
+                    new Tier(3, "titanium", "Titanium", 16),
+                    new Tier(4, "tungstensteel", "Tungstensteel", 32))),
+            new Family("circuit_assembler", "circuitassembler", "LU", RecipeMaps.CIRCUIT_ASSEMBLER,
+                    CIRCUIT_ASSEMBLER, ELECTRIC),
+            new Family("laser_cutter", "lasercutter", "LU", RecipeMaps.LASER_CUTTER, LASER_CUTTER, ELECTRIC),
+            new Family("heat_mixer", "heatmixer", "EU", RecipeMaps.HEAT_MIXER, MIXER, ELECTRIC),
+            new Family("electronics_designer", "eda", "EU", RecipeMaps.ELECTRONICS_DESIGNER, DESIGNER, ELECTRIC),
+            new Family("flaw_detector", "flawdetector", "EU", RecipeMaps.FLAW_DETECTOR, FLAW_DETECTOR, ELECTRIC),
+            new Family("electric_light_mixer", "lightmixerelectric", "EU", RecipeMaps.LIGHT_MIXER, LIGHT_MIXER, List.of(
+                    new Tier(1, "lv", "SteelGalvanized", 4),
+                    new Tier(2, "mv", "Aluminium", 8),
+                    new Tier(3, "hv", "StainlessSteel", 16),
+                    new Tier(4, "ev", "Chromium", 32),
+                    new Tier(5, "iv", "Titanium", 64))),
+            new Family("wafer_tester", "wafertester", "EU", RecipeMaps.WAFER_TESTER, WAFER_TESTER, ELECTRIC),
+            new Family("wafer_coater", "wafercoater", "EU", RecipeMaps.WAFER_COATER, WAFER, ELECTRIC),
+            new Family("ultrasonic_mixer", "ultrasonicmixer", "EU", RecipeMaps.ULTRASONIC_MIXER, MIXER,
+                    ELECTRIC.subList(2, 5)));
+
     @Override
     public List<RecipeTable> recipeTables() {
         List<RecipeTable> maps = new ArrayList<>();
@@ -79,65 +113,42 @@ public final class Gt6KtfruSingleBlockMachines implements Feature {
     @Override
     public List<AddonMachine> machines() {
         List<AddonMachine> machines = new ArrayList<>();
-        heat(machines, "fluid_heater", "fluidheater", "HU", RecipeMaps.FLUID_HEATING, FLUID_HEATER,
-                "Steel", "Invar", "Titanium", "TungstenCarbide");
-        kinetic(machines, "light_mixer", "lightmixer", RecipeMaps.LIGHT_MIXER, KINETIC_LIGHT_MIXER, new int[] {4, 8, 16, 32},
-                "Bronze", "Steel", "Titanium", "Tungstensteel");
-        electric(machines, "circuit_assembler", "circuitassembler", "LU", RecipeMaps.CIRCUIT_ASSEMBLER,
-                CIRCUIT_ASSEMBLER, 1, 5, null);
-        electric(machines, "laser_cutter", "lasercutter", "LU", RecipeMaps.LASER_CUTTER, LASER_CUTTER, 1, 5, null);
-        electric(machines, "heat_mixer", "heatmixer", "EU", RecipeMaps.HEAT_MIXER, MIXER, 1, 5, null);
-        electric(machines, "electronics_designer", "eda", "EU", RecipeMaps.ELECTRONICS_DESIGNER, DESIGNER, 1, 5, null);
-        electric(machines, "flaw_detector", "flawdetector", "EU", RecipeMaps.FLAW_DETECTOR, FLAW_DETECTOR, 1, 5, null);
-        electric(machines, "electric_light_mixer", "lightmixerelectric", "EU", RecipeMaps.LIGHT_MIXER, LIGHT_MIXER, 1, 5,
-                new int[] {4, 8, 16, 32, 64});
-        electric(machines, "wafer_tester", "wafertester", "EU", RecipeMaps.WAFER_TESTER, WAFER_TESTER, 1, 5, null);
-        electric(machines, "wafer_coater", "wafercoater", "EU", RecipeMaps.WAFER_COATER, WAFER, 1, 5, null);
-        electric(machines, "ultrasonic_mixer", "ultrasonicmixer", "EU", RecipeMaps.ULTRASONIC_MIXER, MIXER, 3, 5, null);
+        for (Family family : FAMILIES) {
+            for (Tier tier : family.tiers()) machines.add(basic(family, tier));
+        }
         return List.copyOf(machines);
     }
 
-    private static void heat(List<AddonMachine> out, String prefix, String type, String energy, String recipeMap,
-            SideProfile sides, String... materials) {
-        String[] suffix = {"steel", "invar", "titanium", "tungsten_carbide"};
-        for (int i = 0; i < materials.length; i++) {
-            out.add(basic(prefix + "_" + suffix[i], materials[i], type, energy, VOLTAGE[i + 1], i + 1, 1, recipeMap, sides));
-        }
-    }
-
-    private static void kinetic(List<AddonMachine> out, String prefix, String type, String recipeMap, SideProfile sides,
-            int[] parallel, String... materials) {
-        String[] suffix = {"bronze", "steel", "titanium", "tungstensteel"};
-        for (int i = 0; i < materials.length; i++) {
-            out.add(basic(prefix + "_" + suffix[i], materials[i], type, "RU", VOLTAGE[i + 1], i + 1, parallel[i], recipeMap,
-                    sides));
-        }
-    }
-
-    private static void electric(List<AddonMachine> out, String prefix, String type, String energy, String recipeMap,
-            SideProfile sides, int first, int last, int[] parallel) {
-        for (int tier = first; tier <= last; tier++) {
-            int count = parallel == null ? 1 : parallel[tier - first];
-            out.add(basic(prefix + "_" + TIER[tier], ELECTRIC[tier], type, energy, VOLTAGE[tier], tier, count, recipeMap,
-                    sides));
-        }
-    }
-
-    private static RecipeMachine basic(String id, String material, String type, String energy, long perTick,
-            int tier, int parallel, String recipeMap, SideProfile sides) {
-        var energyInput = EnergyInput.builder(energy, perTick);
+    private static RecipeMachine basic(Family family, Tier tier) {
+        var energyInput = EnergyInput.builder(family.energy(), voltage(tier.number()));
         var io = MachineIo.builder();
-        var recipe = RecipeMachine.builder(MachineCasing.builder(id, material).machineType(type).tier(tier).build())
-                .recipeMap(recipeMap)
+        var recipe = RecipeMachine.builder(MachineCasing.builder(family.prefix() + "_" + tier.suffix(), tier.material())
+                        .machineType(family.type()).tier(tier.number()).build())
+                .recipeMap(family.recipeMap())
                 .basic()
-                .parallel(parallel);
-        sides.apply(energyInput, io, recipe);
+                .parallel(tier.parallel());
+        family.sides().apply(energyInput, io, recipe);
         return recipe.energy(energyInput.build()).io(io.build()).build();
+    }
+
+    private static long voltage(int tier) {
+        return VOLTAGE[tier - 1];
     }
 
     private static Channel on(MachineFace... faces) {
         return new Channel(List.of(faces), null);
     }
+
+    /** One machine of a family: its tier, the suffix of its id, its material and how many recipes it runs at once. */
+    private record Tier(int number, String suffix, String material, int parallel) {
+        Tier(int number, String suffix, String material) {
+            this(number, suffix, material, 1);
+        }
+    }
+
+    /** The machines of one kind on one recipe map, one per tier, with the faces they share. */
+    private record Family(String prefix, String type, String energy, String recipeMap, SideProfile sides,
+            List<Tier> tiers) {}
 
     /** The faces one channel is open on, and the face it moves items or fluid through by itself, if any. */
     private record Channel(List<MachineFace> faces, MachineFace automatic) {
