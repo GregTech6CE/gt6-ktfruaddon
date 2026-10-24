@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
@@ -16,6 +16,7 @@ import com.gregtech.gregtech.api.addon.RecipeMachine;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
@@ -25,7 +26,7 @@ import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
  * - Quantum communication relay (30074): paired EU-to-QU recipe runner emitting 128 QU/tick from the top face.
  * - AI research centers (30106–30108): 67,108,864 Normal compute/tick allocation and monitor point progress.
  */
-public final class Gt6KtfruLateMachines {
+public final class Gt6KtfruLateMachines implements Feature {
     static final String LASER_EXP = "laser_fusion_experimental";
     static final String LASER_IND = "laser_fusion_industrial";
     static final String MICROGRAVITY_ASSEMBLER = "microgravity_assembler";
@@ -49,9 +50,9 @@ public final class Gt6KtfruLateMachines {
             .add(PATTERN, () -> new Gt6KtfruLateBehavior(false, 2))
             .build();
 
-    private Gt6KtfruLateMachines() {}
-
-    public static void addMaps(List<RecipeTable> maps) {
+    @Override
+    public List<RecipeTable> recipeTables() {
+        List<RecipeTable> maps = new ArrayList<>();
         maps.add(RecipeMaps.table(RecipeMaps.LASER_FUSION, "Laser Inertial Fusion", "gascompressor", 3, 3, 0, 3, 3, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.LASER_FUSION_EXPERIMENTAL, "Experimental Laser Fusion", "gascompressor", 3, 3, 0, 3, 3, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.CATALYTIC_REACTOR, "Catalytic Reactor", "mixer", 6, 3, 0, 6, 3, 0, 1));
@@ -62,9 +63,12 @@ public final class Gt6KtfruLateMachines {
         maps.add(RecipeMaps.table(RecipeMaps.QUANTUM_GOLD, "Quantum Gold Synthesis", "gascompressor", 4, 4, 0, 2, 2, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.QUANTUM_OBSERVATION, "Quantum Observation", "gascompressor", 4, 4, 0, 2, 2, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.QUANTUM_COMMUNICATION, "Quantum Communication", "gascompressor", 1, 1, 0, 0, 0, 0, 1));
+        return List.copyOf(maps);
     }
 
-    public static void add(List<AddonMachine> machines) {
+    @Override
+    public List<AddonMachine> machines() {
+        List<AddonMachine> machines = new ArrayList<>();
         machines.add(tokamak("fusion_tokamak_exp", 2048, RecipeMaps.FUSION_TOKAMAK_EXPERIMENTAL));
         machines.add(tokamak("fusion_tokamak_t1", 16384, RecipeMaps.FUSION_TOKAMAK));
         machines.add(laser(LASER_EXP, RecipeMaps.LASER_FUSION_EXPERIMENTAL, "Tungstensteel", 131_072L, 2L * 8L * 1024L * 1024L));
@@ -83,20 +87,12 @@ public final class Gt6KtfruLateMachines {
         machines.add(ai(FLOW));
         machines.add(ai(FILL));
         machines.add(ai(PATTERN));
+        return List.copyOf(machines);
     }
 
-    public static Set<String> behaviorTypes() {
-        return BEHAVIORS.keySet();
-    }
-
-    public static boolean owns(String machineType) {
-        return BEHAVIORS.containsKey(machineType);
-    }
-
-    public static MachineBehavior create(String machineType) {
-        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
-        if (behavior == null) throw new IllegalArgumentException(machineType);
-        return behavior.get();
+    @Override
+    public Map<String, Supplier<MachineBehavior>> behaviors() {
+        return BEHAVIORS;
     }
 
     private static RecipeMachine tokamak(String id, long eu, String map) {

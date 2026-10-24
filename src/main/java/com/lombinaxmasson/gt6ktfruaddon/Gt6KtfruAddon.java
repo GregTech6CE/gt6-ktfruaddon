@@ -10,10 +10,10 @@ import com.gregtech.gregtech.api.addon.CompressedGasTankDeclaration;
 import com.gregtech.gregtech.api.addon.GregTechAddon;
 import com.gregtech.gregtech.api.addon.GregTechAddons;
 import com.gregtech.gregtech.api.addon.GregTechMaterials;
-import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
+import com.lombinaxmasson.gt6ktfruaddon.registry.Features;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -50,14 +50,12 @@ public final class Gt6KtfruAddon {
                     .icon(() -> stack("heat_mixer_lv"))
                     .withSearchBar()
                     .displayItems((parameters, output) -> {
-                        Gt6KtfruMachines machines = new Gt6KtfruMachines();
-                        for (AddonMachine machine : machines.addonMachines())
+                        Features features = Features.get();
+                        for (AddonMachine machine : features.machines())
                             accept(output, machine.casing().id());
-                        for (String drum : Gt6KtfruMachines.GAS_DRUMS) accept(output, drum);
-                        for (String size : Gt6KtfruMachines.FLUID_PIPE_SIZES)
-                            accept(output, Gt6KtfruMachines.fluidPipeId(size));
-                        for (String size : Gt6KtfruMachines.ITEM_PIPE_SIZES)
-                            accept(output, Gt6KtfruMachines.itemPipeId(size));
+                        for (CompressedGasTankDeclaration drum : features.gasTanks())
+                            accept(output, drum.id());
+                        for (String id : features.derivedBlockIds()) accept(output, id);
                         for (var item : Gt6KtfruItems.BY_PATH.values()) output.accept(item.get());
                         acceptStack(output, AddonItems.stack("flywheel", "Iron", 1));
                         acceptStack(output, AddonItems.stack("bladeLargeTurbine", "Steel", 1));
@@ -122,13 +120,7 @@ public final class Gt6KtfruAddon {
      * without touching this method. All missing ids are reported at once.
      */
     private static void requireDeclaredIdsRegistered() {
-        Gt6KtfruMachines declarations = new Gt6KtfruMachines();
-        List<String> ids = new ArrayList<>();
-        for (AddonMachine machine : declarations.addonMachines()) ids.add(machine.casing().id());
-        for (LayoutPart part : declarations.layoutParts()) ids.add(part.name());
-        for (CompressedGasTankDeclaration tank : declarations.compressedGasTanks()) ids.add(tank.id());
-        for (String size : Gt6KtfruMachines.FLUID_PIPE_SIZES) ids.add(Gt6KtfruMachines.fluidPipeId(size));
-        for (String size : Gt6KtfruMachines.ITEM_PIPE_SIZES) ids.add(Gt6KtfruMachines.itemPipeId(size));
+        List<String> ids = new ArrayList<>(Features.get().blockIds());
         ids.addAll(Gt6KtfruItems.BY_PATH.keySet());
         List<String> missing = ids.stream().filter(id -> stack(id).isEmpty()).toList();
         if (!missing.isEmpty()) {

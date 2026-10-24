@@ -29,6 +29,7 @@ import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.RecipeMachine;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
+import com.lombinaxmasson.gt6ktfruaddon.registry.Features;
 
 /**
  * What GT6CE checks only at game start, checked here on the plain JVM: the SDK builders validate
@@ -56,11 +57,8 @@ class MachineContractTest {
         for (CompressedGasTankDeclaration tank : Declarations.gasTanks()) {
             claim(owner, clashes, tank.id(), "a gas drum");
         }
-        for (String size : Gt6KtfruMachines.FLUID_PIPE_SIZES) {
-            claim(owner, clashes, Gt6KtfruMachines.fluidPipeId(size), "a fluid pipe");
-        }
-        for (String size : Gt6KtfruMachines.ITEM_PIPE_SIZES) {
-            claim(owner, clashes, Gt6KtfruMachines.itemPipeId(size), "an item pipe");
+        for (String id : Features.get().derivedBlockIds()) {
+            claim(owner, clashes, id, "a pipe");
         }
         assertEquals(List.of(), clashes);
     }

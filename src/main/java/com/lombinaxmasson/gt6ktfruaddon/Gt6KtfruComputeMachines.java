@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
@@ -13,12 +13,13 @@ import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
 
 /**
  * Live compute blocks. 1100, 1102 and 1104 stay commented out in the source.
  * 1101 is replaced by the three wireless multiblock controllers.
  */
-public final class Gt6KtfruComputeMachines {
+public final class Gt6KtfruComputeMachines implements Feature {
     static final String WIRELESS = "wireless_compute_controller";
     static final String NODE = "wireless_compute_node_aluminium";
     static final String QUANTUM_NODE = "quantum_compute_node_naquadah";
@@ -53,9 +54,9 @@ public final class Gt6KtfruComputeMachines {
             .add("quantum_compute_node_trinaquadalloy", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.NODE, 16777216, 0, "Quantum"))
             .build();
 
-    private Gt6KtfruComputeMachines() {}
-
-    public static void add(List<AddonMachine> machines) {
+    @Override
+    public List<AddonMachine> machines() {
+        List<AddonMachine> machines = new ArrayList<>();
         emitter(machines, "compute_user");
         emitter(machines, "dream_brain");
         node(machines, "compute_cluster", "Chromium", 4);
@@ -82,20 +83,12 @@ public final class Gt6KtfruComputeMachines {
         computeNode(machines, "quantum_compute_node_naquadria", "Naquadria");
         computeNode(machines, "quantum_compute_node_enriched", "Naquadria");
         computeNode(machines, "quantum_compute_node_trinaquadalloy", "Trinaquadalloy");
+        return List.copyOf(machines);
     }
 
-    public static Set<String> behaviorTypes() {
-        return BEHAVIORS.keySet();
-    }
-
-    public static boolean owns(String machineType) {
-        return BEHAVIORS.containsKey(machineType);
-    }
-
-    public static MachineBehavior create(String machineType) {
-        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
-        if (behavior == null) throw new IllegalArgumentException(machineType);
-        return behavior.get();
+    @Override
+    public Map<String, Supplier<MachineBehavior>> behaviors() {
+        return BEHAVIORS;
     }
 
     private static MachineBehavior arrayBehavior(long required, long provided, String unit) {

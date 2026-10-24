@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
@@ -12,8 +12,10 @@ import com.gregtech.gregtech.api.addon.EnergyOutput;
 import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
+import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
@@ -21,7 +23,7 @@ import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
  * A behavior machine still needs one energy input, so a face that the structure
  * leaves open carries it when the source itself has no input.
  */
-public final class Gt6KtfruHeatMachines {
+public final class Gt6KtfruHeatMachines implements Feature {
     static final String SUN_HEATER = "sun_heater";
     static final String SUN_MIRROR = "sun_heater_mirror_large";
     static final String TIDAL = "tidal_wave_generator";
@@ -40,18 +42,21 @@ public final class Gt6KtfruHeatMachines {
             .add(FUEL_DEBURN_TYPE, Gt6KtfruFuelDeburner::new)
             .build();
 
-    private Gt6KtfruHeatMachines() {}
-
-    public static void add(List<AddonMachine> machines) {
+    @Override
+    public List<AddonMachine> machines() {
+        List<AddonMachine> machines = new ArrayList<>();
         machines.add(sunHeater());
         machines.add(sunMirror());
         machines.add(tidal());
         machines.add(oilMiner());
         machines.add(mantle());
         machines.add(fuelDeburn());
+        return List.copyOf(machines);
     }
 
-    public static void addParts(List<LayoutPart> parts) {
+    @Override
+    public List<LayoutPart> parts() {
+        List<LayoutPart> parts = new ArrayList<>();
         parts.add(casing("heat_pipe", "Silver", 6.0F));
         parts.add(casing("heat_pipe_top", "Silver", 6.0F));
         parts.add(casing("tidal_blade", "StainlessSteel", 6.0F));
@@ -61,20 +66,23 @@ public final class Gt6KtfruHeatMachines {
         parts.add(casing("mantle_drill_rod", "Tungsten", 6.0F));
         parts.add(casing("enhanced_frame", "VanadiumSteel", 16.0F));
         parts.add(casing("chemical_reactor_pipe", "StainlessSteel", 1.0F));
+        return List.copyOf(parts);
     }
 
-    public static Set<String> behaviorTypes() {
-        return BEHAVIORS.keySet();
+    @Override
+    public List<StructureLayout> layouts() {
+        return List.of(
+                Gt6KtfruHeatLayouts.sunHeater(),
+                Gt6KtfruHeatLayouts.sunMirror(),
+                Gt6KtfruHeatLayouts.tidal(),
+                Gt6KtfruHeatLayouts.oilMiner(),
+                Gt6KtfruHeatLayouts.mantle(),
+                Gt6KtfruHeatLayouts.fuelDeburn());
     }
 
-    public static boolean owns(String machineType) {
-        return BEHAVIORS.containsKey(machineType);
-    }
-
-    public static MachineBehavior create(String machineType) {
-        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
-        if (behavior == null) throw new IllegalArgumentException(machineType);
-        return behavior.get();
+    @Override
+    public Map<String, Supplier<MachineBehavior>> behaviors() {
+        return BEHAVIORS;
     }
 
     /**

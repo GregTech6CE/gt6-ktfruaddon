@@ -7,6 +7,7 @@ import com.gregtech.gregtech.api.addon.CellMatch;
 import com.gregtech.gregtech.api.addon.LayoutCell;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.StructureRole;
+import com.lombinaxmasson.gt6ktfruaddon.registry.Features;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -166,7 +167,7 @@ public final class Gt6KtfruStructureBuild {
     private static Map<String, StructureLayout> layouts() {
         if (layouts == null) {
             Map<String, StructureLayout> found = new HashMap<>();
-            for (StructureLayout layout : new Gt6KtfruMachines().structureLayouts()) {
+            for (StructureLayout layout : Features.get().layouts()) {
                 found.put(layout.name(), layout);
             }
             layouts = Map.copyOf(found);

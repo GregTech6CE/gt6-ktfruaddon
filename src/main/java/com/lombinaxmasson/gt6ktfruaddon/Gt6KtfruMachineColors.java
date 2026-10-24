@@ -2,6 +2,7 @@ package com.lombinaxmasson.gt6ktfruaddon;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.GregTechMaterials;
+import com.lombinaxmasson.gt6ktfruaddon.registry.Features;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -21,16 +22,16 @@ public final class Gt6KtfruMachineColors {
 
     @SubscribeEvent
     public static void blocks(RegisterColorHandlersEvent.Block event) {
-        paintAll(new Gt6KtfruMachines(), (id, material) -> paint(event, id, material));
+        paintAll((id, material) -> paint(event, id, material));
     }
 
     @SubscribeEvent
     public static void items(RegisterColorHandlersEvent.Item event) {
-        paintAll(new Gt6KtfruMachines(), (id, material) -> paint(event, id, material));
+        paintAll((id, material) -> paint(event, id, material));
     }
 
-    private static void paintAll(Gt6KtfruMachines machines, java.util.function.BiConsumer<String, String> paint) {
-        for (AddonMachine machine : machines.addonMachines())
+    private static void paintAll(java.util.function.BiConsumer<String, String> paint) {
+        for (AddonMachine machine : Features.get().machines())
             paint.accept(machine.casing().id(), machine.casing().material());
     }
 

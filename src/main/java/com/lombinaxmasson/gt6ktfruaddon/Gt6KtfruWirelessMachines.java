@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
@@ -13,9 +13,10 @@ import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
 
 /** Inductive tower 30114, quantum hub 30115, and receivers 31117 and 31118. */
-public final class Gt6KtfruWirelessMachines {
+public final class Gt6KtfruWirelessMachines implements Feature {
     static final String INDUCTIVE = "wireless_battery_inductive";
     static final String QUANTUM = "wireless_battery_quantum";
     static final String INDUCTIVE_RECEIVER = "wireless_receiver_inductive";
@@ -29,27 +30,19 @@ public final class Gt6KtfruWirelessMachines {
             .add(QUANTUM_RECEIVER, () -> new Gt6KtfruWireless(Gt6KtfruWireless.Kind.QUANTUM_RECEIVER))
             .build();
 
-    private Gt6KtfruWirelessMachines() {}
-
-    public static void add(List<AddonMachine> machines) {
+    @Override
+    public List<AddonMachine> machines() {
+        List<AddonMachine> machines = new ArrayList<>();
         machines.add(inductiveTower());
         machines.add(quantumTower());
         machines.add(receiver(INDUCTIVE_RECEIVER, "Tungstensteel", 8192, 4));
         machines.add(receiver(QUANTUM_RECEIVER, "Naquadria", 32768, 16));
+        return List.copyOf(machines);
     }
 
-    public static Set<String> behaviorTypes() {
-        return BEHAVIORS.keySet();
-    }
-
-    public static boolean owns(String machineType) {
-        return BEHAVIORS.containsKey(machineType);
-    }
-
-    public static MachineBehavior create(String machineType) {
-        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
-        if (behavior == null) throw new IllegalArgumentException(machineType);
-        return behavior.get();
+    @Override
+    public Map<String, Supplier<MachineBehavior>> behaviors() {
+        return BEHAVIORS;
     }
 
     /** Nominal 4096 accepts 2048–8192 on the main input. */

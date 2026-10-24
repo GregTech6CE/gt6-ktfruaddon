@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
@@ -15,6 +15,7 @@ import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
@@ -22,7 +23,7 @@ import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
  * the {@code research_monitor} two blocks behind the controller before running a recipe.
  * Microscopes unlock examined items into their bound or adjacent monitor.
  */
-public final class Gt6KtfruResearchMachines {
+public final class Gt6KtfruResearchMachines implements Feature {
     static final String ASSEMBLER = "research_assembler";
     static final String REACTOR = "research_reactor";
     static final String OPTICAL = "optical_microscope";
@@ -40,43 +41,41 @@ public final class Gt6KtfruResearchMachines {
             "research_table_compute",
             "research_table_current_control"
     };
-    private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = behaviors();
+    private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = declareBehaviors();
 
-    private Gt6KtfruResearchMachines() {}
-
-    public static void addMaps(List<RecipeTable> maps) {
+    @Override
+    public List<RecipeTable> recipeTables() {
+        List<RecipeTable> maps = new ArrayList<>();
         maps.add(RecipeMaps.table(RecipeMaps.RESEARCH_ASSEMBLER, "Research Assembler", "researchassembler", 9, 6, 0, 3, 3, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.RESEARCH_REACTOR, "Research Reactor", "fusion", 9, 6, 0, 6, 6, 0, 1));
+        return List.copyOf(maps);
     }
 
-    public static void add(List<AddonMachine> machines) {
+    @Override
+    public List<AddonMachine> machines() {
+        List<AddonMachine> machines = new ArrayList<>();
         for (String id : TABLES) table(machines, id);
         machines.add(researchMachine(ASSEMBLER, "Aluminium", RecipeMaps.RESEARCH_ASSEMBLER, "gt.recipe.assembler"));
         machines.add(researchMachine(REACTOR, "StainlessSteel", RecipeMaps.RESEARCH_REACTOR));
         machines.add(microscope(OPTICAL, "Aluminium", 128, 16, 512, 16384));
         machines.add(microscope(ELECTRON, "StainlessSteel", 512, 16, 4096, 131072));
+        return List.copyOf(machines);
     }
 
-    public static void addLayouts(List<StructureLayout> layouts) {
+    @Override
+    public List<StructureLayout> layouts() {
+        List<StructureLayout> layouts = new ArrayList<>();
         layouts.add(Gt6KtfruResearchLayouts.assembler(ASSEMBLER));
         layouts.add(Gt6KtfruResearchLayouts.assembler(REACTOR));
+        return List.copyOf(layouts);
     }
 
-    public static Set<String> behaviorTypes() {
-        return BEHAVIORS.keySet();
+    @Override
+    public Map<String, Supplier<MachineBehavior>> behaviors() {
+        return BEHAVIORS;
     }
 
-    public static boolean owns(String machineType) {
-        return BEHAVIORS.containsKey(machineType);
-    }
-
-    public static MachineBehavior create(String machineType) {
-        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
-        if (behavior == null) throw new IllegalArgumentException(machineType);
-        return behavior.get();
-    }
-
-    private static Map<String, Supplier<MachineBehavior>> behaviors() {
+    private static Map<String, Supplier<MachineBehavior>> declareBehaviors() {
         Behaviors behaviors = new Behaviors();
         for (String id : TABLES) behaviors.add(id, () -> new Gt6KtfruResearch("research_monitor".equals(id)));
         return behaviors

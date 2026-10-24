@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
@@ -14,11 +14,12 @@ import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
 
 /**
  * Card 19. The crucible heats a known iron charge. Item composition stays unread.
  */
-public final class Gt6KtfruCrucibleMachines {
+public final class Gt6KtfruCrucibleMachines implements Feature {
     static final String CRUCIBLE = "electromagnet_crucible";
     private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
 
@@ -26,35 +27,33 @@ public final class Gt6KtfruCrucibleMachines {
             .add(CRUCIBLE, Gt6KtfruCrucible::new)
             .build();
 
-    private Gt6KtfruCrucibleMachines() {}
-
-    public static void add(List<AddonMachine> machines) {
+    @Override
+    public List<AddonMachine> machines() {
+        List<AddonMachine> machines = new ArrayList<>();
         machines.add(BehaviorMachine.builder(MachineCasing.builder(CRUCIBLE, "Titanium").machineType(CRUCIBLE).build())
                 .energy(EnergyInput.builder("EU", 512).faces(MachineFace.BOTTOM).capacity(8192).build())
                 .gui(GUI)
                 .toggle("gt6ktfruaddon.crucible.stopped", 152, 64, false)
                 .build());
+        return List.copyOf(machines);
     }
 
-    public static void addLayouts(List<StructureLayout> layouts) {
+    @Override
+    public List<StructureLayout> layouts() {
+        List<StructureLayout> layouts = new ArrayList<>();
         layouts.add(Gt6KtfruCrucibleLayouts.crucible(CRUCIBLE));
+        return List.copyOf(layouts);
     }
 
-    public static void addParts(List<LayoutPart> parts) {
+    @Override
+    public List<LayoutPart> parts() {
+        List<LayoutPart> parts = new ArrayList<>();
         parts.add(LayoutPart.builder("crucible_screen", "Chromium").hardness(6.0F).build());
+        return List.copyOf(parts);
     }
 
-    public static Set<String> behaviorTypes() {
-        return BEHAVIORS.keySet();
-    }
-
-    public static boolean owns(String machineType) {
-        return BEHAVIORS.containsKey(machineType);
-    }
-
-    public static MachineBehavior create(String machineType) {
-        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
-        if (behavior == null) throw new IllegalArgumentException(machineType);
-        return behavior.get();
+    @Override
+    public Map<String, Supplier<MachineBehavior>> behaviors() {
+        return BEHAVIORS;
     }
 }

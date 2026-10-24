@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
@@ -17,6 +17,7 @@ import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
+import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
@@ -25,7 +26,7 @@ import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
  * A fuel declaration has no structure-hint key; the layout name is the machine type
  * and the description is in the language file.
  */
-public final class Gt6KtfruTurbines {
+public final class Gt6KtfruTurbines implements Feature {
     static final String BOILER = "fluid_boiler";
     static final String EXCITE = "separate_excite_dynamo";
     private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
@@ -46,9 +47,9 @@ public final class Gt6KtfruTurbines {
             .add(BOILER, Gt6KtfruFluidBoiler::new)
             .build();
 
-    private Gt6KtfruTurbines() {}
-
-    public static void add(List<AddonMachine> machines) {
+    @Override
+    public List<AddonMachine> machines() {
+        List<AddonMachine> machines = new ArrayList<>();
         gas(machines, "large_gas_turbine_magnalium", "StainlessSteel", 1024);
         gas(machines, "large_gas_turbine_trinitanium", "Titanium", 4096);
         gas(machines, "large_gas_turbine_graphene", "Tungstensteel", 16384);
@@ -72,9 +73,12 @@ public final class Gt6KtfruTurbines {
         motor(machines, "expanded_motor_trinaquadalloy", "Trinaquadalloy", 131072);
         motor(machines, "expanded_motor_adamantium", "Adamantium", 524288);
         machines.add(boiler());
+        return List.copyOf(machines);
     }
 
-    public static void addLayouts(List<StructureLayout> layouts) {
+    @Override
+    public List<StructureLayout> layouts() {
+        List<StructureLayout> layouts = new ArrayList<>();
         layouts.add(Gt6KtfruTurbineLayouts.turbine("large_gas_turbine_magnalium", "turbine_shell_stainless"));
         layouts.add(Gt6KtfruTurbineLayouts.turbine("large_gas_turbine_trinitanium", "turbine_shell_titanium"));
         layouts.add(Gt6KtfruTurbineLayouts.turbine("large_gas_turbine_graphene", "turbine_shell_tungstensteel"));
@@ -98,9 +102,12 @@ public final class Gt6KtfruTurbines {
         layouts.add(Gt6KtfruTurbineLayouts.motor("expanded_motor_trinaquadalloy", "trinaquadalloy_wall"));
         layouts.add(Gt6KtfruTurbineLayouts.motor("expanded_motor_adamantium", "adamantium_wall"));
         layouts.add(Gt6KtfruTurbineLayouts.boiler(BOILER));
+        return List.copyOf(layouts);
     }
 
-    public static void addParts(List<LayoutPart> parts) {
+    @Override
+    public List<LayoutPart> parts() {
+        List<LayoutPart> parts = new ArrayList<>();
         parts.add(casing("turbine_shell_stainless", "StainlessSteel", 6.0F));
         parts.add(casing("turbine_shell_titanium", "Titanium", 6.0F));
         parts.add(casing("turbine_shell_tungstensteel", "Tungstensteel", 6.0F));
@@ -110,20 +117,12 @@ public final class Gt6KtfruTurbines {
         parts.add(casing("boiler_heat_pipe", "Invar", 10.0F));
         parts.add(casing("pressure_pipe", "StainlessSteel", 10.0F));
         parts.add(casing("high_pressure_exchanger", "Invar", 10.0F));
+        return List.copyOf(parts);
     }
 
-    public static Set<String> behaviorTypes() {
-        return BEHAVIORS.keySet();
-    }
-
-    public static boolean owns(String machineType) {
-        return BEHAVIORS.containsKey(machineType);
-    }
-
-    public static MachineBehavior create(String machineType) {
-        Supplier<MachineBehavior> behavior = BEHAVIORS.get(machineType);
-        if (behavior == null) throw new IllegalArgumentException(machineType);
-        return behavior.get();
+    @Override
+    public Map<String, Supplier<MachineBehavior>> behaviors() {
+        return BEHAVIORS;
     }
 
     private static void gas(List<AddonMachine> machines, String id, String material, long rate) {
