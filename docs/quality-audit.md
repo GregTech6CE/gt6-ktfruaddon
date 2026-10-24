@@ -66,7 +66,7 @@
 - 1,107 行，混着：配方图声明、单方块配方机、蒸馏塔和矿处理系统、气体燃料机、动能行为机、变压零件、气体电池、掩膜对准机和 CNC 及其布局、压缩气罐、行为工厂分派。类注释（`:30–50`）按卡号写流水账（"Card 08 adds…"），这个文件 12 处，全仓库 22 处。
 - `sides()`（`:489–549`）用 `id.startsWith("fluid_heater_")` 这类前缀匹配决定面配置；`basic()` 里 `id.startsWith("flaw_detector_")` 决定探伤仪标志（`:477`）。
 - 平行数组表按下标对齐：`kineticBehaviors`（`:888–923`）、`transformerParts`（`:929–954`）、`heat()` 的 4 元素 `suffix` 配变长 `materials`（`:420–426`，第 5 个材料会越界）。
-- `hopperInput = {64, 32, 128, 512}`（`:891`）不单调，`VoidHopper.INPUT` 里又抄了一份。是上游原值还是笔误，仓库里没有说明 [待核实]。
+- `hopperInput = {64, 32, 128, 512}`（`:891`）不单调，`VoidHopper.INPUT` 里又抄了一份。是上游原值，已核对：`tileEntityInit0` 里 21010 至 21013 就是这几个数。
 - 公有可变数组：`GAS_DRUMS`、`FLUID_PIPE_SIZES`、`ITEM_PIPE_SIZES`（`:129–140`）。
 - 魔法数字：GUI 坐标、`1_000_000_000_000L`、掩膜对准机布局里的源 id（`31002`、`31110`、`31200`，`:627–644`）。
 - 行为类里的常数和声明处重复，靠人工保持一致：`Miner.INPUT`、`VoidHopper.INPUT` 和 `Machines` 里的声明各写一份；而 `FuelBattery.rate()` 是行为类导出、声明处引用。两种做法并存。
@@ -469,7 +469,7 @@ com.lombinaxmasson.gt6ktfruaddon
 
 第 3 步后半（热机布局、`LateMachines`、环）。九个提交：下面两组共八个，每个都在干净克隆里单独构建、跑测试，最后一个是这份记录。
 
-先纠正上一轮的一处错：我写过"`HeatLayouts` 的 `sides()` 和平行数组就是计划第 3 步里'改成数据表'的那一半"，不对。`sides()`（按 id 前缀匹配面配置）在 `SingleBlockMachines`，平行数组在 `SingleBlockMachines`（`heat()` 的 `suffix` 配 `materials`）、`KineticMachines` 和 `TransformerParts`，都是机器声明，和 `HeatLayouts` 无关；我是把 `HeatLayouts` 里层图的 `new String[] {` 当成了它们。`HeatLayouts` 是六个手写布局，对它来说"改成数据表"是迁到 `LayerLayout`（§3 早就写了"其他手写布局应该迁到它上面"），这一轮按这个做。`sides()` 和平行数组那一半没做，是第 3 步现在剩下的唯一一件。这一轮通读了 `HeatLayouts` 和 `LateMachines`（§2 列为没通读的）。
+先纠正上一轮的一处错：我写过"`HeatLayouts` 的 `sides()` 和平行数组就是计划第 3 步里'改成数据表'的那一半"，不对。`sides()`（按 id 前缀匹配面配置）在 `SingleBlockMachines`，平行数组在 `SingleBlockMachines`（`heat()` 的 `suffix` 配 `materials`）、`KineticMachines` 和 `TransformerParts`，都是机器声明，和 `HeatLayouts` 无关；我是把 `HeatLayouts` 里层图的 `new String[] {` 当成了它们。`HeatLayouts` 是六个手写布局，对它来说"改成数据表"是迁到 `LayerLayout`（§3 早就写了"其他手写布局应该迁到它上面"），这一轮按这个做。`sides()` 和平行数组那一半这一轮没做，在下一段做了。这一轮通读了 `HeatLayouts` 和 `LateMachines`（§2 列为没通读的）。
 
 热机布局，三个提交：
 
@@ -503,7 +503,25 @@ com.lombinaxmasson.gt6ktfruaddon
 | 类大小 | 手写类里没有超过 400 行的了：最大的是 `Materials`（332 行，一次性生成后手改过）和 `FuelDeburnLayout`（313 行，层图数据），其余都不超过 276 行。生成文件不算 |
 | `smoke-boot.ps1` | 通过，84 秒 |
 
-第 3 步现在只剩一件：`sides()` 和平行数组改成数据表（`SingleBlockMachines`、`KineticMachines`、`TransformerParts`）。附录 B 的分包试算可以重跑了，放在第 4 步开头，用最终的类名和映射。
+第 3 步当时只剩一件：`sides()` 和平行数组改成数据表（`SingleBlockMachines`、`KineticMachines`、`TransformerParts`），下一段做完了。
+
+第 3 步最后一件（`sides()` 和平行数组改成表）。五个提交：四个代码提交，每个都在干净克隆里单独构建、跑测试，最后一个是这份记录。
+
+- `SingleBlockMachines` 的面配置。`sides()` 按 id 前缀决定面配置，没有一个前缀对得上就抛，`basic()` 里又测一次 id 去找探伤仪。现在每个家族传一个 `SideProfile`：一个 record，装四个物品和流体通道、能量面和三个会不同的配方标志。九种面配置是常量，原来写在分支里的注释跟着常量走；共用面配置的家族（两种光混合器、热混合机和超声混合机、设计机和探伤仪、晶圆测试机和涂布机）从同一个常量派生。`MachineIo` 里没点名的通道和点名成"没有面"是一回事，所以每个配置都点满四个通道，原来跳过某个通道的分支，结果不变。
+- `SingleBlockMachines` 的家族表。`heat()`、`kinetic()`、`electric()` 把后缀数组和变长的材料列表配对（多给一个材料就越界），层级的电压、后缀、材料又各放在一个带"零级占位"的数组里。现在 `Tier` 记层级号、id 后缀、材料和并行数，`Family` 记前缀、类型、能量、配方图、面配置和各层级，`FAMILIES` 按机器声明的顺序列出十一个家族；电学家族共用一张层级表，超声混合机取其中后三级，电压按层级号查。
+- `KineticMachines`。九个要按下标对齐的数组变成三张表：`Tier`（层级号、id、材料、飞轮的包上限）、`Hopper`（层级加虚空漏斗的输入和范围）、`FlywheelKind`（类型、槽数、安培）；飞轮的种类和它的 id 原来是两个装着同样字符串的数组，合成一个。虚空漏斗的输入 64、32、128、512（木头比青铜高）核对过，是来源的原值：`tileEntityInit0` 里 21010 至 21013 就是这几个数，§4.1 S3 里"是上游原值还是笔误"的 [待核实] 已改成已核对。
+- `TransformerParts`。七个数组变成两张表：`Tier`（层级号、材料、电压后缀和齿轮后缀）和 `Kind`（类型、能量、安培、id 是否以齿轮层级结尾）；原来靠 `"RU".equals(energy)` 挑后缀，现在是表里的一个字段；类型和 id 原来也是两个装着同样字符串的数组，合成一个。
+
+验证（本机）：
+
+| 项 | 结果 |
+| --- | --- |
+| 声明快照 | 四个提交都和上一个比对，21 段全部逐段相同（278 台机器每一台的每个字段都在内） |
+| `gradlew build` | 每个提交在干净克隆里单独构建，33 个测试，0 失败 |
+| 类大小 | `SingleBlockMachines` 171 → 203 行，`KineticMachines` 175 → 193 行，`TransformerParts` 92 → 97 行。行数反而多了：每张表多了记录定义和说明，换来的是不用再数下标 |
+| `smoke-boot.ps1` | 通过，85 秒 |
+
+第 3 步到这里做完了。§4.1 S3 里另外几条（行为类里的常数和声明处重复、GUI 坐标这类魔法数字、公有可变数组）不在第 3 步的清单里，WP3 收尾时再核对。附录 B 的分包试算可以重跑了，放在第 4 步开头，用最终的类名和映射。
 
 ### WP4 行为层公共件和生命周期（L）
 
@@ -576,7 +594,7 @@ com.lombinaxmasson.gt6ktfruaddon
 - [x] WP0 本地可构建、可复现（B2、B5；G2 的路径部分）。2026-10-24 做完；全新克隆和 `-AutoDownloadJdk` 还没验证
 - [x] WP1 署名与定位（R4）。2026-10-24 做完：README 首段、`NOTICE`、`mods.toml` 的作者和描述；剩生成文件头写来源（WP5）、README 其余过期的条目（WP7）
 - [ ] WP2 契约测试与自检（B1、B3、S8；S2 的自检部分）。2026-10-24 做了测试、自检推导和冒烟脚本；剩文件头检查（等 WP5）、失败策略开关、CI 里的冒烟
-- [ ] WP3 包结构与登记表（S1、S2、S3、S7）。2026-10-24 做了第 1、2 步（拆枢纽、登记表）和第 3 步的大部分（切 `Machines`、热机布局、拆 `LateMachines`）；第 3 步里 `sides()` 和平行数组改成数据表、第 4 至 6 步还没做
+- [ ] WP3 包结构与登记表（S1、S2、S3、S7）。2026-10-24 做了第 1、2 步（拆枢纽、登记表）和第 3 步（切 `Machines`、热机布局、拆 `LateMachines`、`sides()` 和平行数组改成表）；第 4 至 6 步还没做
 - [ ] WP4 行为层公共件与生命周期（S4、D1、D2、D3、D5）
 - [ ] WP5 生成代码卫生（G1、G2、G3；G4 可选）
 - [ ] WP6 缺陷与细节（D4、D6、D7、D8、D9；S6 的飞轮）
