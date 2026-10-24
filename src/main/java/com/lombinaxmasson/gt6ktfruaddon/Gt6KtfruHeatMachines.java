@@ -1,6 +1,7 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
 import java.util.List;
+import java.util.Set;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
 import com.gregtech.gregtech.api.addon.BehaviorMachine;
@@ -18,6 +19,13 @@ import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
  * leaves open carries it when the source itself has no input.
  */
 public final class Gt6KtfruHeatMachines {
+    static final String SUN_HEATER = "sun_heater";
+    static final String SUN_MIRROR = "sun_heater_mirror_large";
+    static final String TIDAL = "tidal_wave_generator";
+    static final String OIL_MINER = "oil_miner";
+    static final String MANTLE = "mantle_heater";
+    /** Layout name, machine type and block id. The recipe map is {@link RecipeMaps#FUEL_DEBURN}. */
+    static final String FUEL_DEBURN_TYPE = "fuel_deburn_factory";
     private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
 
     private Gt6KtfruHeatMachines() {}
@@ -43,22 +51,21 @@ public final class Gt6KtfruHeatMachines {
         parts.add(casing("chemical_reactor_pipe", "StainlessSteel", 1.0F));
     }
 
+    public static Set<String> behaviorTypes() {
+        return Set.of(SUN_HEATER, SUN_MIRROR, TIDAL, OIL_MINER, MANTLE, FUEL_DEBURN_TYPE);
+    }
+
     public static boolean owns(String machineType) {
-        return Gt6KtfruMachines.SUN_HEATER.equals(machineType)
-                || Gt6KtfruMachines.SUN_MIRROR.equals(machineType)
-                || Gt6KtfruMachines.TIDAL.equals(machineType)
-                || Gt6KtfruMachines.OIL_MINER.equals(machineType)
-                || Gt6KtfruMachines.MANTLE.equals(machineType)
-                || Gt6KtfruMachines.FUEL_DEBURN_TYPE.equals(machineType);
+        return behaviorTypes().contains(machineType);
     }
 
     public static MachineBehavior create(String machineType) {
-        if (Gt6KtfruMachines.SUN_HEATER.equals(machineType)) return new Gt6KtfruSunHeater();
-        if (Gt6KtfruMachines.SUN_MIRROR.equals(machineType)) return new Gt6KtfruSunMirror();
-        if (Gt6KtfruMachines.TIDAL.equals(machineType)) return new Gt6KtfruTidalGenerator();
-        if (Gt6KtfruMachines.OIL_MINER.equals(machineType)) return new Gt6KtfruOilMiner();
-        if (Gt6KtfruMachines.MANTLE.equals(machineType)) return new Gt6KtfruMantleHeater();
-        if (Gt6KtfruMachines.FUEL_DEBURN_TYPE.equals(machineType)) return new Gt6KtfruFuelDeburner();
+        if (SUN_HEATER.equals(machineType)) return new Gt6KtfruSunHeater();
+        if (SUN_MIRROR.equals(machineType)) return new Gt6KtfruSunMirror();
+        if (TIDAL.equals(machineType)) return new Gt6KtfruTidalGenerator();
+        if (OIL_MINER.equals(machineType)) return new Gt6KtfruOilMiner();
+        if (MANTLE.equals(machineType)) return new Gt6KtfruMantleHeater();
+        if (FUEL_DEBURN_TYPE.equals(machineType)) return new Gt6KtfruFuelDeburner();
         throw new IllegalArgumentException(machineType);
     }
 
@@ -67,8 +74,8 @@ public final class Gt6KtfruHeatMachines {
      * Nominal 640 HU accepts 320 to 1280.
      */
     private static BehaviorMachine sunHeater() {
-        return BehaviorMachine.builder(MachineCasing.builder(Gt6KtfruMachines.SUN_HEATER, "StainlessSteel")
-                        .machineType(Gt6KtfruMachines.SUN_HEATER).tier(3).build())
+        return BehaviorMachine.builder(MachineCasing.builder(SUN_HEATER, "StainlessSteel")
+                        .machineType(SUN_HEATER).tier(3).build())
                 .energy(EnergyInput.builder("HU", 640).faces(MachineFace.FRONT)
                         .capacity(Gt6KtfruSunHeater.capacity()).build())
                 .gui(GUI)
@@ -77,8 +84,8 @@ public final class Gt6KtfruHeatMachines {
 
     /** No energy in the source. The bottom is the only open face. */
     private static BehaviorMachine sunMirror() {
-        return BehaviorMachine.builder(MachineCasing.builder(Gt6KtfruMachines.SUN_MIRROR, "StainlessSteel")
-                        .machineType(Gt6KtfruMachines.SUN_MIRROR).tier(3).build())
+        return BehaviorMachine.builder(MachineCasing.builder(SUN_MIRROR, "StainlessSteel")
+                        .machineType(SUN_MIRROR).tier(3).build())
                 .energy(EnergyInput.builder("HU", 1).faces(MachineFace.BOTTOM).capacity(1).build())
                 .gui(GUI)
                 .build();
@@ -89,8 +96,8 @@ public final class Gt6KtfruHeatMachines {
      * are structure cells. Capacity holds the largest positive sine result, 224.
      */
     private static BehaviorMachine tidal() {
-        return BehaviorMachine.builder(MachineCasing.builder(Gt6KtfruMachines.TIDAL, "StainlessSteel")
-                        .machineType(Gt6KtfruMachines.TIDAL).tier(3).build())
+        return BehaviorMachine.builder(MachineCasing.builder(TIDAL, "StainlessSteel")
+                        .machineType(TIDAL).tier(3).build())
                 .energy(EnergyInput.builder("RU", 1).faces(MachineFace.BACK)
                         .capacity(Gt6KtfruTidalGenerator.MAX_RATE).build())
                 .energyOutput(EnergyOutput.builder("RU", Gt6KtfruTidalGenerator.MAX_RATE, 1)
@@ -101,8 +108,8 @@ public final class Gt6KtfruHeatMachines {
 
     /** KU 128 on the open bottom. The source window is 16 to 1024; this input accepts 64 to 256. */
     private static BehaviorMachine oilMiner() {
-        return BehaviorMachine.builder(MachineCasing.builder(Gt6KtfruMachines.OIL_MINER, "StainlessSteel")
-                        .machineType(Gt6KtfruMachines.OIL_MINER).tier(3).build())
+        return BehaviorMachine.builder(MachineCasing.builder(OIL_MINER, "StainlessSteel")
+                        .machineType(OIL_MINER).tier(3).build())
                 .energy(EnergyInput.builder("KU", 128).faces(MachineFace.BOTTOM).capacity(1024).build())
                 .gui(GUI)
                 .progress(70, 8)
@@ -117,8 +124,8 @@ public final class Gt6KtfruHeatMachines {
      * RU on the open front is the drill progress.
      */
     private static BehaviorMachine mantle() {
-        return BehaviorMachine.builder(MachineCasing.builder(Gt6KtfruMachines.MANTLE, "Tungsten")
-                        .machineType(Gt6KtfruMachines.MANTLE).tier(5).build())
+        return BehaviorMachine.builder(MachineCasing.builder(MANTLE, "Tungsten")
+                        .machineType(MANTLE).tier(5).build())
                 .energy(EnergyInput.builder("EU", 1024).faces(MachineFace.BOTTOM).capacity(16384).build())
                 .auxiliaryEnergy(EnergyInput.builder("RU", 1).anyPacket()
                         .faces(MachineFace.FRONT).capacity(1_000_000_000L).build())
@@ -132,8 +139,8 @@ public final class Gt6KtfruHeatMachines {
      * at most three fluids in and one recycled-fuel out. The map still says 6 and 6.
      */
     private static BehaviorMachine fuelDeburn() {
-        return BehaviorMachine.builder(MachineCasing.builder(Gt6KtfruMachines.FUEL_DEBURN_TYPE, "Tungsten")
-                        .machineType(Gt6KtfruMachines.FUEL_DEBURN_TYPE).tier(5).build())
+        return BehaviorMachine.builder(MachineCasing.builder(FUEL_DEBURN_TYPE, "Tungsten")
+                        .machineType(FUEL_DEBURN_TYPE).tier(5).build())
                 .energy(EnergyInput.builder("EU", 512).faces(MachineFace.BOTTOM).capacity(8192).build())
                 .auxiliaryEnergy(EnergyInput.builder("HU", 1).anyPacket()
                         .faces(MachineFace.TOP).capacity(1_000_000_000L).build())

@@ -14,7 +14,7 @@ public final class Gt6KtfruHeatLayouts {
     private Gt6KtfruHeatLayouts() {}
 
     public static StructureLayout sunHeater() {
-        var layout = StructureLayout.builder(Gt6KtfruMachines.SUN_HEATER);
+        var layout = StructureLayout.builder(Gt6KtfruHeatMachines.SUN_HEATER);
         // One absorb layer. The source repeats that layer until it fails, then caps with the top.
         String[][] grids = {
                 {"WWWWW", "WWWWW", "WWWWW", "WWWWW", "WWWWW"},
@@ -27,7 +27,7 @@ public final class Gt6KtfruHeatLayouts {
     }
 
     public static StructureLayout sunMirror() {
-        var layout = StructureLayout.builder(Gt6KtfruMachines.SUN_MIRROR);
+        var layout = StructureLayout.builder(Gt6KtfruHeatMachines.SUN_MIRROR);
         String[][] grids = {
                 {"WWW", "W W", "WWW"},
                 {"   ", " W ", "   "},
@@ -38,7 +38,7 @@ public final class Gt6KtfruHeatLayouts {
     }
 
     public static StructureLayout tidal() {
-        var layout = StructureLayout.builder(Gt6KtfruMachines.TIDAL);
+        var layout = StructureLayout.builder(Gt6KtfruHeatMachines.TIDAL);
         String[][] grids = {
                 {
                         "  LLLLLL",
@@ -74,7 +74,7 @@ public final class Gt6KtfruHeatLayouts {
     }
 
     public static StructureLayout oilMiner() {
-        var layout = StructureLayout.builder(Gt6KtfruMachines.OIL_MINER);
+        var layout = StructureLayout.builder(Gt6KtfruHeatMachines.OIL_MINER);
         String[][] grids = {
                 {"WAA", " AA", "WAA"},
                 {"WOO", "OOO", "WOO"}
@@ -84,7 +84,7 @@ public final class Gt6KtfruHeatLayouts {
     }
 
     public static StructureLayout mantle() {
-        var layout = StructureLayout.builder(Gt6KtfruMachines.MANTLE);
+        var layout = StructureLayout.builder(Gt6KtfruHeatMachines.MANTLE);
         String[][] grids = {
                 {"WWWWW", "WWWWW", "WWDWW", "WWWWW", "WWWWW"},
                 {"WWWWW", "WHHHW", " HHHW", "WHHHW", "WWWWW"},
@@ -101,7 +101,7 @@ public final class Gt6KtfruHeatLayouts {
     }
 
     public static StructureLayout fuelDeburn() {
-        var layout = StructureLayout.builder(Gt6KtfruMachines.FUEL_DEBURN_TYPE);
+        var layout = StructureLayout.builder(Gt6KtfruHeatMachines.FUEL_DEBURN_TYPE);
         String[][] grids = {
                 layerA(), layerB(), layerC(), layerD(), layerC(), layerE(), layerF(), layerG(),
                 layerH(), layerI(), layerJ(), layerK(), layerL(), layerM(), layerN(), layerO(),

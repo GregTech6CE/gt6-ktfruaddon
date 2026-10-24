@@ -60,13 +60,6 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
     public static final String MASK_ALIGNER_DUV = "mask_aligner_duv";
     public static final String MASK_ALIGNER_EUV = "mask_aligner_euv";
     public static final String CNC_MACHINE = "cnc_machine";
-    public static final String SUN_HEATER = "sun_heater";
-    public static final String SUN_MIRROR = "sun_heater_mirror_large";
-    public static final String TIDAL = "tidal_wave_generator";
-    public static final String OIL_MINER = "oil_miner";
-    public static final String MANTLE = "mantle_heater";
-    /** Layout name, machine type and block id. The recipe map is {@link RecipeMaps#FUEL_DEBURN}. */
-    public static final String FUEL_DEBURN_TYPE = "fuel_deburn_factory";
     public static final String TRANSFORMER_SMALL = "transformer_small";
     public static final String TRANSFORMER_LARGE = "transformer_large";
     public static final String FLYWHEEL_GEAR_SMALL = "flywheel_gear_small";
@@ -312,8 +305,8 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
                 VACUUM_FLYWHEEL, LARGE_VACUUM_FLYWHEEL, GAS_BATTERY,
                 TRANSFORMER_SMALL, TRANSFORMER_LARGE,
                 FLYWHEEL_GEAR_SMALL, FLYWHEEL_GEAR_LARGE,
-                LIGHT_TRANSFORMER_SMALL, LIGHT_TRANSFORMER_LARGE,
-                SUN_HEATER, SUN_MIRROR, TIDAL, OIL_MINER, MANTLE, FUEL_DEBURN_TYPE));
+                LIGHT_TRANSFORMER_SMALL, LIGHT_TRANSFORMER_LARGE));
+        types.addAll(Gt6KtfruHeatMachines.behaviorTypes());
         types.addAll(Gt6KtfruTurbines.behaviorTypes());
         types.addAll(Gt6KtfruBatteries.behaviorTypes());
         types.addAll(Gt6KtfruResearchMachines.behaviorTypes());
