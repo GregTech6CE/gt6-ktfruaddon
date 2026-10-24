@@ -17,6 +17,7 @@ import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruAiCenters;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruBatteries;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruCatalyticMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruComputeMachines;
@@ -29,7 +30,6 @@ import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruGasMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruGeneratedStructures;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruHeatMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruKineticMachines;
-import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruLateMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruMicrogravityMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruOreProcessing;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruQuantumMachines;
@@ -88,7 +88,7 @@ public final class Features {
                     new Gt6KtfruCatalyticMachines(),
                     new Gt6KtfruQuantumMachines(),
                     new Gt6KtfruMicrogravityMachines(),
-                    new Gt6KtfruLateMachines(),
+                    new Gt6KtfruAiCenters(),
                     new Gt6KtfruCrucibleMachines(),
                     new Gt6KtfruGeneratedStructures()));
         }

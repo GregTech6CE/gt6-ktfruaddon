@@ -15,10 +15,11 @@ import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
 
 /**
- * Late recipe machines and the addon-side subsystem behavior machines:
- * - AI research centers (30106–30108): 67,108,864 Normal compute/tick allocation and monitor point progress.
+ * The three AI research centers (30106–30108): each allocates 67,108,864 Normal compute per tick from
+ * its bound compute controller and adds its points per tick (8, 4 or 2) to the bound or adjacent
+ * research monitor.
  */
-public final class Gt6KtfruLateMachines implements Feature {
+public final class Gt6KtfruAiCenters implements Feature {
     static final String FLOW = "ai_flow_control";
     static final String FILL = "ai_fill_planning";
     static final String PATTERN = "ai_pattern_recognition";
