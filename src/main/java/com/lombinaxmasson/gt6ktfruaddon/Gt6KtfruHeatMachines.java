@@ -85,7 +85,7 @@ public final class Gt6KtfruHeatMachines implements Feature {
                 Gt6KtfruHeatLayouts.tidal(TIDAL),
                 Gt6KtfruHeatLayouts.oilMiner(OIL_MINER),
                 Gt6KtfruHeatLayouts.mantle(MANTLE),
-                Gt6KtfruHeatLayouts.fuelDeburn(FUEL_DEBURN_TYPE));
+                Gt6KtfruFuelDeburnLayout.layout(FUEL_DEBURN_TYPE));
     }
 
     @Override
