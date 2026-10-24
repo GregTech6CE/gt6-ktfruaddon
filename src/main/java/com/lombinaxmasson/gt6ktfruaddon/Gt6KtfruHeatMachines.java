@@ -16,6 +16,7 @@ import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.Parts;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
@@ -31,7 +32,6 @@ public final class Gt6KtfruHeatMachines implements Feature {
     static final String MANTLE = "mantle_heater";
     /** Layout name, machine type and block id. The recipe map is {@link RecipeMaps#FUEL_DEBURN}. */
     static final String FUEL_DEBURN_TYPE = "fuel_deburn_factory";
-    private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
 
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
             .add(SUN_HEATER, Gt6KtfruSunHeater::new)
@@ -57,15 +57,15 @@ public final class Gt6KtfruHeatMachines implements Feature {
     @Override
     public List<LayoutPart> parts() {
         List<LayoutPart> parts = new ArrayList<>();
-        parts.add(casing("heat_pipe", "Silver", 6.0F));
-        parts.add(casing("heat_pipe_top", "Silver", 6.0F));
-        parts.add(casing("tidal_blade", "StainlessSteel", 6.0F));
-        parts.add(casing("large_sun_mirror_frame", "StainlessSteel", 10.0F));
-        parts.add(casing("large_sun_mirror", "Silver", 10.0F));
-        parts.add(casing("oil_miner_drill", "StainlessSteel", 6.0F));
-        parts.add(casing("mantle_drill_rod", "Tungsten", 6.0F));
-        parts.add(casing("enhanced_frame", "VanadiumSteel", 16.0F));
-        parts.add(casing("chemical_reactor_pipe", "StainlessSteel", 1.0F));
+        parts.add(Parts.casing("heat_pipe", "Silver", 6.0F));
+        parts.add(Parts.casing("heat_pipe_top", "Silver", 6.0F));
+        parts.add(Parts.casing("tidal_blade", "StainlessSteel", 6.0F));
+        parts.add(Parts.casing("large_sun_mirror_frame", "StainlessSteel", 10.0F));
+        parts.add(Parts.casing("large_sun_mirror", "Silver", 10.0F));
+        parts.add(Parts.casing("oil_miner_drill", "StainlessSteel", 6.0F));
+        parts.add(Parts.casing("mantle_drill_rod", "Tungsten", 6.0F));
+        parts.add(Parts.casing("enhanced_frame", "VanadiumSteel", 16.0F));
+        parts.add(Parts.casing("chemical_reactor_pipe", "StainlessSteel", 1.0F));
         return List.copyOf(parts);
     }
 
@@ -94,7 +94,7 @@ public final class Gt6KtfruHeatMachines implements Feature {
                         .machineType(SUN_HEATER).tier(3).build())
                 .energy(EnergyInput.builder("HU", 640).faces(MachineFace.FRONT)
                         .capacity(Gt6KtfruSunHeater.capacity()).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build();
     }
 
@@ -103,7 +103,7 @@ public final class Gt6KtfruHeatMachines implements Feature {
         return BehaviorMachine.builder(MachineCasing.builder(SUN_MIRROR, "StainlessSteel")
                         .machineType(SUN_MIRROR).tier(3).build())
                 .energy(EnergyInput.builder("HU", 1).faces(MachineFace.BOTTOM).capacity(1).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build();
     }
 
@@ -118,7 +118,7 @@ public final class Gt6KtfruHeatMachines implements Feature {
                         .capacity(Gt6KtfruTidalGenerator.MAX_RATE).build())
                 .energyOutput(EnergyOutput.builder("RU", Gt6KtfruTidalGenerator.MAX_RATE, 1)
                         .faces(MachineFace.TOP).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build();
     }
 
@@ -127,7 +127,7 @@ public final class Gt6KtfruHeatMachines implements Feature {
         return BehaviorMachine.builder(MachineCasing.builder(OIL_MINER, "StainlessSteel")
                         .machineType(OIL_MINER).tier(3).build())
                 .energy(EnergyInput.builder("KU", 128).faces(MachineFace.BOTTOM).capacity(1024).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .progress(70, 8)
                 .fluid(32000, 26, 8, BehaviorMachine.SlotRole.INPUT)
                 .fluid(32000, 44, 8, BehaviorMachine.SlotRole.OUTPUT)
@@ -145,7 +145,7 @@ public final class Gt6KtfruHeatMachines implements Feature {
                 .energy(EnergyInput.builder("EU", 1024).faces(MachineFace.BOTTOM).capacity(16384).build())
                 .auxiliaryEnergy(EnergyInput.builder("RU", 1).anyPacket()
                         .faces(MachineFace.FRONT).capacity(1_000_000_000L).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build();
     }
 
@@ -160,7 +160,7 @@ public final class Gt6KtfruHeatMachines implements Feature {
                 .energy(EnergyInput.builder("EU", 512).faces(MachineFace.BOTTOM).capacity(8192).build())
                 .auxiliaryEnergy(EnergyInput.builder("HU", 1).anyPacket()
                         .faces(MachineFace.TOP).capacity(1_000_000_000L).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .progress(126, 8)
                 .item(26, 8, BehaviorMachine.SlotRole.INPUT)
                 .fluid(64000, 48, 8, BehaviorMachine.SlotRole.INPUT)
@@ -171,7 +171,4 @@ public final class Gt6KtfruHeatMachines implements Feature {
                 .build();
     }
 
-    private static LayoutPart casing(String name, String material, float hardness) {
-        return LayoutPart.builder(name, material).hardness(hardness).build();
-    }
 }

@@ -21,7 +21,6 @@ public final class Gt6KtfruWirelessMachines implements Feature {
     static final String QUANTUM = "wireless_battery_quantum";
     static final String INDUCTIVE_RECEIVER = "wireless_receiver_inductive";
     static final String QUANTUM_RECEIVER = "wireless_receiver_quantum";
-    private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
 
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
             .add(INDUCTIVE, () -> new Gt6KtfruWireless(Gt6KtfruWireless.Kind.INDUCTIVE))
@@ -49,7 +48,7 @@ public final class Gt6KtfruWirelessMachines implements Feature {
     private static BehaviorMachine inductiveTower() {
         return BehaviorMachine.builder(MachineCasing.builder(INDUCTIVE, "Tungstensteel").machineType(INDUCTIVE).build())
                 .energy(EnergyInput.builder("EU", 4096).faces(MachineFace.BOTTOM).capacity(Gt6KtfruWireless.INDUCTIVE_CAPACITY).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .toggle("gt6ktfruaddon.wireless_battery.sealed", 152, 64, true)
                 .build();
     }
@@ -67,7 +66,7 @@ public final class Gt6KtfruWirelessMachines implements Feature {
                         .faces(MachineFace.BACK, MachineFace.LEFT, MachineFace.RIGHT, MachineFace.TOP)
                         .capacity(Gt6KtfruWireless.QUANTUM_CAPACITY)
                         .build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .toggle("gt6ktfruaddon.wireless_battery.sealed", 152, 64, true)
                 .build();
     }
@@ -76,7 +75,7 @@ public final class Gt6KtfruWirelessMachines implements Feature {
         return BehaviorMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
                 .energy(EnergyInput.builder("EU", 1).faces(MachineFace.BOTTOM).capacity(voltage * ampere).build())
                 .energyOutput(EnergyOutput.builder("EU", voltage, ampere).faces(MachineFace.FRONT).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .toggle("gt6ktfruaddon.wireless_receiver.stopped", 152, 64, false)
                 .build();
     }

@@ -26,6 +26,7 @@ import com.gregtech.gregtech.api.addon.StructureRole;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.Parts;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
@@ -89,7 +90,6 @@ public final class Gt6KtfruBaseMachines implements Feature {
     public static final String LARGE_ELECTRIC_FLYWHEEL = "large_electric_flywheel";
     public static final String VACUUM_FLYWHEEL = "vacuum_flywheel";
     public static final String LARGE_VACUUM_FLYWHEEL = "large_vacuum_flywheel";
-    private static final String KINETIC_GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
     public static final String BRONZE_COMPRESSOR = "gas_compressor_bronze";
     public static final String STEEL_GAS_DRUM = "steel_gas_drum";
     public static final String STAINLESS_GAS_DRUM = "stainless_gas_drum";
@@ -267,21 +267,21 @@ public final class Gt6KtfruBaseMachines implements Feature {
     @Override
     public List<LayoutPart> parts() {
         return List.of(
-                casing("aluminium_wall", "Aluminium", 4.0F),
-                casing("sunlight_absorber", "Silver", 6.0F),
-                casing("catalytic_reactor_casing", "Tungstensteel", 10.0F),
-                casing("mask_aligner_platform_motor", "StainlessSteel", 6.0F),
-                casing("mask_aligner_wafer_platform", "StainlessSteel", 6.0F),
-                casing("cnc_platform", "Aluminium", 6.0F),
-                casing("cnc_motor", "Aluminium", 6.0F),
-                casing("cnc_cutter_head", "StainlessSteel", 6.0F),
-                casing("light_module_uv", "Aluminium", 6.0F),
-                casing("light_module_uv_plus", "StainlessSteel", 6.0F),
-                casing("light_module_duv", "Chromium", 6.0F),
-                casing("light_module_euv", "Tungstensteel", 6.0F),
-                casing("mask_aligner_shell", "StainlessSteel", 10.0F),
-                casing("mask_aligner_io_uv", "Aluminium", 6.0F),
-                casing("mask_aligner_io_uv_plus", "StainlessSteel", 6.0F),
+                Parts.casing("aluminium_wall", "Aluminium", 4.0F),
+                Parts.casing("sunlight_absorber", "Silver", 6.0F),
+                Parts.casing("catalytic_reactor_casing", "Tungstensteel", 10.0F),
+                Parts.casing("mask_aligner_platform_motor", "StainlessSteel", 6.0F),
+                Parts.casing("mask_aligner_wafer_platform", "StainlessSteel", 6.0F),
+                Parts.casing("cnc_platform", "Aluminium", 6.0F),
+                Parts.casing("cnc_motor", "Aluminium", 6.0F),
+                Parts.casing("cnc_cutter_head", "StainlessSteel", 6.0F),
+                Parts.casing("light_module_uv", "Aluminium", 6.0F),
+                Parts.casing("light_module_uv_plus", "StainlessSteel", 6.0F),
+                Parts.casing("light_module_duv", "Chromium", 6.0F),
+                Parts.casing("light_module_euv", "Tungstensteel", 6.0F),
+                Parts.casing("mask_aligner_shell", "StainlessSteel", 10.0F),
+                Parts.casing("mask_aligner_io_uv", "Aluminium", 6.0F),
+                Parts.casing("mask_aligner_io_uv_plus", "StainlessSteel", 6.0F),
                 energyModule("mask_aligner_energy_uv", "Aluminium", 192, 64, 256),
                 energyModule("mask_aligner_energy_uv_plus", "StainlessSteel", 768, 256, 1024));
     }
@@ -607,10 +607,6 @@ public final class Gt6KtfruBaseMachines implements Feature {
         };
     }
 
-    private static LayoutPart casing(String name, String material, float hardness) {
-        return LayoutPart.builder(name, material).hardness(hardness).build();
-    }
-
     private static LayoutPart energyModule(String name, String material, long nominal, long min, long max) {
         return LayoutPart.builder(name, material).hardness(6.0F)
                 .energyInput(EnergyInput.builder("EU", nominal).range(min, max)
@@ -862,7 +858,7 @@ public final class Gt6KtfruBaseMachines implements Feature {
                 .energy(EnergyInput.builder(energy, packet).faces(MachineFace.BACK)
                         .capacity(packet * ampere).build())
                 .energyOutput(EnergyOutput.builder(energy, packet, ampere).faces(MachineFace.FRONT).build())
-                .gui(KINETIC_GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .toggle("gt6ktfruaddon.transformer.stopped", 152, 8, false)
                 .build();
     }
@@ -881,7 +877,7 @@ public final class Gt6KtfruBaseMachines implements Feature {
                 .energy(EnergyInput.builder("EU", rate).faces(MachineFace.BOTTOM)
                         .capacity(Gt6KtfruFuelBattery.capacity(rate)).build())
                 .energyOutput(EnergyOutput.builder("EU", rate, 1).faces(MachineFace.TOP).build())
-                .gui(KINETIC_GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .progress(8, 64)
                 .toggle("gt6ktfruaddon.fuel_battery.stopped", 44, 64, false)
                 .toggle("gt6ktfruaddon.fuel_battery.electrolyte", 64, 64, false)
@@ -900,7 +896,7 @@ public final class Gt6KtfruBaseMachines implements Feature {
         var builder = BehaviorMachine.builder(MachineCasing.builder(id, material)
                         .machineType(VOID_HOPPER).tier(tier).build())
                 .energy(EnergyInput.builder("RU", input).capacity(input * 2).build())
-                .gui(KINETIC_GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .item(26, 8, BehaviorMachine.SlotRole.INPUT)
                 .toggle("gt6ktfruaddon.void_hopper.blacklist", 152, 8, false)
                 .toggle("gt6ktfruaddon.void_hopper.clear", 152, 28, false)
@@ -916,7 +912,7 @@ public final class Gt6KtfruBaseMachines implements Feature {
         var builder = BehaviorMachine.builder(MachineCasing.builder(id, material)
                         .machineType("RF".equals(energy) ? MINER_RF : MINER).tier(tier).build())
                 .energy(EnergyInput.builder(energy, input).capacity(input * 2).build())
-                .gui(KINETIC_GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .item(26, 8, BehaviorMachine.SlotRole.INPUT)
                 .toggle("gt6ktfruaddon.miner.reset", 152, 8, false)
                 .maxRange(32);
@@ -936,7 +932,7 @@ public final class Gt6KtfruBaseMachines implements Feature {
                 .energy(EnergyInput.builder("RU", 2).faces(MachineFace.TOP).capacity(4).build())
                 .energyOutput(EnergyOutput.builder("RU", 2, 2)
                         .faces(MachineFace.FRONT, MachineFace.BACK).build())
-                .gui(KINETIC_GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build();
     }
 
@@ -947,7 +943,7 @@ public final class Gt6KtfruBaseMachines implements Feature {
                 .energy(EnergyInput.builder(energy, outputMax).faces(MachineFace.BOTTOM)
                         .capacity(outputMax).build())
                 .energyOutput(EnergyOutput.builder(energy, outputMax, 1).faces(MachineFace.FRONT).build())
-                .gui(KINETIC_GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build();
     }
 
@@ -958,7 +954,7 @@ public final class Gt6KtfruBaseMachines implements Feature {
                         .machineType(type).tier(tier).build())
                 .energy(EnergyInput.builder("RU", vmax).faces(MachineFace.BACK).build())
                 .energyOutput(EnergyOutput.builder("RU", vmax, ampere).faces(MachineFace.FRONT).build())
-                .gui(KINETIC_GUI);
+                .gui(Ktfru.PLACEHOLDER_GUI);
         int x0 = slots == 1 ? 80 : 44;
         for (int slot = 0; slot < slots; slot++) {
             builder.item(x0 + slot * 18, 8, BehaviorMachine.SlotRole.INPUT);
@@ -975,7 +971,7 @@ public final class Gt6KtfruBaseMachines implements Feature {
         return BehaviorMachine.builder(MachineCasing.builder(id, material)
                         .machineType(GAS_COMPRESSOR).tier(tier).build())
                 .energy(EnergyInput.builder("KU", ku).faces(MachineFace.BOTTOM).build())
-                .gui("gt6ktfruaddon:textures/gui/machines/gascompressor.png")
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .fluid(tank, 152, 8, BehaviorMachine.SlotRole.INPUT)
                 .build();
     }

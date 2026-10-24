@@ -23,7 +23,6 @@ public final class Gt6KtfruComputeMachines implements Feature {
     static final String WIRELESS = "wireless_compute_controller";
     static final String NODE = "wireless_compute_node_aluminium";
     static final String QUANTUM_NODE = "quantum_compute_node_naquadah";
-    private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
 
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
             .add("compute_user", () -> new Gt6KtfruCompute(Gt6KtfruCompute.Kind.PLAIN, 512, 0, ""))
@@ -99,7 +98,7 @@ public final class Gt6KtfruComputeMachines implements Feature {
         machines.add(BehaviorMachine.builder(MachineCasing.builder(id, "StainlessSteel").machineType(id).build())
                 .energy(EnergyInput.builder("EU", 512).faces(MachineFace.BOTTOM).capacity(512).build())
                 .energyOutput(EnergyOutput.builder("EU", 512, 1).faces(MachineFace.FRONT).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build());
     }
 
@@ -108,21 +107,21 @@ public final class Gt6KtfruComputeMachines implements Feature {
         machines.add(BehaviorMachine.builder(MachineCasing.builder(id, "StainlessSteel").machineType(id).build())
                 .energy(EnergyInput.builder("EU", 1).faces(MachineFace.BOTTOM).capacity(1).build())
                 .energyOutput(EnergyOutput.builder("EU", 512, 1).faces(MachineFace.FRONT).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build());
     }
 
     private static void array(List<AddonMachine> machines, String id, String material) {
         machines.add(BehaviorMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
                 .energy(EnergyInput.builder("EU", 1).faces(MachineFace.BOTTOM).capacity(1).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build());
     }
 
     private static void node(List<AddonMachine> machines, String id, String material, int slots) {
         var builder = BehaviorMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
                 .energy(EnergyInput.builder("EU", 1).faces(MachineFace.BOTTOM).capacity(1).build())
-                .gui(GUI);
+                .gui(Ktfru.PLACEHOLDER_GUI);
         for (int slot = 0; slot < slots; slot++) {
             builder.item(26 + slot * 18, 8, BehaviorMachine.SlotRole.INPUT);
         }
@@ -132,7 +131,7 @@ public final class Gt6KtfruComputeMachines implements Feature {
     private static void computeNode(List<AddonMachine> machines, String id, String material) {
         machines.add(BehaviorMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
                 .energy(EnergyInput.builder("EU", 1).faces(MachineFace.BOTTOM).capacity(1).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build());
     }
 }

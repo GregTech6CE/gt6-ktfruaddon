@@ -28,7 +28,6 @@ public final class Gt6KtfruResearchMachines implements Feature {
     static final String REACTOR = "research_reactor";
     static final String OPTICAL = "optical_microscope";
     static final String ELECTRON = "electron_microscope";
-    private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
 
     private static final String[] TABLES = {
             "research_monitor",
@@ -91,7 +90,7 @@ public final class Gt6KtfruResearchMachines implements Feature {
         machines.add(BehaviorMachine.builder(MachineCasing.builder(id, "StainlessSteel").machineType(id).build())
                 .energy(EnergyInput.builder("EU", 512).faces(MachineFace.BOTTOM).capacity(512).build())
                 .energyOutput(EnergyOutput.builder("EU", 512, 1).faces(MachineFace.FRONT).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build());
     }
 
@@ -104,7 +103,7 @@ public final class Gt6KtfruResearchMachines implements Feature {
                         .faces(MachineFace.BACK, MachineFace.LEFT, MachineFace.RIGHT, MachineFace.TOP)
                         .capacity(524288)
                         .build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .energyGauge(6, 8)
                 .progress(100, 26)
                 .item(22, 8, BehaviorMachine.SlotRole.INPUT)
@@ -130,7 +129,7 @@ public final class Gt6KtfruResearchMachines implements Feature {
                         .faces(MachineFace.BACK, MachineFace.LEFT, MachineFace.RIGHT, MachineFace.TOP)
                         .capacity(capacity)
                         .build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .item(44, 26, BehaviorMachine.SlotRole.INPUT)
                 .item(112, 26, BehaviorMachine.SlotRole.OUTPUT)
                 .build();

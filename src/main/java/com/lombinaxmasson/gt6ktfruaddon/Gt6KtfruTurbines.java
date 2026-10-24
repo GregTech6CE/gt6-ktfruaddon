@@ -18,6 +18,7 @@ import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.Parts;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
@@ -29,7 +30,6 @@ import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 public final class Gt6KtfruTurbines implements Feature {
     static final String BOILER = "fluid_boiler";
     static final String EXCITE = "separate_excite_dynamo";
-    private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
     private static final int AMPERE = 16;
 
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
@@ -108,15 +108,15 @@ public final class Gt6KtfruTurbines implements Feature {
     @Override
     public List<LayoutPart> parts() {
         List<LayoutPart> parts = new ArrayList<>();
-        parts.add(casing("turbine_shell_stainless", "StainlessSteel", 6.0F));
-        parts.add(casing("turbine_shell_titanium", "Titanium", 6.0F));
-        parts.add(casing("turbine_shell_tungstensteel", "Tungstensteel", 6.0F));
-        parts.add(casing("turbine_shell_adamantium", "Adamantium", 6.0F));
-        parts.add(casing("turbine_shell_trinaquadalloy", "Trinaquadalloy", 10.0F));
-        parts.add(casing("trinaquadalloy_wall", "Trinaquadalloy", 10.0F));
-        parts.add(casing("boiler_heat_pipe", "Invar", 10.0F));
-        parts.add(casing("pressure_pipe", "StainlessSteel", 10.0F));
-        parts.add(casing("high_pressure_exchanger", "Invar", 10.0F));
+        parts.add(Parts.casing("turbine_shell_stainless", "StainlessSteel", 6.0F));
+        parts.add(Parts.casing("turbine_shell_titanium", "Titanium", 6.0F));
+        parts.add(Parts.casing("turbine_shell_tungstensteel", "Tungstensteel", 6.0F));
+        parts.add(Parts.casing("turbine_shell_adamantium", "Adamantium", 6.0F));
+        parts.add(Parts.casing("turbine_shell_trinaquadalloy", "Trinaquadalloy", 10.0F));
+        parts.add(Parts.casing("trinaquadalloy_wall", "Trinaquadalloy", 10.0F));
+        parts.add(Parts.casing("boiler_heat_pipe", "Invar", 10.0F));
+        parts.add(Parts.casing("pressure_pipe", "StainlessSteel", 10.0F));
+        parts.add(Parts.casing("high_pressure_exchanger", "Invar", 10.0F));
         return List.copyOf(parts);
     }
 
@@ -163,7 +163,7 @@ public final class Gt6KtfruTurbines implements Feature {
                         .capacity(inputMax * AMPERE * 2)
                         .build())
                 .energyOutput(EnergyOutput.builder("EU", outputMax, AMPERE).faces(MachineFace.BACK).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build());
     }
 
@@ -177,7 +177,7 @@ public final class Gt6KtfruTurbines implements Feature {
                 .auxiliaryEnergy(EnergyInput.builder("EU", 5).anyPacket()
                         .faces(MachineFace.TOP).capacity(1024).build())
                 .energyOutput(EnergyOutput.builder("EU", 870, AMPERE).faces(MachineFace.BACK).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build();
     }
 
@@ -188,7 +188,7 @@ public final class Gt6KtfruTurbines implements Feature {
         machines.add(BehaviorMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
                 .energy(EnergyInput.builder("RU", 1).faces(MachineFace.BOTTOM).capacity(rate).build())
                 .energyOutput(EnergyOutput.builder("RU", rate, 1).faces(MachineFace.FRONT).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .fluid(steamTank, 32, 8, BehaviorMachine.SlotRole.INPUT)
                 .fluid(waterTank, 56, 8, BehaviorMachine.SlotRole.OUTPUT)
                 .build());
@@ -202,7 +202,7 @@ public final class Gt6KtfruTurbines implements Feature {
         long rate = Gt6KtfruFluidBoiler.RATE;
         return BehaviorMachine.builder(MachineCasing.builder(BOILER, "Invar").machineType(BOILER).build())
                 .energy(EnergyInput.builder("HU", 1).faces(MachineFace.BOTTOM).capacity(1).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .progress(78, 8)
                 .fluid(Math.toIntExact(rate * 4), 28, 8, BehaviorMachine.SlotRole.INPUT)
                 .fluid(Math.toIntExact(rate * 16), 50, 8, BehaviorMachine.SlotRole.INPUT)
@@ -211,7 +211,4 @@ public final class Gt6KtfruTurbines implements Feature {
                 .build();
     }
 
-    private static LayoutPart casing(String name, String material, float hardness) {
-        return LayoutPart.builder(name, material).hardness(hardness).build();
-    }
 }

@@ -21,7 +21,6 @@ import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
  */
 public final class Gt6KtfruCrucibleMachines implements Feature {
     static final String CRUCIBLE = "electromagnet_crucible";
-    private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
 
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
             .add(CRUCIBLE, Gt6KtfruCrucible::new)
@@ -32,7 +31,7 @@ public final class Gt6KtfruCrucibleMachines implements Feature {
         List<AddonMachine> machines = new ArrayList<>();
         machines.add(BehaviorMachine.builder(MachineCasing.builder(CRUCIBLE, "Titanium").machineType(CRUCIBLE).build())
                 .energy(EnergyInput.builder("EU", 512).faces(MachineFace.BOTTOM).capacity(8192).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .toggle("gt6ktfruaddon.crucible.stopped", 152, 64, false)
                 .build());
         return List.copyOf(machines);

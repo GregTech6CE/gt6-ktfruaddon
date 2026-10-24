@@ -16,6 +16,7 @@ import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.Parts;
 
 /**
  * Card 14. Liquid batteries store RU from the fluid in a one-cell sink.
@@ -24,7 +25,6 @@ import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
  * Bottom HU of 1 only satisfies the behavior machine.
  */
 public final class Gt6KtfruBatteries implements Feature {
-    private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
 
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
             .add("liquid_battery_stainless", () -> new Gt6KtfruLiquidBattery(512, 1024, 64, 0.1))
@@ -65,14 +65,14 @@ public final class Gt6KtfruBatteries implements Feature {
     @Override
     public List<LayoutPart> parts() {
         List<LayoutPart> parts = new ArrayList<>();
-        parts.add(part("liquid_battery_wall_bronze", "Bronze", 1.0F));
-        parts.add(part("liquid_battery_wall_steel", "Steel", 1.0F));
-        parts.add(part("liquid_battery_wall_plastic", "Plastic", 1.0F));
-        parts.add(part("magnetic_conductor", "ElectricalSteel", 6.0F));
-        parts.add(part("battery_cabin", "Chromium", 6.0F));
-        parts.add(part("flywheel_cabin", "TitaniumIridium", 6.0F));
-        parts.add(part("transform_battery_gear", "Tungstensteel", 6.0F));
-        parts.add(part("energy_crystal", "EnergiumRed", 6.0F));
+        parts.add(Parts.casing("liquid_battery_wall_bronze", "Bronze", 1.0F));
+        parts.add(Parts.casing("liquid_battery_wall_steel", "Steel", 1.0F));
+        parts.add(Parts.casing("liquid_battery_wall_plastic", "Plastic", 1.0F));
+        parts.add(Parts.casing("magnetic_conductor", "ElectricalSteel", 6.0F));
+        parts.add(Parts.casing("battery_cabin", "Chromium", 6.0F));
+        parts.add(Parts.casing("flywheel_cabin", "TitaniumIridium", 6.0F));
+        parts.add(Parts.casing("transform_battery_gear", "Tungstensteel", 6.0F));
+        parts.add(Parts.casing("energy_crystal", "EnergiumRed", 6.0F));
         return List.copyOf(parts);
     }
 
@@ -90,7 +90,7 @@ public final class Gt6KtfruBatteries implements Feature {
                         .capacity(inputMax * ampere)
                         .build())
                 .energyOutput(EnergyOutput.builder("RU", outputMax, ampere).faces(MachineFace.FRONT).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .fluid(Gt6KtfruLiquidBattery.TANK, 28, 8, BehaviorMachine.SlotRole.ANY)
                 .build());
     }
@@ -103,7 +103,7 @@ public final class Gt6KtfruBatteries implements Feature {
                         .faces(MachineFace.LEFT, MachineFace.RIGHT, MachineFace.BACK, MachineFace.TOP)
                         .capacity(inputMax * ampere)
                         .build())
-                .gui(GUI);
+                .gui(Ktfru.PLACEHOLDER_GUI);
         if (!light) {
             for (int slot = 0; slot < 8; slot++) {
                 builder.item(26 + slot * 18, 8, BehaviorMachine.SlotRole.ANY);
@@ -113,7 +113,4 @@ public final class Gt6KtfruBatteries implements Feature {
         return builder.build();
     }
 
-    private static LayoutPart part(String name, String material, float hardness) {
-        return LayoutPart.builder(name, material).hardness(hardness).build();
-    }
 }

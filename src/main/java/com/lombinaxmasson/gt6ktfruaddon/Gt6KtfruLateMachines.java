@@ -36,7 +36,6 @@ public final class Gt6KtfruLateMachines implements Feature {
     static final String FLOW = "ai_flow_control";
     static final String FILL = "ai_fill_planning";
     static final String PATTERN = "ai_pattern_recognition";
-    private static final String GUI = "gt6ktfruaddon:textures/gui/machines/gascompressor.png";
 
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
             .add(LASER_EXP, Gt6KtfruLaserFusion::experimental)
@@ -124,7 +123,7 @@ public final class Gt6KtfruLateMachines implements Feature {
                         .faces(MachineFace.BOTTOM, MachineFace.BACK, MachineFace.LEFT, MachineFace.RIGHT)
                         .capacity(pulseCapacity)
                         .build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .energyGauge(84, 8)
                 .progress(84, 64)
                 .item(8, 26, BehaviorMachine.SlotRole.INPUT)
@@ -147,7 +146,7 @@ public final class Gt6KtfruLateMachines implements Feature {
                         .faces(MachineFace.BOTTOM, MachineFace.LEFT, MachineFace.RIGHT, MachineFace.TOP)
                         .capacity(65536)
                         .build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .progress(66, 26)
                 .item(36, 26, BehaviorMachine.SlotRole.INPUT)
                 .item(102, 26, BehaviorMachine.SlotRole.OUTPUT)
@@ -166,7 +165,7 @@ public final class Gt6KtfruLateMachines implements Feature {
                         .faces(MachineFace.BACK, MachineFace.LEFT, MachineFace.RIGHT, MachineFace.TOP)
                         .capacity(65536)
                         .build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .progress(92, 26)
                 .item(26, 26, BehaviorMachine.SlotRole.INPUT)
                 .item(124, 26, BehaviorMachine.SlotRole.OUTPUT)
@@ -191,7 +190,7 @@ public final class Gt6KtfruLateMachines implements Feature {
                 .energyOutput(EnergyOutput.builder("QU", Gt6KtfruQuantumRelay.QU_PER_TICK, 1)
                         .faces(MachineFace.TOP)
                         .build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .progress(76, 26)
                 .item(44, 26, BehaviorMachine.SlotRole.INPUT)
                 .item(112, 26, BehaviorMachine.SlotRole.OUTPUT)
@@ -242,14 +241,14 @@ public final class Gt6KtfruLateMachines implements Feature {
     private static BehaviorMachine room() {
         return BehaviorMachine.builder(MachineCasing.builder(ROOM, "Tungstensteel").machineType(ROOM).build())
                 .energy(EnergyInput.builder("EU", 4096).faces(MachineFace.BOTTOM).capacity(65536).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build();
     }
 
     private static BehaviorMachine ai(String id) {
         return BehaviorMachine.builder(MachineCasing.builder(id, "Tungstensteel").machineType(id).build())
                 .energy(EnergyInput.builder("EU", 1).faces(MachineFace.BOTTOM).capacity(1).build())
-                .gui(GUI)
+                .gui(Ktfru.PLACEHOLDER_GUI)
                 .build();
     }
 }
