@@ -9,7 +9,7 @@ import paths
 ROOT = paths.ROOT
 SRC = paths.UPSTREAM / "src/main/java/cn/kuzuanpa/ktfruaddon/api/material/materialPreInit.java"
 GT = paths.GT6_ROOT / "core" / "src" / "main" / "java"
-OUT_JAVA = ROOT / "src/main/java/com/lombinaxmasson/gt6ktfruaddon/Gt6KtfruMaterials.java"
+OUT_JAVA = ROOT / "src/main/java/com/lombinaxmasson/gt6ktfruaddon/content/Gt6KtfruMaterials.java"
 OUT_EN = ROOT / "src/main/resources/assets/gt6ce/lang/en_us.json"
 OUT_ZH = ROOT / "src/main/resources/assets/gt6ce/lang/zh_cn.json"
 LANG_ZH = paths.UPSTREAM / "src/main/resources/assets/ktfruaddon/lang/zh_CN.lang"
@@ -165,13 +165,14 @@ def main():
             continue
         kept.append(row)
     lines = [
-        "package com.lombinaxmasson.gt6ktfruaddon;",
+        "package com.lombinaxmasson.gt6ktfruaddon.content;",
         "",
         "import java.util.List;",
         "",
         "import com.gregtech.gregtech.api.addon.AddonMaterialContributor;",
         "import com.gregtech.gregtech.api.addon.MaterialDeclaration;",
         "import com.gregtech.gregtech.api.addon.MaterialFormRequest;",
+        "import com.lombinaxmasson.gt6ktfruaddon.Ktfru;",
         "",
         "/**",
         " * Chemical materials from kTFRUAddon materialPreInit at 6404ab69. Temperatures",

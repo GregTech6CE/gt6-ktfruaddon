@@ -13,6 +13,7 @@ import com.gregtech.gregtech.api.addon.GregTechMaterials;
 import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
+import com.lombinaxmasson.gt6ktfruaddon.content.Gt6KtfruMaterials;
 import com.lombinaxmasson.gt6ktfruaddon.generated.Gt6KtfruItems;
 import com.lombinaxmasson.gt6ktfruaddon.registry.Features;
 import com.mojang.logging.LogUtils;

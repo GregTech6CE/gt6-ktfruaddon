@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.gregtech.gregtech.api.addon.AddonMachineContributor;
 import com.gregtech.gregtech.api.addon.AddonMaterialContributor;
 import com.gregtech.gregtech.api.addon.platform.BehaviorMachineContributor;
+import com.lombinaxmasson.gt6ktfruaddon.content.Gt6KtfruMaterials;
 
 /**
  * GT6CE finds the addon through {@code META-INF/services}. A service file that names a class which

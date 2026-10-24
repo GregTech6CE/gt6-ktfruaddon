@@ -776,7 +776,7 @@ def load_prefixes():
 
 
 def load_addon():
-    text = (ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "Gt6KtfruMaterials.java").read_text(encoding="utf-8")
+    text = (ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "content" / "Gt6KtfruMaterials.java").read_text(encoding="utf-8")
     addon = {}
     for match in re.finditer(r'builder\("([^"]+)"\)(.*?)\.build\(\)', text):
         name, body = match.groups()

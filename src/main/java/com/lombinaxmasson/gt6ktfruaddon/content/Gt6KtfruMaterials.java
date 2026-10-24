@@ -1,4 +1,4 @@
-package com.lombinaxmasson.gt6ktfruaddon;
+package com.lombinaxmasson.gt6ktfruaddon.content;
 
 import java.util.List;
 import java.util.Set;
@@ -8,6 +8,7 @@ import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.MaterialFormRequest;
 import com.gregtech.gregtech.api.addon.PrefixCondition;
 import com.gregtech.gregtech.api.addon.PrefixDeclaration;
+import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 
 /**
  * Chemical materials from kTFRUAddon materialPreInit at 6404ab69. Bittern is the

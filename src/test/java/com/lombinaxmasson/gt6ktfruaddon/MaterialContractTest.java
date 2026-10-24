@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.PrefixDeclaration;
+import com.lombinaxmasson.gt6ktfruaddon.content.Gt6KtfruMaterials;
 
 class MaterialContractTest {
     @Test
