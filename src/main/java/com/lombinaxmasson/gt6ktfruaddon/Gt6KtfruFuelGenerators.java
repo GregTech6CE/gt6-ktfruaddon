@@ -11,28 +11,10 @@ import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
- * What is not a feature of its own yet; WP3 step 3 cuts it up.
- * Single-block machines from {@code tileEntityInit0}. Recipe machines are
- * 20000–27542. Fuel generators are the gas turbines and diesel engines from
- * 10000–10160. The large recipe machines are the three distillation towers and
- * the ore processing system. The two large compressed-gas valves and the five
- * gas compressors are behavior machines. Teflon fluid pipes, PVC item pipes
- * and the five compressed-gas drums are separate declarations. Card 08 adds the
- * void hoppers, miners, water mill, manual motors and flywheel boxes.
- * Card 09 adds the two gas batteries. Rows keep both poles and leave the electrolyte out.
- * Card 10 adds the transformer, flywheel-gear and light-transformer parts.
- * Card 11 adds the mask aligners, the CNC machine and their structure parts.
- * Card 12 adds the sun heater, large mirror, tidal generator, oil miner,
- * mantle heater and fuel deburn factory.
- * Card 13 adds the large gas and steam turbines, dynamos, expanded motors and fluid boiler.
- * Card 14 adds the liquid batteries and transform batteries.
- * Card 15 adds the research tables, microscopes, assembler and reactor.
- * Card 16 adds the wireless, biology, quantum and spacetime controllers, plus the compute nodes.
- * Card 17 adds the inductive tower, the quantum hub and both receivers.
- * Card 18 adds the late recipe machines, tokamak layouts, catalytic reactors, microgravity and AI centers.
- * Card 19 adds the electromagnetic crucible and its screen.
+ * The fuel generators, 10000–10160 upstream: seven gas turbines on the gas fuel table and the
+ * diesel and turbo diesel engines on the engine fuel table. All of them output RU from the front.
  */
-public final class Gt6KtfruBaseMachines implements Feature {
+public final class Gt6KtfruFuelGenerators implements Feature {
     @Override
     public List<AddonMachine> machines() {
         List<AddonMachine> machines = new ArrayList<>();
@@ -88,5 +70,4 @@ public final class Gt6KtfruBaseMachines implements Feature {
                 .single()
                 .build();
     }
-
 }

@@ -17,11 +17,11 @@ import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
-import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruBaseMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruBatteries;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruComputeMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruCrucibleMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruDistillationMachines;
+import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruFuelGenerators;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruGasBatteries;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruGasMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruGeneratedStructures;
@@ -73,7 +73,7 @@ public final class Features {
                     new Gt6KtfruGasBatteries(),
                     new Gt6KtfruTransformerParts(),
                     new Gt6KtfruSemiconductorMachines(),
-                    new Gt6KtfruBaseMachines(),
+                    new Gt6KtfruFuelGenerators(),
                     new Gt6KtfruHeatMachines(),
                     new Gt6KtfruTurbines(),
                     new Gt6KtfruBatteries(),
