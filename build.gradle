@@ -91,6 +91,7 @@ def checkGt6ceJars = tasks.register('checkGt6ceJars') {
     }
 }
 tasks.named('compileJava') { dependsOn checkGt6ceJars }
+tasks.named('compileTestJava') { dependsOn checkGt6ceJars }
 
 dependencies {
     localRuntime "maven.modrinth:emi:${emi_version}"
@@ -100,6 +101,22 @@ dependencies {
     // Neither jar is packaged into this one.
     compileOnly gtSdk
     localRuntime gtMod
+
+    // The contract tests run on the plain JVM. The SDK declarations have no Minecraft dependency;
+    // the behavior classes do, so the tests share the compile classpath of main.
+    testImplementation files(sourceSets.main.compileClasspath)
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'com.google.code.gson:gson:2.11.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    testLogging {
+        events 'failed'
+        exceptionFormat 'full'
+    }
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
