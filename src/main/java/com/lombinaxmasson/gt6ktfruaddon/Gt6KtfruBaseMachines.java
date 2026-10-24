@@ -49,7 +49,6 @@ import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
  * Card 19 adds the electromagnetic crucible and its screen.
  */
 public final class Gt6KtfruBaseMachines implements Feature {
-    public static final String GAS_BATTERY = "gas_battery";
     public static final String MASK_ALIGNER_UV = "mask_aligner_uv";
     public static final String MASK_ALIGNER_UV_PLUS = "mask_aligner_uv_plus";
     public static final String MASK_ALIGNER_DUV = "mask_aligner_duv";
@@ -63,7 +62,6 @@ public final class Gt6KtfruBaseMachines implements Feature {
     public static final String LIGHT_TRANSFORMER_LARGE = "light_transformer_large";
 
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
-            .add(GAS_BATTERY, Gt6KtfruFuelBattery::new)
             .add(TRANSFORMER_SMALL, () -> new Gt6KtfruTransformerPart(4))
             .add(TRANSFORMER_LARGE, () -> new Gt6KtfruTransformerPart(16))
             .add(FLYWHEEL_GEAR_SMALL, () -> new Gt6KtfruTransformerPart(4))
@@ -75,7 +73,6 @@ public final class Gt6KtfruBaseMachines implements Feature {
     @Override
     public List<RecipeTable> recipeTables() {
         List<RecipeTable> maps = new ArrayList<>();
-        maps.add(RecipeMaps.table(RecipeMaps.FUEL_BATTERY, "Fuel Battery", "fuelbattery", 2, 0, 2, 3, 2, 2, 4));
         maps.add(RecipeMaps.table(RecipeMaps.MASK_ALIGNER, "Mask Aligner", "maskaligner", 3, 3, 1, 3, 0, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.CNC, "CNC", "cnc", 4, 3, 1, 3, 0, 1, 1));
         maps.add(RecipeMaps.table(RecipeMaps.FUEL_DEBURN, "Fuel Deburner", "fueldeburner", 3, 3, 0, 6, 6, 0, 1));
@@ -87,8 +84,6 @@ public final class Gt6KtfruBaseMachines implements Feature {
     @Override
     public List<AddonMachine> machines() {
         List<AddonMachine> machines = new ArrayList<>();
-        machines.add(gasBattery("gas_battery_aluminium", "Aluminium", 1));
-        machines.add(gasBattery("gas_battery_stainless", "StainlessSteel", 2));
         transformerParts(machines);
         machines.add(maskAligner(MASK_ALIGNER_UV, "Aluminium", 2, 128, 64, 256,
                 MachineFace.TOP, MachineFace.BACK, null, false));
@@ -394,35 +389,6 @@ public final class Gt6KtfruBaseMachines implements Feature {
                 .energyOutput(EnergyOutput.builder(energy, packet, ampere).faces(MachineFace.FRONT).build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
                 .toggle("gt6ktfruaddon.transformer.stopped", 152, 8, false)
-                .build();
-    }
-
-    /**
-     * Source 10010 / 10011. EU leaves the top. The bottom input exists because a
-     * behavior machine needs one. Fuel tanks are 8000 mB. The electrolyte tank
-     * is exactly the required amount. Toggle 0 stops processing. Toggle 1
-     * opens the electrolyte tank.
-     */
-    private static BehaviorMachine gasBattery(String id, String material, int tier) {
-        long rate = Gt6KtfruFuelBattery.rate(tier);
-        int electrolyte = Gt6KtfruFuelBattery.electrolyte(tier);
-        return BehaviorMachine.builder(MachineCasing.builder(id, material)
-                        .machineType(GAS_BATTERY).tier(tier).build())
-                .energy(EnergyInput.builder("EU", rate).faces(MachineFace.BOTTOM)
-                        .capacity(Gt6KtfruFuelBattery.capacity(rate)).build())
-                .energyOutput(EnergyOutput.builder("EU", rate, 1).faces(MachineFace.TOP).build())
-                .gui(Ktfru.PLACEHOLDER_GUI)
-                .progress(8, 64)
-                .toggle("gt6ktfruaddon.fuel_battery.stopped", 44, 64, false)
-                .toggle("gt6ktfruaddon.fuel_battery.electrolyte", 64, 64, false)
-                .item(26, 8, BehaviorMachine.SlotRole.INPUT)
-                .item(48, 8, BehaviorMachine.SlotRole.INPUT)
-                .fluid(8000, 80, 8, BehaviorMachine.SlotRole.INPUT)
-                .fluid(8000, 98, 8, BehaviorMachine.SlotRole.INPUT)
-                .fluid(8000, 116, 8, BehaviorMachine.SlotRole.OUTPUT)
-                .fluid(8000, 134, 8, BehaviorMachine.SlotRole.OUTPUT)
-                .fluid(electrolyte, 152, 8, BehaviorMachine.SlotRole.INPUT)
-                .recipeMaps(RecipeMaps.FUEL_BATTERY)
                 .build();
     }
 
