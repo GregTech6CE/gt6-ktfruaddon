@@ -15,7 +15,7 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
  * The casing layer uses tint index 0. GT only paints its own machines, so the
  * material color comes from the public material catalog.
  */
-@EventBusSubscriber(modid = Gt6KtfruAddon.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Ktfru.MODID, value = Dist.CLIENT)
 public final class Gt6KtfruMachineColors {
     private Gt6KtfruMachineColors() {}
 
@@ -45,7 +45,7 @@ public final class Gt6KtfruMachineColors {
     }
 
     private static Block block(String id) {
-        ResourceLocation name = ResourceLocation.fromNamespaceAndPath(Gt6KtfruAddon.MODID, id);
+        ResourceLocation name = ResourceLocation.fromNamespaceAndPath(Ktfru.MODID, id);
         if (!BuiltInRegistries.BLOCK.containsKey(name)) return null;
         return BuiltInRegistries.BLOCK.get(name);
     }

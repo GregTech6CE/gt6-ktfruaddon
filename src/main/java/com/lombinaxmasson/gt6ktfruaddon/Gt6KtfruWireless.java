@@ -146,7 +146,7 @@ public final class Gt6KtfruWireless implements MachineBehavior {
     private static boolean receiverBlock(Level world, BlockPos pos, boolean quantum) {
         var id = BuiltInRegistries.BLOCK.getKey(world.getBlockState(pos).getBlock());
         String path = quantum ? Gt6KtfruWirelessMachines.QUANTUM_RECEIVER : Gt6KtfruWirelessMachines.INDUCTIVE_RECEIVER;
-        return id != null && Gt6KtfruAddon.MODID.equals(id.getNamespace()) && path.equals(id.getPath());
+        return id != null && Ktfru.MODID.equals(id.getNamespace()) && path.equals(id.getPath());
     }
 
     private static Level world(MachineBehaviorContext context, String dim) {

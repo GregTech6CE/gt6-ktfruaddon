@@ -36,13 +36,12 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * Probe entry. Materials and machines arrive through ServiceLoader. Recipes are added once GT
  * calls {@code onRecipesReady}.
  */
-@Mod(Gt6KtfruAddon.MODID)
+@Mod(Ktfru.MODID)
 public final class Gt6KtfruAddon {
-    public static final String MODID = "gt6ktfruaddon";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
-            DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+            DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Ktfru.MODID);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB =
             CREATIVE_MODE_TABS.register("main", () -> CreativeModeTab.builder()
@@ -82,7 +81,7 @@ public final class Gt6KtfruAddon {
         GregTechAddons.register(new GregTechAddon() {
             @Override
             public String id() {
-                return MODID;
+                return Ktfru.MODID;
             }
 
             @Override
@@ -161,7 +160,7 @@ public final class Gt6KtfruAddon {
     }
 
     private static ItemStack stack(String path) {
-        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(MODID, path));
+        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(Ktfru.MODID, path));
         return item == Items.AIR ? ItemStack.EMPTY : new ItemStack(item);
     }
 }

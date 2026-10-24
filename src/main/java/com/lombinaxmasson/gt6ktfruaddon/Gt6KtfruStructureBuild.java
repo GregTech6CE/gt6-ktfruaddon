@@ -41,7 +41,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
  * never places their layout. This listener places it. The same facing rule as
  * the structure check: right is clockwise, back is opposite the facing.
  */
-@EventBusSubscriber(modid = Gt6KtfruAddon.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Ktfru.MODID, bus = EventBusSubscriber.Bus.GAME)
 public final class Gt6KtfruStructureBuild {
     private static final int WAND_DAMAGE = 10;
     private static Map<String, StructureLayout> layouts;
@@ -57,7 +57,7 @@ public final class Gt6KtfruStructureBuild {
         BlockState state = level.getBlockState(origin);
         if (!state.hasProperty(HorizontalDirectionalBlock.FACING)) return;
         ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        if (!Gt6KtfruAddon.MODID.equals(blockId.getNamespace())) return;
+        if (!Ktfru.MODID.equals(blockId.getNamespace())) return;
         StructureLayout layout = layouts().get(blockId.getPath());
         if (layout == null) return;
         event.setCanceled(true);

@@ -17,7 +17,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  */
 public final class Gt6KtfruItems {
     public static final DeferredRegister<Item> ITEMS =
-            DeferredRegister.create(net.minecraft.core.registries.Registries.ITEM, Gt6KtfruAddon.MODID);
+            DeferredRegister.create(net.minecraft.core.registries.Registries.ITEM, Ktfru.MODID);
 
     public static final DeferredHolder<Item, Item> PROTON_EXCHANGE_MEMBRANE = item("proton_exchange_membrane");
     public static final DeferredHolder<Item, Item> ALKALINE_ION_EXCHANGE_MEMBRANE =

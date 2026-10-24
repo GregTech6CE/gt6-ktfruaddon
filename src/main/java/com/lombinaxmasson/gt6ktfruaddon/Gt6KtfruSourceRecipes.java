@@ -5240,7 +5240,7 @@ public final class Gt6KtfruSourceRecipes {
             case "trinaquadalloy_turbine_shell" -> "turbine_shell_trinaquadalloy";
             default -> path;
         };
-        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(Gt6KtfruAddon.MODID, id));
+        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(Ktfru.MODID, id));
         if (item == Items.AIR) {
             PROBLEMS.add("block " + path);
             return ItemStack.EMPTY;

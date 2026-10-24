@@ -232,7 +232,7 @@ public final class Gt6KtfruCompute implements MachineBehavior {
         if (!context.level().hasChunkAt(pos)) return false;
         BlockState state = context.level().getBlockState(pos);
         var id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        return id != null && Gt6KtfruAddon.MODID.equals(id.getNamespace()) && id.getPath().startsWith(prefix);
+        return id != null && Ktfru.MODID.equals(id.getNamespace()) && id.getPath().startsWith(prefix);
     }
 
     private static List<BlockPos> links(MachineBehaviorContext context) {

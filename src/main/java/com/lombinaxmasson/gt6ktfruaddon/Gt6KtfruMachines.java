@@ -162,7 +162,7 @@ public final class Gt6KtfruMachines implements AddonMachineContributor, Behavior
 
     @Override
     public String addonId() {
-        return Gt6KtfruAddon.MODID;
+        return Ktfru.MODID;
     }
 
     @Override

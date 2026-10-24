@@ -180,7 +180,7 @@ def main():
         " * a form the material flags do not allow fails startup, and ore is not a generated prefix.",
         " */",
         "public final class Gt6KtfruMaterials implements AddonMaterialContributor {",
-        "    @Override public String addonId() { return Gt6KtfruAddon.MODID; }",
+        "    @Override public String addonId() { return Ktfru.MODID; }",
         "",
         "    @Override public List<MaterialDeclaration> materials() {",
         "        return List.of(",
