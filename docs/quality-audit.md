@@ -358,10 +358,11 @@ com.lombinaxmasson.gt6ktfruaddon
 ├─ KtfruAddon            @Mod 入口，只做接线（原 Gt6KtfruAddon）
 ├─ Ktfru                 MODID 等常量，叶子类，不依赖任何东西
 ├─ core/                 与具体机器无关的公共件
-│  ├─ feature/           Feature 接口、登记表
+│  ├─ feature/           Feature 接口、Behaviors（行为表）
 │  ├─ layout/            LayerLayout
 │  ├─ behavior/          RecipeRunner、EnergyBridge、LossTimer、TtlRegistry、PosCodec
 │  └─ Gt6ce              GT6CE 命名约定的唯一出处（"gt6ce" 命名空间、fluid_item_、builder_wand、fluid_spring_）
+├─ registry/             Features（登记表，认得所有特性）、机器的 ServiceLoader 入口
 ├─ recipe/               Recipes（手写行）、RecipeMaps（配方图名常量）
 ├─ generated/            SourceRecipes、GeneratedLayouts、Items
 ├─ content/              Materials（一次性生成后手改过，按手写文件处理）
@@ -408,6 +409,27 @@ com.lombinaxmasson.gt6ktfruaddon
 | 类级依赖分析 | 依赖边 82 条变 61 条；强连通分量从 20 个类变成 `Wireless` 和 `WirelessMachines` 一对（同一特性，WP4 拆 `Wireless` 时消除）；引用 `Machines` 的类从 12 个变 3 个（`Addon`、`MachineColors`、`StructureBuild`，都是 `new Gt6KtfruMachines()`，第 2 步的登记表解决）；跨类用到的包级成员从 33 个变 22 个 |
 
 附录 B 的分包试算要等第 3 步切完 `Machines` 之后再按最终划分重跑，现在 `Machines` 里还混着五个特性的声明。
+
+第 2 步（登记表）分三个提交：
+
+- 每个特性类把"机器类型对行为"写成一张 `Behaviors` 表，`behaviorTypes`、`owns`、`create` 都读这张表。原来 `create` 里 switch 的默认分支（计算发射器、研究台、模式识别中心、感应接收器）现在逐个写出类型；`Machines` 自己的 22 个类型也一样。
+- `Feature` 接口（`core.feature`）和登记表 `registry.Features`：特性只写自己有的（配方表、机器、布局、零件、气体鼓、管道、行为），登记表合并，每张列表只构建一次。八个特性类和原来 `Machines` 的内容（现在叫 `Gt6KtfruBaseMachines`，第 3 步切开）都成了 `Feature`；生成的布局由很薄的 `Gt6KtfruGeneratedStructures` 接进来。ServiceLoader 入口 `Gt6KtfruMachines` 只剩转发。`Addon` 的创造栏和自检、`MachineColors`、`StructureBuild` 都问登记表，`new Gt6KtfruMachines()` 一个不剩。
+- 材料声明只构建一次（`Gt6KtfruMaterials` 里缓存）。
+
+和计划不同的地方：
+
+- 登记表放在 `registry`，不在 `core.feature`：它要认得所有特性，放进 `core` 就违反"`core` 不依赖任何特性"。`Feature` 接口留在 `core.feature`。
+- `Feature` 比计划多了气体鼓、两种管道和 `derivedBlockIds()`（管道的块 id，自检和创造栏用）。这些声明现在在基础特性里，第 3 步会跟着 `gas` 特性走；自检因此不再需要知道管道尺寸。
+- 顺序：登记表里特性的顺序就是每张列表的顺序。GT6CE 按位置给结构零件编号（`AddonMachines` 里从 1,000,000 起顺序分配），所以零件、机器、配方表的顺序必须不变，实际上也没变，第 3 步切开基础特性时同样要保持。只有布局的顺序变了一处：坩埚的布局现在排在生成布局之前（原来在之后）。GT6CE 按名字登记布局（`SharedLargeMachineLayouts` 是按名字的 `LinkedHashMap`），没有依赖顺序的地方。
+
+验证（本机）：
+
+| 项 | 结果 |
+| --- | --- |
+| 声明快照 | 21 段里 20 段逐字节相同；`structureLayouts` 一段内容相同，只是第 49 到 80 条（31 个生成布局加坩埚）换了位置。机器 278 台、零件 112 个（顺序不变）、配方表 32 张、99 种机器类型和各自造出的行为类及字段都在那 20 段里 |
+| `gradlew build` | 33 个测试，0 失败（原来 22 个，加登记表 10 个、材料 1 个） |
+| 故意破坏 | 3 处都变红：坩埚特性没进登记表；一个机器类型有两个行为；一台行为机没有行为。`FeaturesTest` 还会在写了 `Feature` 类却没登记时变红，以前没有东西能发现这种遗漏 |
+| `smoke-boot.ps1` | 通过，104 秒 |
 
 ### WP4 行为层公共件和生命周期（L）
 
@@ -480,7 +502,7 @@ com.lombinaxmasson.gt6ktfruaddon
 - [x] WP0 本地可构建、可复现（B2、B5；G2 的路径部分）。2026-10-24 做完；全新克隆和 `-AutoDownloadJdk` 还没验证
 - [x] WP1 署名与定位（R4）。2026-10-24 做完：README 首段、`NOTICE`、`mods.toml` 的作者和描述；剩生成文件头写来源（WP5）、README 其余过期的条目（WP7）
 - [ ] WP2 契约测试与自检（B1、B3、S8；S2 的自检部分）。2026-10-24 做了测试、自检推导和冒烟脚本；剩文件头检查（等 WP5）、失败策略开关、CI 里的冒烟
-- [ ] WP3 包结构与登记表（S1、S2、S3、S7）。2026-10-24 做了第 1 步（拆枢纽）；第 2 至 6 步还没做
+- [ ] WP3 包结构与登记表（S1、S2、S3、S7）。2026-10-24 做了第 1、2 步（拆枢纽、登记表）；第 3 至 6 步还没做
 - [ ] WP4 行为层公共件与生命周期（S4、D1、D2、D3、D5）
 - [ ] WP5 生成代码卫生（G1、G2、G3；G4 可选）
 - [ ] WP6 缺陷与细节（D4、D6、D7、D8、D9；S6 的飞轮）
