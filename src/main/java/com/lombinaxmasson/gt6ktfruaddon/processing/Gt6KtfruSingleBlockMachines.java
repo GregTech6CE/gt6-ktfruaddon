@@ -1,4 +1,4 @@
-package com.lombinaxmasson.gt6ktfruaddon;
+package com.lombinaxmasson.gt6ktfruaddon.processing;
 
 import static com.gregtech.gregtech.api.addon.MachineFace.BACK;
 import static com.gregtech.gregtech.api.addon.MachineFace.BOTTOM;

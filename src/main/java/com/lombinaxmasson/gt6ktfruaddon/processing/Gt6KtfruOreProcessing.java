@@ -1,4 +1,4 @@
-package com.lombinaxmasson.gt6ktfruaddon;
+package com.lombinaxmasson.gt6ktfruaddon.processing;
 
 import java.util.ArrayList;
 import java.util.List;
