@@ -58,3 +58,6 @@ __pycache__/
 
 ### Local instructions ###
 /CLAUDE.md
+
+# Cleanup plan and progress notes. A local working document, not part of the repository.
+/docs/quality-audit.md
