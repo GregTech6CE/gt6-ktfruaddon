@@ -80,12 +80,12 @@ public final class Gt6KtfruHeatMachines implements Feature {
     @Override
     public List<StructureLayout> layouts() {
         return List.of(
-                Gt6KtfruHeatLayouts.sunHeater(),
-                Gt6KtfruHeatLayouts.sunMirror(),
-                Gt6KtfruHeatLayouts.tidal(),
-                Gt6KtfruHeatLayouts.oilMiner(),
-                Gt6KtfruHeatLayouts.mantle(),
-                Gt6KtfruHeatLayouts.fuelDeburn());
+                Gt6KtfruHeatLayouts.sunHeater(SUN_HEATER),
+                Gt6KtfruHeatLayouts.sunMirror(SUN_MIRROR),
+                Gt6KtfruHeatLayouts.tidal(TIDAL),
+                Gt6KtfruHeatLayouts.oilMiner(OIL_MINER),
+                Gt6KtfruHeatLayouts.mantle(MANTLE),
+                Gt6KtfruHeatLayouts.fuelDeburn(FUEL_DEBURN_TYPE));
     }
 
     @Override
