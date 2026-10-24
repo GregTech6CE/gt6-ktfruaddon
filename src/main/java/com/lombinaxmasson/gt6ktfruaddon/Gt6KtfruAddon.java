@@ -1,11 +1,16 @@
 package com.lombinaxmasson.gt6ktfruaddon;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 
 import com.gregtech.gregtech.api.addon.AddonMachine;
+import com.gregtech.gregtech.api.addon.CompressedGasTankDeclaration;
 import com.gregtech.gregtech.api.addon.GregTechAddon;
 import com.gregtech.gregtech.api.addon.GregTechAddons;
 import com.gregtech.gregtech.api.addon.GregTechMaterials;
+import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
@@ -100,69 +105,37 @@ public final class Gt6KtfruAddon {
                 if (fluidItem(acetylene) == Items.AIR)
                     throw new IllegalStateException("acetylene fluid item is missing");
                 Gt6KtfruRecipes.register();
-                if (stack("heat_mixer_lv").isEmpty())
-                    throw new IllegalStateException("heat mixer is missing");
-                if (stack("tiny_distillation_tower").isEmpty())
-                    throw new IllegalStateException("tiny distillation tower is missing");
-                if (stack("small_distillation_tower").isEmpty())
-                    throw new IllegalStateException("small distillation tower is missing");
-                if (stack("distillation_tower").isEmpty())
-                    throw new IllegalStateException("distillation tower is missing");
-                if (stack("ore_processing_system").isEmpty())
-                    throw new IllegalStateException("ore processing system is missing");
-                if (stack("gas_turbine_steel").isEmpty())
-                    throw new IllegalStateException("steel gas turbine is missing");
-                if (stack(Gt6KtfruMachines.STEEL_GAS_TANK).isEmpty()
-                        || stack(Gt6KtfruMachines.STAINLESS_GAS_TANK).isEmpty())
-                    throw new IllegalStateException("compressed gas tank valve is missing");
-                if (stack(Gt6KtfruMachines.BRONZE_COMPRESSOR).isEmpty())
-                    throw new IllegalStateException("bronze gas compressor is missing");
-                if (stack(Gt6KtfruMachines.STEEL_GAS_DRUM).isEmpty())
-                    throw new IllegalStateException("steel compressed gas drum is missing");
-                if (stack(Gt6KtfruMachines.fluidPipeId("tiny")).isEmpty())
-                    throw new IllegalStateException("tiny teflon pipe is missing");
-                if (stack(Gt6KtfruMachines.itemPipeId("medium")).isEmpty())
-                    throw new IllegalStateException("medium pvc item pipe is missing");
-                if (stack("void_hopper_wood").isEmpty() || stack("miner_tin_alloy").isEmpty()
-                        || stack("water_mill").isEmpty() || stack("manual_motor_wood").isEmpty()
-                        || stack("manual_kinetic_motor_wood").isEmpty()
-                        || stack("flywheel_wood").isEmpty()
-                        || stack("large_vacuum_flywheel_adamantium").isEmpty())
-                    throw new IllegalStateException("kinetic behavior machine is missing");
-                if (stack("gas_battery_aluminium").isEmpty() || stack("gas_battery_stainless").isEmpty()
-                        || stack("ktfru.item.battery.pole.nickel").isEmpty()
-                        || stack("proton_exchange_membrane").isEmpty())
-                    throw new IllegalStateException("gas battery is missing");
+                requireDeclaredIdsRegistered();
                 if (AddonItems.stack("flywheel", "Iron", 1).isEmpty()
                         || AddonItems.stack("dustCommercialPure", "Iron", 1).isEmpty()
                         || Gt6KtfruItems.stack("nickel_catalyst_cluster", 1).isEmpty())
                     throw new IllegalStateException("kTFRU prefix or catalyst item is missing");
-                if (stack("transformer_small_lv").isEmpty() || stack("light_transformer_large_luv").isEmpty()
-                        || stack("flywheel_gear_small_t1").isEmpty() || stack("flywheel_gear_large_t6").isEmpty())
-                    throw new IllegalStateException("transformer part is missing");
-                if (stack("mask_aligner_uv").isEmpty() || stack("cnc_machine").isEmpty()
-                        || stack("aluminium_wall").isEmpty() || stack("mask_aligner_energy_uv").isEmpty())
-                    throw new IllegalStateException("mask aligner is missing");
-                if (stack("research_reactor").isEmpty() || stack("optical_microscope").isEmpty()
-                        || stack("electron_microscope").isEmpty() || stack("structure_glass").isEmpty()
-                        || stack("wireless_compute_controller").isEmpty() || stack("spacetime_compute_t2").isEmpty()
-                        || stack("quantum_compute_node_naquadah").isEmpty()
-                        || stack("wireless_battery_inductive").isEmpty() || stack("wireless_battery_quantum").isEmpty()
-                        || stack("wireless_receiver_inductive").isEmpty() || stack("wireless_receiver_quantum").isEmpty()
-                        || stack("laser_fusion_industrial").isEmpty() || stack("catalytic_reactor_iv").isEmpty()
-                        || stack("centrifugal_microgravity").isEmpty() || stack("ai_pattern_recognition").isEmpty()
-                        || stack("fusion_tokamak_t1").isEmpty())
-                    throw new IllegalStateException("late kTFRU machine is missing");
-                if (stack(Gt6KtfruMachines.SUN_HEATER).isEmpty() || stack(Gt6KtfruMachines.SUN_MIRROR).isEmpty()
-                        || stack(Gt6KtfruMachines.TIDAL).isEmpty() || stack(Gt6KtfruMachines.OIL_MINER).isEmpty()
-                        || stack(Gt6KtfruMachines.MANTLE).isEmpty() || stack(Gt6KtfruMachines.FUEL_DEBURN_TYPE).isEmpty()
-                        || stack("tidal_blade").isEmpty() || stack("enhanced_frame").isEmpty())
-                    throw new IllegalStateException("heat machine is missing");
                 FluidStack hydrogen = AddonFluids.still("Hydrogen", 250);
                 if (hydrogen == null || hydrogen.isEmpty())
                     throw new IllegalStateException("GT fluid field Hydrogen is missing");
             }
         });
+    }
+
+    /**
+     * Every block and item this addon declares has to be registered once GT6CE has dispatched
+     * the recipe lifecycle. The ids come from the declarations, so a new machine is covered
+     * without touching this method. All missing ids are reported at once.
+     */
+    private static void requireDeclaredIdsRegistered() {
+        Gt6KtfruMachines declarations = new Gt6KtfruMachines();
+        List<String> ids = new ArrayList<>();
+        for (AddonMachine machine : declarations.addonMachines()) ids.add(machine.casing().id());
+        for (LayoutPart part : declarations.layoutParts()) ids.add(part.name());
+        for (CompressedGasTankDeclaration tank : declarations.compressedGasTanks()) ids.add(tank.id());
+        for (String size : Gt6KtfruMachines.FLUID_PIPE_SIZES) ids.add(Gt6KtfruMachines.fluidPipeId(size));
+        for (String size : Gt6KtfruMachines.ITEM_PIPE_SIZES) ids.add(Gt6KtfruMachines.itemPipeId(size));
+        ids.addAll(Gt6KtfruItems.BY_PATH.keySet());
+        List<String> missing = ids.stream().filter(id -> stack(id).isEmpty()).toList();
+        if (!missing.isEmpty()) {
+            throw new IllegalStateException(missing.size() + " declared blocks or items are not registered: "
+                    + String.join(", ", missing));
+        }
     }
 
     private static void acceptFluid(CreativeModeTab.Output output, MaterialDeclaration material) {
