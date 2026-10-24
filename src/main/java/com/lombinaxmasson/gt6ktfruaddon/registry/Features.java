@@ -25,6 +25,7 @@ import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruDistillationMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruGeneratedStructures;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruHeatMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruLateMachines;
+import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruOreProcessing;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruResearchMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruSingleBlockMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruTurbines;
@@ -61,6 +62,7 @@ public final class Features {
             instance = new Features(List.of(
                     new Gt6KtfruSingleBlockMachines(),
                     new Gt6KtfruDistillationMachines(),
+                    new Gt6KtfruOreProcessing(),
                     new Gt6KtfruBaseMachines(),
                     new Gt6KtfruHeatMachines(),
                     new Gt6KtfruTurbines(),
