@@ -21,14 +21,11 @@ import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 /**
  * Late recipe machines and the addon-side subsystem behavior machines:
- * - Laser fusion (30071, 30072): discrete LU pulse storage, peak check and mandatory cooling.
  * - Microgravity room (30102), crystal growth (30103) and microgravity assembler (30105): room index check.
  * - Quantum communication relay (30074): paired EU-to-QU recipe runner emitting 128 QU/tick from the top face.
  * - AI research centers (30106–30108): 67,108,864 Normal compute/tick allocation and monitor point progress.
  */
 public final class Gt6KtfruLateMachines implements Feature {
-    static final String LASER_EXP = "laser_fusion_experimental";
-    static final String LASER_IND = "laser_fusion_industrial";
     static final String MICROGRAVITY_ASSEMBLER = "microgravity_assembler";
     static final String MICROGRAVITY_CRYSTAL = "microgravity_crystal_growth";
     static final String QUANTUM_RELAY = "quantum_communication_relay";
@@ -38,8 +35,6 @@ public final class Gt6KtfruLateMachines implements Feature {
     static final String PATTERN = "ai_pattern_recognition";
 
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
-            .add(LASER_EXP, Gt6KtfruLaserFusion::experimental)
-            .add(LASER_IND, Gt6KtfruLaserFusion::industrial)
             .add(MICROGRAVITY_ASSEMBLER, () -> new Gt6KtfruRooms(RecipeMaps.COSMIC_RADIATION, false, 0))
             .add(MICROGRAVITY_CRYSTAL, () -> new Gt6KtfruRooms(RecipeMaps.MICROGRAVITY_CRYSTAL, true, 2))
             .add(QUANTUM_RELAY, Gt6KtfruQuantumRelay::new)
@@ -52,10 +47,6 @@ public final class Gt6KtfruLateMachines implements Feature {
     @Override
     public List<RecipeTable> recipeTables() {
         List<RecipeTable> maps = new ArrayList<>();
-        maps.add(RecipeMaps.table(RecipeMaps.FUSION_TOKAMAK, "Fusion Tokamak", "fusiontokamak", 3, 3, 0, 6, 6, 1, 1));
-        maps.add(RecipeMaps.table(RecipeMaps.FUSION_TOKAMAK_EXPERIMENTAL, "Experimental Fusion Tokamak", "fusiontokamak", 3, 3, 0, 6, 6, 1, 1));
-        maps.add(RecipeMaps.table(RecipeMaps.LASER_FUSION, "Laser Inertial Fusion", "gascompressor", 3, 3, 0, 3, 3, 0, 1));
-        maps.add(RecipeMaps.table(RecipeMaps.LASER_FUSION_EXPERIMENTAL, "Experimental Laser Fusion", "gascompressor", 3, 3, 0, 3, 3, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.CATALYTIC_REACTOR, "Catalytic Reactor", "mixer", 6, 3, 0, 6, 3, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.MIRROR_GOLD_SYNTHESIS, "Mirror Gold Synthesis", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
         maps.add(RecipeMaps.table(RecipeMaps.MIRROR_GOLD_QUANTUMIZATION, "Mirror Gold Quantumization", "gascompressor", 5, 5, 0, 2, 2, 0, 1));
@@ -70,10 +61,6 @@ public final class Gt6KtfruLateMachines implements Feature {
     @Override
     public List<AddonMachine> machines() {
         List<AddonMachine> machines = new ArrayList<>();
-        machines.add(tokamak("fusion_tokamak_exp", 2048, RecipeMaps.FUSION_TOKAMAK_EXPERIMENTAL));
-        machines.add(tokamak("fusion_tokamak_t1", 16384, RecipeMaps.FUSION_TOKAMAK));
-        machines.add(laser(LASER_EXP, RecipeMaps.LASER_FUSION_EXPERIMENTAL, "Tungstensteel", 131_072L, 2L * 8L * 1024L * 1024L));
-        machines.add(laser(LASER_IND, RecipeMaps.LASER_FUSION, "Osmium", 2_097_152L, 8L * 134_217_728L));
         machines.add(catalytic("catalytic_reactor_ev", "StainlessSteel", 2048, 256, 4096));
         machines.add(catalytic("catalytic_reactor_iv", "Tungstensteel", 8192, 1024, 16384));
         machines.add(basic("mirror_gold_synthesis", "Iridium", 8192, 8192, 8192, RecipeMaps.MIRROR_GOLD_SYNTHESIS, true));
@@ -94,49 +81,6 @@ public final class Gt6KtfruLateMachines implements Feature {
     @Override
     public Map<String, Supplier<MachineBehavior>> behaviors() {
         return BEHAVIORS;
-    }
-
-    private static RecipeMachine tokamak(String id, long eu, String map) {
-        // Source: NBT_ENERGY_ACCEPTED_2 is LU with NBT_SPECIAL_IS_START_ENERGY.
-        // Each recipe's special value is charged from that buffer before progress.
-        return RecipeMachine.builder(MachineCasing.builder(id, "StainlessSteel").machineType(id).build())
-                .recipeMap(map)
-                .largeRecipe()
-                .constantEnergy(false)
-                .energy(EnergyInput.builder("EU", eu).faces().build())
-                .auxiliaryEnergy(EnergyInput.builder("LU", eu)
-                        .anyPacket()
-                        .faces(MachineFace.all())
-                        .capacity(4_194_304L)
-                        .build())
-                .startupEnergy(true)
-                .structureKeys(List.of("gt6ktfruaddon.structure." + id + ".1"))
-                .build();
-    }
-
-    private static BehaviorMachine laser(String id, String map, String material, long maxPacket, long pulseCapacity) {
-        return BehaviorMachine.builder(MachineCasing.builder(id, material).machineType(id).build())
-                .energy(EnergyInput.builder("LU", maxPacket / 2)
-                        .faces(MachineFace.TOP)
-                        .capacity(pulseCapacity)
-                        .build())
-                .auxiliaryEnergy(EnergyInput.builder("LU", maxPacket)
-                        .range(1, maxPacket)
-                        .faces(MachineFace.BOTTOM, MachineFace.BACK, MachineFace.LEFT, MachineFace.RIGHT)
-                        .capacity(pulseCapacity)
-                        .build())
-                .gui(Ktfru.PLACEHOLDER_GUI)
-                .energyGauge(84, 8)
-                .progress(84, 64)
-                .item(8, 26, BehaviorMachine.SlotRole.INPUT)
-                .item(26, 26, BehaviorMachine.SlotRole.INPUT)
-                .item(156, 26, BehaviorMachine.SlotRole.OUTPUT)
-                .fluid(8_000, 46, 8, BehaviorMachine.SlotRole.INPUT)
-                .fluid(8_000, 66, 8, BehaviorMachine.SlotRole.INPUT)
-                .fluid(8_000, 116, 8, BehaviorMachine.SlotRole.OUTPUT)
-                .fluid(8_000, 136, 8, BehaviorMachine.SlotRole.OUTPUT)
-                .recipeMaps(map)
-                .build();
     }
 
     private static BehaviorMachine microgravityAssembler() {
