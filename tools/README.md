@@ -10,6 +10,15 @@ GT6CE 构建脚本和代码、资源生成脚本。生成脚本只通过 [`paths
 - `-NoBuild` 只把 `.gt6ce-src` 检出到固定提交，不构建。生成脚本读的 GT6CE 源码就是这份。
 - Linux 和 macOS 参照 `build.yml`。
 
+## 冒烟启动
+
+`smoke-boot.ps1` 跑 `gradlew runGameTestServer`，把整个模组栈（GT6CE 加附属）加载到通用初始化结束。GT6CE 在这一步把 `onRecipesReady` 派发给附属，所以未知零件、注册表重复键、解析不了的配方栈、启动自检失败都会在这里暴露。附属没有 GameTest，所以起来之后服务器会报 `No test functions were given!`，这条错误是预期的。
+
+- 通过的判据是日志里同时有附属的 `gt6ktfruaddon: ready on` 和 GT6CE 的 `GT addon API <n> ready: [...gt6ktfruaddon...]`（后者只在所有附属的 `onRecipesReady` 都返回之后才打印），而且没有失败标记。模组加载失败时 Gradle 也可能以 0 退出（缺 `.polymer()` 的材料就是这样），所以以日志为准，退出码只是附加检查。没通过时脚本会打印日志里第一处加载错误。
+- 不用 `runData`：数据生成运行不触发通用初始化事件，会在 GT6CE 根本没派发的情况下"通过"。
+- GameTestServer 不需要 EULA，不用写 `eula.txt`。
+- Gradle 的输出留在 `build/smoke-boot.log`。
+
 ## 生成脚本的输入
 
 | 输入 | 环境变量 | 默认位置 | 需要它的脚本 |

@@ -57,7 +57,7 @@
 
 - 新增或改动一台机器要同时改：声明、布局、零件、`machineTypes()`、`create()` 与 `owns()`（八个子类各有一套，七个另有 `behaviorTypes()`）、`Addon` 里的启动自检；再加方块状态、物品模型、两份语言文件。
 - `create()` 是按字符串逐个比较的 if 链（`Machines.java:352–379`）。
-- 启动自检是手写的 44 个 id（`Addon.java:84–164`），方块条目约 414 个，覆盖约一成。漏补不会报错。
+- 启动自检是手写的 55 个 id（`Addon.java:84–164`），声明的方块有 408 个、物品 504 个，覆盖约 6%。漏补不会报错。
 - 创造栏每次构建、两个客户端着色事件、首次使用建造杖，都会 `new Gt6KtfruMachines()` 把全部声明重建一遍（`Addon.java:49`、`MachineColors.java:24,29`、`StructureBuild.java:169`），`new Gt6KtfruMaterials()` 也是（`Addon.java:63`）。
 - 整改：WP2（自检由登记表推导）、WP3（`Feature` 接口加缓存）。
 
@@ -109,7 +109,7 @@
 
 **S8 失败策略是探针式的。**
 
-- `Addon.onRecipesReady` 里有 25 处 `throw`；`SourceRecipes.register()` 末尾把所有未解析的栈汇总后抛出（`:64–67`）；`Recipes.register()` 还断言"临时行已不存在"（`:40–47`），那是卡 02 的历史。任何一个栈解析不了，异常就从 `onRecipesReady` 抛出去；GT6CE 怎么处理这个异常没有核实 [待核实]。
+- `Addon.onRecipesReady` 里有 25 处 `throw`；`SourceRecipes.register()` 末尾把所有未解析的栈汇总后抛出（`:64–67`）；`Recipes.register()` 还断言"临时行已不存在"（`:40–47`），那是卡 02 的历史。任何一个栈解析不了，异常就从 `onRecipesReady` 抛出去。GT6CE 在 `FMLCommonSetupEvent` 里调用它（`GregTechNeoForge.java:157`，核对于 `1d1f69fbb`），不吞异常：`GregTechAddons.dispatchRecipesReady` 把阶段置为 `FAILED`，包装成 `IllegalStateException("GT addon recipes failed: gt6ktfruaddon")` 重新抛出。也就是说，一个解析不了的栈会让游戏在模组加载阶段就崩，不是进世界以后。
 - 探针需要这样响。发行版应该记录并跳过那一行，由开关决定严不严格（§8 第 4 条）。
 - 整改：WP2。
 
@@ -204,7 +204,7 @@
 | 带头部标注的生成文件 | 0 / 3（`Materials` 已是手改文件，不算） | 3 / 3 |
 | 全局可变静态 Map | 13 | 0，或由带生命周期的服务持有 |
 | `kept()` 副本 | 4 | 1（`RecipeRunner` 内） |
-| 手写启动自检 id | 44 | 0 |
+| 手写启动自检 id | 55 | 0 |
 | 全量声明重建 | 4 处 `new Gt6KtfruMachines()`、1 处 `new Gt6KtfruMaterials()` | 0（登记表构建一次） |
 | 生成脚本里的硬编码绝对路径 | 5 处，4 个脚本 | 0 |
 | 测试 | 0 | 契约测试，CI 里运行 |
@@ -289,10 +289,41 @@
 1. 加 `src/test`（JUnit 5）。声明部分（`materials()`、`recipeTables()`、`addonMachines()`、`structureLayouts()`、`layoutParts()`）用纯 JVM 测试，不需要 Minecraft（B1 已核对）。`create(type)` 会加载行为类，行为类引用 Minecraft 类，测试类路径上要有它们：先试 ModDevGradle 给主源集的类路径，不行再用它的 `unitTest` [待核实]。配方注册（`onRecipesReady`）要游戏注册表，纯 JVM 测不了，仍靠起服务端到 `Done` 的冒烟脚本（也放进 WP2）。
 2. 契约测试：对每个 Contributor 调用 `materials()`、`recipeTables()`、`addonMachines()`、`structureLayouts()`、`layoutParts()`、`machineTypes()`；断言 id 唯一、布局名匹配 `[a-z0-9_]+`、`create(type)` 对每个 `machineTypes()` 返回非空、布局引用的零件名都在 `layoutParts()` 或已知 GT 零件里、配方行引用的配方图都存在。卡 23 的几类启动失败（缺 `.polymer()`、GUI 矩形重叠、布局名带点、同一类型混用能量）应该先在这里变红。
 3. 文件头检查：`generated/` 下每个文件都有头部。
-4. `Addon.onRecipesReady` 里 44 个 id 的自检换成遍历登记表；失败策略加开关（§8 第 4 条）。
+4. `Addon.onRecipesReady` 里 55 个 id 的自检换成遍历登记表；失败策略加开关（§8 第 4 条）。
 5. CI 跑 `gradlew test`；校验和不一致改为失败，或者在 `build.yml` 里写明为什么只警告。
 
 完成标准：故意漏一个 `create()` 分支，或者写错一个布局名，测试变红；去掉手写 id 清单后，自检覆盖全部机器。
+
+**2026-10-24 进展：**
+
+- 步骤 1：测试在 `src/test/java/com/lombinaxmasson/gt6ktfruaddon/`，共 22 个 JUnit 5 测试，`gradlew test` 约 4 秒。`gradlew build` 会跑它们，所以 CI 里的 `./gradlew build` 不用改。测试类路径直接用主源集的编译类路径（Minecraft、NeoForge、SDK 都在），不需要 `unitTest`，`create(type)` 在纯 JVM 里能实例化行为类。物品注册表在纯 JVM 里起不来（`Bootstrap.bootStrap()` 要 FML 的 `LoadingModList`），所以物品只测资源，注册靠冒烟。
+- 步骤 2：
+  - `MachineContractTest`（11 项）：声明都能构建；方块 id 在机器、零件、气瓶、管道之间唯一；同一机器类型的方块主能量类型一致；`machineTypes()`、`create()` 和行为机器三者一致，未知类型被拒；配方表名唯一；机器只用已声明的或 GT6CE 内置的配方图；大型配方机器有以类型命名的布局；布局名唯一且都有机器类型在用；布局只引用已声明的零件或 GT6CE 的内置零件（名单取自运行包 jar 里的物品模型）。
+  - `ResourceContractTest`（4 项）：中英文语言键一致；每台机器有 blockstate、物品模型和两种语言的名称；零件和气瓶有名称；结构提示行的键两种语言都在。
+  - `ServiceRegistrationTest`（3 项）：三个 `META-INF/services` 都能加载到提供者。`MaterialContractTest`（2 项）：材料名和前缀名唯一。`ItemResourceTest`（2 项）：物品模型都有名称，名称都有模型。
+  - 卡 23 点名的失败：同一类型混用能量有单独的测试；GUI 矩形重叠和各类名称格式是 SDK 构建器在 `build()` 里拒绝的，构建声明就会失败；缺 `.polymer()` 的构建器不检查，是 GT6CE 加载材料时才报，只有冒烟抓得到（下表）。
+  - 测试第一次运行就找到一个真缺陷：`quantum_gold_chamber` 和 `quantum_observation_tower` 的结构提示第 1 行，两种语言里都缺。已各补两条；文案是新写的，待核对。
+- 步骤 4（自检部分）：`Gt6KtfruAddon.requireDeclaredIdsRegistered()` 取代了手写的 55 个 id（53 个方块、2 个物品）。它从 `Gt6KtfruMachines` 的声明（机器外壳、布局零件、气瓶、两类管道的尺寸）和 `Gt6KtfruItems.BY_PATH` 推出要查的 id，在 `Gt6KtfruRecipes.register()` 之后检查，缺的一次报全。新增机器不用再改它。现在覆盖 912 个 id：408 个方块和 504 个物品，旧清单的 55 个都在里面（逐个核对过）。
+- 更正：审计里原来写的"44 个 id"是按字符串字面量数的，漏了用常量给出的 id；按 `stack(` 调用数是 55。正文、基线表和附录的复核命令都已改正。
+- 顺带发现：`en_us` 里有 6 个 `block.` 名字没有对应的方块（`electric_controller`、`network_cable`、`wired_controller`、`wireless_battery`、`wireless_controller`、`wireless_receiver`），代码里找不到声明它们的地方。是不是上游遗留的无用条目没有核对，没动。
+- 冒烟：`tools/smoke-boot.ps1` 跑 `gradlew runGameTestServer`（`build.gradle` 新增的运行配置）。判据是日志标记，不看退出码，原因和用法在 `tools/README.md`。`runData` 试过，不能用：数据生成运行不触发通用初始化事件，GT6CE 没派发附属也会"通过"。GameTestServer 不要 EULA；附属没有 GameTest，结尾的 `No test functions were given!` 是预期的。
+- §2 B1 说的"没有测试"是审计时的状态。
+
+验证结果（本机）：
+
+| 项 | 结果 |
+| --- | --- |
+| `gradlew build` | 成功；22 个测试，0 失败 |
+| `smoke-boot.ps1`（没做故意破坏时） | 通过，约 80 秒 |
+| 契约测试的故意破坏（每次一处，改完还原） | 6 处都有测试变红：删掉 `create()` 的 `gas_compressor` 分支；布局里写错零件名；激光切割机改用热混合机的 id；删掉 `zh_cn` 的一条结构提示；材料服务文件指向不存在的类；藏起 `sun_heater` 的 blockstate |
+| 冒烟的故意破坏（同上） | 3 处都变红：布局里写错零件名（`uses unknown part`）；多声明一个 GT6CE 不会造的管道尺寸（自检点名 `pipe_gigantic_teflon`）；去掉 `SiliconeRubber` 的 `.polymer()`（GT6CE 报 `form 'plate / SiliconeRubber' is not valid for that material`） |
+
+没做的：
+
+- 步骤 3 的文件头检查：现在没有 `generated/` 目录，生成文件也没有头部，等 WP3、WP5 之后再加。
+- 步骤 4 的失败策略开关（§8 第 4 条）。
+- 步骤 5：冒烟还没进 CI。`smoke-boot.ps1` 是 Windows PowerShell 脚本，`build.yml` 在 Ubuntu 上跑，需要一份可移植的版本，本机没法验证。校验和不一致仍然只是警告：可复现性只在本机测过，要等 Linux CI 的实测再决定改不改成失败。
+- 没覆盖到：`runClient`；物品注册只有冒烟盖到，没有单元测试；`create()` 返回的行为类只测了能实例化，没跑生命周期（WP4）。
 
 ### WP3 包结构和登记表（L）
 
@@ -413,7 +444,7 @@ com.lombinaxmasson.gt6ktfruaddon
 
 - [x] WP0 本地可构建、可复现（B2、B5；G2 的路径部分）。2026-10-24 做完；全新克隆和 `-AutoDownloadJdk` 还没验证
 - [ ] WP1 署名与定位（R4）
-- [ ] WP2 契约测试与自检（B1、B3、S8；S2 的自检部分）
+- [ ] WP2 契约测试与自检（B1、B3、S8；S2 的自检部分）。2026-10-24 做了测试、自检推导和冒烟脚本；剩文件头检查（等 WP5）、失败策略开关、CI 里的冒烟
 - [ ] WP3 包结构与登记表（S1、S2、S3、S7）
 - [ ] WP4 行为层公共件与生命周期（S4、D1、D2、D3、D5）
 - [ ] WP5 生成代码卫生（G1、G2、G3；G4 可选）
@@ -446,8 +477,8 @@ grep -n "static boolean kept(" $P/*.java
 grep -n "new Gt6KtfruMachines()\|new Gt6KtfruMaterials()" $P/*.java
 grep -c '"gt6ce"' $P/*.java | grep -v ':0'
 
-# 启动自检里手写的 id 数
-grep -o 'stack("[a-z_0-9.]*")' $P/Gt6KtfruAddon.java | wc -l
+# 启动自检里手写的 id 数（`Gt6KtfruRecipes.register()` 到氢那行之间的 `stack(` 调用，含常量给出的 id）
+awk '/Gt6KtfruRecipes.register\(\);/,/FluidStack hydrogen/' $P/Gt6KtfruAddon.java | grep -oE '(^|[^.[:alnum:]_])stack\(' | wc -l
 
 # 资源重复（内容种数）
 R=src/main/resources/assets/gt6ktfruaddon

@@ -47,6 +47,14 @@ neoForge {
             programArgument '--nogui'
         }
 
+        // Boots the whole mod stack in a GameTestServer, which needs no EULA, and stops by itself.
+        // GT6CE dispatches onRecipesReady to the addon during common setup, so tools/smoke-boot.ps1
+        // uses this run to see whether GT6CE accepts the addon.
+        gameTestServer {
+            type = 'gameTestServer'
+            systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+        }
+
         configureEach {
             systemProperty 'forge.logging.markers', 'REGISTRIES'
             logLevel = org.slf4j.event.Level.DEBUG
