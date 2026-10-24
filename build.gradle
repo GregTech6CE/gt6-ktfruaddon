@@ -121,6 +121,8 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    // MachineContractTest reads GT6CE's built-in part names from this jar.
+    inputs.files(gtMod).withPropertyName('gt6ceModJar').withPathSensitivity(PathSensitivity.NONE)
     testLogging {
         events 'failed'
         exceptionFormat 'full'
