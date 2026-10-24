@@ -28,7 +28,6 @@ import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruHeatMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruMicrogravityMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruQuantumMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruResearchMachines;
-import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruSemiconductorMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruTransformerParts;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruTurbines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruWirelessMachines;
@@ -39,6 +38,7 @@ import com.lombinaxmasson.gt6ktfruaddon.processing.Gt6KtfruCatalyticMachines;
 import com.lombinaxmasson.gt6ktfruaddon.processing.Gt6KtfruDistillationMachines;
 import com.lombinaxmasson.gt6ktfruaddon.processing.Gt6KtfruOreProcessing;
 import com.lombinaxmasson.gt6ktfruaddon.processing.Gt6KtfruSingleBlockMachines;
+import com.lombinaxmasson.gt6ktfruaddon.semiconductor.Gt6KtfruSemiconductorMachines;
 
 /**
  * Every feature of the addon, and the lists GT6CE asks for, each built once.
