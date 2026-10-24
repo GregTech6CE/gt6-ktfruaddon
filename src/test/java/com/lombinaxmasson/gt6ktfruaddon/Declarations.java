@@ -10,6 +10,7 @@ import com.gregtech.gregtech.api.addon.PrefixDeclaration;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.lombinaxmasson.gt6ktfruaddon.content.Gt6KtfruMaterials;
+import com.lombinaxmasson.gt6ktfruaddon.registry.Gt6KtfruMachines;
 
 /**
  * What the addon declares to GT6CE, built once per test JVM. The SDK builders validate in

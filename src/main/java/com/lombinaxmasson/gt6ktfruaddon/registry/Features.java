@@ -27,7 +27,6 @@ import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruFuelGenerators;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruFusionMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruGasBatteries;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruGasMachines;
-import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruGeneratedStructures;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruHeatMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruKineticMachines;
 import com.lombinaxmasson.gt6ktfruaddon.Gt6KtfruMicrogravityMachines;

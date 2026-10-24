@@ -16,6 +16,7 @@ import com.gregtech.gregtech.api.addon.platform.AddonItems;
 import com.lombinaxmasson.gt6ktfruaddon.content.Gt6KtfruMaterials;
 import com.lombinaxmasson.gt6ktfruaddon.generated.Gt6KtfruItems;
 import com.lombinaxmasson.gt6ktfruaddon.registry.Features;
+import com.lombinaxmasson.gt6ktfruaddon.registry.Gt6KtfruRecipes;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.core.registries.BuiltInRegistries;

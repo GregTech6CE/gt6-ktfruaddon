@@ -1,4 +1,4 @@
-package com.lombinaxmasson.gt6ktfruaddon;
+package com.lombinaxmasson.gt6ktfruaddon.registry;
 
 import java.util.List;
 import java.util.Set;
@@ -13,7 +13,7 @@ import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.BehaviorMachineContributor;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
-import com.lombinaxmasson.gt6ktfruaddon.registry.Features;
+import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 
 /**
  * What GT6CE finds through ServiceLoader. Every list comes from the feature registry, which builds
