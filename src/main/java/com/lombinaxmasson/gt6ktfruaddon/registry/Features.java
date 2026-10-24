@@ -18,27 +18,27 @@ import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
-import com.lombinaxmasson.gt6ktfruaddon.fusion.Gt6KtfruFusionMachines;
-import com.lombinaxmasson.gt6ktfruaddon.gas.Gt6KtfruGasMachines;
-import com.lombinaxmasson.gt6ktfruaddon.heat.Gt6KtfruCrucibleMachines;
-import com.lombinaxmasson.gt6ktfruaddon.heat.Gt6KtfruHeatMachines;
-import com.lombinaxmasson.gt6ktfruaddon.kinetic.Gt6KtfruKineticMachines;
-import com.lombinaxmasson.gt6ktfruaddon.network.Gt6KtfruComputeMachines;
-import com.lombinaxmasson.gt6ktfruaddon.network.Gt6KtfruWirelessMachines;
-import com.lombinaxmasson.gt6ktfruaddon.power.Gt6KtfruBatteries;
-import com.lombinaxmasson.gt6ktfruaddon.power.Gt6KtfruFuelGenerators;
-import com.lombinaxmasson.gt6ktfruaddon.power.Gt6KtfruGasBatteries;
-import com.lombinaxmasson.gt6ktfruaddon.power.Gt6KtfruTransformerParts;
-import com.lombinaxmasson.gt6ktfruaddon.power.Gt6KtfruTurbines;
-import com.lombinaxmasson.gt6ktfruaddon.processing.Gt6KtfruCatalyticMachines;
-import com.lombinaxmasson.gt6ktfruaddon.processing.Gt6KtfruDistillationMachines;
-import com.lombinaxmasson.gt6ktfruaddon.processing.Gt6KtfruOreProcessing;
-import com.lombinaxmasson.gt6ktfruaddon.processing.Gt6KtfruSingleBlockMachines;
-import com.lombinaxmasson.gt6ktfruaddon.quantum.Gt6KtfruQuantumMachines;
-import com.lombinaxmasson.gt6ktfruaddon.research.Gt6KtfruAiCenters;
-import com.lombinaxmasson.gt6ktfruaddon.research.Gt6KtfruMicrogravityMachines;
-import com.lombinaxmasson.gt6ktfruaddon.research.Gt6KtfruResearchMachines;
-import com.lombinaxmasson.gt6ktfruaddon.semiconductor.Gt6KtfruSemiconductorMachines;
+import com.lombinaxmasson.gt6ktfruaddon.fusion.FusionMachines;
+import com.lombinaxmasson.gt6ktfruaddon.gas.GasMachines;
+import com.lombinaxmasson.gt6ktfruaddon.heat.CrucibleMachines;
+import com.lombinaxmasson.gt6ktfruaddon.heat.HeatMachines;
+import com.lombinaxmasson.gt6ktfruaddon.kinetic.KineticMachines;
+import com.lombinaxmasson.gt6ktfruaddon.network.ComputeMachines;
+import com.lombinaxmasson.gt6ktfruaddon.network.WirelessMachines;
+import com.lombinaxmasson.gt6ktfruaddon.power.Batteries;
+import com.lombinaxmasson.gt6ktfruaddon.power.FuelGenerators;
+import com.lombinaxmasson.gt6ktfruaddon.power.GasBatteries;
+import com.lombinaxmasson.gt6ktfruaddon.power.TransformerParts;
+import com.lombinaxmasson.gt6ktfruaddon.power.Turbines;
+import com.lombinaxmasson.gt6ktfruaddon.processing.CatalyticMachines;
+import com.lombinaxmasson.gt6ktfruaddon.processing.DistillationMachines;
+import com.lombinaxmasson.gt6ktfruaddon.processing.OreProcessing;
+import com.lombinaxmasson.gt6ktfruaddon.processing.SingleBlockMachines;
+import com.lombinaxmasson.gt6ktfruaddon.quantum.QuantumMachines;
+import com.lombinaxmasson.gt6ktfruaddon.research.AiCenters;
+import com.lombinaxmasson.gt6ktfruaddon.research.MicrogravityMachines;
+import com.lombinaxmasson.gt6ktfruaddon.research.ResearchMachines;
+import com.lombinaxmasson.gt6ktfruaddon.semiconductor.SemiconductorMachines;
 
 /**
  * Every feature of the addon, and the lists GT6CE asks for, each built once.
@@ -68,28 +68,28 @@ public final class Features {
     public static synchronized Features get() {
         if (instance == null) {
             instance = new Features(List.of(
-                    new Gt6KtfruSingleBlockMachines(),
-                    new Gt6KtfruDistillationMachines(),
-                    new Gt6KtfruOreProcessing(),
-                    new Gt6KtfruGasMachines(),
-                    new Gt6KtfruKineticMachines(),
-                    new Gt6KtfruGasBatteries(),
-                    new Gt6KtfruTransformerParts(),
-                    new Gt6KtfruSemiconductorMachines(),
-                    new Gt6KtfruFuelGenerators(),
-                    new Gt6KtfruHeatMachines(),
-                    new Gt6KtfruTurbines(),
-                    new Gt6KtfruBatteries(),
-                    new Gt6KtfruResearchMachines(),
-                    new Gt6KtfruComputeMachines(),
-                    new Gt6KtfruWirelessMachines(),
-                    new Gt6KtfruFusionMachines(),
-                    new Gt6KtfruCatalyticMachines(),
-                    new Gt6KtfruQuantumMachines(),
-                    new Gt6KtfruMicrogravityMachines(),
-                    new Gt6KtfruAiCenters(),
-                    new Gt6KtfruCrucibleMachines(),
-                    new Gt6KtfruGeneratedStructures()));
+                    new SingleBlockMachines(),
+                    new DistillationMachines(),
+                    new OreProcessing(),
+                    new GasMachines(),
+                    new KineticMachines(),
+                    new GasBatteries(),
+                    new TransformerParts(),
+                    new SemiconductorMachines(),
+                    new FuelGenerators(),
+                    new HeatMachines(),
+                    new Turbines(),
+                    new Batteries(),
+                    new ResearchMachines(),
+                    new ComputeMachines(),
+                    new WirelessMachines(),
+                    new FusionMachines(),
+                    new CatalyticMachines(),
+                    new QuantumMachines(),
+                    new MicrogravityMachines(),
+                    new AiCenters(),
+                    new CrucibleMachines(),
+                    new GeneratedStructures()));
         }
         return instance;
     }

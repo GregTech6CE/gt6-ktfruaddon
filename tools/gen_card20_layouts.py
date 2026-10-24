@@ -1,4 +1,4 @@
-# Transcribes kTFRUAddon layer structures into Gt6KtfruGeneratedLayouts.java.
+# Transcribes kTFRUAddon layer structures into GeneratedLayouts.java.
 # Expandable layers are written once. Run from the repo root.
 
 import re
@@ -8,7 +8,7 @@ import paths
 
 ROOT = paths.ROOT
 SRC = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon"
-OUT = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "generated" / "Gt6KtfruGeneratedLayouts.java"
+OUT = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "generated" / "GeneratedLayouts.java"
 
 MATERIALS = {
     "Al": "Aluminium",
@@ -136,7 +136,7 @@ def registry():
 def existing_names():
     names = set(KNOWN.values())
     for path in (ROOT / "src" / "main" / "java").rglob("*.java"):
-        if path.name == "Gt6KtfruGeneratedLayouts.java":
+        if path.name == "GeneratedLayouts.java":
             continue
         text = path.read_text(encoding="utf-8")
         names.update(re.findall(r'(?:casing|part|builder)\(\s*"([a-z0-9_]+)"', text))
@@ -396,15 +396,15 @@ def main():
     a("import com.gregtech.gregtech.api.addon.LayoutPart;")
     a("import com.gregtech.gregtech.api.addon.StructureLayout;")
     a("import com.gregtech.gregtech.api.addon.StructureRole;")
-    a("import com.lombinaxmasson.gt6ktfruaddon.core.layout.Gt6KtfruLayerLayout;")
+    a("import com.lombinaxmasson.gt6ktfruaddon.core.layout.LayerLayout;")
     a("")
     a("/**")
     a(" * Layouts transcribed from this repo's kTFRUAddon checkout.")
     a(" * An expandable layer is included once.")
     a(" * A compute cell accepts its node block or the source's wall fallback.")
     a(" */")
-    a("public final class Gt6KtfruGeneratedLayouts {")
-    a("    private Gt6KtfruGeneratedLayouts() {}")
+    a("public final class GeneratedLayouts {")
+    a("    private GeneratedLayouts() {}")
     a("")
     a("    public static void addLayouts(List<StructureLayout> layouts) {")
     for layout, _, _, _, _ in parsed:
@@ -421,7 +421,7 @@ def main():
         ox, oy, oz = offset
         a(f"    /** {path} offset {ox},{oy},{oz}. */")
         a(f"    public static StructureLayout {layout}() {{")
-        a(f'        return Gt6KtfruLayerLayout.build("{layout}", {ox}, {oy}, {oz}, new String[][] {{')
+        a(f'        return LayerLayout.build("{layout}", {ox}, {oy}, {oz}, new String[][] {{')
         for layer in layers:
             rows = ", ".join(java_string(row) for row in layer)
             a(f"            new String[] {{{rows}}},")
@@ -429,21 +429,21 @@ def main():
         rendered = []
         for mark, spec in specs:
             if spec == "controller":
-                rendered.append(f"                Gt6KtfruLayerLayout.controller('{mark}')")
+                rendered.append(f"                LayerLayout.controller('{mark}')")
             elif spec == "air":
-                rendered.append(f"                Gt6KtfruLayerLayout.air('{mark}')")
+                rendered.append(f"                LayerLayout.air('{mark}')")
             else:
                 kind, ident, role = spec
                 if kind == "part":
-                    rendered.append(f"                Gt6KtfruLayerLayout.part('{mark}', \"{ident}\", StructureRole.{role})")
+                    rendered.append(f"                LayerLayout.part('{mark}', \"{ident}\", StructureRole.{role})")
                 elif kind == "oneof":
                     members = ", ".join(
                         f'CellMatch.part("{value}")' if member == "part" else f'CellMatch.block("{value}")'
                         for member, value, _ in ident
                     )
-                    rendered.append(f"                Gt6KtfruLayerLayout.oneOf('{mark}', StructureRole.{role}, {members})")
+                    rendered.append(f"                LayerLayout.oneOf('{mark}', StructureRole.{role}, {members})")
                 else:
-                    rendered.append(f"                Gt6KtfruLayerLayout.block('{mark}', \"{ident}\", StructureRole.{role})")
+                    rendered.append(f"                LayerLayout.block('{mark}', \"{ident}\", StructureRole.{role})")
         a(",\n".join(rendered))
         a("        );")
         a("    }")

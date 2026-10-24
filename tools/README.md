@@ -44,10 +44,10 @@ git -C kTFRUAddon checkout 6404ab6979de9fce832ce0c41171000decf00e69
 读代码得到的先后约束，没列出的脚本之间没有核实过依赖：
 
 1. `gen_card22_items.py` 写 `tools/own_items.json`，`extract_machine_recipes.py` 读它。
-2. `extract_machine_recipes.py` 读 `Gt6KtfruMaterials.java`。这个文件现在是手改过的，不再由 `gen_materials.py` 生成（见下）。
+2. `extract_machine_recipes.py` 读 `Materials.java`。这个文件现在是手改过的，不再由 `gen_materials.py` 生成（见下）。
 3. `gen_card20_layouts.py` 写 `tools/card20-parts.txt`（不入库的中间文件），`gen_card20_assets.py` 读它。
 4. `gen_card20_assets.py` 给卡 20 的机器写通用模板的 blockstate 和物品模型；`port_block_textures.py` 重写 `blockstates/` 下的全部文件。所以 `gen_card20_assets.py` 必须先于 `port_block_textures.py`，单独重跑它会把这些 blockstate 退回模板。
-5. `gen_card20_layouts.py` 会扫描 `src/main/java` 里已有的零件声明（跳过 `Gt6KtfruGeneratedLayouts.java` 本身），避免重复声明。
+5. `gen_card20_layouts.py` 会扫描 `src/main/java` 里已有的零件声明（跳过 `GeneratedLayouts.java` 本身），避免重复声明。
 
 产物都写进 `src/main/`；`extract_machine_recipes.py` 另外把跳过账本写到 `build/source-recipe-report.txt`。
 
@@ -64,5 +64,5 @@ git -C kTFRUAddon checkout 6404ab6979de9fce832ce0c41171000decf00e69
 | `gen_card22_items.py` | 与已提交的文件逐字节一致 |
 | `gen_card20_layouts.py` | 与已提交的文件逐字节一致 |
 | `gen_card20_assets.py`，然后 `port_block_textures.py` | 按这个顺序运行后一致。单独运行 `gen_card20_assets.py` 会改动 94 个文件：47 个 blockstate 和 47 个物品模型退回通用模板 |
-| `gen_materials.py` | 不一致。已提交的 `Gt6KtfruMaterials.java` 在生成之后被手改过（`prefixes()`、`.polymer()`、Bittern 液体、部分 `.gas()` 和 `.liquid()` 标志），`assets/gt6ce/lang/` 里也多了手加的条目。现在要加 `--force` 才会运行，重新生成会丢掉这些手改 |
-| `extract_machine_recipes.py` | 与已提交的 `Gt6KtfruSourceRecipes.java` 逐字节一致（解析 689 行）。需要原版 GregTech 6 源码副本，和 `build-gt6ce.ps1` 打出的运行包 jar |
+| `gen_materials.py` | 不一致。已提交的 `Materials.java` 在生成之后被手改过（`prefixes()`、`.polymer()`、Bittern 液体、部分 `.gas()` 和 `.liquid()` 标志），`assets/gt6ce/lang/` 里也多了手加的条目。现在要加 `--force` 才会运行，重新生成会丢掉这些手改 |
+| `extract_machine_recipes.py` | 与已提交的 `SourceRecipes.java` 逐字节一致（解析 689 行）。需要原版 GregTech 6 源码副本，和 `build-gt6ce.ps1` 打出的运行包 jar |

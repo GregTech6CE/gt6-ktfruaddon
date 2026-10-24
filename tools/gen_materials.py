@@ -9,7 +9,7 @@ import paths
 ROOT = paths.ROOT
 SRC = paths.UPSTREAM / "src/main/java/cn/kuzuanpa/ktfruaddon/api/material/materialPreInit.java"
 GT = paths.GT6_ROOT / "core" / "src" / "main" / "java"
-OUT_JAVA = ROOT / "src/main/java/com/lombinaxmasson/gt6ktfruaddon/content/Gt6KtfruMaterials.java"
+OUT_JAVA = ROOT / "src/main/java/com/lombinaxmasson/gt6ktfruaddon/content/Materials.java"
 OUT_EN = ROOT / "src/main/resources/assets/gt6ce/lang/en_us.json"
 OUT_ZH = ROOT / "src/main/resources/assets/gt6ce/lang/zh_cn.json"
 LANG_ZH = paths.UPSTREAM / "src/main/resources/assets/ktfruaddon/lang/zh_CN.lang"
@@ -180,7 +180,7 @@ def main():
         " * because that list does not carry one. Plate, foil and ore requests stay empty:",
         " * a form the material flags do not allow fails startup, and ore is not a generated prefix.",
         " */",
-        "public final class Gt6KtfruMaterials implements AddonMaterialContributor {",
+        "public final class Materials implements AddonMaterialContributor {",
         "    @Override public String addonId() { return Ktfru.MODID; }",
         "",
         "    @Override public List<MaterialDeclaration> materials() {",
@@ -242,7 +242,7 @@ def main():
 if __name__ == "__main__":
     if "--force" not in sys.argv[1:]:
         sys.exit(
-            "gen_materials.py was a one-shot. Gt6KtfruMaterials.java and assets/gt6ce/lang/*.json have been edited "
+            "gen_materials.py was a one-shot. Materials.java and assets/gt6ce/lang/*.json have been edited "
             "by hand since (prefixes(), .polymer(), the Bittern liquid, fluid flags), so regenerating loses those "
             "edits.\nPass --force to overwrite them anyway.")
     paths.require_inputs(upstream=True, gt6=True)

@@ -9,8 +9,8 @@ import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.PrefixDeclaration;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
-import com.lombinaxmasson.gt6ktfruaddon.content.Gt6KtfruMaterials;
-import com.lombinaxmasson.gt6ktfruaddon.registry.Gt6KtfruMachines;
+import com.lombinaxmasson.gt6ktfruaddon.content.Materials;
+import com.lombinaxmasson.gt6ktfruaddon.registry.Machines;
 
 /**
  * What the addon declares to GT6CE, built once per test JVM. The SDK builders validate in
@@ -18,8 +18,8 @@ import com.lombinaxmasson.gt6ktfruaddon.registry.Gt6KtfruMachines;
  * SDK's own message.
  */
 final class Declarations {
-    private static final Gt6KtfruMachines MACHINE_CONTRIBUTOR = new Gt6KtfruMachines();
-    private static final Gt6KtfruMaterials MATERIAL_CONTRIBUTOR = new Gt6KtfruMaterials();
+    private static final Machines MACHINE_CONTRIBUTOR = new Machines();
+    private static final Materials MATERIAL_CONTRIBUTOR = new Materials();
 
     private static List<AddonMachine> machines;
     private static List<RecipeTable> recipeTables;
@@ -31,7 +31,7 @@ final class Declarations {
 
     private Declarations() {}
 
-    static Gt6KtfruMachines machineContributor() {
+    static Machines machineContributor() {
         return MACHINE_CONTRIBUTOR;
     }
 

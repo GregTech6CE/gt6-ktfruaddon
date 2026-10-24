@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.PrefixDeclaration;
-import com.lombinaxmasson.gt6ktfruaddon.content.Gt6KtfruMaterials;
+import com.lombinaxmasson.gt6ktfruaddon.content.Materials;
 
 class MaterialContractTest {
     @Test
@@ -29,7 +29,7 @@ class MaterialContractTest {
 
     @Test
     void theMaterialListIsBuiltOnceWhicheverInstanceAsks() {
-        assertSame(new Gt6KtfruMaterials().materials(), new Gt6KtfruMaterials().materials());
+        assertSame(new Materials().materials(), new Materials().materials());
     }
 
     @Test

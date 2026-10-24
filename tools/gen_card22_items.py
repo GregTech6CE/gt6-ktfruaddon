@@ -16,7 +16,7 @@ import paths
 ROOT = paths.ROOT
 ENUM = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "api" / "item" / "ItemList.java"
 ITEM_SRC = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "item"
-JAVA = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "generated" / "Gt6KtfruItems.java"
+JAVA = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "generated" / "KtfruItems.java"
 LANGS = (
     ROOT / "src" / "main" / "resources" / "assets" / "gt6ktfruaddon" / "lang" / "en_us.json",
     ROOT / "src" / "main" / "resources" / "assets" / "gt6ktfruaddon" / "lang" / "zh_cn.json",
@@ -157,7 +157,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * and engine lines. TFC, Advanced Rocketry, Applied Energistics and Twilight
  * Forest entries stay unregistered.
  */
-public final class Gt6KtfruItems {{
+public final class KtfruItems {{
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(net.minecraft.core.registries.Registries.ITEM, Ktfru.MODID);
 
@@ -193,7 +193,7 @@ public final class Gt6KtfruItems {{
         BY_PATH = Map.copyOf(map);
     }}
 
-    private Gt6KtfruItems() {{}}
+    private KtfruItems() {{}}
 
     public static ItemStack stack(String path, int count) {{
         DeferredHolder<Item, Item> holder = BY_PATH.get(path);

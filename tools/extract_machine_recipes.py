@@ -1,6 +1,6 @@
 """Classify kTFRUAddon 6404ab69 rows for the ten single-block recipe maps.
 
-Writes Gt6KtfruSourceRecipes.java for rows whose inputs and outputs resolve
+Writes SourceRecipes.java for rows whose inputs and outputs resolve
 through AddonItems and AddonFluids. Prints the skip ledger used by card 06.
 """
 
@@ -18,7 +18,7 @@ import paths
 ROOT = paths.ROOT
 SOURCE = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "recipe" / "recipe"
 GT = paths.GT6_ROOT
-OUT_JAVA = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "generated" / "Gt6KtfruSourceRecipes.java"
+OUT_JAVA = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "generated" / "SourceRecipes.java"
 REPORT = ROOT / "build" / "source-recipe-report.txt"
 RUNTIME_JAR = paths.RUNTIME_JAR
 
@@ -776,7 +776,7 @@ def load_prefixes():
 
 
 def load_addon():
-    text = (ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "content" / "Gt6KtfruMaterials.java").read_text(encoding="utf-8")
+    text = (ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "content" / "Materials.java").read_text(encoding="utf-8")
     addon = {}
     for match in re.finditer(r'builder\("([^"]+)"\)(.*?)\.build\(\)', text):
         name, body = match.groups()
@@ -1789,14 +1789,14 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * one unit of molten metal is 144 mB, and {{@code FL.make}} stays millibuckets.
  * A leftover that does not fill one millibucket rounds up only when the source
  * call asks for it. Rows with the source optimize flag are divided the way
- * GregTech divides them. The light mixer row stays in {{@code Gt6KtfruRecipes}}.
+ * GregTech divides them. The light mixer row stays in {{@code Recipes}}.
  */
-public final class Gt6KtfruSourceRecipes {{
+public final class SourceRecipes {{
     private static final ItemStack[] NO_ITEMS = new ItemStack[0];
     private static final FluidStack[] NO_FLUIDS = new FluidStack[0];
     private static final Set<String> PROBLEMS = new LinkedHashSet<>();
 
-    private Gt6KtfruSourceRecipes() {{}}
+    private SourceRecipes() {{}}
 
     public static void register() {{
         PROBLEMS.clear();
@@ -1870,7 +1870,7 @@ public final class Gt6KtfruSourceRecipes {{
     }}
 
     private static ItemStack own(String path, int count) {{
-        ItemStack stack = Gt6KtfruItems.stack(path, count);
+        ItemStack stack = KtfruItems.stack(path, count);
         if (stack == null || stack.isEmpty()) {{
             PROBLEMS.add("item " + path);
             return ItemStack.EMPTY;

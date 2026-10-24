@@ -18,16 +18,16 @@ META-INF/licenses/AGPL-3.0.txt。
 
 从上游进来的内容，以及它们怎么进来的（脚本在 tools/，输入位置见 tools/README.md）：
 
-  配方行      Gt6KtfruSourceRecipes。上游 recipe/recipe/ 里的配方代码，按 29 张配方图归类，解析出 689 行；
+  配方行      SourceRecipes。上游 recipe/recipe/ 里的配方代码，按 29 张配方图归类，解析出 689 行；
               输入输出都能对到 GT6CE 物品和流体的写进这个文件，其余记在跳过账本里。
               tools/extract_machine_recipes.py
-  物品        Gt6KtfruItems、物品模型、语言名。上游 api/item/ItemList.java 里的普通物品，504 个，不含
+  物品        KtfruItems、物品模型、语言名。上游 api/item/ItemList.java 里的普通物品，504 个，不含
               集成类物品；显示名取自 addItem 的标签。
               tools/gen_card22_items.py
-  材料        Gt6KtfruMaterials，230 个声明。大部分由脚本从上游 api/material/materialPreInit.java 生成，
+  材料        Materials，230 个声明。大部分由脚本从上游 api/material/materialPreInit.java 生成，
               中文名取自上游 zh_CN.lang；生成之后手改过，所以不再由脚本重新生成。
               tools/gen_materials.py
-  多方块布局  Gt6KtfruGeneratedLayouts，31 个布局，每个的注释写着上游类和偏移。
+  多方块布局  GeneratedLayouts，31 个布局，每个的注释写着上游类和偏移。
               tools/gen_card20_layouts.py
   贴图        assets/gt6ktfruaddon/textures/ 下的 974 个文件（含 .mcmeta）：940 个与上游检出里的文件
               逐字节相同，其中 384 个同时也与 GT6CE core 里的文件相同；28 个只与 GT6CE core 里的文件
