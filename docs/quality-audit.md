@@ -346,7 +346,7 @@
 
 1. **拆枢纽。** `MODID` 移到叶子类 `Ktfru`；34 个配方图和机器类型常量从 `Machines` 移到叶子类 `recipe.RecipeMaps`，同步改生成脚本模板，重新生成，或者对已生成文件做同样的替换；`parsePos/formatPos/Key` 移到 `core`。完成后重跑依赖分析，类级强连通分量应该消失。
 2. **登记表。** 引入 `Feature` 接口：每个特性提供 `recipeTables`、`machines`、`layouts`、`parts`，以及 `Map<String, Supplier<MachineBehavior>> behaviors()`；`machineTypes()` 和 `create()` 都由这张 Map 得出；登记表只构建一次并缓存。八个子类依次改成 `Feature`，删掉 `owns`、`create`、`behaviorTypes`。
-3. **切 `Machines`。** 按特性切出去（`processing`、`gas`、`kinetic`、`semiconductor`，气体燃料机和变压零件并入 `power`），一个特性一个提交；`sides()` 改成数据表（`SideProfile` record），平行数组改成 record 表；`LateMachines` 按领域拆开 [待核实：这个类没通读，拆法按类注释和常量名推断]。
+3. **切 `Machines`。** 按特性切出去（`processing`、`gas`、`kinetic`、`semiconductor`，气体燃料机和变压零件并入 `power`），一个特性一个提交；`sides()` 改成数据表（`SideProfile` record），平行数组改成 record 表；`LateMachines` 按领域拆开（已通读，拆法见进展）。
 4. **纯移动。** `git mv` 加改 `package`、`import`，同步 3 个 `META-INF/services` 文件和脚本模板里的类名；行为不变。
 5. **去前缀。** 单独一个提交去掉 `Gt6Ktfru` 前缀（§8 第 2 条）。
 6. **依赖方向检查。** ArchUnit 或 `tools/` 里的脚本（附录 B 的试算脚本可以作为原型）：`core` 不依赖任何特性；特性之间只允许 `research` 依赖 `network`；生成代码只依赖 `core`、`recipe`；顶层接线（`KtfruAddon`、登记表、`client`、`event`）不被依赖。
@@ -373,7 +373,8 @@ com.lombinaxmasson.gt6ktfruaddon
 ├─ heat/                 太阳炉、潮汐、油矿、地幔、脱燃、坩埚
 ├─ semiconductor/        掩膜对准机、CNC
 ├─ research/             研究监视器、显微镜、研究组装、微重力房间、AI 中心
-├─ network/              计算集群、无线计算、无线能量、量子中继
+├─ network/              计算集群、无线计算、无线能量
+├─ quantum/              镜金、量子金、量子观测、量子中继
 ├─ fusion/               激光聚变、托卡马克
 ├─ client/               MachineColors
 └─ event/                StructureBuild
@@ -431,11 +432,11 @@ com.lombinaxmasson.gt6ktfruaddon
 | 故意破坏 | 3 处都变红：坩埚特性没进登记表；一个机器类型有两个行为；一台行为机没有行为。`FeaturesTest` 还会在写了 `Feature` 类却没登记时变红，以前没有东西能发现这种遗漏 |
 | `smoke-boot.ps1` | 通过，104 秒 |
 
-第 3 步（切 `Machines`）。计划里的第 3 步有三件事：按特性切 `Machines`；`sides()` 和平行数组改成数据表；`LateMachines` 按领域拆开。这一轮只做了第一件，另外两件和一个新发现的环写在下面"还没做的"里。切 `Machines` 分十二个提交，每个都在干净克隆里单独构建、跑测试：
+第 3 步（切 `Machines`）。计划里的第 3 步有三件事：按特性切 `Machines`；`sides()` 和平行数组改成数据表；`LateMachines` 按领域拆开。先做了第一件，另外两件和一个新发现的环放在下一段，那里也说明 `sides()` 那件还剩着。切 `Machines` 分十二个提交，每个都在干净克隆里单独构建、跑测试：
 
 - 提交 0：先把两处重复收成一处。九个类各有一份占位 GUI 的路径常量（`gascompressor.png`），四个类各有一份"只带材料和硬度的结构零件"帮手方法，现在是 `Ktfru.PLACEHOLDER_GUI` 和 `core.layout.Parts.casing`。不先收的话，切出去的新特性会把它们抄到第五份和第十份。
 - 提交 1 至 8：每个提交把基础特性最前面的一个特性切进新类。登记表把新类排在基础特性前面，所以机器、零件、布局的顺序都和切之前一样。
-- 提交 9：基础特性里剩下的三张配方表各回各家：脱燃配方表去 `HeatMachines`（脱燃厂在那里），两张托卡马克配方表去 `LateMachines`（托卡马克在那里）。
+- 提交 9：基础特性里剩下的三张配方表各回各家：脱燃配方表去 `HeatMachines`（脱燃厂在那里），两张托卡马克配方表去 `LateMachines`（托卡马克在那里；后来 `LateMachines` 拆开了，这两张现在在 `FusionMachines`）。
 - 提交 10：剩下的只有 7 台燃气轮机和 20 台柴油机，类改名 `Gt6KtfruFuelGenerators`，类注释改成说它是什么（原来写的是"还不是独立特性"）。
 - 提交 11：这份记录。
 
@@ -455,12 +456,7 @@ com.lombinaxmasson.gt6ktfruaddon
 
 配方表的顺序变了一处。第 2 步原来写的"配方表的顺序必须不变"说重了，那一句已经改掉。核对 GT6CE 源码：配方表按名字登记（`AddonMachines.install` 里的 `mapOwner`），没有任何东西按它们的位置编号；`RecipeMap.RECIPE_MAP_LIST` 只被遍历（JEI 和 EMI 的插件按它的顺序登记类别），按下标取的只有 GT6CE 自己的一个测试。所以两张托卡马克配方表现在排在研究的两张后面（32 张里第 19 至 22 条换了位置），影响的只是 JEI 和 EMI 里这四个类别的先后。零件的顺序没动，那个是真有编号的。
 
-还没做的：
-
-- `HeatLayouts` 还是 529 行，是现在唯一超过 400 行的手写类。进展开头"决定"一段里写的"按特性切完预计都能压到 400 行以内"对它不成立，因为它本来就不在 `Machines` 里。它的 `sides()` 和平行数组就是计划第 3 步里"改成数据表"的那一半，还没动。
-- `LateMachines`（256 行）按领域拆开也没动。附录 B 的映射把它拆给 `processing`、`research`、`network`、`fusion` 四个包，所以第 4 步之前要拆，否则分包时一个类横跨四个包。
-- 类级依赖分析现在有两对环：`Wireless`↔`WirelessMachines`（已知，WP4 处理）和 `HeatLayouts`↔`HeatMachines`（新发现）。后一对第 2 步就有了：`HeatMachines.layouts()` 调 `HeatLayouts`，`HeatLayouts` 用 `HeatMachines` 的六个类型常量；我第 2 步没重跑类级分析，当时没看到。两对都在同一个特性里，不违反"包级无环"，和 `HeatLayouts` 的改造放在一起解决最省事。
-- 附录 B 的分包试算等 `LateMachines` 拆完再重跑：现在跑，它得整个塞进一个包，结果会误导。
+留下三件事，下一段处理：`HeatLayouts` 还是 529 行，是现在唯一超过 400 行的手写类（进展开头"决定"一段里写的"按特性切完预计都能压到 400 行以内"对它不成立，因为它本来就不在 `Machines` 里）；`LateMachines`（256 行）要按领域拆开；类级依赖分析里除了已知的 `Wireless`↔`WirelessMachines`，还有一对新发现的环 `HeatLayouts`↔`HeatMachines`。
 
 验证（本机）：
 
@@ -470,6 +466,44 @@ com.lombinaxmasson.gt6ktfruaddon
 | `gradlew build` | 每个提交在干净克隆里单独构建，33 个测试，0 失败 |
 | 类大小 | 第 2 步结束时基础特性是 997 行（审计时的 `Machines` 是 1,107 行）；现在基础特性已经没有了，最大的新类是 `SemiconductorMachines`，250 行 |
 | `smoke-boot.ps1` | 通过，89 秒 |
+
+第 3 步后半（热机布局、`LateMachines`、环）。九个提交：下面两组共八个，每个都在干净克隆里单独构建、跑测试，最后一个是这份记录。
+
+先纠正上一轮的一处错：我写过"`HeatLayouts` 的 `sides()` 和平行数组就是计划第 3 步里'改成数据表'的那一半"，不对。`sides()`（按 id 前缀匹配面配置）在 `SingleBlockMachines`，平行数组在 `SingleBlockMachines`（`heat()` 的 `suffix` 配 `materials`）、`KineticMachines` 和 `TransformerParts`，都是机器声明，和 `HeatLayouts` 无关；我是把 `HeatLayouts` 里层图的 `new String[] {` 当成了它们。`HeatLayouts` 是六个手写布局，对它来说"改成数据表"是迁到 `LayerLayout`（§3 早就写了"其他手写布局应该迁到它上面"），这一轮按这个做。`sides()` 和平行数组那一半没做，是第 3 步现在剩下的唯一一件。这一轮通读了 `HeatLayouts` 和 `LateMachines`（§2 列为没通读的）。
+
+热机布局，三个提交：
+
+- 打断环。布局方法改成接收机器类型当名字，`HeatMachines.layouts()` 传自己的常量，`HeatLayouts` 不再引用 `HeatMachines`。这个环是第 2 步引入的：`HeatMachines` 成了 `Feature` 以后要自己列出布局，而 `HeatLayouts` 一直拿 `HeatMachines` 的六个类型常量给布局命名；我第 2 步没重跑类级依赖分析，当时没看到。
+- 改成层表。六个手写布局都改用 `LayerLayout.build`：每个只剩层字符串和每个符号一行，原来的循环、六个 switch 和辅助方法删掉。地幔加热器在格子之后还要加一个重复段，所以 `LayerLayout` 多了 `builder()`（返回还没 build 的构建器），`build()` 调它。一个符号落在控制器格上，原来的循环会抛，`LayerLayout` 跳过，生成的布局本来就是这样；热机的图里控制器处全是空格，SDK 也不收原点上的格子。
+- 脱燃厂的 17 张层图（322 行）连同建布局的调用搬进 `FuelDeburnLayout`，层图从一个方法一张改成常量。`HeatLayouts` 从 529 行降到 106 行，`FuelDeburnLayout` 313 行。
+
+`LateMachines`，五个提交。拆法不再按类注释和常量名推断，通读之后看两样：来源里每张配方表出自哪个类，以及行为类互相用不用。镜金、量子金、量子观测和量子通信的配方出自来源的 `QuantumEntry` 和 `QuantumObservation`，宇宙辐射和微重力晶体出自 `ComputerBuilding`，激光聚变出自 `Fusion` 和 `PurityRefining`，催化反应出自 `CatalyticChemistry`；`QuantumRelay` 不用别的类，`LateBehavior`（房间和 AI 中心）用 `Compute`、`Research`、`Rooms`。
+
+| 类（省略 `Gt6Ktfru`） | 行数 | 内容 | 第 4 步去的包 |
+| --- | --- | --- | --- |
+| `FusionMachines` | 101 | 实验和一阶托卡马克、两个激光聚变控制器；4 张配方表、2 个行为 | `fusion` |
+| `CatalyticMachines` | 42 | 两台催化反应器；1 张配方表 | `processing` |
+| `QuantumMachines` | 106 | 两台镜金机、量子金室、量子观测塔、量子通信中继；5 张配方表、1 个行为 | `quantum`（新增，见下） |
+| `MicrogravityMachines` | 117 | 微重力房间、晶体生长、微重力组装机、宇宙辐射室；2 张配方表、3 个行为 | `research` |
+| `AiCenters` | 53 | 三个 AI 研究中心；3 个行为 | `research` |
+
+和附录 B 的映射不同的一处：量子中继不放进 `network`，和镜金、量子金、量子观测放在一起，包叫 `quantum`。来源把它们的配方放在同一条线上，中继在代码上也不依赖计算和无线的任何类，单独成包不增加依赖；`research` 依赖 `network` 的规则不变（AI 中心用 `Compute`）。附录 B 的映射和 §7 的目标结构已按这个改。
+
+三个小改动，都不改变声明的结果（快照为证）：`large()` 去掉能量区间参数，四台机器的最小、最大都等于额定 EU，区间那个分支从没走过；镜金机用的那一段 `basic()` 成了 `mirrorGold()`；宇宙辐射室是 `basic()` 最后一个用户，改成自己的 `cosmicRadiationChamber()`，`basic()` 删掉。
+
+机器的顺序变了一处。量子金室、量子观测塔和中继三台，原来夹在微重力那几台中间，现在排到它们前面；量子的 5 张配方表同样，排到宇宙辐射和微重力晶体前面。GT6CE 不按位置给机器编号（`AddonMachineRuntime` 按名字绑定配方图），所以影响的只有创造栏里的先后，和 JEI、EMI 里那几张配方表的先后。
+
+验证（本机）：
+
+| 项 | 结果 |
+| --- | --- |
+| 声明快照 | 每个提交都和上一个比对。热机布局三个、聚变、催化、微重力、改名，共七个是 21 段全部逐段相同（80 个布局的每个格子都在内）；量子一个是 19 段相同，`addonMachines` 和 `recipeTables` 两段只有上面说的条目换了位置。比对脚本按"已切出的领域依次排在前面、剩下的在后面、其余特性的条目不动"算出期望顺序，实际和期望逐行相同；最终状态对第 3 步前半结束时的快照也是同样的结果 |
+| `gradlew build` | 每个提交在干净克隆里单独构建，33 个测试，0 失败 |
+| 类级依赖分析 | 强连通分量只剩 `Wireless`↔`WirelessMachines`（WP4 拆 `Wireless` 时消除）；`HeatLayouts`↔`HeatMachines` 没了 |
+| 类大小 | 手写类里没有超过 400 行的了：最大的是 `Materials`（332 行，一次性生成后手改过）和 `FuelDeburnLayout`（313 行，层图数据），其余都不超过 276 行。生成文件不算 |
+| `smoke-boot.ps1` | 通过，84 秒 |
+
+第 3 步现在只剩一件：`sides()` 和平行数组改成数据表（`SingleBlockMachines`、`KineticMachines`、`TransformerParts`）。附录 B 的分包试算可以重跑了，放在第 4 步开头，用最终的类名和映射。
 
 ### WP4 行为层公共件和生命周期（L）
 
@@ -542,7 +576,7 @@ com.lombinaxmasson.gt6ktfruaddon
 - [x] WP0 本地可构建、可复现（B2、B5；G2 的路径部分）。2026-10-24 做完；全新克隆和 `-AutoDownloadJdk` 还没验证
 - [x] WP1 署名与定位（R4）。2026-10-24 做完：README 首段、`NOTICE`、`mods.toml` 的作者和描述；剩生成文件头写来源（WP5）、README 其余过期的条目（WP7）
 - [ ] WP2 契约测试与自检（B1、B3、S8；S2 的自检部分）。2026-10-24 做了测试、自检推导和冒烟脚本；剩文件头检查（等 WP5）、失败策略开关、CI 里的冒烟
-- [ ] WP3 包结构与登记表（S1、S2、S3、S7）。2026-10-24 做了第 1、2 步（拆枢纽、登记表）和第 3 步的前半（切 `Machines`）；第 3 步的后半（`HeatLayouts` 的数据表、`LateMachines` 按领域拆开）和第 4 至 6 步还没做
+- [ ] WP3 包结构与登记表（S1、S2、S3、S7）。2026-10-24 做了第 1、2 步（拆枢纽、登记表）和第 3 步的大部分（切 `Machines`、热机布局、拆 `LateMachines`）；第 3 步里 `sides()` 和平行数组改成数据表、第 4 至 6 步还没做
 - [ ] WP4 行为层公共件与生命周期（S4、D1、D2、D3、D5）
 - [ ] WP5 生成代码卫生（G1、G2、G3；G4 可选）
 - [ ] WP6 缺陷与细节（D4、D6、D7、D8、D9；S6 的飞轮）
@@ -607,7 +641,7 @@ EOF
 
 两个方案的跨包引用里，约 707 处主要来自 `SourceRecipes`（少量来自 `Recipes`）对 `Machines`、`ResearchMachines`、`LateMachines` 常量的引用；拆掉枢纽（WP3 第 1 步）后，这些变成对叶子类 `RecipeMaps` 的引用。选按特性切片：包数少、需公开的成员少，一台机器相关的类大多落在同一个包里。但在拆枢纽之前，两种方案都不是无环的。
 
-试算里的特性包是 power、heat、logistics、science、compute；§7 的目标结构在此基础上按领域重新划分了名字和边界（processing、gas、kinetic、power、heat、semiconductor、research、network、fusion），试算没有对最终划分重跑，WP3 第 1 步之后要重跑一次。
+试算里的特性包是 power、heat、logistics、science、compute；§7 的目标结构在此基础上按领域重新划分了名字和边界（processing、gas、kinetic、power、heat、semiconductor、research、network、quantum、fusion），试算没有对最终划分重跑，第 4 步开头要重跑一次。
 
 ### 类到包的映射（提议）
 
@@ -619,15 +653,16 @@ EOF
 | `recipe` | `Recipes`；新增 `RecipeMaps` | 34 个常量来自 `Machines` |
 | `generated` | `SourceRecipes`、`GeneratedLayouts`、`Items` | 带文件头 |
 | `content` | `Materials` | 手改过的材料声明；`META-INF/services` 同步 |
-| `processing` | `Machines` 中的单方块配方机、蒸馏塔、矿处理系统及其布局；`LateMachines` 中的催化反应器 | 面配置改数据表 |
+| `processing` | `Machines` 中的单方块配方机、蒸馏塔、矿处理系统及其布局；`CatalyticMachines` | 面配置改数据表 |
 | `gas` | `GasTank`、`GasCompressor`；`Machines` 中的压缩气罐、鼓、管道声明 | |
 | `kinetic` | `VoidHopper`、`Miner`、`WaterMill`、`ManualMotor`、`Flywheel`；`Machines.kineticBehaviors` 的声明 | |
 | `power` | `Turbines`、`TurbineLayouts`、`Dynamo`、`SteamTurbine`、`FluidBoiler`、`Batteries`、`BatteryLayouts`、`LiquidBattery`、`TransformBattery`、`FuelBattery`、`TransformerPart`；`Machines` 中的气体燃料机、柴油机、变压零件、气体电池声明 | |
-| `heat` | `HeatMachines`、`HeatLayouts`、`SunHeater`、`SunMirror`、`MantleHeater`、`OilMiner`、`FuelDeburner`、`TidalGenerator`、`Crucible`、`CrucibleMachines`、`CrucibleLayouts` | 潮汐发电机和声明同包 |
+| `heat` | `HeatMachines`、`HeatLayouts`、`FuelDeburnLayout`、`SunHeater`、`SunMirror`、`MantleHeater`、`OilMiner`、`FuelDeburner`、`TidalGenerator`、`Crucible`、`CrucibleMachines`、`CrucibleLayouts` | 潮汐发电机和声明同包 |
 | `semiconductor` | `Machines` 中的掩膜对准机、CNC 及其布局和零件 | |
-| `research` | `Research`、`ResearchAssembler`、`ResearchMachines`、`ResearchLayouts`、`Microscope`、`Rooms`、`LateBehavior`（拆成微重力房间控制器和 AI 中心两个类）；`LateMachines` 中的微重力和 AI 中心 | 依赖 `network` |
-| `network` | `Compute`、`ComputeMachines`、`Wireless`、`WirelessMachines`、`QuantumRelay`；`LateMachines` 中的量子中继 | |
-| `fusion` | `LaserFusion`；`LateMachines` 中的激光聚变和托卡马克 | |
+| `research` | `Research`、`ResearchAssembler`、`ResearchMachines`、`ResearchLayouts`、`Microscope`、`Rooms`、`LateBehavior`（拆成微重力房间控制器和 AI 中心两个类）、`MicrogravityMachines`、`AiCenters` | 依赖 `network` |
+| `network` | `Compute`、`ComputeMachines`、`Wireless`、`WirelessMachines` | |
+| `quantum` | `QuantumMachines`、`QuantumRelay` | 原计划把量子中继放进 `network`；来源把中继和镜金、量子金的配方放在同一条线上，代码上它不依赖计算和无线的任何类 |
+| `fusion` | `LaserFusion`、`FusionMachines` | |
 | `client` | `MachineColors` | |
 | `event` | `StructureBuild` | |
 
