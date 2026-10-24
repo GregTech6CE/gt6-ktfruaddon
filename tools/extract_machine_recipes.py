@@ -13,12 +13,14 @@ import zipfile
 from collections import Counter, defaultdict
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "kTFRUAddon" / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "recipe" / "recipe"
-GT = Path(r"D:\Baobao\projects\dev\java\GregTech6CommunityEdition\GregTech6")
+import paths
+
+ROOT = paths.ROOT
+SOURCE = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "recipe" / "recipe"
+GT = paths.GT6_ROOT
 OUT_JAVA = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "Gt6KtfruSourceRecipes.java"
 REPORT = ROOT / "build" / "source-recipe-report.txt"
-RUNTIME_JAR = ROOT / "libs" / "gt6ce" / "gt6ce-1.21.1-neoforge.jar"
+RUNTIME_JAR = paths.RUNTIME_JAR
 
 MAPS = (
     "FluidHeating",
@@ -676,7 +678,7 @@ def load_runtime_items() -> set[str]:
 def load_gt_electric_ids(symbols: dict[str, str]) -> dict[int, str]:
     """GT6 numeric wire/cable ids from ``MultiTileEntityWireElectric.addElectricWires``."""
     text = (
-        GT / "work" / "gt6-ref" / "gregtech6" / "src" / "main" / "java" / "gregtech"
+        paths.GT6_REF / "gregtech6" / "src" / "main" / "java" / "gregtech"
         / "loaders" / "b" / "Loader_MultiTileEntities.java"
     ).read_text(encoding="utf-8")
     table: dict[int, str] = {}
@@ -2060,4 +2062,5 @@ def main():
 
 
 if __name__ == "__main__":
+    paths.require_inputs(upstream=True, gt6=True, gt6_ref=True, runtime_jar=True)
     main()

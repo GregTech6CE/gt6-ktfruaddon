@@ -4,8 +4,10 @@
 import re
 from pathlib import Path
 
-ROOT = Path(r"D:\Baobao\projects\dev\java\gt6-ktfruaddon")
-SRC = ROOT / "kTFRUAddon" / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon"
+import paths
+
+ROOT = paths.ROOT
+SRC = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon"
 OUT = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "Gt6KtfruGeneratedLayouts.java"
 
 MATERIALS = {
@@ -455,4 +457,5 @@ def main():
 
 
 if __name__ == "__main__":
+    paths.require_inputs(upstream=True)
     main()

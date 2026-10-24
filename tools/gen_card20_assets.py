@@ -3,7 +3,9 @@
 import json
 from pathlib import Path
 
-ROOT = Path(r"D:\Baobao\projects\dev\java\gt6-ktfruaddon")
+import paths
+
+ROOT = paths.ROOT
 ASSETS = ROOT / "src" / "main" / "resources" / "assets" / "gt6ktfruaddon"
 TEMPLATE = (ASSETS / "blockstates" / "research_monitor.json").read_text(encoding="utf-8")
 ITEM = '{ "parent": "gt6ktfruaddon:block/machine/basic/sun_heater" }\n'

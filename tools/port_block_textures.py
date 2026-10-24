@@ -9,11 +9,13 @@ import json
 import shutil
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "kTFRUAddon" / "src" / "main" / "resources" / "assets" / "gregtech" / "textures" / "blocks" / "machines"
-GT_SRC = ROOT.parent / "GregTech6CommunityEdition" / "GregTech6" / "core" / "src" / "main" / "resources" / "assets" / "gt6ce" / "textures" / "block" / "machines"
-GUI_SRC = ROOT / "kTFRUAddon" / "src" / "main" / "resources" / "assets" / "gregtech" / "textures" / "gui" / "machines"
-GT_GUI_SRC = ROOT.parent / "GregTech6CommunityEdition" / "GregTech6" / "core" / "src" / "main" / "resources" / "assets" / "gt6ce" / "textures" / "gui" / "recipes"
+import paths
+
+ROOT = paths.ROOT
+SRC = paths.UPSTREAM / "src" / "main" / "resources" / "assets" / "gregtech" / "textures" / "blocks" / "machines"
+GT_SRC = paths.GT6_ROOT / "core" / "src" / "main" / "resources" / "assets" / "gt6ce" / "textures" / "block" / "machines"
+GUI_SRC = paths.UPSTREAM / "src" / "main" / "resources" / "assets" / "gregtech" / "textures" / "gui" / "machines"
+GT_GUI_SRC = paths.GT6_ROOT / "core" / "src" / "main" / "resources" / "assets" / "gt6ce" / "textures" / "gui" / "recipes"
 ASSETS = ROOT / "src" / "main" / "resources" / "assets" / "gt6ktfruaddon"
 DEST = ASSETS / "textures" / "block" / "machines"
 MODELS = ASSETS / "models" / "block" / "machine" / "basic"
@@ -523,4 +525,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    paths.require_inputs(upstream=True, gt6=True)
     main()

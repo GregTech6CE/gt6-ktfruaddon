@@ -47,6 +47,9 @@ libs/gt6ce/*.jar
 # Private GT6CE working copy used by tools/build-gt6ce.ps1
 /.gt6ce-src/
 
+# Intermediate written by tools/gen_card20_layouts.py and read by tools/gen_card20_assets.py
+/tools/card20-parts.txt
+
 # Local upstream checkout. Its own branch stays 1.7.10.
 /kTFRUAddon/
 

@@ -1,15 +1,18 @@
 """One-shot reader for the pinned kTFRUAddon material list. Not shipped in the mod jar."""
 import json
 import re
+import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "kTFRUAddon/src/main/java/cn/kuzuanpa/ktfruaddon/api/material/materialPreInit.java"
-GT = Path(r"D:\Baobao\projects\dev\java\GregTech6CommunityEdition\GregTech6\core\src\main\java")
+import paths
+
+ROOT = paths.ROOT
+SRC = paths.UPSTREAM / "src/main/java/cn/kuzuanpa/ktfruaddon/api/material/materialPreInit.java"
+GT = paths.GT6_ROOT / "core" / "src" / "main" / "java"
 OUT_JAVA = ROOT / "src/main/java/com/lombinaxmasson/gt6ktfruaddon/Gt6KtfruMaterials.java"
 OUT_EN = ROOT / "src/main/resources/assets/gt6ce/lang/en_us.json"
 OUT_ZH = ROOT / "src/main/resources/assets/gt6ce/lang/zh_cn.json"
-LANG_ZH = ROOT / "kTFRUAddon/src/main/resources/assets/ktfruaddon/lang/zh_CN.lang"
+LANG_ZH = paths.UPSTREAM / "src/main/resources/assets/ktfruaddon/lang/zh_CN.lang"
 SKIP = {"HenSoPretty"}
 SUB = "₀₁₂₃₄₅₆₇₈₉"
 
@@ -235,14 +238,11 @@ def main():
     for item in notes:
         print(" note", item)
 
-def probe():
-    root = Path(r"D:\Baobao\projects\dev\java\GregTech6CommunityEdition\GregTech6")
-    for path in root.rglob("*.java"):
-        if "build" in path.parts:
-            continue
-        if "Methanol" in path.read_text(encoding="utf-8", errors="replace"):
-            print(path.relative_to(root))
-
 if __name__ == "__main__":
+    if "--force" not in sys.argv[1:]:
+        sys.exit(
+            "gen_materials.py was a one-shot. Gt6KtfruMaterials.java and assets/gt6ce/lang/*.json have been edited "
+            "by hand since (prefixes(), .polymer(), the Bittern liquid, fluid flags), so regenerating loses those "
+            "edits.\nPass --force to overwrite them anyway.")
+    paths.require_inputs(upstream=True, gt6=True)
     main()
-    probe()

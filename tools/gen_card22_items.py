@@ -11,9 +11,11 @@ import json
 import re
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-ENUM = ROOT / "kTFRUAddon" / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "api" / "item" / "ItemList.java"
-ITEM_SRC = ROOT / "kTFRUAddon" / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "item"
+import paths
+
+ROOT = paths.ROOT
+ENUM = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "api" / "item" / "ItemList.java"
+ITEM_SRC = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "item"
 JAVA = ROOT / "src" / "main" / "java" / "com" / "lombinaxmasson" / "gt6ktfruaddon" / "Gt6KtfruItems.java"
 LANGS = (
     ROOT / "src" / "main" / "resources" / "assets" / "gt6ktfruaddon" / "lang" / "en_us.json",
@@ -21,7 +23,7 @@ LANGS = (
 )
 MODELS = ROOT / "src" / "main" / "resources" / "assets" / "gt6ktfruaddon" / "models" / "item"
 ICONS = ROOT / "src" / "main" / "resources" / "assets" / "gt6ktfruaddon" / "textures" / "item" / "material_icons"
-SHINY = ROOT / "kTFRUAddon" / "src" / "main" / "resources" / "assets" / "ktfruaddon" / "textures" / "items" / "materialicons" / "SHINY"
+SHINY = paths.UPSTREAM / "src" / "main" / "resources" / "assets" / "ktfruaddon" / "textures" / "items" / "materialicons" / "SHINY"
 MAP_JSON = ROOT / "tools" / "own_items.json"
 
 FIXED = {
@@ -273,4 +275,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    paths.require_inputs(upstream=True)
     main()
