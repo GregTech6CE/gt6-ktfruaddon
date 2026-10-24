@@ -2,6 +2,7 @@ package com.lombinaxmasson.gt6ktfruaddon;
 
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.StructureRole;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.Gt6KtfruLayerLayout;
 
 /**
  * The fuel deburn factory: 19 layers of 14 rows and 11 columns, in the axis order of

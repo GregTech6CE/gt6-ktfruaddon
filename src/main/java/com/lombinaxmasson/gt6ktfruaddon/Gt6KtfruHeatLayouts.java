@@ -4,6 +4,7 @@ import com.gregtech.gregtech.api.addon.CellMatch;
 import com.gregtech.gregtech.api.addon.LayoutRepeat;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.StructureRole;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.Gt6KtfruLayerLayout;
 
 /**
  * Card 12 layouts. Layer strings are the source order: the string index is X and

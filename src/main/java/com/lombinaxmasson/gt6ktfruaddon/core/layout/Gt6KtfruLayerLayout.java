@@ -1,4 +1,4 @@
-package com.lombinaxmasson.gt6ktfruaddon;
+package com.lombinaxmasson.gt6ktfruaddon.core.layout;
 
 import java.util.HashMap;
 import java.util.Map;

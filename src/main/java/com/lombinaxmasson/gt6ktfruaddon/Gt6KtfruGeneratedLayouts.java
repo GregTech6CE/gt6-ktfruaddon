@@ -6,6 +6,7 @@ import com.gregtech.gregtech.api.addon.CellMatch;
 import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.StructureRole;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.Gt6KtfruLayerLayout;
 
 /**
  * Layouts transcribed from this repo's kTFRUAddon checkout.
