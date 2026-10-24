@@ -19,7 +19,17 @@ import com.gregtech.gregtech.api.addon.PrefixDeclaration;
 public final class Gt6KtfruMaterials implements AddonMaterialContributor {
     @Override public String addonId() { return Ktfru.MODID; }
 
+    private static List<MaterialDeclaration> declared;
+
+    /** Built on the first call and kept: the creative tab asks every time it fills. */
     @Override public List<MaterialDeclaration> materials() {
+        synchronized (Gt6KtfruMaterials.class) {
+            if (declared == null) declared = declareMaterials();
+            return declared;
+        }
+    }
+
+    private static List<MaterialDeclaration> declareMaterials() {
         return List.of(
                 MaterialDeclaration.builder("AmmoniumDichromate").displayName("Ammonium Dichromate").color(0xFFA033).chemicalFormula("Cr₂O₇(NH3)₂").meltingPointKelvin(456).boilingPointKelvin(460).density(1F).dust().build(),
                 MaterialDeclaration.builder("AmmoniumChromicSulfate").displayName("Ammonium Chromic Sulfate").color(0x4800A1).chemicalFormula("NH₄Cr(SO₄)₂").meltingPointKelvin(456).boilingPointKelvin(460).density(1F).dust().build(),

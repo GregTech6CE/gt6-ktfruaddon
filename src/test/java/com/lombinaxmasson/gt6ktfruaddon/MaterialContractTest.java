@@ -2,6 +2,7 @@ package com.lombinaxmasson.gt6ktfruaddon;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,11 @@ class MaterialContractTest {
             if (!seen.add(material.name())) duplicates.add(material.name());
         }
         assertEquals(List.of(), duplicates);
+    }
+
+    @Test
+    void theMaterialListIsBuiltOnceWhicheverInstanceAsks() {
+        assertSame(new Gt6KtfruMaterials().materials(), new Gt6KtfruMaterials().materials());
     }
 
     @Test
