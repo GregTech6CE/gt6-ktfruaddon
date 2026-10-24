@@ -6,17 +6,17 @@ GT6CE 的 NeoForge 1.21.1 附属，用来试现在的附属接口能接住多少
 
 ## 开发
 
-需要 JDK 21。编译只依赖 GT6CE 的加载器 SDK `gt6ce-addon-sdk-1.21.1-neoforge-0.0.0.jar`。侧面、廉价超频和上方光照都在这份 API 0 的配方机器构建器上；0.8.0 的构建器没有这些方法。`runClient` 和 `runServer` 使用同一份源码打出来的 `gt6ce-1.21.1-neoforge.jar`（模组版本 0.0.0）。两个 jar 都不进 git，也不打进成品。
+需要 git、Python 3 和 JDK 21；构建 GT6CE 还要 JDK 17。编译只依赖 GT6CE 的加载器 SDK（`libs/gt6ce/gt6ce-addon-sdk-1.21.1-neoforge-*.jar`）。侧面、廉价超频和上方光照都在这份 API 0 的配方机器构建器上；0.8.0 的构建器没有这些方法。`runClient` 和 `runServer` 使用同一份源码打出来的 `gt6ce-1.21.1-neoforge.jar`（模组版本 0.0.0）。两个 jar 都不进 git，也不打进成品；`tools\build-gt6ce.ps1` 按 `libs/gt6ce/build-commit.txt` 里的提交把它们打出来。
 
-依赖模组是 `gt6ce`，`versionRange="[0.0.0,0.8)"`。0.8.0 的 `MachineDeclaration` 装不下这些字段，装上会在注册时崩溃，所以范围不包含它。`update-gt.ps1` 仍下载 CI 上的 0.8.0 产物，不能直接替换这份本地运行包。
+依赖模组是 `gt6ce`，`versionRange="[0.0.0,0.8)"`。0.8.0 的 `MachineDeclaration` 装不下这些字段，装上会在注册时崩溃，所以范围不包含它。
 
 ```powershell
-$env:JAVA_HOME = 'C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot'
+.\tools\build-gt6ce.ps1   # 第一次，或者 build-commit.txt 变了之后
 .\gradlew.bat build
 .\gradlew.bat runClient
 ```
 
-`libs/gt6ce/build-commit.txt` 是本地 `GregTech6` 的 `addon/kubejs`（`9c67ceaa4`）。CI 按这个提交自己构建 SDK 和模组 jar。`update-gt.ps1` 下载的是主线上的 0.8.0 产物，不能拿来覆盖这两个 jar。这一版删掉了旧的 `MachineDeclaration` 一族，机器从 `addonMachines()` 返回。`addon/behavior-energy` 上的 `0f77a888` 给燃料机加了液体马达提示，并去掉一部分 “(no auto)” 面标签；这一版运行包没有那次改动。
+脚本只读取源仓库：默认用旁边的 `..\GregTech6`（要包含固定提交），没有就从 GitHub 克隆；构建发生在 git 忽略的 `.gt6ce-src` 里，不会动你正在用的 GregTech6 检出。JDK 17 和 21 会在 `JAVA17_HOME`、`JAVA21_HOME`、常见安装目录和 `~/.gradle/jdks` 里找，缺 17 时加 `-AutoDownloadJdk` 让 Gradle 下载；`-DryRun` 只打印会用到什么。`libs/gt6ce/build-commit.txt` 钉住的是 GT6CE `main` 上的 `1d1f69fbb`（API 0，模组版本 0.0.0），CI 和脚本按同一个提交构建。`.sha256` 记的是一次本地构建的运行包，换机器重打不一定逐字节相同，CI 只警告；换了 `build-commit.txt` 之后用 `-UpdateChecksum` 更新它。这一版删掉了旧的 `MachineDeclaration` 一族，机器从 `addonMachines()` 返回。`addon/behavior-energy` 上的 `0f77a888` 给燃料机加了液体马达提示，并去掉一部分 “(no auto)” 面标签；这一版运行包没有那次改动。
 
 ## 许可
 

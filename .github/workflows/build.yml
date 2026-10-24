@@ -27,7 +27,7 @@ jobs:
       if: steps.gt6ce-cache.outputs.cache-hit != 'true'
       uses: actions/checkout@v4
       with:
-        repository: SaltNya/GregTech6
+        repository: GregTech6CE/GregTech6
         ref: ${{ env.GT6CE_COMMIT }}
         path: gt6ce-src
 

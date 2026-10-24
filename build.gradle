@@ -1,6 +1,5 @@
 plugins {
     id 'java-library'
-    id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.148'
     id 'idea'
 }
@@ -11,12 +10,6 @@ tasks.named('wrapper', Wrapper).configure {
 
 version = mod_version
 group = mod_group_id
-
-sourceSets.main.resources {
-    srcDir('src/generated/resources')
-    exclude("**/*.bbmodel")
-    exclude("src/generated/**/.cache")
-}
 
 repositories {
     mavenCentral()
@@ -71,12 +64,33 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
-// Recipe machines, behavior machines, fuel generators, functional layout parts,
-// auxiliary energy and the remaining addon API gaps are on the API 0 SDK built
-// from addon/remaining-api-gaps at 1d1f69fbb. The 0.8.0 SDK cannot register
-// the current declarations.
-def gtSdk = files('libs/gt6ce/gt6ce-addon-sdk-1.21.1-neoforge-0.0.0.jar')
-def gtMod = files('libs/gt6ce/gt6ce-1.21.1-neoforge.jar')
+// The declarations here need the API 0 SDK and the matching mod jar built from the commit pinned in
+// libs/gt6ce/build-commit.txt. The 0.8.0 release cannot register them. Neither jar is committed:
+// tools/build-gt6ce.ps1 builds both into libs/gt6ce/.
+def gtSdk = fileTree(dir: 'libs/gt6ce', include: 'gt6ce-addon-sdk-1.21.1-neoforge-*.jar',
+        exclude: ['*-sources.jar', '*-javadoc.jar'])
+def gtMod = fileTree(dir: 'libs/gt6ce', include: 'gt6ce-1.21.1-neoforge.jar')
+
+def checkGt6ceJars = tasks.register('checkGt6ceJars') {
+    group = 'verification'
+    description = 'Stops with build instructions when the GT6CE SDK or runtime jar is missing.'
+    def sdk = gtSdk
+    def mod = gtMod
+    doLast {
+        def missing = []
+        if (sdk.files.size() != 1) {
+            missing << "exactly one libs/gt6ce/gt6ce-addon-sdk-1.21.1-neoforge-*.jar (found ${sdk.files.size()})"
+        }
+        if (mod.files.isEmpty()) {
+            missing << 'libs/gt6ce/gt6ce-1.21.1-neoforge.jar'
+        }
+        if (!missing.isEmpty()) {
+            throw new GradleException("The GT6CE jars are missing: ${missing.join(', ')}.\n" +
+                    'Run tools\\build-gt6ce.ps1 to build them from libs/gt6ce/build-commit.txt (see README.md).')
+        }
+    }
+}
+tasks.named('compileJava') { dependsOn checkGt6ceJars }
 
 dependencies {
     localRuntime "maven.modrinth:emi:${emi_version}"
@@ -107,19 +121,6 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 }
 sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
-
-publishing {
-    publications {
-        register('mavenJava', MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/repo"
-        }
-    }
-}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'

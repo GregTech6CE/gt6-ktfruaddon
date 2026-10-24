@@ -44,6 +44,9 @@ repo/
 !**/src/**/repo/
 libs/gt6ce/*.jar
 
+# Private GT6CE working copy used by tools/build-gt6ce.ps1
+/.gt6ce-src/
+
 # Local upstream checkout. Its own branch stays 1.7.10.
 /kTFRUAddon/
 
