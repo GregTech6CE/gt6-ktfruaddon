@@ -12,6 +12,7 @@ import com.gregtech.gregtech.api.addon.EnergyOutput;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.GuiGrid;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
@@ -50,7 +51,7 @@ public final class WirelessMachines implements Feature {
         return BehaviorMachine.builder(MachineCasing.builder(INDUCTIVE, "Tungstensteel").machineType(INDUCTIVE).build())
                 .energy(EnergyInput.builder("EU", 4096).faces(MachineFace.BOTTOM).capacity(WirelessTower.INDUCTIVE_CAPACITY).build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
-                .toggle("gt6ktfruaddon.wireless_battery.sealed", 152, 64, true)
+                .toggle("gt6ktfruaddon.wireless_battery.sealed", GuiGrid.TOGGLE_X, 64, true)
                 .build();
     }
 
@@ -68,7 +69,7 @@ public final class WirelessMachines implements Feature {
                         .capacity(WirelessTower.QUANTUM_CAPACITY)
                         .build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
-                .toggle("gt6ktfruaddon.wireless_battery.sealed", 152, 64, true)
+                .toggle("gt6ktfruaddon.wireless_battery.sealed", GuiGrid.TOGGLE_X, 64, true)
                 .build();
     }
 
@@ -77,7 +78,7 @@ public final class WirelessMachines implements Feature {
                 .energy(EnergyInput.builder("EU", 1).faces(MachineFace.BOTTOM).capacity(voltage * ampere).build())
                 .energyOutput(EnergyOutput.builder("EU", voltage, ampere).faces(MachineFace.FRONT).build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
-                .toggle("gt6ktfruaddon.wireless_receiver.stopped", 152, 64, false)
+                .toggle("gt6ktfruaddon.wireless_receiver.stopped", GuiGrid.TOGGLE_X, 64, false)
                 .build();
     }
 }

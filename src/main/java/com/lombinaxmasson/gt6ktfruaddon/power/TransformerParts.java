@@ -12,6 +12,7 @@ import com.gregtech.gregtech.api.addon.EnergyOutput;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.GuiGrid;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
@@ -86,7 +87,7 @@ public final class TransformerParts implements Feature {
                         .capacity(packet * ampere).build())
                 .energyOutput(EnergyOutput.builder(energy, packet, ampere).faces(MachineFace.FRONT).build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
-                .toggle("gt6ktfruaddon.transformer.stopped", 152, 8, false)
+                .toggle("gt6ktfruaddon.transformer.stopped", GuiGrid.TOGGLE_X, 8, false)
                 .build();
     }
 

@@ -13,6 +13,7 @@ import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.GuiGrid;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
@@ -66,7 +67,7 @@ public final class GasBatteries implements Feature {
                 .progress(8, 64)
                 .toggle("gt6ktfruaddon.fuel_battery.stopped", 44, 64, false)
                 .toggle("gt6ktfruaddon.fuel_battery.electrolyte", 64, 64, false)
-                .item(26, 8, FuelBattery.SLOTS.itemRole(0))
+                .item(GuiGrid.INPUT_X, GuiGrid.TOP, FuelBattery.SLOTS.itemRole(0))
                 .item(48, 8, FuelBattery.SLOTS.itemRole(1))
                 .fluid(8000, 80, 8, FuelBattery.SLOTS.fluidRole(0))
                 .fluid(8000, 98, 8, FuelBattery.SLOTS.fluidRole(1))
