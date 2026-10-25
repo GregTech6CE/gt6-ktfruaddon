@@ -1,3 +1,29 @@
+/*
+ * GENERATED FILE - DO NOT EDIT. 勿手改。
+ * Upstream: https://github.com/kuzuanpa/kTFRUAddon @ 6404ab6979de9fce832ce0c41171000decf00e69
+ * GT6CE: 1d1f69fbb267ad31548b1fcb1ec1168435b67bf3
+ * Generate from repository root: python tools/extract_machine_recipes.py
+ * Adaptations from tools/mappings.json (aliases and substitutions):
+ * block_aliases: adamantium_turbine_shell -> turbine_shell_adamantium
+ * block_aliases: ai_memory_bank -> ai_high_bandwidth_memory_bank
+ * block_aliases: laser_focusing_array -> laser_fusion_focusing_array
+ * block_aliases: laser_product_collector -> laser_fusion_neutron_product_collector
+ * block_aliases: laser_pulse_storage -> laser_fusion_pulse_storage_module
+ * block_aliases: laser_target_injector -> laser_fusion_target_injector
+ * block_aliases: quantum_coherence_casing -> quantum_coherence_chamber_wall
+ * block_aliases: quantum_coherence_casing_iridium -> quantum_coherence_chamber_wall_31111
+ * block_aliases: room_energy_port -> room_energy_and_status_port
+ * block_aliases: stainless_turbine_shell -> turbine_shell_stainless
+ * block_aliases: sun_heater_top_layer -> heat_pipe_top
+ * block_aliases: titanium_turbine_shell -> turbine_shell_titanium
+ * block_aliases: trinaquadalloy_turbine_shell -> turbine_shell_trinaquadalloy
+ * block_aliases: tungstensteel_turbine_shell -> turbine_shell_tungstensteel
+ * gt_substitutions: casing_machine_double_naquadria -> casing_machine_double_tungstensteel
+ * gt_substitutions: casing_machine_naquadria -> casing_machine_trinaquadalloy
+ * form_substitutions: paneGlass Black -> minecraft:black_stained_glass_pane
+ * form_substitutions: plate Glass -> minecraft:glass
+ * form_substitutions: plate Paper -> minecraft:paper
+ */
 package com.lombinaxmasson.gt6ktfruaddon.generated;
 
 import java.util.LinkedHashSet;
@@ -5198,11 +5224,9 @@ public final class SourceRecipes {
     }
 
     private static ItemStack form(String prefix, String material, int count) {
-        // GT6CE does not generate these source forms; the vanilla item keeps the row usable.
-        if ("plate".equals(prefix) && "Paper".equals(material)) return new ItemStack(Items.PAPER, count);
+        if ("paneGlass".equals(prefix) && "Black".equals(material)) return new ItemStack(Items.BLACK_STAINED_GLASS_PANE, count);
         if ("plate".equals(prefix) && "Glass".equals(material)) return new ItemStack(Items.GLASS, count);
-        if ("paneGlass".equals(prefix) && "Black".equals(material))
-            return new ItemStack(Items.BLACK_STAINED_GLASS_PANE, count);
+        if ("plate".equals(prefix) && "Paper".equals(material)) return new ItemStack(Items.PAPER, count);
         ItemStack stack = AddonItems.stack(prefix, material, count);
         if (stack == null || stack.isEmpty()) {
             PROBLEMS.add(prefix + " " + material);
@@ -5226,20 +5250,20 @@ public final class SourceRecipes {
 
     private static ItemStack block(String path, int count) {
         String id = switch (path) {
-            case "laser_focusing_array" -> "laser_fusion_focusing_array";
-            case "laser_target_injector" -> "laser_fusion_target_injector";
-            case "laser_pulse_storage" -> "laser_fusion_pulse_storage_module";
-            case "laser_product_collector" -> "laser_fusion_neutron_product_collector";
-            case "sun_heater_top_layer" -> "heat_pipe_top";
+            case "adamantium_turbine_shell" -> "turbine_shell_adamantium";
             case "ai_memory_bank" -> "ai_high_bandwidth_memory_bank";
-            case "room_energy_port" -> "room_energy_and_status_port";
+            case "laser_focusing_array" -> "laser_fusion_focusing_array";
+            case "laser_product_collector" -> "laser_fusion_neutron_product_collector";
+            case "laser_pulse_storage" -> "laser_fusion_pulse_storage_module";
+            case "laser_target_injector" -> "laser_fusion_target_injector";
             case "quantum_coherence_casing" -> "quantum_coherence_chamber_wall";
             case "quantum_coherence_casing_iridium" -> "quantum_coherence_chamber_wall_31111";
+            case "room_energy_port" -> "room_energy_and_status_port";
             case "stainless_turbine_shell" -> "turbine_shell_stainless";
+            case "sun_heater_top_layer" -> "heat_pipe_top";
             case "titanium_turbine_shell" -> "turbine_shell_titanium";
-            case "tungstensteel_turbine_shell" -> "turbine_shell_tungstensteel";
-            case "adamantium_turbine_shell" -> "turbine_shell_adamantium";
             case "trinaquadalloy_turbine_shell" -> "turbine_shell_trinaquadalloy";
+            case "tungstensteel_turbine_shell" -> "turbine_shell_tungstensteel";
             default -> path;
         };
         Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(Ktfru.MODID, id));
@@ -5251,10 +5275,9 @@ public final class SourceRecipes {
     }
 
     private static ItemStack gt(String path, int count) {
-        // GT6CE gives Naquadria no casing form; use the alloy that carries the same chain.
         String id = switch (path) {
-            case "casing_machine_naquadria" -> "casing_machine_trinaquadalloy";
             case "casing_machine_double_naquadria" -> "casing_machine_double_tungstensteel";
+            case "casing_machine_naquadria" -> "casing_machine_trinaquadalloy";
             default -> path;
         };
         Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("gt6ce", id));

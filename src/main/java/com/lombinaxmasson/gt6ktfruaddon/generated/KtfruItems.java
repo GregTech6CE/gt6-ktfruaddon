@@ -1,3 +1,10 @@
+/*
+ * GENERATED FILE - DO NOT EDIT. 勿手改。
+ * Upstream: https://github.com/kuzuanpa/kTFRUAddon @ 6404ab6979de9fce832ce0c41171000decf00e69
+ * GT6CE: 1d1f69fbb267ad31548b1fcb1ec1168435b67bf3
+ * Generate from repository root: python tools/generate_items.py
+ * Adaptations: none in this file.
+ */
 package com.lombinaxmasson.gt6ktfruaddon.generated;
 
 import java.util.LinkedHashMap;
