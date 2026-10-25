@@ -33,6 +33,7 @@ import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
+import com.lombinaxmasson.gt6ktfruaddon.core.Gt6ce;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeTiming;
 
@@ -5281,7 +5282,7 @@ public final class SourceRecipes {
             case "casing_machine_naquadria" -> "casing_machine_trinaquadalloy";
             default -> path;
         };
-        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("gt6ce", id));
+        Item item = BuiltInRegistries.ITEM.get(Gt6ce.id(id));
         if (item == null || item == Items.AIR) {
             PROBLEMS.add("gt6ce " + path);
             return ItemStack.EMPTY;
