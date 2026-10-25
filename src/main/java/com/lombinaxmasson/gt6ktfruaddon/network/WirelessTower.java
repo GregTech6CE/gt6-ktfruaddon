@@ -13,6 +13,8 @@ import com.lombinaxmasson.gt6ktfruaddon.network.WirelessInbox.Mark;
 
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.LinkList;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -26,6 +28,8 @@ import net.minecraft.world.level.Level;
 
 /** Inductive towers send within 64 blocks with distance loss; quantum towers send across dimensions. */
 public final class WirelessTower extends BehaviorBase {
+    private final LinkList linkList = new LinkList();
+
     static final long INDUCTIVE_CAPACITY = 367_001_600_000L;
     static final long QUANTUM_CAPACITY = 1_468_006_400_000L;
     private final boolean quantum;
@@ -102,26 +106,11 @@ public final class WirelessTower extends BehaviorBase {
         return serverLevel.getServer().getLevel(key);
     }
 
-    private static List<Mark> links(MachineBehaviorContext context) {
-        List<Mark> found = new ArrayList<>();
-        String raw = context.state().getString("links");
-        if (raw.isEmpty()) return found;
-        for (String piece : raw.split("\\|")) {
-            int split = piece.lastIndexOf(',');
-            int middle = piece.lastIndexOf(',', split - 1);
-            int first = piece.lastIndexOf(',', middle - 1);
-            if (first < 0) continue;
-            try {
-                String dim = piece.substring(0, first);
-                int x = Integer.parseInt(piece.substring(first + 1, middle));
-                int y = Integer.parseInt(piece.substring(middle + 1, split));
-                int z = Integer.parseInt(piece.substring(split + 1));
-                found.add(new Mark(dim, new BlockPos(x, y, z), kindOf(context)));
-            } catch (NumberFormatException ignored) {
-                // A broken entry is skipped.
-            }
-        }
-        return found;
+    private List<Mark> links(MachineBehaviorContext context) {
+        String dim = context.level().dimension().location().toString();
+        boolean quantum = kindOf(context);
+        return new ArrayList<>(linkList.read(context.state().getString("links"), dim).stream()
+                .map(link -> new Mark(link.dim(), link.pos(), quantum)).toList());
     }
 
     private static boolean kindOf(MachineBehaviorContext context) {
@@ -130,12 +119,7 @@ public final class WirelessTower extends BehaviorBase {
     }
 
     private static void write(MachineBehaviorContext context, List<Mark> links) {
-        var text = new StringBuilder();
-        for (Mark mark : links) {
-            if (!text.isEmpty()) text.append('|');
-            text.append(mark.dim()).append(',').append(mark.pos().getX()).append(',')
-                    .append(mark.pos().getY()).append(',').append(mark.pos().getZ());
-        }
-        context.state().setString("links", text.toString());
+        context.state().setString("links", LinkList.write(links.stream()
+                .map(mark -> new DimPos(mark.dim(), mark.pos())).toList()));
     }
 }

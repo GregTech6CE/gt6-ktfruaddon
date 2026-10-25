@@ -13,6 +13,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PlayerMemory;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimensionMemory;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -40,7 +42,7 @@ public final class QuantumRelay extends BehaviorBase {
         }
         String dim = context.level().dimension().location().toString();
         DimPos self = new DimPos(dim, context.pos().immutable());
-                BlockPos newlyLinked = NEW_PARTNERS.remove(self);
+        BlockPos newlyLinked = NEW_PARTNERS.remove(self);
         if (newlyLinked != null) {
             context.state().setString("partner", formatPos(newlyLinked));
         }
@@ -51,7 +53,7 @@ public final class QuantumRelay extends BehaviorBase {
         BlockPos partnerPos = parsePos(context.state().getString("partner"));
         long now = context.level().getGameTime();
         long euStored = context.energy("EU");
-                RELAYS.put(self, new RelayEntry(partnerPos, euStored), now);
+        RELAYS.put(self, new RelayEntry(partnerPos, euStored), now);
 
         if (partnerPos == null || !isPaired(self, partnerPos, now)) {
             context.working(false);
@@ -102,7 +104,7 @@ public final class QuantumRelay extends BehaviorBase {
         String dim = context.level().dimension().location().toString();
         BlockPos here = context.pos().immutable();
         DimPos self = new DimPos(dim, here);
-                DimPos pending = PENDING.get(player.getUUID());
+        DimPos pending = PENDING.get(player.getUUID());
         if (player.isShiftKeyDown() || pending == null || pending.pos().equals(here)) {
             PENDING.put(player.getUUID(), self);
             player.displayClientMessage(Component.translatable("gt6ktfruaddon.quantum_relay.recorded",
@@ -125,7 +127,7 @@ public final class QuantumRelay extends BehaviorBase {
     }
 
     private static boolean isPaired(DimPos self, BlockPos partnerPos, long now) {
-                RelayEntry partner = RELAYS.get(new DimPos(self.dim(), partnerPos), now);
+        RelayEntry partner = RELAYS.get(new DimPos(self.dim(), partnerPos), now);
         if (partner == null) return false;
         return self.pos().equals(partner.partner());
 
@@ -170,20 +172,9 @@ public final class QuantumRelay extends BehaviorBase {
         return false;
     }
 
-    private static String formatPos(BlockPos pos) {
-        return pos.getX() + "," + pos.getY() + "," + pos.getZ();
-    }
+    private static String formatPos(BlockPos pos) { return PosCodec.format(pos); }
 
-    private static BlockPos parsePos(String raw) {
-        if (raw == null || raw.isEmpty()) return null;
-        String[] parts = raw.split(",");
-        if (parts.length != 3) return null;
-        try {
-            return new BlockPos(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
-        } catch (NumberFormatException ignored) {
-            return null;
-        }
-    }
+    private static BlockPos parsePos(String raw) { return PosCodec.parse(raw); }
 
     private record RelayEntry(BlockPos partner, long euStored) {}
 }

@@ -93,7 +93,7 @@ public final class ResearchNetwork {
         String dim = context.level().dimension().location().toString();
         DimPos key = new DimPos(dim, context.pos().immutable());
         long now = context.level().getGameTime();
-                MonitorEntry entry = MONITORS.get(key, now);
+        MonitorEntry entry = MONITORS.get(key, now);
         if (entry == null) {
             entry = new MonitorEntry(parseSet(raw), context.state().getLong("points"));
             MONITORS.put(key, entry, now);

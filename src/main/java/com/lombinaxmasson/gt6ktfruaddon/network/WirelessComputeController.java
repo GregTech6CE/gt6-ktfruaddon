@@ -8,6 +8,9 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.LinkList;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -17,6 +20,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /** Sums bound Normal compute nodes within 512 blocks in the same dimension. */
 public final class WirelessComputeController extends BehaviorBase {
+    private final LinkList linkList = new LinkList();
+
     @Override
     public void tick(MachineBehaviorContext context) {
         boolean formed = context.structureFormed();
@@ -56,28 +61,14 @@ public final class WirelessComputeController extends BehaviorBase {
         return id != null && Ktfru.MODID.equals(id.getNamespace()) && id.getPath().startsWith(prefix);
     }
 
-    private static List<BlockPos> links(MachineBehaviorContext context) {
-        List<BlockPos> found = new ArrayList<>();
-        String raw = context.state().getString("links");
-        if (raw.isEmpty()) return found;
-        for (String piece : raw.split(";")) {
-            String[] xyz = piece.split(",");
-            if (xyz.length != 3) continue;
-            try {
-                found.add(new BlockPos(Integer.parseInt(xyz[0]), Integer.parseInt(xyz[1]), Integer.parseInt(xyz[2])));
-            } catch (NumberFormatException ignored) {
-                // A broken entry is skipped.
-            }
-        }
-        return found;
+    private List<BlockPos> links(MachineBehaviorContext context) {
+        String dim = context.level().dimension().location().toString();
+        return new ArrayList<>(linkList.read(context.state().getString("links"), dim).stream()
+                .filter(link -> dim.equals(link.dim())).map(DimPos::pos).toList());
     }
 
     private static void write(MachineBehaviorContext context, List<BlockPos> links) {
-        var text = new StringBuilder();
-        for (BlockPos pos : links) {
-            if (!text.isEmpty()) text.append(';');
-            text.append(pos.getX()).append(',').append(pos.getY()).append(',').append(pos.getZ());
-        }
-        context.state().setString("links", text.toString());
+        String dim = context.level().dimension().location().toString();
+        context.state().setString("links", LinkList.write(links.stream().map(pos -> new DimPos(dim, pos)).toList()));
     }
 }
