@@ -1,8 +1,9 @@
 package com.lombinaxmasson.gt6ktfruaddon.network;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PlayerMemory;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimensionMemory;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 
 import net.minecraft.core.BlockPos;
 
@@ -16,7 +17,7 @@ final class WirelessInbox {
         }
     }
 
-    private static final Map<UUID, Mark> PENDING = new HashMap<>();
+    private static final PlayerMemory<Mark> PENDING = new PlayerMemory<>(Mark::dim);
 
     static void remember(UUID player, Mark mark) {
         PENDING.put(player, mark);
@@ -26,24 +27,25 @@ final class WirelessInbox {
         return PENDING.remove(player);
     }
 
-    record Key(String dim, int x, int y, int z) {}
 
-    private static final Map<Key, Long> ROOM = new HashMap<>();
-    private static final Map<Key, Long> WAITING = new HashMap<>();
+    private static final DimensionMemory<Long> ROOM = new DimensionMemory<>();
+    private static final DimensionMemory<Long> WAITING = new DimensionMemory<>();
 
-    static void setRoom(Key key, long room) {
+    static void setRoom(DimPos key, long room) {
         ROOM.put(key, room);
     }
 
-    static long room(Key key) {
-        return ROOM.getOrDefault(key, 0L);
+    static long room(DimPos key) {
+        Long room = ROOM.get(key);
+        return room == null ? 0L : room;
     }
 
-    static void give(Key key, long amount) {
-        WAITING.merge(key, amount, Long::sum);
+    static void give(DimPos key, long amount) {
+        Long waiting = WAITING.get(key);
+        WAITING.put(key, (waiting == null ? 0L : waiting) + amount);
     }
 
-    static long pull(Key key) {
+    static long pull(DimPos key) {
         Long waiting = WAITING.remove(key);
         return waiting == null ? 0 : waiting;
     }

@@ -6,6 +6,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import com.lombinaxmasson.gt6ktfruaddon.network.WirelessInbox.Mark;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +23,7 @@ public final class WirelessReceiver extends BehaviorBase {
     @Override
     public void tick(MachineBehaviorContext context) {
         String dim = context.level().dimension().location().toString();
-        var key = new WirelessInbox.Key(dim, context.pos().getX(), context.pos().getY(), context.pos().getZ());
+        var key = new DimPos(dim, context.pos().immutable());
         long packet = quantum ? 32768 : 8192;
         long amps = quantum ? 16 : 4;
         boolean stopped = context.toggle(0);

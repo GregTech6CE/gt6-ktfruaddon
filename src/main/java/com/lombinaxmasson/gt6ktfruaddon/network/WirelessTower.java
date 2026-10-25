@@ -11,6 +11,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
 
 import com.lombinaxmasson.gt6ktfruaddon.network.WirelessInbox.Mark;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -59,7 +61,7 @@ public final class WirelessTower extends BehaviorBase {
             Level world = world(context, link.dim());
             if (world == null || !world.hasChunkAt(link.pos()) || !receiverBlock(world, link.pos(), quantum)) continue;
             if (!quantum && !inRange(context.pos(), link.pos())) continue;
-            var key = new WirelessInbox.Key(link.dim(), link.pos().getX(), link.pos().getY(), link.pos().getZ());
+            var key = new DimPos(link.dim(), link.pos().immutable());
             long room = WirelessInbox.room(key);
             long sentAmps = Math.min(amps, room / packet);
             if (sentAmps < 1) continue;
