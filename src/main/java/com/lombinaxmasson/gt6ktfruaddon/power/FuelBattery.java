@@ -9,6 +9,10 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.RecipeRunner;
+
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Slots;
+
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -26,16 +30,19 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * Toggle 0 stops processing. Toggle 1 opens the electrolyte tank and closes the fuel tanks.
  */
 public final class FuelBattery extends BehaviorBase {
-    private static final int FUEL_A = 0;
-    private static final int FUEL_B = 1;
-    private static final int OUT_A = 2;
-    private static final int OUT_B = 3;
-    private static final int ELECTROLYTE = 4;
+    static final int FUEL_A = 0;
+    static final int FUEL_B = 1;
+    static final int OUT_A = 2;
+    static final int OUT_B = 3;
+    static final int ELECTROLYTE = 4;
     /** Same order as the toggles on the behavior machine. */
     private static final int STOPPED = 0;
     private static final int EDITING = 1;
     /** Largest {@code |EUt| * duration} on the source rows, 384 * 13. */
     private static final long RECIPE_HEADROOM = 4992;
+
+    static final Slots SLOTS = new Slots(List.of(0, 1), List.of(), List.of(FUEL_A, FUEL_B, ELECTROLYTE), List.of(OUT_A, OUT_B));
+    private final RecipeRunner runner = new RecipeRunner(SLOTS, List.of(RecipeMaps.FUEL_BATTERY));
 
     @Override
     public void tick(MachineBehaviorContext context) {
@@ -101,15 +108,14 @@ public final class FuelBattery extends BehaviorBase {
         return want != null && !want.isEmpty() && FluidStack.isSameFluidSameComponents(tank, want);
     }
 
-    private static boolean craft(MachineBehaviorContext context, long rate) {
+    private boolean craft(MachineBehaviorContext context, long rate) {
         if (!electrolyteMatches(context)) return false;
-        AddonRecipes.Line line = find(context);
-        if (line == null || !outputsFit(context, line)) return false;
+        AddonRecipes.Line line = runner.find(context);
+        if (line == null || !runner.canComplete(context, line)) return false;
         alignFuels(context, line);
         boolean crafted = false;
         for (int pass = 0; pass < 16 && context.energy() < rate * 2; pass++) {
-            if (!outputsFit(context, line) || !consumeFluids(context, line)) break;
-            fillOutputs(context, line.fluidOutputs());
+            if (!runner.complete(context, line)) break;
             long gain = Math.abs(line.euPerTick()) * Math.max(1, line.duration());
             context.generate(gain);
             crafted = true;
@@ -141,74 +147,6 @@ public final class FuelBattery extends BehaviorBase {
     private static Component name(ItemStack stack) {
         return stack == null || stack.isEmpty()
                 ? Component.translatable("gt6ktfruaddon.fuel_battery.empty") : stack.getHoverName();
-    }
-
-    private static AddonRecipes.Line find(MachineBehaviorContext context) {
-        return AddonRecipes.map(RecipeMaps.FUEL_BATTERY).find(
-                List.of(context.item(0), context.item(1)),
-                List.of(context.fluid(FUEL_A), context.fluid(FUEL_B), context.fluid(ELECTROLYTE)),
-                true, 2, 0);
-    }
-
-    private static boolean outputsFit(MachineBehaviorContext context, AddonRecipes.Line line) {
-        FluidStack[] outputs = line.fluidOutputs();
-        if (outputs == null || outputs.length == 0) return true;
-        if (outputs.length > 2) return false;
-        if (!fits(context, OUT_A, outputs[0])) return false;
-        return outputs.length < 2 || fits(context, OUT_B, outputs[1]);
-    }
-
-    private static boolean fits(MachineBehaviorContext context, int tank, FluidStack stack) {
-        if (stack == null || stack.isEmpty()) return true;
-        FluidStack here = context.fluid(tank);
-        if (!here.isEmpty() && !FluidStack.isSameFluidSameComponents(here, stack)) return false;
-        return here.getAmount() + stack.getAmount() <= context.capacity(tank);
-    }
-
-    private static boolean consumeFluids(MachineBehaviorContext context, AddonRecipes.Line line) {
-        FluidStack[] inputs = line.fluidInputs();
-        if (inputs == null) return true;
-        for (int index = 0; index < inputs.length; index++) {
-            if (skipped(line, index)) continue;
-            FluidStack need = inputs[index];
-            int tank = tankHolding(context, need);
-            if (tank < 0) return false;
-            FluidStack preview = context.drain(tank, need.getAmount(), true);
-            if (preview.getAmount() < need.getAmount()) return false;
-        }
-        for (int index = 0; index < inputs.length; index++) {
-            if (skipped(line, index)) continue;
-            FluidStack need = inputs[index];
-            context.drain(tankHolding(context, need), need.getAmount(), false);
-        }
-        return true;
-    }
-
-    /**
-     * An input with nothing to take, or a kept one, is not paid. The electrolyte is kept: it sits in
-     * its own tank, which {@code ready} has checked, and the recipe does not use it up.
-     */
-    private static boolean skipped(AddonRecipes.Line line, int index) {
-        FluidStack need = line.fluidInputs()[index];
-        if (need == null || need.isEmpty() || need.getAmount() <= 0) return true;
-        for (int kept : line.keptFluidInputs()) if (kept == index) return true;
-        return false;
-    }
-
-    private static int tankHolding(MachineBehaviorContext context, FluidStack need) {
-        for (int tank : new int[] {FUEL_A, FUEL_B}) {
-            FluidStack here = context.fluid(tank);
-            if (!here.isEmpty() && FluidStack.isSameFluidSameComponents(here, need)) return tank;
-        }
-        return -1;
-    }
-
-    private static void fillOutputs(MachineBehaviorContext context, FluidStack[] outputs) {
-        if (outputs == null) return;
-        if (outputs.length > 0 && outputs[0] != null && !outputs[0].isEmpty())
-            context.fill(OUT_A, outputs[0], false);
-        if (outputs.length > 1 && outputs[1] != null && !outputs[1].isEmpty())
-            context.fill(OUT_B, outputs[1], false);
     }
 
     private static void pushDown(MachineBehaviorContext context) {
