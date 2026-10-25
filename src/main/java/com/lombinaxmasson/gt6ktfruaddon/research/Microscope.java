@@ -50,7 +50,7 @@ public final class Microscope extends BehaviorBase {
         }
         var id = BuiltInRegistries.ITEM.getKey(stack.getItem());
         if (id != null && monitor != null) {
-            Research.unlockItem(context.level(), monitor, id.toString());
+            ResearchNetwork.unlockItem(context.level(), monitor, id.toString());
         }
         if (remaining <= 0) {
             context.setItem(0, ItemStack.EMPTY);
@@ -72,7 +72,7 @@ public final class Microscope extends BehaviorBase {
     public boolean onUse(MachineBehaviorContext context, Player player, InteractionHand hand) {
         if (!AddonTools.isMagnifyingGlass(player.getItemInHand(hand))) return false;
         String dim = context.level().dimension().location().toString();
-        DimPos pending = Research.takePendingMonitor(player.getUUID(), dim);
+        DimPos pending = ResearchNetwork.takePendingMonitor(player.getUUID(), dim);
         if (pending != null) {
             context.state().setString("monitor", PosCodec.format(pending.pos()));
         }
@@ -85,10 +85,10 @@ public final class Microscope extends BehaviorBase {
 
     private static BlockPos resolveMonitor(MachineBehaviorContext context) {
         BlockPos saved = PosCodec.parse(context.state().getString("monitor"));
-        if (saved != null && Research.isMonitorOnline(context.level(), saved)) {
+        if (saved != null && ResearchNetwork.isMonitorOnline(context.level(), saved)) {
             return saved;
         }
-        BlockPos adjacent = Research.findAdjacentMonitor(context.level(), context.pos());
+        BlockPos adjacent = ResearchNetwork.findAdjacentMonitor(context.level(), context.pos());
         if (adjacent != null) {
             context.state().setString("monitor", PosCodec.format(adjacent));
             return adjacent;

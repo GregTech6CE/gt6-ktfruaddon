@@ -77,7 +77,7 @@ public final class ResearchMachines implements Feature {
 
     private static Map<String, Supplier<MachineBehavior>> declareBehaviors() {
         Behaviors behaviors = new Behaviors();
-        for (String id : TABLES) behaviors.add(id, () -> new Research("research_monitor".equals(id)));
+        for (String id : TABLES) behaviors.add(id, () -> "research_monitor".equals(id) ? new ResearchMonitor() : new ResearchTable());
         return behaviors
                 .add(ASSEMBLER, () -> new ResearchAssembler(RecipeMaps.RESEARCH_ASSEMBLER, "gt.recipe.assembler"))
                 .add(REACTOR, () -> new ResearchAssembler(RecipeMaps.RESEARCH_REACTOR))

@@ -65,7 +65,7 @@ public final class LateBehavior extends BehaviorBase {
         if (pendingController != null) {
             context.state().setString("controller", PosCodec.format(pendingController.pos()));
         }
-        DimPos pendingMonitor = Research.takePendingMonitor(player.getUUID(), dim);
+        DimPos pendingMonitor = ResearchNetwork.takePendingMonitor(player.getUUID(), dim);
         if (pendingMonitor != null) {
             context.state().setString("monitor", PosCodec.format(pendingMonitor.pos()));
         }
@@ -99,7 +99,7 @@ public final class LateBehavior extends BehaviorBase {
             return;
         }
         BlockPos monitor = resolveMonitor(context);
-        if (monitor == null || !Research.isMonitorOnline(context.level(), monitor)) {
+        if (monitor == null || !ResearchNetwork.isMonitorOnline(context.level(), monitor)) {
             context.state().setString("status", STATUS_NO_MONITOR);
             context.working(false);
             return;
@@ -120,17 +120,17 @@ public final class LateBehavior extends BehaviorBase {
             context.working(false);
             return;
         }
-        Research.addPoints(context.level(), monitor, points);
+        ResearchNetwork.addPoints(context.level(), monitor, points);
         context.state().setString("status", STATUS_RUNNING);
         context.working(true);
     }
 
     private static BlockPos resolveMonitor(MachineBehaviorContext context) {
         BlockPos saved = PosCodec.parse(context.state().getString("monitor"));
-        if (saved != null && Research.isMonitorOnline(context.level(), saved)) {
+        if (saved != null && ResearchNetwork.isMonitorOnline(context.level(), saved)) {
             return saved;
         }
-        BlockPos adjacent = Research.findAdjacentMonitor(context.level(), context.pos());
+        BlockPos adjacent = ResearchNetwork.findAdjacentMonitor(context.level(), context.pos());
         if (adjacent != null) {
             context.state().setString("monitor", PosCodec.format(adjacent));
             return adjacent;

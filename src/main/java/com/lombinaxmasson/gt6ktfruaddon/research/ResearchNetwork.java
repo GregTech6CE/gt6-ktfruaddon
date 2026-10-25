@@ -7,25 +7,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
-import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-/**
- * Research blocks and the addon-side monitor index ({@code ResearchTreeMonitor}, 9818).
- * Microscopes unlock examined items into their bound or adjacent monitor.
- * AI centers add minigame progress points to their bound or adjacent monitor.
- * The research assembler and research reactor check the monitor two blocks behind the controller.
- */
-public final class Research extends BehaviorBase {
+/** Research monitor index and pairing state. Access is confined to the server thread. */
+public final class ResearchNetwork {
     static final String TREE = "minecraft:paper,minecraft:glass,minecraft:iron_ingot";
     private static final long EXPIRY_TICKS = 20L;
     private static final Direction[] HORIZONTAL = {
@@ -35,11 +25,7 @@ public final class Research extends BehaviorBase {
     private static final Map<DimPos, MonitorEntry> MONITORS = new HashMap<>();
     private static final Map<UUID, DimPos> PENDING_MONITOR = new HashMap<>();
 
-    private final boolean monitor;
-
-    public Research(boolean monitor) {
-        this.monitor = monitor;
-    }
+    private ResearchNetwork() {}
 
     public static synchronized DimPos takePendingMonitor(UUID player, String dim) {
         DimPos key = PENDING_MONITOR.get(player);
@@ -99,56 +85,40 @@ public final class Research extends BehaviorBase {
         return true;
     }
 
-    @Override
-    public void tick(MachineBehaviorContext context) {
-        if (monitor) {
-            String raw = context.state().getString("tree");
-            if (raw.isEmpty()) {
-                raw = TREE;
-                context.state().setString("tree", raw);
-            }
-            String dim = context.level().dimension().location().toString();
-            DimPos key = new DimPos(dim, context.pos().immutable());
-            long now = context.level().getGameTime();
-            synchronized (Research.class) {
-                MonitorEntry entry = MONITORS.get(key);
-                if (entry == null) {
-                    entry = new MonitorEntry(parseSet(raw), context.state().getLong("points"), now);
-                    MONITORS.put(key, entry);
-                } else {
-                    entry.unlocked.addAll(parseSet(raw));
-                    entry.lastTick = now;
-                    if (entry.dirty) {
-                        context.state().setString("tree", String.join(",", entry.unlocked));
-                        context.state().setLong("points", entry.points);
-                        entry.dirty = false;
-                    }
+    static void update(MachineBehaviorContext context) {
+        String raw = context.state().getString("tree");
+        if (raw.isEmpty()) {
+            raw = TREE;
+            context.state().setString("tree", raw);
+        }
+        String dim = context.level().dimension().location().toString();
+        DimPos key = new DimPos(dim, context.pos().immutable());
+        long now = context.level().getGameTime();
+        synchronized (ResearchNetwork.class) {
+            MonitorEntry entry = MONITORS.get(key);
+            if (entry == null) {
+                entry = new MonitorEntry(parseSet(raw), context.state().getLong("points"), now);
+                MONITORS.put(key, entry);
+            } else {
+                entry.unlocked.addAll(parseSet(raw));
+                entry.lastTick = now;
+                if (entry.dirty) {
+                    context.state().setString("tree", String.join(",", entry.unlocked));
+                    context.state().setLong("points", entry.points);
+                    entry.dirty = false;
                 }
             }
         }
-        context.working(false);
     }
 
-    @Override
-    public void beforeBreak(MachineBehaviorContext context) {
-        if (!monitor) return;
+    static synchronized void remove(MachineBehaviorContext context) {
         String dim = context.level().dimension().location().toString();
-        synchronized (Research.class) {
-            MONITORS.remove(new DimPos(dim, context.pos().immutable()));
-        }
+        MONITORS.remove(new DimPos(dim, context.pos().immutable()));
     }
 
-    @Override
-    public boolean onUse(MachineBehaviorContext context, Player player, InteractionHand hand) {
-        if (!monitor || !AddonTools.isMagnifyingGlass(player.getItemInHand(hand))) return false;
+    static synchronized void remember(UUID player, MachineBehaviorContext context) {
         String dim = context.level().dimension().location().toString();
-        BlockPos here = context.pos().immutable();
-        synchronized (Research.class) {
-            PENDING_MONITOR.put(player.getUUID(), new DimPos(dim, here));
-        }
-        player.displayClientMessage(Component.translatable(
-                "gt6ktfruaddon.research.tree", context.state().getString("tree")), false);
-        return true;
+        PENDING_MONITOR.put(player, new DimPos(dim, context.pos().immutable()));
     }
 
     private static Set<String> parseSet(String csv) {

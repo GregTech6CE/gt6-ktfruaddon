@@ -83,12 +83,12 @@ public final class ResearchAssembler extends BehaviorBase {
     public boolean onUse(MachineBehaviorContext context, Player player, InteractionHand hand) {
         if (!AddonTools.isMagnifyingGlass(player.getItemInHand(hand))) return false;
         String dim = context.level().dimension().location().toString();
-        DimPos pending = Research.takePendingMonitor(player.getUUID(), dim);
+        DimPos pending = ResearchNetwork.takePendingMonitor(player.getUUID(), dim);
         if (pending != null) {
             context.state().setString("monitor", PosCodec.format(pending.pos()));
         }
         BlockPos db = databasePos(context);
-        boolean online = Research.isMonitorOnline(context.level(), db);
+        boolean online = ResearchNetwork.isMonitorOnline(context.level(), db);
         player.displayClientMessage(Component.translatable("gt6ktfruaddon.research_assembler.status",
                 context.structureFormed() ? 1 : 0,
                 PosCodec.format(db),
@@ -112,12 +112,12 @@ public final class ResearchAssembler extends BehaviorBase {
         if (outputs == null || outputs.length == 0 || outputs[0] == null || outputs[0].isEmpty()) return true;
         var id = BuiltInRegistries.ITEM.getKey(outputs[0].getItem());
         if (id == null) return false;
-        return Research.isUnlocked(context.level(), databasePos(context), id.toString());
+        return ResearchNetwork.isUnlocked(context.level(), databasePos(context), id.toString());
     }
 
     private static BlockPos databasePos(MachineBehaviorContext context) {
         BlockPos behindTwo = context.pos().relative(context.facing().getOpposite(), 2);
-        if (Research.isMonitorOnline(context.level(), behindTwo)) {
+        if (ResearchNetwork.isMonitorOnline(context.level(), behindTwo)) {
             return behindTwo;
         }
         BlockPos saved = PosCodec.parse(context.state().getString("monitor"));
