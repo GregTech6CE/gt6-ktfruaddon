@@ -1,6 +1,6 @@
 # 23 按 1d1f69fbb 补齐 API 缺口
 
-- 状态：active
+- 状态：closed（代码收尾；玩法未验收）
 - 依赖：无
 - 文件范围：
   - `libs/gt6ce/` 的两个包和基线文件
@@ -173,15 +173,9 @@ SDK 的 `BehaviorMachine.Builder` 会检查能量条、进度条、槽、罐和�
 - [x] 启动日志没有 `source stacks did not resolve`、`uses unknown part` 或配方被拒；补齐源配方后服务端到达 `Done (16.693s)`
 - [ ] 玩法：托卡马克启动能量、流体电池危险流体、计算格二选一各跑一次
 
-## 接口缺口（本卡之后仍存在的）
+## 收尾与后续
 
-- 核心材料仍不能通过 `forms()` 请求未开启的形态，也不能复用内置方块前缀（石墨板 `casingMachine`）。GT6CE 也没有 Sodium/PotassiumAluminate 的液体形态，对应两行 HeatMixer 仍在缺口里。
-- 大型压缩气罐的阀门如果做成结构墙零件，仍没有接收方入口；当前只能放在控制器面。
-- 配方机的结构端口只转发主能量类型，不转发 `auxiliaryEnergy`；托卡马克的 LU 只能从控制器面进。
-- 没有爆炸入口；液体电池的酸/魔/高温只能拒收和清空。
-- GT6CE 没有公开 `powerconducting`，用 `plasma` 近似。
-- `CellMatch.oneOf` 不接受嵌套组；需要「多选里再套多选」时仍要拆格。
-- `LayoutRepeat` 仍以 1024 份和世界高度为上限，超过世界高度的结构表达不了。
+2026-10-25（WP7）：代码与注册范围收尾，移动到 closed。上面两项玩法勾选仍保持未完成，已收录 [未验收清单](../../unverified-gameplay.md)。当前接口缺口、材料替代和后续 WP4/WP6 修正统一见 [卡 05](../prep/05-api-gaps.md)，本卡前文是 2026-10-23 的实施记录。
 
 ## 日志
 

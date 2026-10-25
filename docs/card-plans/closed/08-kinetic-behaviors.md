@@ -1,5 +1,7 @@
 # 08 虚空漏斗、矿机、水车、手摇和飞轮
 
+> 当前更正（2026-10-25，WP6/WP7）：以下日志描述当时实现。飞轮前缀和公开 mass/toolQuality/toolSpeed 已可用，飞轮箱与 RU 变压电池已恢复容量，按完整注册 id/前缀识别物品；完整转速、损毁和结构外送边界见 [唯一账本](../prep/05-api-gaps.md)。
+
 - 状态：closed
 - 依赖：07
 - 文件范围：`Gt6KtfruVoidHopper.java`、`Gt6KtfruMiner.java`、`Gt6KtfruWaterMill.java`、`Gt6KtfruManualMotor.java`、`Gt6KtfruFlywheel.java`，`Gt6KtfruMachines.java` 里对应的 `BehaviorMachine`，方块状态、模型和语言

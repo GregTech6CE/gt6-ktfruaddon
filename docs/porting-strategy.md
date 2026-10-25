@@ -2,7 +2,7 @@
 
 落地仓库就是本仓库（AGPL-3.0-only，NeoForge 1.21.1，模组 id `gt6ktfruaddon`）。上游阅读副本在仓库根的 `kTFRUAddon/`，已写入 `.gitignore`。那份检出的分支名叫 `1.7.10`，因为 [kuzuanpa/kTFRUAddon](https://github.com/kuzuanpa/kTFRUAddon) 的默认分支就叫这个名字。本仓库的分支仍是 `main`。
 
-计划卡先不开工。`docs/card-plans/` 里的 01–05 对着的是 CrucibleCraft 钉住的 `75cebb71`。`kTFRUAddon/` 比那个提交新 46 个提交，停在 `6404ab6979de9fce832ce0c41171000decf00e69`（2026-10-07，rename pure dusts; unify burn&fuel output to exhaust gas）。材料名、纯尘前缀和燃料排气都可能已经变了。表面清单刷新之前，卡 01 的验收保持未勾。
+卡 01–22 已关闭，卡 23 的代码补齐也已收尾。当前上游数据基线为 `6404ab6979de9fce832ce0c41171000decf00e69`；历史卡保留当时记录，未完成的玩法检查见 [未验收清单](unverified-gameplay.md)。
 
 ## 三份源各自的职责
 
@@ -10,8 +10,8 @@
 | --- | --- |
 | `kTFRUAddon/`，分支 `1.7.10`，提交 `6404ab69` | 行为与数据的阅读权威。AGPL-3.0。不进本仓库。上游 `dev` 停在 2026-02-13 的 `3e5b60ec`，比 `1.7.10` 旧，不跟。 |
 | 本仓库 `main` | 附属本体。计划卡、语言、配方声明、改编后的代码都写在这里。编译只用 GT6CE 附属 SDK。 |
-| `D:\Baobao\projects\dev\java\cruciblecraft-template-1.21.1` | 分档、证据层、关卡口径的参考。它的表面清单是旧对照，而且 CrucibleCraft 自己不收这些机器。 |
-| `D:\Baobao\projects\dev\java\GregTech6CommunityEdition` | 接口形状的本地参考。附属编译对着 `libs/gt6ce/build-commit.txt` 里的 `9c67ceaa405ab5675306e074be2ae505c31701ab`（`addon/kubejs`，模组版本 0.0.0，API 0）。0.8.0 的配方机器构建器没有这些 API 0 入口。 |
+| CrucibleCraft 参考文档（非构建输入） | 分档、证据层、关卡口径的参考。它的表面清单是旧对照，而且 CrucibleCraft 自己不收这些机器。 |
+| `.gt6ce-src/`（构建脚本管理） | 接口形状的本地参考。附属编译对着 `libs/gt6ce/build-commit.txt` 里的 `1d1f69fbb267ad31548b1fcb1ec1168435b67bf3`（固定源码提交，模组版本 0.0.0，API 0）。0.8.0 的配方机器构建器没有这些 API 0 入口。 |
 
 上游检出有 412 个 Java 文件。主体在 `tile`（148）和 `api`（119），配方在 `recipe`（24）。`kTFRUAddon/进度.csv` 是上游作者自己的研究树进度，不拿来当移植队列。
 
@@ -32,7 +32,7 @@
 | C | 运行时绑 TFC、Advanced Rocketry、Botania，或整合包脚手架（`EnvironmentHelper` 那类） | 留在 1.7.10 检出里 |
 | D | 主体是 A，个别配方点到 `MD.AE` 或 IC2 冷却液别名 | 机器进候选，那几条配方单独标出 |
 
-`75cebb71` 之后新出现的系统先全部标成待分档，默认留在缺口账：研究锁与研究配方、无线研究 / 计算 / 能量命令、微重力房间、镜金与量子金、激光聚变、时空 / 量子 / 生物计算机、AI 研究员。刷新表面时再逐个看 import。
+研究锁、无线计算/能量、微重力房间、量子中继、激光聚变和 AI 中心已在卡 15–23 按附属自有子系统落地。研究 UI 与 C 档边界见唯一账本。
 
 阅读入口都相对于 `kTFRUAddon/`：
 
@@ -63,17 +63,11 @@
 - `StructureLayout` 的格子填已经存在的 GT 零件名、`air`、方块 id、方块标签，或 `layoutParts()` 返回的外壳、能量零件和功能零件。普通方块和标签的角色必须是 `CASING`。角色用 `StructureRole`。功能零件用 `slots`、`tick`、`use`、`field`，条件输入是 `energyInput` 加 `condition`。
 - `fluidPipes()` 和 `itemPipes()` 各加一行材料，GT 按内置档位展开。`compressedGasTanks()` 声明压缩气罐，`pushCompressedGas` 只灌相邻的这种罐。
 
-配方行在 `GregTechAddon.onRecipesReady` 里用 `AddonRecipes` 添加。编程电路用 `AddonItems.selectorTag`，不消耗的物品输入写下标到 `keptInputs`，数量仍至少是 1。缺一格就保持缺口，不用原版零件或其他材料顶上。
+配方行在 `GregTechAddon.onRecipesReady` 里用 `AddonRecipes` 添加。编程电路用 `AddonItems.selectorTag`，不消耗的物品输入写下标到 `keptInputs`，数量仍至少是 1。新适配原则上缺一格就留缺口。现有 Naquadria 外壳、Paper/Glass 和涡轮 CNC 的替代属于既存例外，逐项列在唯一账本，不能据此扩展新替代。
 
-## 公开接口表达不了的部分
+## 当前接口边界
 
-这些留在卡 05，有公开入口之后另开实施卡。缺陷检测器的互斥输出和输出储罐搜索、大型气罐阀门已经落地。
-
-- 功能零件的流体储罐和自己的 GUI，以及从任意物品反查材料组成。
-- 写在 GT 零件上的外观号。
-- 研究树、计算机集群、房间、加速器、戴森球界面。
-- 修改 GT 本体机器的方块实体。数据包只能改已经存在的配方图上的静态行。
-- TFC 压板、TFC 配方、TFC 受热坩埚接口。
+统一见 [卡 05](card-plans/prep/05-api-gaps.md)。功能零件流体储罐/GUI、材料反查和外观号均已有入口；研究与计算业务由附属实现。
 
 ## 交付口径
 
@@ -85,7 +79,7 @@
 - 临时合成必须写在卡上。正式产线跟源配方的输入输出，D 档那几条单独标。
 - 人跑客户端发现的问题另开卡。
 
-## 开工顺序
+## 初期实施顺序（历史，已由卡 01–23 执行）
 
 1. 刷新表面。对 `75cebb71..6404ab69` 看材料表、`prefixList`、`tileEntityInit0` 的新增注册、燃料排气。更新 `docs/ktfruaddon-gt6-surface.md` 的对照提交。新系统先分档，再决定进不进现有卡。
 2. 材料卡。范围仍是粉、液体、气体，外加 `forms()` 能要到的已有前缀。名字、显示名、颜色、化学式、开尔文温度跟源表。摄氏条目沿用源码 `registerC` 的 +273。源表把乙烷标成液体，声明照这个标。
@@ -99,4 +93,4 @@
 
 日常对照时让 `kTFRUAddon/` 停在 `6404ab69`。需要更新时在那个目录里拉取 `1.7.10`，并先改本页的提交号和「待分档」列表，然后才改计划卡。不要把那个目录 `git add` 进本仓库。
 
-注意：`kTFRUAddon/` 在 `.gitignore` 里，默认的 `rg` / `Grep` / `Glob` 从仓库根搜会自动跳过它。搜 `kTFRUAddon` 时必须直接把搜索路径指到 `D:\Baobao\projects\dev\java\gt6-ktfruaddon\kTFRUAddon`（或使用 `--no-ignore` / 临时去掉 `.gitignore` 里的忽略项再搜），不要去工作区外找别的检出。
+注意：`kTFRUAddon/` 在 `.gitignore` 里，默认的 `rg` / `Grep` / `Glob` 从仓库根搜会自动跳过它。搜 `kTFRUAddon` 时必须直接把搜索路径指到 `kTFRUAddon/`（或使用 `--no-ignore` / 临时去掉 `.gitignore` 里的忽略项再搜），不要去工作区外找别的检出。

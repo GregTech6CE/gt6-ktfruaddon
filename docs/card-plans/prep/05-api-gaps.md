@@ -1,6 +1,6 @@
 # 05 表面里接口接不住的部分
 
-- 状态：prep
+- 状态：持续维护的唯一缺口账本（不占实施卡位）
 - 依赖：无
 - 文件范围：这张卡。不改机器，除非某条被接口打开后另开实施卡。
 - 平台：NeoForge 1.21.1
@@ -9,7 +9,7 @@
 
 这些条目在表面清单的 A/B 档里，所以不是 C 档那种「不要移植」。C 档本身不在任何实施卡里。
 
-只记 GT6CE 附属接口里没有的东西。源码现在对照 `addon/remaining-api-gaps` 的 `1d1f69fbb`（2026-10-23）。这个提交补上了前一版 `9c67ceaa4` 之后剩下的接口缺口。附属现在编译用的是 `libs/gt6ce/gt6ce-addon-sdk-1.21.1-neoforge-0.0.0.jar`，已在 2026-10-23 按 `1d1f69fbb` 重打并用 `javap` 和附属 `compileJava` 核对过；旧包留在同目录的 `gt6ce-addon-sdk-1.21.1-neoforge-0.0.0-6eba3e1ed.jar`。运行用的 `gt6ce-1.21.1-neoforge.jar` 也已在 2026-10-23 按 `1d1f69fbb` 重打，sha256 `b82e423c0c47911b6c6b2233cd7e38828692e4e20c4ce538f54b7b9b2a263e93`，`build-commit.txt` 和 `.sha256` 已同步。下面「已有入口」记的是源码和这份新 SDK 包都有的状态。API 仍是 0，模组版本仍是 0.0.0。每一条都写清来源卡、源名字、试过的入口、缺的是什么，以及当前机器怎么落的。
+本页统一记录接口缺口、适配差异、兼容假设与未验收事项；`GAP.md` 只作入口。固定基线：kTFRUAddon `6404ab69`，GT6CE `1d1f69fbb267ad31548b1fcb1ec1168435b67bf3`（API 0，模组 0.0.0）。构建输入与校验方式见 [构建指南](../../building.md) 和 [生成指南](../../regenerating.md)。以下历史日志保留当时事实；当前结论以接口缺口及 WP4/WP6/WP7 小节为准。
 
 ## 已有入口，不列缺口
 
@@ -18,7 +18,7 @@
 - 探伤仪。`RecipeMachine` 有 `searchOutputTanks(true)` 和 `exclusiveOutputs(true)`，对应输出储罐回退和两项物品输出二选一。卡 02。
 - 编程电路、保留物品和输出概率。编程电路是 `AddonItems.selectorTag(0..24)`。不消耗的物品输入按数量 1 写进 `Line.keptInputs`。物品输出概率在 `Line.outputChances`。流体的版本见下面「配方行没有 0 mB 的流体输入」。卡 06、09。
 - 单方块压缩气罐和管子。气罐是 `compressedGasTanks()`，灌气是 `pushCompressedGas`。管子是 `fluidPipes()` 和 `itemPipes()`。卡 07。
-- 研究、无线计算、无线能量、微重力房间、激光脉冲和量子中继。科技树、算力网、房间包围盒、无线配对坐标、激光脉冲池和量子中继配对都存在附属自己的方块状态或附属静态表里，GT 不负责保存或转发。坩埚温度和熔融物走下面的 `CrucibleContent` / `CrucibleMold` 入口。卡 15–21。
+- 研究、无线计算、无线能量、微重力房间、激光脉冲和量子中继。科技树、算力网、房间包围盒、无线配对坐标、激光脉冲池和量子中继配对都存在附属自己的方块状态或附属临时登记和持久化方块状态里；临时登记已由 NeoForge 生命周期事件清理，GT 不负责业务转发。坩埚温度和熔融物走下面的 `CrucibleContent` / `CrucibleMold` 入口。卡 15–21。
 - 异种能量转换与双缓存。行为机主 `energy` 和 `auxiliaryEnergy` 都能写 `range(min, max)` / `anyPacket()`；需要收另一种能量类型（如量子中继收 EU 发 QU）时，用 `auxiliaryEnergy` 声明第二种类型并和主缓存分在不同面。卡 14、20、21。
 - 纯发电行为机。`BehaviorMachine` 只写 `energyOutput`、不写 `energy` 就能建；`generate` 和 `emit` 用一份完整输出包作缓冲。研究方块、计算方块和两只计算零件不再需要凭空声明进电面。`0a910848b`。卡 08、09、15、16。
 - 行为机的物品和流体面。`io(MachineIo)` 对行为机开放，没点名的通道是关的，不是六面缺省；`canInsert` 和 `canFill` 有带 `MachineFace` 的重载，管子先看面再问行为。自动面和 `IoTarget` 仍拒绝。`0278fc5b8`。卡 07、09、14。
@@ -27,7 +27,7 @@
 - 输出包下限与符号。`EnergyOutput.minSize` 缺省 1，`allowNegative()` 只给 KU 和 RU，`requireEmit` 按绝对值检查。燃料机用 `FuelGenerator.Builder.amperes(n)`，1–64。`77592cf59`。卡 08、13。
 - 双向能量零件和内部通道。`LayoutPart` 同时写 `energyOutput` 和 `energyInput` 时，`energyInput` 是不带 `faces`、不带 `condition` 的控制器→零件内部通道；控制器用 `pushToPart(part, type, size, amount)` 或 `emit(part, size, amount)` 充能，零件在自己的 tick 从 `energyOutput.faces()` 送出。`37dfaa566`。卡 10、14。
 - 结构外送能。`MachineBehaviorContext.emitTo(target, side, size, amount)` 把声明的输出类型和包上限送到任意已加载坐标的方块实体，不占用声明的面；目标不保留引用。`EnergyOutput.Builder.remote()` 允许输出不写 `faces`，这种输出不会自己发到相邻方块，只走 `emitTo`。`9c67ceaa4`。卡 12、13、17。
-- 布局的重复层和方块谓词。`LayoutRepeat` 支持向上/向下和 `max=-1` 自动重复（上限 64 份）；`CellMatch.anyFluid()`、`anyFluid(fluidTag)`、`anyOpaque()`、`block` 和 `tag` 都能写。数据包也能写 `repeats`。`37dfaa566`。卡 12、13、14。
+- 布局的重复层和方块谓词。`LayoutRepeat` 支持向上/向下和 `max=-1` 自动重复（当前上限 1024 份，见下文）；`CellMatch.anyFluid()`、`anyFluid(fluidTag)`、`anyOpaque()`、`block` 和 `tag` 都能写。数据包也能写 `repeats`。`37dfaa566`。卡 12、13、14。
 - GT 零件外观号。`LayoutCell.withDesign(int)`、`LayoutRepeat.Builder.cell(..., design)`，数据包和 KubeJS 的格子也能写 `design`；成形时写进 `gt.design`，拆开时还原。`654e797f6`。卡 04、12、13、14。
 - 材料统计与物品反查。`GregTechMaterials.Material` 有 `mass()`、`toolQuality()`、`toolSpeed()`、`toolDurability()`；`AddonItems.composition(ItemStack)` 按 GT 自己的物品数据反查前缀和材料单位，没有登记的物品仍是空。`e87273731`。卡 08、14、19。
 - 坩埚内容与浇铸。绑定零件用 `PartContext.crucible()` 读 `CrucibleContent`（材料、数量、温度），不取走；行为机实现 `MachineBehavior.getCrucibleMaterial` / `getCrucibleTemperature` / `getCrucibleContentAmount`，用 `fillMoldAtSide(context, mold, side, amount)` 把熔融物灌进 `CrucibleMold`。`fd5f38381`、`82694dacf`。卡 19。
@@ -123,3 +123,43 @@
 - 2026-10-23：复核新 SDK 后补入坩埚入口。绑定零件可读 `PartContext.crucible()` 的 `CrucibleContent`，行为机可实现 `getCrucibleMaterial` / `getCrucibleTemperature` / `getCrucibleContentAmount` 和 `fillMoldAtSide`（`fd5f38381`、`82694dacf`）。`GAP.md` 同步到 `9c67ceaa4` 并删掉已不成立的「零件没有流体储罐/GUI、读不到物品组成、外观号写不进去」等旧话。剩余缺口仍是上面十条，没有新增永久缺口。
 - 2026-10-23：GT6CE `1d1f69fbb` 关闭剩余接口缺口。SDK 和运行包切到该提交（运行包 sha256 `b82e423c0c47911b6c6b2233cd7e38828692e4e20c4ce538f54b7b9b2a263e93`）。卡 23 用上全部九类新入口：原零件名、`CellMatch.oneOf`、1024 份重复段、配方机 `auxiliaryEnergy`/`startupEnergy`、0 mB 流体催化剂、涡轮前缀条件与排除、酸/等离子/魔流体、行为机结构端口、`anyType()`。缺口缩到核心材料形态、结构墙上的压缩气体阀门、配方机结构端口不转发第二能量、没有爆炸入口、`powerconducting` 只能近似、多选不能嵌套、重复段仍以世界高度为上限。源配方重新生成到 652 行，剩余 46 次调用未落地。
 - 2026-10-23：非 C 档源配方补齐到 689 行。热熔融金属、重水、NaK、氯酸锂、润滑脂、MatterNeutral、机器物品映射、超 99 堆叠、头颅和涡轮 CNC 都落地。剩余 19 行 skip：9 C 档、4 行手写保留、2 行辅助方法定义、4 行 GT6CE 形态或流体缺口（石墨板、Naquadria 细导线、铝酸钠/铝酸钾液体）。服务端 `Done (16.693s)`。
+
+### 行为运行器的边界（WP4，2026-10-25）
+
+- **行为配方付款没有公开的材料等价匹配器。** 固定 SDK `1d1f69fbb` 的 `AddonRecipes.Map.find` 内部使用 `RecipeInputs.consume`，可以按材料等价和部分组件规则命中；SDK 没有公开相同的匹配或付款规划入口。附属的 `RecipeRunner` 使用公开的严格物品及组件匹配，支持分格付款、重复输入和 kept 输入。仅靠材料等价命中的输入可能停机，但不会先扣能量或扣掉部分材料。没有借用 GT6CE 内部类，也没有用材料名称或成分猜测等价。
+- **行为机没有内置的配方运行器与世界生命周期挂载点。** 本附属用一个公共运行器和 NeoForge 服务端事件管理临时登记；这不是新增 SDK 接口。
+- **`emitTo` 只查本维度。** 量子无线仍用受生命周期管理的跨维度收件箱；余量先预订再付费，未能存进接收器的能量留在收件箱。
+
+
+### WP6 复查与保留行为（2026-10-25）
+
+- **飞轮储能接口已够用，容量为 0 的旧说明失效。** 固定 SDK `1d1f69fbb` 的 `GregTechMaterials.Material` 已公开 `mass()`、`toolQuality()`、`toolSpeed()`；`AddonItems.composition` 返回 `flywheel` 前缀及材料，`MachineBehaviorContext.setCapacity` 可动态设置容量。附属用这些公开 API 恢复飞轮箱与 RU 变压电池容量，不调用内部类。公式来自 kTFRUAddon `6404ab69` 的 `item/items/itemFlywheel.java:33–39`、`tile/energy/storage/FlywheelBox.java:100–115` 与 `tile/multiblock/energy/storage/TransformBattery.java:196–198`。飞轮箱按最慢飞轮转速与机器上限计算，变压电池按每件独立容量累加；取出后的超额能量被清掉，空箱拒收。现有发包策略增加飞轮 RPM 上限，未声称完整还原上游转速曲线、超载损毁和结构能量零件外送；超载损毁仍受缺少公开爆炸入口限制，变压电池的结构外送仍未实现。六种与机器 id 冲突的材料仍在现有飞轮前缀排除表里，本次不迁移 id。
+- **材料疑点按固定上游保留（D9）。** `materialPreInit.java:49` 的 Propanediol 与 `:46` 的 Propanol 公式相同；`:147` 的 Butadiene 末尾确实写成 `CH2` 再加下标 2。附属逐字保留并在声明旁标注来源，未自行作化学更正。`:138–139` 的 EpoxyResin 明确请求 `INGOT_BASED`、粉、板和箔；附属 `.metal()` 是打开这些生成形态的 SDK 开关，不是另作物性判断。
+- **名称空格不是统一改写任务（D9）。** 138 个材料注册名/显示名直接匹配上游材料声明，包含 ZincOxide、Propanediol 等不拆词的名称。其余来自流体的声明中，有 13 个现有显示名做过可读化：AllylAlcohol、AllylAcetate、MethacrylicAcid、GlacialAceticAcid、InitalBottomOil、MoltenTeflon、MoltenBakelite、MoltenPolycarbonate、ImpureTitaniumAcylate、CrudeTitaniumAcylate、PurifyTitaniumAcylate、DistilledPlatinumGroupSolutionDown、Graphite_Methylpyrrolidone。这些差异包括拆词/修正拼写、Molten 三项补状态、Distilled…Down 修正上游误写 Up。此次核对不再改变显示名、注册 id 或材料形态。
+- **虚空漏斗木头 64、青铜 32 是上游数值（D9）。** kTFRUAddon `tileEntityInit0` 中源 id 21010–21013 明确是 64、32、128、512；保持不单调，并在声明表/行为表旁标注来源。
+- **命名约定仍是兼容边界（S5）。** `core.Gt6ce` 集中记录 `gt6ce` 命名空间、布局零件名、`fluid_item_`、`builder_wand`、`fluid_spring_` 等假设；它们仍不是 SDK 的专门查询接口。集中管理方便上游命名变化时定位，不代表这些耦合已消失。
+
+### WP7 补充：适配差异与兼容假设（2026-10-25）
+
+| 项目/来源 | 想用的公开入口与限制 | 当前落法与影响 |
+| --- | --- | --- |
+| S5 建造杖，event/StructureBuild | 大型配方控制器没有对应建造杖入口 | 附属监听右键，按 `core.Gt6ce.builderWand` 路径约定识别；命名变化会失效 |
+| S5 布局零件、流体显示物品、OilMiner 泉 | 缺少专门的注册名/泉流体查询 | `core.Gt6ce` 集中 `gt6ce:<part>`、`fluid_item_`、`fluid_spring_` 假设；不是稳定查询契约 |
+| S5 材料翻译 | 固定源码 AddonMaterials 把 displayName 交给材料声明，GTMaterial.getTranslationKey() 仍生成 material.gt6ce.*；单个显示名不能表达多语言 | 手工维护 `assets/gt6ce/lang` 的材料键；依赖 GT6CE 翻译键约定，跨命名空间资源仍是兼容边界 |
+| S5 行为状态序列化 | 公开状态是 String/Int/Long，缺少结构化链接表入口 | `PosCodec` 与各领域编码保存链接，临时登记由生命周期清理；没有调用内部类 |
+| S5 行为机配方运行 | 没有内置运行器/公开等价付款规划器 | 公共 RecipeRunner；严格匹配的边界见 WP4 小节 |
+| S5 HeatMachines 假输入 | 历史上行为机被要求声明进电；当前 SDK 已允许纯输出机 | 部分热机仍有 1 HU 声明占位，不能当成源玩法要求；属于待复查适配，不称永久接口缺口 |
+| S6 Naquadria 外壳 | 缺少对应形态 | mappings.json 两条替代：普通壳→Trinaquadalloy，双壳→Tungstensteel；改变材料进度 |
+| S6 Paper/Glass 板及黑玻璃板 | GT6CE 缺少源形态 | mappings.json 三条原版替代：纸、玻璃、黑色染色玻璃板；改变材料来源 |
+| S6 涡轮 CNC | 金属 bouleGt 形态缺失 | 提取器按同材料锭代替，11 个材料；数量/时长仍按生成器规则，输入形态不同 |
+| S6 飞轮 | 公开材料属性与前缀反查已足够 | WP6 已恢复容量；完整转速曲线、损毁和变压电池结构外送仍有差异，详见 WP6 |
+
+上列替代是既存适配，违反早期“缺一格就留缺口”的严格口径。此次只如实记账，不新增替代或改变配方；是否撤销须另作玩法决定。方块别名只是同一内容的 id 对应，与材料替代分开看。
+
+### 玩家可见边界与未验收
+
+- [未验收清单](../../unverified-gameplay.md) 集中记录 closed 卡仍未完成的客户端、配方、传能和交互验收。
+- [中文待核对清单](../../untranslated-zh-cn.md) 列出英文/中文相同及缺中文键；不把同文一律认定为漏译。
+- [生存配方产物清单](../../survival-availability.md) 列出每个方块的直接产物命中；不保证整条生存链可达。
+- 130 个物品模型仍为纸占位：研究数据、电极、无线计算节点、晶圆、激光靶等。
+- 燃料多方块没有结构提示挂载入口；研究小游戏/任务树 UI、沿 GT 电线判连通仍不做。C 档不在本仓库范围。

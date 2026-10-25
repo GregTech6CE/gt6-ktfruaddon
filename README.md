@@ -4,7 +4,12 @@
 
 仓库名和显示名是 gt6-ktfruaddon，游戏里的模组 id 是 `gt6ktfruaddon`（模组 id 不能带连字符）。上游检出在仓库根的 `kTFRUAddon/`，git 忽略，不进版本库，生成脚本从那里读数据。
 
-可移植范围在 [`docs/ktfruaddon-gt6-surface.md`](docs/ktfruaddon-gt6-surface.md)，从 CrucibleCraft 拷来。阶段卡在 [`docs/card-plans/README.md`](docs/card-plans/README.md)。表面材料卡已关。单方块配方机器在卡 02，流体燃料机在卡 03。占位氢燃烧器已撤。
+当前内容已覆盖卡 01–23 的代码落地；689 行源配方、504 个自有物品及多种配方机、行为机和多方块。卡片关闭表示代码范围收尾，游戏内验收单独跟踪。
+
+- [构建与运行](docs/building.md)、[架构与新增机器](docs/adding-a-machine.md)、[重新生成](docs/regenerating.md)
+- [范围清单](docs/ktfruaddon-gt6-surface.md)、[阶段卡](docs/card-plans/README.md)、[唯一缺口账本](docs/card-plans/prep/05-api-gaps.md)
+- [未验收玩法](docs/unverified-gameplay.md)、[生存配方产物](docs/survival-availability.md)、[中文待核对](docs/untranslated-zh-cn.md)
+- 本地整改计划：[quality-audit.md](docs/quality-audit.md)（按维护决定不入库，公开克隆中此链接不可用；公共现状以以上指南与账本为准）。
 
 ## 开发
 
@@ -18,7 +23,7 @@
 .\gradlew.bat runClient
 ```
 
-脚本只读取源仓库：默认用旁边的 `..\GregTech6`（要包含固定提交），没有就从 GitHub 克隆；构建发生在 git 忽略的 `.gt6ce-src` 里，不会动你正在用的 GregTech6 检出。JDK 17 和 21 会在 `JAVA17_HOME`、`JAVA21_HOME`、常见安装目录和 `~/.gradle/jdks` 里找，缺 17 时加 `-AutoDownloadJdk` 让 Gradle 下载；`-DryRun` 只打印会用到什么。`libs/gt6ce/build-commit.txt` 钉住的是 GT6CE `main` 上的 `1d1f69fbb`（API 0，模组版本 0.0.0），CI 和脚本按同一个提交构建。`.sha256` 记的是一次本地构建的运行包，换机器重打不一定逐字节相同，CI 只警告；换了 `build-commit.txt` 之后用 `-UpdateChecksum` 更新它。这一版删掉了旧的 `MachineDeclaration` 一族，机器从 `addonMachines()` 返回。`addon/behavior-energy` 上的 `0f77a888` 给燃料机加了液体马达提示，并去掉一部分 “(no auto)” 面标签；这一版运行包没有那次改动。
+脚本只读取源仓库：默认用旁边的 `..\GregTech6`（要包含固定提交），没有就从 GitHub 克隆；构建发生在 git 忽略的 `.gt6ce-src` 里，不会动你正在用的 GregTech6 检出。JDK 17 和 21 会在 `JAVA17_HOME`、`JAVA21_HOME`、常见安装目录和 `~/.gradle/jdks` 里找，缺 17 时加 `-AutoDownloadJdk` 让 Gradle 下载；`-DryRun` 只打印会用到什么。`libs/gt6ce/build-commit.txt` 钉住的是 GT6CE `main` 上的 `1d1f69fbb`（API 0，模组版本 0.0.0），CI 和脚本按同一个提交构建。`.sha256` 记的是一次本地构建的运行包，换机器重打不一定逐字节相同，CI 只警告；换了 `build-commit.txt` 之后用 `-UpdateChecksum` 更新它。这一版删掉了旧的 `MachineDeclaration` 一族，机器从 `addonMachines()` 返回。
 
 ## 许可
 

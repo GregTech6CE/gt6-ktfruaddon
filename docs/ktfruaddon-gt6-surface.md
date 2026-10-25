@@ -3,8 +3,7 @@
 从 CrucibleCraft `docs/current/ktfruaddon-gt6-surface.md` 拷来。
 
 对照 [kuzuanpa/kTFRUAddon](https://github.com/kuzuanpa/kTFRUAddon)
-`75cebb71abb9b5ac5ceb447e3324bd161b6fa7ab`。Java/tick 权威仍是钉住的
-GregTech 6，见 CrucibleCraft `docs/current/code-tree.md` 的「参考源」。这份清单回答：addon 里哪些东西是 **GregTech 6 风格**、
+`6404ab6979de9fce832ce0c41171000decf00e69`。本仓库运行语义以固定 GT6CE `1d1f69fbb` 的公开 SDK 和附属实现为准；上游是行为与数据的对照来源。这份清单回答：addon 里哪些东西是 **GregTech 6 风格**、
 运行时 **不绑 Advanced Rocketry / TerraFirmaCraft**（以及同类整合模组）。
 
 这不是 unique-active，也不是移植队列。增减公共 16 前缀、开形态、写配方卡，
@@ -24,7 +23,7 @@ AE2 / IC2 / Galacticraft / BuildCraft 等）。**编译依赖 ≠ 运行时逻�
 | 档 | 含义 | 进不进本页「GT6 表面」 |
 | --- | --- | --- |
 | A | 只碰 `gregapi` / `gregtech` / 原版 / Forge / kTFRUAddon 自己 | 进 |
-| B | 多方块还 import LibVulpes `ItemProjector` / `BlockMeta`（TFRU 全息投影仪） | 进（全息可换成 CC 结构检查；机器 tick 仍是 GT） |
+| B | 多方块还 import LibVulpes `ItemProjector` / `BlockMeta`（TFRU 全息投影仪） | 进（本仓库用 GT6CE 结构布局代替全息；机器 tick 仍是 GT） |
 | C | 运行时 import 或硬门 TFC / AR 小行星 / Botania rune / AE 电路 | **不进** |
 | D | 配方里偶发 `MD.AE` / `FL.Coolant_IC2` / TFRU 金砖 generify | 主体进，那几条配方单独标 |
 
@@ -47,7 +46,7 @@ vanilla GT6 已有的 1300 段柴油。
 
 | ID | 内容 | 说明 |
 | --- | --- | --- |
-| 10000–10006 | Small Gas Turbine ×7 | `MultiTileEntityGasMotor`（4 行 MotorLiquid）；`FM.Gas` → RU；效率 3500。材料：青铜 / 钢 / 因瓦 / 钛 / 钨钢 / **铱** / 铬。**不是** GT6 大型燃气涡轮 17231–17234。kTFRUAddon 是 AGPL，CC 不移植这 7 台单方块；曾经落地的注册已移除。 |
+| 10000–10006 | Small Gas Turbine ×7 | `MultiTileEntityGasMotor`（4 行 MotorLiquid）；`FM.Gas` → RU；效率 3500。材料：青铜 / 钢 / 因瓦 / 钛 / 钨钢 / **铱** / 铬。**不是** GT6 大型燃气涡轮 17231–17234。本仓库已在卡 03 注册这 7 台单方块；CrucibleCraft 的不移植结论不适用于本仓库。 |
 | 10010–10011 | Gas Battery | `FuelBattery` + `recipeMaps.FuelBattery`；EU；要质子交换膜等 addon 零件。 |
 | 10021–10027 | Manual Motor | 手摇 RU / KU。 |
 | 10050–10054 | Compressed Gas Drum | 钢 / 不锈钢 / 下界合金 / 钨钢为 GT 材料。Manasteel 那档用 `MT.Manasteel`（GT 表里的植物魔法材料名，无 Botania 时可能空）。 |
@@ -137,6 +136,22 @@ vanilla GT6 已有大型蒸汽/燃气涡轮。kTFRUAddon 再加更高材料壳�
 
 研究树 **解锁表** 会点到 AR 物品，见划掉节。控制器方块本身是 GT 多方块。
 
+### 6404ab69 的后期系统与本仓库落点
+
+旧版清单只列“研究桌/计算节点”，不能据此认为以下系统仍待分档。对照固定上游注册与卡 15–23，当前归类如下；源业务中指向外部模组的研究任务与 GUI 不随控制器一起搬入。
+
+| 源内容 | 档与范围 | 当前落点 |
+| --- | --- | --- |
+| 研究监视器、显微镜、研究组装机/反应釜（9818、30042/30043、30077/30078） | 控制器 A/B；含外部物品的任务逐条排除 | research；卡 15、21，自有解锁表 |
+| 计算集群、无线计算、时空/量子/生物计算节点（30058–30070、32010–32043） | A/B；GT 电线寻路和外部计算物品不搬 | network；卡 16、20、21，自有拓扑 |
+| 微重力房间（30102/30103/30105） | A/B；局部业务索引，未声称改世界重力规则 | research；卡 21 |
+| AI 中心（30106–30108） | A/B；算力分配，研究小游戏 UI 不搬 | research；卡 18、21 |
+| 激光聚变（30071/30072） | A/B；脉冲池与冷却由附属实现 | fusion；卡 18、21 |
+| 量子中继与量子枢纽（30074、30115） | A/B；自有配对/收件箱 | quantum、network；卡 17、21、23 |
+| 镜金/量子金及对应产线 | A；已解析配方，未解析行单列账本 | 材料与生成配方；卡 22、23 |
+
+当前内容边界与原行为差异见 [唯一账本](card-plans/prep/05-api-gaps.md)，玩法状态见 [未验收清单](unverified-gameplay.md)。
+
 ### 材料、前缀、配方图
 
 `api/material/materialPreInit.java`：铬/铝中间体、醇、醛、油渣、环氧等
@@ -196,10 +211,10 @@ Chemistry、Circuits、ComputerBuilding、OilProcessing、Plastic、CompactItem
 | 东西 | 身份 |
 | --- | --- |
 | `FM.Gas` / `FM.Engine` 燃料行、MotorLiquid 排气丢第二槽 | GT6 源行为（SOURCE_BACKED） |
-| 小型燃气涡轮 7 档、飞轮箱、半导体线、addon 蒸馏塔、扩展柴油/涡轮壳 | kTFRUAddon DESIGN_POLICY。许可是 AGPL，CC 不移植 |
-| GT6 大型燃气涡轮 17231–17234 | vanilla。燃料图 `cruciblecraft:fuels_gas_turbine` 留给这台多方块 |
+| 小型燃气涡轮 7 档、飞轮箱、半导体线、addon 蒸馏塔、扩展柴油/涡轮壳 | kTFRUAddon 自有内容；本仓库按 AGPL 在 GT6CE 适配 |
+| GT6 大型燃气涡轮 17231–17234 | GT6 本体内容，与附属小型涡轮分开 |
 
-CC 不收录 kTFRUAddon 机器。本页其余行只是清单，不是移植队列。
+本页是来源范围清单；本仓库实施状态以阶段卡和唯一账本为准。
 
 ## 源码入口
 

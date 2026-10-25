@@ -94,3 +94,7 @@ CI 每次跑检查器测试和自动模式；通常缺原版 GT6 与上游检出
 | `generate_structure_assets.py`，然后 `port_block_textures.py` | 按这个顺序运行后一致。当时单独运行 `generate_structure_assets.py` 会改动 94 个文件（WP5 已修正）：47 个 blockstate 和 47 个物品模型退回通用模板 |
 | `gen_materials.py` | 不一致。已提交的 `Materials.java` 在生成之后被手改过（`prefixes()`、`.polymer()`、Bittern 液体、部分 `.gas()` 和 `.liquid()` 标志），`assets/gt6ce/lang/` 里也多了手加的条目。当时要加 `--force` 才会运行；WP5 已移除覆盖能力 |
 | `extract_machine_recipes.py` | 与已提交的 `SourceRecipes.java` 逐字节一致（解析 689 行）。需要原版 GregTech 6 源码副本，和 `build-gt6ce.ps1` 打出的运行包 jar |
+
+## 文档清单
+
+先运行 `gradlew documentationInventory` 从登记表导出全部方块（需要 SDK），再用 `python tools/documentation_reports.py` 更新中文待核对与方块直接配方产物清单；`--check` 比较已提交报告。无需上游输入，统计边界见 [生成指南](../docs/regenerating.md)。
