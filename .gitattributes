@@ -3,3 +3,7 @@ src/main/java/com/lombinaxmasson/gt6ktfruaddon/generated/*.java text eol=lf
 src/main/resources/**/*.json text eol=lf
 src/main/resources/**/*.mcmeta text eol=lf
 tools/own_items.json text eol=lf
+
+# Reports are byte-compared by documentation_reports.py.
+docs/untranslated-zh-cn.md text eol=lf
+docs/survival-availability.md text eol=lf

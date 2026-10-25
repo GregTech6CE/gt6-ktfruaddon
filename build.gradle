@@ -159,3 +159,13 @@ idea {
         downloadJavadoc = true
     }
 }
+
+// Use the registry itself, including GT6CE-derived blocks, for WP7 documentation.
+tasks.register('documentationInventory', JavaExec) {
+    group = 'documentation'
+    description = 'Exports declared block ids for tools/documentation_reports.py.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.lombinaxmasson.gt6ktfruaddon.DocumentationInventory'
+    args layout.buildDirectory.file('reports/documentation-block-ids.txt').get().asFile.absolutePath
+}
