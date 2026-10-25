@@ -21,7 +21,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 /**
  * Gas battery. Poles stay in the slots. The electrolyte tank has to hold its amount and is not drained.
  * Nickel with CaTiO3 requires yttrium-zirconium oxide. Carbon with platinum requires sulfuric acid.
- * Each recipe row names that fluid as a 0 mB presence-only catalyst.
+ * Each recipe row lists that fluid as its last fluid input, 1 mB, and marks it kept: the tank is checked
+ * and the recipe does not use it up.
  * Toggle 0 stops processing. Toggle 1 opens the electrolyte tank and closes the fuel tanks.
  */
 public final class FuelBattery implements MachineBehavior {
@@ -107,7 +108,7 @@ public final class FuelBattery implements MachineBehavior {
         alignFuels(context, line);
         boolean crafted = false;
         for (int pass = 0; pass < 16 && context.energy() < rate * 2; pass++) {
-            if (!outputsFit(context, line) || !consumeFluids(context, line.fluidInputs())) break;
+            if (!outputsFit(context, line) || !consumeFluids(context, line)) break;
             fillOutputs(context, line.fluidOutputs());
             long gain = Math.abs(line.euPerTick()) * Math.max(1, line.duration());
             context.generate(gain);
@@ -164,20 +165,34 @@ public final class FuelBattery implements MachineBehavior {
         return here.getAmount() + stack.getAmount() <= context.capacity(tank);
     }
 
-    private static boolean consumeFluids(MachineBehaviorContext context, FluidStack[] inputs) {
+    private static boolean consumeFluids(MachineBehaviorContext context, AddonRecipes.Line line) {
+        FluidStack[] inputs = line.fluidInputs();
         if (inputs == null) return true;
-        for (FluidStack need : inputs) {
-            if (need == null || need.isEmpty() || need.getAmount() <= 0) continue;
+        for (int index = 0; index < inputs.length; index++) {
+            if (skipped(line, index)) continue;
+            FluidStack need = inputs[index];
             int tank = tankHolding(context, need);
             if (tank < 0) return false;
             FluidStack preview = context.drain(tank, need.getAmount(), true);
             if (preview.getAmount() < need.getAmount()) return false;
         }
-        for (FluidStack need : inputs) {
-            if (need == null || need.isEmpty() || need.getAmount() <= 0) continue;
+        for (int index = 0; index < inputs.length; index++) {
+            if (skipped(line, index)) continue;
+            FluidStack need = inputs[index];
             context.drain(tankHolding(context, need), need.getAmount(), false);
         }
         return true;
+    }
+
+    /**
+     * An input with nothing to take, or a kept one, is not paid. The electrolyte is kept: it sits in
+     * its own tank, which {@code ready} has checked, and the recipe does not use it up.
+     */
+    private static boolean skipped(AddonRecipes.Line line, int index) {
+        FluidStack need = line.fluidInputs()[index];
+        if (need == null || need.isEmpty() || need.getAmount() <= 0) return true;
+        for (int kept : line.keptFluidInputs()) if (kept == index) return true;
+        return false;
     }
 
     private static int tankHolding(MachineBehaviorContext context, FluidStack need) {
