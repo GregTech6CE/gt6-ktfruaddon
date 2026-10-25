@@ -2,6 +2,7 @@ package com.lombinaxmasson.gt6ktfruaddon.heat;
 
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.Gt6ce;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.minecraft.core.BlockPos;
@@ -74,14 +75,12 @@ public final class OilMiner extends BehaviorBase {
         if (!context.level().isLoaded(pos)) return "";
         BlockState state = context.level().getBlockState(pos);
         ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        if (id == null || !"gt6ce".equals(id.getNamespace())) return "";
-        String path = id.getPath();
-        return path.startsWith("fluid_spring_") ? path : "";
+        return Gt6ce.springPath(id);
     }
 
     private static FluidStack produced(FluidStack input, String springPath) {
         if (springPath.isEmpty()) return FluidStack.EMPTY;
-        String fluidPath = springPath.substring("fluid_spring_".length());
+        String fluidPath = Gt6ce.springFluid(springPath);
         boolean gas = fluidPath.startsWith("gas_");
         boolean lava = "lava".equals(fluidPath);
         if (same(input, "Water")) {
@@ -106,7 +105,7 @@ public final class OilMiner extends BehaviorBase {
     private static FluidStack fluid(String path) {
         ResourceLocation id = "lava".equals(path)
                 ? ResourceLocation.parse("minecraft:lava")
-                : ResourceLocation.fromNamespaceAndPath("gt6ce", path);
+                : Gt6ce.id(path);
         var fluid = BuiltInRegistries.FLUID.get(id);
         if (fluid == null || fluid == net.minecraft.world.level.material.Fluids.EMPTY) return FluidStack.EMPTY;
         return new FluidStack(fluid, 1);

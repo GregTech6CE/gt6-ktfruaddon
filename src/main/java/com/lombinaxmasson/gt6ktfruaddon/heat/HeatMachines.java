@@ -15,6 +15,7 @@ import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.GuiGrid;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
@@ -171,7 +172,7 @@ public final class HeatMachines implements Feature {
                         .faces(MachineFace.TOP).capacity(1_000_000_000L).build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
                 .progress(126, 8)
-                .item(26, 8, FuelDeburner.SLOTS.itemRole(0))
+                .item(GuiGrid.INPUT_X, GuiGrid.TOP, FuelDeburner.SLOTS.itemRole(0))
                 .fluid(64000, 48, 8, FuelDeburner.SLOTS.fluidRole(0))
                 .fluid(64000, 66, 8, FuelDeburner.SLOTS.fluidRole(1))
                 .fluid(64000, 84, 8, FuelDeburner.SLOTS.fluidRole(2))

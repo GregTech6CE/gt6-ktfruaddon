@@ -13,6 +13,7 @@ import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.GuiGrid;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
@@ -33,7 +34,7 @@ public final class CrucibleMachines implements Feature {
         machines.add(BehaviorMachine.builder(MachineCasing.builder(CRUCIBLE, "Titanium").machineType(CRUCIBLE).build())
                 .energy(EnergyInput.builder("EU", 512).faces(MachineFace.BOTTOM).capacity(8192).build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
-                .toggle("gt6ktfruaddon.crucible.stopped", 152, 64, false)
+                .toggle("gt6ktfruaddon.crucible.stopped", GuiGrid.TOGGLE_X, 64, false)
                 .build());
         return List.copyOf(machines);
     }

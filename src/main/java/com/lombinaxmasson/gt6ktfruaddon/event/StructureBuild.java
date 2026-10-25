@@ -7,6 +7,7 @@ import com.gregtech.gregtech.api.addon.CellMatch;
 import com.gregtech.gregtech.api.addon.LayoutCell;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.StructureRole;
+import com.lombinaxmasson.gt6ktfruaddon.core.Gt6ce;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.lombinaxmasson.gt6ktfruaddon.registry.Features;
 
@@ -146,7 +147,7 @@ public final class StructureBuild {
     private static Block partBlock(CellMatch match) {
         ResourceLocation id;
         if (match instanceof CellMatch.Part part) {
-            id = ResourceLocation.fromNamespaceAndPath("gt6ce", part.name());
+            id = Gt6ce.id(part.name());
         } else if (match instanceof CellMatch.Block block) {
             id = ResourceLocation.parse(block.id());
         } else {
@@ -158,7 +159,7 @@ public final class StructureBuild {
 
     private static boolean builderWand(ItemStack stack) {
         ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
-        return "gt6ce".equals(id.getNamespace()) && id.getPath().contains("builder_wand");
+        return Gt6ce.builderWand(id);
     }
 
     private static EquipmentSlot handSlot(InteractionHand hand) {

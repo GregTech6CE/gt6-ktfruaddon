@@ -12,6 +12,7 @@ import com.gregtech.gregtech.api.addon.EnergyOutput;
 import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.GuiGrid;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
@@ -118,12 +119,12 @@ public final class KineticMachines implements Feature {
                         .machineType(VOID_HOPPER).tier(tier).build())
                 .energy(EnergyInput.builder("RU", input).capacity(input * 2).build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
-                .item(26, 8, BehaviorMachine.SlotRole.INPUT)
-                .toggle("gt6ktfruaddon.void_hopper.blacklist", 152, 8, false)
-                .toggle("gt6ktfruaddon.void_hopper.clear", 152, 28, false)
+                .item(GuiGrid.INPUT_X, GuiGrid.TOP, BehaviorMachine.SlotRole.INPUT)
+                .toggle("gt6ktfruaddon.void_hopper.blacklist", GuiGrid.TOGGLE_X, 8, false)
+                .toggle("gt6ktfruaddon.void_hopper.clear", GuiGrid.TOGGLE_X, 28, false)
                 .maxRange(range);
         for (int slot = 0; slot < 9; slot++) {
-            builder.item(8 + slot * 18, 64, BehaviorMachine.SlotRole.OUTPUT);
+            builder.item(GuiGrid.LEFT + slot * GuiGrid.SLOT_PITCH, GuiGrid.OUTPUT_Y, BehaviorMachine.SlotRole.OUTPUT);
         }
         return builder.build();
     }
@@ -134,11 +135,11 @@ public final class KineticMachines implements Feature {
                         .machineType("RF".equals(energy) ? MINER_RF : MINER).tier(tier).build())
                 .energy(EnergyInput.builder(energy, input).capacity(input * 2).build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
-                .item(26, 8, BehaviorMachine.SlotRole.INPUT)
-                .toggle("gt6ktfruaddon.miner.reset", 152, 8, false)
+                .item(GuiGrid.INPUT_X, GuiGrid.TOP, BehaviorMachine.SlotRole.INPUT)
+                .toggle("gt6ktfruaddon.miner.reset", GuiGrid.TOGGLE_X, 8, false)
                 .maxRange(32);
         for (int slot = 0; slot < 9; slot++) {
-            builder.item(8 + slot * 18, 64, BehaviorMachine.SlotRole.OUTPUT);
+            builder.item(GuiGrid.LEFT + slot * GuiGrid.SLOT_PITCH, GuiGrid.OUTPUT_Y, BehaviorMachine.SlotRole.OUTPUT);
         }
         return builder.build();
     }
@@ -178,7 +179,7 @@ public final class KineticMachines implements Feature {
                 .gui(Ktfru.PLACEHOLDER_GUI);
         int x0 = slots == 1 ? 80 : 44;
         for (int slot = 0; slot < slots; slot++) {
-            builder.item(x0 + slot * 18, 8, BehaviorMachine.SlotRole.INPUT);
+            builder.item(x0 + slot * GuiGrid.SLOT_PITCH, GuiGrid.TOP, BehaviorMachine.SlotRole.INPUT);
         }
         return builder.build();
     }

@@ -3,6 +3,7 @@ package com.lombinaxmasson.gt6ktfruaddon.power;
 import java.util.Map;
 
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.Gt6ce;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.LossTimer;
@@ -69,7 +70,7 @@ public final class TransformBattery extends BehaviorBase {
 
     private static long cell(ItemStack stack) {
         var id = BuiltInRegistries.ITEM.getKey(stack.getItem());
-        if (id == null || !"gt6ce".equals(id.getNamespace())) return 0;
+        if (!Gt6ce.owns(id)) return 0;
         Long each = CELLS.get(id.getPath());
         return each == null ? 0 : each;
     }

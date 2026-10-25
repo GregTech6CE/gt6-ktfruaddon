@@ -13,6 +13,7 @@ import com.gregtech.gregtech.api.addon.GregTechMaterials;
 import com.gregtech.gregtech.api.addon.MaterialDeclaration;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
+import com.lombinaxmasson.gt6ktfruaddon.core.Gt6ce;
 import com.lombinaxmasson.gt6ktfruaddon.content.Materials;
 import com.lombinaxmasson.gt6ktfruaddon.generated.KtfruItems;
 import com.lombinaxmasson.gt6ktfruaddon.registry.Features;
@@ -143,7 +144,7 @@ public final class KtfruAddon {
         if (fluid == null || fluid.isEmpty()) return Items.AIR;
         var id = BuiltInRegistries.FLUID.getKey(fluid.getFluid());
         if (id == null) return Items.AIR;
-        return BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("gt6ce", "fluid_item_" + id.getPath()));
+        return BuiltInRegistries.ITEM.get(Gt6ce.fluidItem(id));
     }
 
     private static void acceptStack(CreativeModeTab.Output output, ItemStack stack) {

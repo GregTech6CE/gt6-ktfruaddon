@@ -14,6 +14,7 @@ import com.gregtech.gregtech.api.addon.MachineCasing;
 import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.StructureLayout;
 import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.layout.GuiGrid;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Behaviors;
 import com.lombinaxmasson.gt6ktfruaddon.core.feature.Feature;
@@ -107,9 +108,9 @@ public final class Batteries implements Feature {
                 .gui(Ktfru.PLACEHOLDER_GUI);
         if (!light) {
             for (int slot = 0; slot < 8; slot++) {
-                builder.item(26 + slot * 18, 8, BehaviorMachine.SlotRole.ANY);
+                builder.item(GuiGrid.INPUT_X + slot * GuiGrid.SLOT_PITCH, GuiGrid.TOP, BehaviorMachine.SlotRole.ANY);
             }
-            builder.toggle("gt6ktfruaddon.transform_battery.sealed", 152, 64, false);
+            builder.toggle("gt6ktfruaddon.transform_battery.sealed", GuiGrid.TOGGLE_X, 64, false);
         }
         return builder.build();
     }
