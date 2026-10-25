@@ -3,6 +3,7 @@ package com.lombinaxmasson.gt6ktfruaddon.kinetic;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.LossTimer;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -28,7 +29,7 @@ public final class Flywheel extends BehaviorBase {
 
     @Override
     public void tick(MachineBehaviorContext context) {
-        applyLoss(context);
+        LossTimer.lose(context, lossPercent);
         long size = vmax(context);
         long stored = context.energy();
         if (size >= 1 && stored >= size) {
@@ -55,17 +56,6 @@ public final class Flywheel extends BehaviorBase {
             return true;
         }
         return false;
-    }
-
-    /** Source loss: every 200 ticks, on tick 5, keep {@code 1 - percent/100}. */
-    private void applyLoss(MachineBehaviorContext context) {
-        int timer = context.state().getInt("loss") + 1;
-        context.state().setInt("loss", timer);
-        if (timer % 200 != 5) return;
-        long stored = context.energy();
-        long kept = (long) Math.floor(stored * (1.0 - lossPercent / 100.0));
-        long drop = stored - kept;
-        if (drop > 0) context.consume(drop);
     }
 
     private static boolean takeOne(MachineBehaviorContext context, Player player) {

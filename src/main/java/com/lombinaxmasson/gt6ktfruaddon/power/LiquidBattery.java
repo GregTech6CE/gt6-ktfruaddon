@@ -4,6 +4,7 @@ import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.LossTimer;
 
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -41,7 +42,7 @@ public final class LiquidBattery extends BehaviorBase {
         long midpoint = (outputMin + outputMax) / 2;
         boolean active = stored > midpoint;
         if (active && computed > 0) emit(context, computed);
-        if (active) lose(context);
+        if (active) LossTimer.lose(context, lossPercent);
         long cap = context.capacity();
         context.progress(cap <= 0 ? 0 : Math.min(1.0F, context.energy() / (float) cap));
         context.working(active && computed > 0);
@@ -101,17 +102,6 @@ public final class LiquidBattery extends BehaviorBase {
         long packets = fill + (stored == cap ? 0 : 1);
         if (packets > ampere) packets = ampere;
         if (packets >= 1) context.emit(size, packets);
-    }
-
-    /** Keep {@code 1 - percent/100} when the local timer is 5 mod 200. */
-    private void lose(MachineBehaviorContext context) {
-        int timer = context.state().getInt("loss") + 1;
-        context.state().setInt("loss", timer);
-        if (timer % 200 != 5) return;
-        long stored = context.energy();
-        long kept = (long) Math.floor(stored * (1.0D - lossPercent / 100.0D));
-        long drop = stored - kept;
-        if (drop > 0) context.consume(drop);
     }
 
     private static int temperature(FluidStack stack) {

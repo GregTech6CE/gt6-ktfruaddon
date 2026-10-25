@@ -5,6 +5,7 @@ import java.util.Map;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.LossTimer;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
@@ -42,7 +43,7 @@ public final class TransformBattery extends BehaviorBase {
         context.setCapacity(computed > 0 ? computed : Math.max(stored, 1));
         EnergyBridge.pull(context, energy);
         stored = context.energy();
-        if (stored > 0) lose(context);
+        if (stored > 0) LossTimer.lose(context, lossPercent);
         long cap = context.capacity();
         context.progress(cap <= 0 ? 0 : Math.min(1.0F, context.energy() / (float) cap));
         context.working(context.structureFormed() && context.energy() > 0);
@@ -64,17 +65,6 @@ public final class TransformBattery extends BehaviorBase {
             if ("RU".equals(energy) && flywheel(stack)) cap += flywheelStorage() * stack.getCount();
         }
         return cap;
-    }
-
-    /** Keep {@code 1 - percent/100} when the local timer is 5 mod 200. */
-    private void lose(MachineBehaviorContext context) {
-        int timer = context.state().getInt("loss") + 1;
-        context.state().setInt("loss", timer);
-        if (timer % 200 != 5) return;
-        long stored = context.energy();
-        long kept = (long) Math.floor(stored * (1.0D - lossPercent / 100.0D));
-        long drop = stored - kept;
-        if (drop > 0) context.consume(drop);
     }
 
     private static long cell(ItemStack stack) {
