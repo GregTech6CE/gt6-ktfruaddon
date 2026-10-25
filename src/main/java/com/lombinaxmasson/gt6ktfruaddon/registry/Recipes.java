@@ -8,6 +8,7 @@ import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.lombinaxmasson.gt6ktfruaddon.generated.KtfruItems;
 import com.lombinaxmasson.gt6ktfruaddon.generated.SourceRecipes;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeTiming;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -61,22 +62,22 @@ public final class Recipes {
         ItemStack platinum = new ItemStack(KtfruItems.BATTERY_POLE_PLATINUM.get());
         String yzo = "GenLiquid_YttriumZirconiumOxide";
         String sulfuric = "GenLiquid_SulfuricAcid";
-        battery(yzo, nickel, catio3, -384, 9, two("Methane", 20, "Air", 80), two("CarbonDioxide", 20, "DistW", 40));
-        battery(yzo, nickel, catio3, -166, 9, two("GenGas_CarbonMonoxide", 20, "Air", 20), one("CarbonDioxide", 20));
-        battery(yzo, nickel, catio3, -16, 9, two("Hydrogen", 20, "Air", 20), one("DistW", 20));
-        battery(yzo, nickel, catio3, -180, 9, two("GenLiquid_Methanol", 20, "Air", 60), two("CarbonDioxide", 20, "DistW", 40));
-        battery(yzo, nickel, catio3, -288, 9, two("BioEthanol", 20, "Air", 120), two("CarbonDioxide", 40, "DistW", 60));
-        battery(yzo, nickel, catio3, -384, 13, two("Methane", 20, "Oxygen", 40), two("CarbonDioxide", 20, "DistW", 40));
-        battery(yzo, nickel, catio3, -166, 13, two("GenGas_CarbonMonoxide", 20, "Oxygen", 10), one("CarbonDioxide", 20));
-        battery(yzo, nickel, catio3, -16, 13, two("Hydrogen", 20, "Oxygen", 10), one("DistW", 20));
-        battery(yzo, nickel, catio3, -180, 13, two("GenLiquid_Methanol", 20, "Oxygen", 30), two("CarbonDioxide", 20, "DistW", 40));
-        battery(yzo, nickel, catio3, -288, 13, two("BioEthanol", 20, "Oxygen", 60), two("CarbonDioxide", 40, "DistW", 60));
-        battery(sulfuric, carbon, platinum, -16, 7, two("Hydrogen", 20, "Air", 10), one("DistW", 20));
-        battery(sulfuric, carbon, platinum, -180, 7, two("GenLiquid_Methanol", 20, "Air", 30), two("CarbonDioxide", 20, "DistW", 40));
-        battery(sulfuric, carbon, platinum, -288, 7, two("BioEthanol", 20, "Air", 60), two("CarbonDioxide", 40, "DistW", 60));
-        battery(sulfuric, carbon, platinum, -16, 10, two("Hydrogen", 20, "Oxygen", 10), one("DistW", 20));
-        battery(sulfuric, carbon, platinum, -180, 10, two("GenLiquid_Methanol", 20, "Oxygen", 30), two("CarbonDioxide", 20, "DistW", 40));
-        battery(sulfuric, carbon, platinum, -288, 10, two("BioEthanol", 20, "Oxygen", 60), two("CarbonDioxide", 40, "DistW", 60));
+        battery(yzo, nickel, catio3, RecipeTiming.ticks(9).euPerTick(-384), two("Methane", 20, "Air", 80), two("CarbonDioxide", 20, "DistW", 40));
+        battery(yzo, nickel, catio3, RecipeTiming.ticks(9).euPerTick(-166), two("GenGas_CarbonMonoxide", 20, "Air", 20), one("CarbonDioxide", 20));
+        battery(yzo, nickel, catio3, RecipeTiming.ticks(9).euPerTick(-16), two("Hydrogen", 20, "Air", 20), one("DistW", 20));
+        battery(yzo, nickel, catio3, RecipeTiming.ticks(9).euPerTick(-180), two("GenLiquid_Methanol", 20, "Air", 60), two("CarbonDioxide", 20, "DistW", 40));
+        battery(yzo, nickel, catio3, RecipeTiming.ticks(9).euPerTick(-288), two("BioEthanol", 20, "Air", 120), two("CarbonDioxide", 40, "DistW", 60));
+        battery(yzo, nickel, catio3, RecipeTiming.ticks(13).euPerTick(-384), two("Methane", 20, "Oxygen", 40), two("CarbonDioxide", 20, "DistW", 40));
+        battery(yzo, nickel, catio3, RecipeTiming.ticks(13).euPerTick(-166), two("GenGas_CarbonMonoxide", 20, "Oxygen", 10), one("CarbonDioxide", 20));
+        battery(yzo, nickel, catio3, RecipeTiming.ticks(13).euPerTick(-16), two("Hydrogen", 20, "Oxygen", 10), one("DistW", 20));
+        battery(yzo, nickel, catio3, RecipeTiming.ticks(13).euPerTick(-180), two("GenLiquid_Methanol", 20, "Oxygen", 30), two("CarbonDioxide", 20, "DistW", 40));
+        battery(yzo, nickel, catio3, RecipeTiming.ticks(13).euPerTick(-288), two("BioEthanol", 20, "Oxygen", 60), two("CarbonDioxide", 40, "DistW", 60));
+        battery(sulfuric, carbon, platinum, RecipeTiming.ticks(7).euPerTick(-16), two("Hydrogen", 20, "Air", 10), one("DistW", 20));
+        battery(sulfuric, carbon, platinum, RecipeTiming.ticks(7).euPerTick(-180), two("GenLiquid_Methanol", 20, "Air", 30), two("CarbonDioxide", 20, "DistW", 40));
+        battery(sulfuric, carbon, platinum, RecipeTiming.ticks(7).euPerTick(-288), two("BioEthanol", 20, "Air", 60), two("CarbonDioxide", 40, "DistW", 60));
+        battery(sulfuric, carbon, platinum, RecipeTiming.ticks(10).euPerTick(-16), two("Hydrogen", 20, "Oxygen", 10), one("DistW", 20));
+        battery(sulfuric, carbon, platinum, RecipeTiming.ticks(10).euPerTick(-180), two("GenLiquid_Methanol", 20, "Oxygen", 30), two("CarbonDioxide", 20, "DistW", 40));
+        battery(sulfuric, carbon, platinum, RecipeTiming.ticks(10).euPerTick(-288), two("BioEthanol", 20, "Oxygen", 60), two("CarbonDioxide", 40, "DistW", 60));
         require(AddonRecipes.map(RecipeMaps.FUEL_BATTERY).find(
                 List.of(nickel, catio3), List.of(fluid("Methane", 20), fluid("Air", 80), fluid(yzo, 1)), true, 2, 0),
                 "fuel battery methane row");
@@ -88,13 +89,13 @@ public final class Recipes {
                 "heat mixer yttrium zirconium oxide");
     }
 
-    private static void battery(String electrolyte, ItemStack a, ItemStack b, long euPerTick, long duration,
+    private static void battery(String electrolyte, ItemStack a, ItemStack b, RecipeTiming timing,
             FluidStack[] fluidsIn, FluidStack[] fluidsOut) {
         FluidStack[] inputs = new FluidStack[fluidsIn.length + 1];
         System.arraycopy(fluidsIn, 0, inputs, 0, fluidsIn.length);
         inputs[fluidsIn.length] = catalyst(electrolyte);
         require(AddonRecipes.map(RecipeMaps.FUEL_BATTERY).add(new AddonRecipes.Line(
-                new ItemStack[] {a, b}, NO_ITEMS, inputs, fluidsOut, duration, euPerTick, 0, null,
+                new ItemStack[] {a, b}, NO_ITEMS, inputs, fluidsOut, timing.duration(), timing.euPerTick(), 0, null,
                 new int[] {0, 1}, new int[] {fluidsIn.length})),
                 RecipeMaps.FUEL_BATTERY);
     }
@@ -117,11 +118,11 @@ public final class Recipes {
      * Recycled-fuel fluids are the five source liquids. Exhaust rows stay on the engine and centrifuge maps.
      */
     private static void fuelDeburn() {
-        deburn(0, 24, 3000, 638, new FluidStack[] {fluid("Water", 1000), fluid("CarbonDioxide", 2000)}, "GenLiquid_RecycledFuel0");
-        deburn(1, 80, 5000, 922, new FluidStack[] {fluid("Water", 2000), fluid("CarbonDioxide", 4000)}, "GenLiquid_RecycledFuel1");
-        deburn(2, 240, 5000, 1788, new FluidStack[] {fluid("Water", 4000), fluid("CarbonDioxide", 8000)}, "GenLiquid_RecycledFuel2");
-        deburn(3, 800, 12800, 1464, new FluidStack[] {fluid("Water", 6000), fluid("CarbonDioxide", 20000), fluid("Nitrogen", 4000)}, "GenLiquid_RecycledFuel3");
-        deburn(4, 1800, 51200, 2192, new FluidStack[] {fluid("Water", 16000), fluid("CarbonDioxide", 30000), fluid("Nitrogen", 8000)}, "GenLiquid_RecycledFuel4");
+        deburn(0, RecipeTiming.ticks(3000).euPerTick(24), 638, new FluidStack[] {fluid("Water", 1000), fluid("CarbonDioxide", 2000)}, "GenLiquid_RecycledFuel0");
+        deburn(1, RecipeTiming.ticks(5000).euPerTick(80), 922, new FluidStack[] {fluid("Water", 2000), fluid("CarbonDioxide", 4000)}, "GenLiquid_RecycledFuel1");
+        deburn(2, RecipeTiming.ticks(5000).euPerTick(240), 1788, new FluidStack[] {fluid("Water", 4000), fluid("CarbonDioxide", 8000)}, "GenLiquid_RecycledFuel2");
+        deburn(3, RecipeTiming.ticks(12800).euPerTick(800), 1464, new FluidStack[] {fluid("Water", 6000), fluid("CarbonDioxide", 20000), fluid("Nitrogen", 4000)}, "GenLiquid_RecycledFuel3");
+        deburn(4, RecipeTiming.ticks(51200).euPerTick(1800), 2192, new FluidStack[] {fluid("Water", 16000), fluid("CarbonDioxide", 30000), fluid("Nitrogen", 8000)}, "GenLiquid_RecycledFuel4");
         require(AddonFluids.still("GenLiquid_AqueousOilHeavy", 1), "aqueous heavy oil");
         require(AddonRecipes.map(RecipeMaps.FUEL_DEBURN).find(
                 List.of(AddonItems.selectorTag(0)),
@@ -130,13 +131,13 @@ public final class Recipes {
                 "fuel deburner circuit 0");
     }
 
-    private static void deburn(int circuit, long eu, long duration, long special, FluidStack[] inputs, String output) {
+    private static void deburn(int circuit, RecipeTiming timing, long special, FluidStack[] inputs, String output) {
         ItemStack tag = AddonItems.selectorTag(circuit);
         if (tag == null || tag.isEmpty()) throw new IllegalStateException("missing selector circuit " + circuit);
         require(AddonRecipes.map(RecipeMaps.FUEL_DEBURN).add(new AddonRecipes.Line(
                 new ItemStack[] {tag}, NO_ITEMS, inputs,
                 new FluidStack[] {fluid(output, 100)},
-                duration, eu, special)), "fuel deburner circuit " + circuit);
+                timing.duration(), timing.euPerTick(), special)), "fuel deburner circuit " + circuit);
     }
 
     /** Plastic.java. The only LightMixer row. */
@@ -148,7 +149,7 @@ public final class Recipes {
                         fluid("GenLiquid_Dichloromethane", 100),
                         fluid("GenLiquid_Chloroform", 100),
                         fluid("GenGas_HydrochloricAcid", 600)},
-                600, 32);
+                RecipeTiming.ticks(600).euPerTick(32));
     }
 
     /**
@@ -160,24 +161,25 @@ public final class Recipes {
                 new ItemStack[] {prefix("dustSmall", "Salt", 1)},
                 new FluidStack[] {fluid("Ocean", 1000)},
                 new FluidStack[] {fluid("GenLiquid_Bittern", 100), fluid("DistW", 500)},
-                duration, 64);
+                RecipeTiming.ticks(duration).euPerTick(64));
         require(AddonRecipes.map(map).find(
                 List.of(), List.of(fluid("Ocean", 1000)), true, 1, 3),
                 map + " ocean row");
     }
 
     private static void fusionTokamak() {
+        var timing = RecipeTiming.ticks(400).euPerTick(2048);
         require(AddonRecipes.map(RecipeMaps.FUSION_TOKAMAK).add(new AddonRecipes.Line(
                 NO_ITEMS, NO_ITEMS,
                 new FluidStack[] {fluid("Deuterium", 144), fluid("Tritium", 144)},
                 new FluidStack[] {fluid("Helium", 144)},
-                400, 2048, 1_048_576L)), RecipeMaps.FUSION_TOKAMAK);
+                timing.duration(), timing.euPerTick(), 1_048_576L)), RecipeMaps.FUSION_TOKAMAK);
     }
 
     private static void add(String map, ItemStack[] itemsIn, ItemStack[] itemsOut,
-            FluidStack[] fluidsIn, FluidStack[] fluidsOut, long duration, long euPerTick) {
+            FluidStack[] fluidsIn, FluidStack[] fluidsOut, RecipeTiming timing) {
         require(AddonRecipes.map(map).add(new AddonRecipes.Line(
-                itemsIn, itemsOut, fluidsIn, fluidsOut, duration, euPerTick, 0)), map);
+                itemsIn, itemsOut, fluidsIn, fluidsOut, timing.duration(), timing.euPerTick(), 0)), map);
     }
 
     private static ItemStack dust(String material, int count) {

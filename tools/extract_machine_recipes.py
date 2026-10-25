@@ -1745,7 +1745,7 @@ def emit(rows: list[dict]) -> str:
                     kept_fluids=java_ints(row.get("kept_fluids")),
                 )
             body.append(
-                "        add(\"{file}:{line}\", {field}, {eu}L, {duration}L,\n"
+                "        add(\"{file}:{line}\", {field}, RecipeTiming.ticks({duration}L).euPerTick({eu}L),\n"
                 "                {items_in},\n"
                 "                {items_out},\n"
                 "                {fluids_in},\n"
@@ -1775,6 +1775,7 @@ import com.gregtech.gregtech.api.addon.platform.AddonItems;
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeTiming;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -1811,20 +1812,20 @@ public final class SourceRecipes {{
 
 {methods}
 
-    private static void add(String where, String map, long euPerTick, long duration,
+    private static void add(String where, String map, RecipeTiming timing,
             ItemStack[] itemsIn, ItemStack[] itemsOut, FluidStack[] fluidsIn, FluidStack[] fluidsOut) {{
-        add(where, map, euPerTick, duration, itemsIn, itemsOut, fluidsIn, fluidsOut, 0L, null, null, null);
+        add(where, map, timing, itemsIn, itemsOut, fluidsIn, fluidsOut, 0L, null, null, null);
     }}
 
-    private static void add(String where, String map, long euPerTick, long duration,
+    private static void add(String where, String map, RecipeTiming timing,
             ItemStack[] itemsIn, ItemStack[] itemsOut, FluidStack[] fluidsIn, FluidStack[] fluidsOut,
             long special, int[] chances, int[] kept, int[] keptFluids) {{
         if (broken(itemsIn) || brokenFluidInputs(fluidsIn) || broken(itemsOut) || broken(fluidsOut)) {{
             return;
         }}
         AddonRecipes.Line line = chances == null && kept == null && keptFluids == null
-                ? new AddonRecipes.Line(itemsIn, itemsOut, fluidsIn, fluidsOut, duration, euPerTick, special)
-                : new AddonRecipes.Line(itemsIn, itemsOut, fluidsIn, fluidsOut, duration, euPerTick, special,
+                ? new AddonRecipes.Line(itemsIn, itemsOut, fluidsIn, fluidsOut, timing.duration(), timing.euPerTick(), special)
+                : new AddonRecipes.Line(itemsIn, itemsOut, fluidsIn, fluidsOut, timing.duration(), timing.euPerTick(), special,
                         chances, kept, keptFluids);
         if (AddonRecipes.map(map).add(line) == null) {{
             PROBLEMS.add(where + " was rejected");
