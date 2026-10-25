@@ -55,6 +55,9 @@ final class FakeMachine {
             switch (method.getName()) {
                 case "energy":
                     return none ? energy : auxiliary.getOrDefault((String) args[0], 0L);
+                case "setCapacity":
+                    capacity = (Long) args[0];
+                    return null;
                 case "capacity":
                     return capacity;
                 case "generate": {

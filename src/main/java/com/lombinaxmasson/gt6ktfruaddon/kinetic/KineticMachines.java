@@ -169,7 +169,7 @@ public final class KineticMachines implements Feature {
                 .build();
     }
 
-    /** Back in, front out, at {@code vmax}. Capacity 0, so nothing is kept past the tick. */
+    /** Back in, front out, up to {@code vmax}. The behavior sets capacity from installed wheels. */
     private static BehaviorMachine flywheel(String id, String material, String type, int tier,
             long vmax, int slots, int ampere) {
         var builder = BehaviorMachine.builder(MachineCasing.builder(id, material)

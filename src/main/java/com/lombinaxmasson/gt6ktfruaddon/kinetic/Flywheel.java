@@ -1,22 +1,21 @@
 package com.lombinaxmasson.gt6ktfruaddon.kinetic;
 
+import java.util.ArrayList;
+
+import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
-import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Tiers;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.FlywheelStorage;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.LossTimer;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Tiers;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-/**
- * Flywheel box. Capacity stays 0: the material catalog has no mass, tool quality
- * or tool speed, and the flywheel prefix is not registered. A right click can
- * still park an item whose id contains {@code flywheel}.
- */
+/** Flywheel box: public material properties determine storage and the slowest inserted wheel limits RPM. */
 public final class Flywheel extends BehaviorBase {
     private static final long[] VMAX = {8, 32, 128, 512, 2048, 8192};
 
@@ -30,8 +29,14 @@ public final class Flywheel extends BehaviorBase {
 
     @Override
     public void tick(MachineBehaviorContext context) {
+        var box = storage(context);
+        FlywheelStorage.resize(context, box.capacity());
+        if (box.capacity() == 0) {
+            context.working(false);
+            return;
+        }
         LossTimer.lose(context, lossPercent);
-        long size = vmax(context);
+        long size = Math.min(vmax(context), (long) Math.floor(box.rpm()));
         long stored = context.energy();
         if (size >= 1 && stored >= size) {
             long packets = Math.min(ampere, stored / size);
@@ -82,8 +87,18 @@ public final class Flywheel extends BehaviorBase {
     }
 
     private static boolean flywheel(ItemStack stack) {
-        var id = BuiltInRegistries.ITEM.getKey(stack.getItem());
-        return id != null && id.getPath().contains("flywheel");
+        return FlywheelStorage.wheel(stack).storage() > 0;
+    }
+
+    @Override
+    public boolean acceptsEnergy(MachineBehaviorContext context, String type, MachineFace face, long size, long amount) {
+        return "RU".equals(type) && storage(context).capacity() > 0;
+    }
+
+    private FlywheelStorage.Box storage(MachineBehaviorContext context) {
+        var wheels = new ArrayList<FlywheelStorage.Wheel>();
+        for (int slot = 0; slot < context.itemSlots(); slot++) wheels.add(FlywheelStorage.wheel(context.item(slot)));
+        return FlywheelStorage.box(wheels, vmax(context), ampere);
     }
 
     private static long vmax(MachineBehaviorContext context) {

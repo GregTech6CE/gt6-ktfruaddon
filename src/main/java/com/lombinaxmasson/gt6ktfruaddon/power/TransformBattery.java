@@ -2,10 +2,12 @@ package com.lombinaxmasson.gt6ktfruaddon.power;
 
 import java.util.Map;
 
+import com.gregtech.gregtech.api.addon.MachineFace;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.Gt6ce;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.FlywheelStorage;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.LossTimer;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,8 +15,7 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Transform battery. EU capacity is the filled cells in the eight slots.
- * RU capacity stays 0: a flywheel's maximum needs mass, tool quality and
- * tool speed, and the material catalog has none of those. LU is the fixed
+ * RU capacity sums the inserted flywheels using the public material catalog. LU is the fixed
  * crystal capacity and is always sealed. A sealed machine does not take
  * items. Nothing here can push that buffer into a card 10 transformer part.
  */
@@ -40,10 +41,14 @@ public final class TransformBattery extends BehaviorBase {
     @Override
     public void tick(MachineBehaviorContext context) {
         long computed = capacity(context);
-        long stored = context.energy();
-        context.setCapacity(computed > 0 ? computed : Math.max(stored, 1));
+        FlywheelStorage.resize(context, computed);
+        if (computed <= 0) {
+            context.progress(0);
+            context.working(false);
+            return;
+        }
         EnergyBridge.pull(context, energy);
-        stored = context.energy();
+        long stored = context.energy();
         if (stored > 0) LossTimer.lose(context, lossPercent);
         long cap = context.capacity();
         context.progress(cap <= 0 ? 0 : Math.min(1.0F, context.energy() / (float) cap));
@@ -63,7 +68,7 @@ public final class TransformBattery extends BehaviorBase {
             ItemStack stack = context.item(slot);
             if (stack.isEmpty()) continue;
             if ("EU".equals(energy)) cap += cell(stack) * stack.getCount();
-            if ("RU".equals(energy) && flywheel(stack)) cap += flywheelStorage() * stack.getCount();
+            if ("RU".equals(energy)) cap = FlywheelStorage.addWheels(cap, FlywheelStorage.wheel(stack), stack.getCount());
         }
         return cap;
     }
@@ -75,13 +80,8 @@ public final class TransformBattery extends BehaviorBase {
         return each == null ? 0 : each;
     }
 
-    private static boolean flywheel(ItemStack stack) {
-        var id = BuiltInRegistries.ITEM.getKey(stack.getItem());
-        return id != null && id.getPath().contains("flywheel");
-    }
-
-    /** The catalog cannot answer mass, tool quality or tool speed. */
-    private static long flywheelStorage() {
-        return 0;
+    @Override
+    public boolean acceptsEnergy(MachineBehaviorContext context, String type, MachineFace face, long size, long amount) {
+        return energy.equals(type) && capacity(context) > 0;
     }
 }
