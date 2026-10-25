@@ -12,13 +12,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
-/**
- * Centrifugal microgravity controller (30102) and the three AI research centers (30106–30108).
- * After spinning for 600 ticks at 2048 EU/tick, the room registers its 9x9x9 interior in {@link MicrogravityRooms}.
- * Each AI center allocates 67,108,864 Normal compute/tick from its bound compute controller and adds
- * its points/tick (8, 4 or 2) to the bound or adjacent {@code research_monitor}.
- */
-public final class LateBehavior extends BehaviorBase {
+/** Allocates Normal compute and adds research points to its bound or adjacent monitor. */
+public final class AiCenter extends BehaviorBase {
     public static final long AI_COMPUTE_PER_TICK = 67_108_864L;
     public static final String STATUS_IDLE = "idle";
     public static final String STATUS_UNBOUND = "unbound";
@@ -27,39 +22,20 @@ public final class LateBehavior extends BehaviorBase {
     public static final String STATUS_INSUFFICIENT = "insufficient";
     public static final String STATUS_RUNNING = "running";
 
-    private final boolean room;
     private final long points;
 
-    public LateBehavior(boolean room, long points) {
-        this.room = room;
+    public AiCenter(long points) {
         this.points = points;
     }
 
     @Override
     public void tick(MachineBehaviorContext context) {
-        if (room) {
-            tickRoom(context);
-        } else {
-            tickAi(context);
-        }
-    }
-
-    @Override
-    public void beforeBreak(MachineBehaviorContext context) {
-        if (room) {
-            MicrogravityRooms.updateRoom(context.level(), context.pos(), false);
-        }
+        tickAi(context);
     }
 
     @Override
     public boolean onUse(MachineBehaviorContext context, Player player, InteractionHand hand) {
         if (!AddonTools.isMagnifyingGlass(player.getItemInHand(hand))) return false;
-        if (room) {
-            int spin = context.state().getInt("spin");
-            player.displayClientMessage(Component.translatable("gt6ktfruaddon.microgravity_room.status",
-                    context.structureFormed() ? 1 : 0, spin, spin >= 600 ? 1 : 0), false);
-            return true;
-        }
         String dim = context.level().dimension().location().toString();
         DimPos pendingController = ComputeNetwork.takePendingController(player.getUUID(), dim);
         if (pendingController != null) {
@@ -74,22 +50,6 @@ public final class LateBehavior extends BehaviorBase {
         player.displayClientMessage(Component.translatable("gt6ktfruaddon.ai.points",
                 points, context.structureFormed() ? 1 : 0, status, AI_COMPUTE_PER_TICK), false);
         return true;
-    }
-
-    private static void tickRoom(MachineBehaviorContext context) {
-        if (!context.structureFormed() || !context.consume(2048)) {
-            context.state().setInt("spin", 0);
-            context.working(false);
-            context.progress(0);
-            MicrogravityRooms.updateRoom(context.level(), context.pos(), false);
-            return;
-        }
-        int spin = Math.min(600, context.state().getInt("spin") + 1);
-        context.state().setInt("spin", spin);
-        context.progress(spin / 600.0F);
-        boolean active = spin >= 600;
-        context.working(active);
-        MicrogravityRooms.updateRoom(context.level(), context.pos(), active);
     }
 
     private void tickAi(MachineBehaviorContext context) {

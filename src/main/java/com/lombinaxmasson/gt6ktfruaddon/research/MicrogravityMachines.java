@@ -31,7 +31,7 @@ public final class MicrogravityMachines implements Feature {
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
             .add(MICROGRAVITY_ASSEMBLER, () -> new MicrogravityMachine(RecipeMaps.COSMIC_RADIATION, false, 0))
             .add(MICROGRAVITY_CRYSTAL, () -> new MicrogravityMachine(RecipeMaps.MICROGRAVITY_CRYSTAL, true, 2))
-            .add(ROOM, () -> new LateBehavior(true, 0))
+            .add(ROOM, () -> new MicrogravityController())
             .build();
 
     @Override

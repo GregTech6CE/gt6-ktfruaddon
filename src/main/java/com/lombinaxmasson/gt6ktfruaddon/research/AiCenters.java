@@ -26,9 +26,9 @@ public final class AiCenters implements Feature {
     static final String PATTERN = "ai_pattern_recognition";
 
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
-            .add(FLOW, () -> new LateBehavior(false, 8))
-            .add(FILL, () -> new LateBehavior(false, 4))
-            .add(PATTERN, () -> new LateBehavior(false, 2))
+            .add(FLOW, () -> new AiCenter(8))
+            .add(FILL, () -> new AiCenter(4))
+            .add(PATTERN, () -> new AiCenter(2))
             .build();
 
     @Override
