@@ -3,7 +3,6 @@ package com.lombinaxmasson.gt6ktfruaddon.quantum;
 import java.util.List;
 import java.util.UUID;
 
-import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
@@ -14,6 +13,10 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimensionMemory;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
+
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.RecipeRunner;
+
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Slots;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -34,6 +37,10 @@ public final class QuantumRelay extends BehaviorBase {
     private static final TtlRegistry<RelayEntry> RELAYS = new TtlRegistry<>();
     private static final PlayerMemory<DimPos> PENDING = new PlayerMemory<>(DimPos::dim);
     private static final DimensionMemory<BlockPos> NEW_PARTNERS = new DimensionMemory<>();
+
+    static final Slots SLOTS = new Slots(List.of(0), List.of(1), List.of(), List.of());
+    private final RecipeRunner runner = new RecipeRunner(SLOTS, List.of(RecipeMaps.QUANTUM_COMMUNICATION))
+            .energy("EU").after(context -> context.generate(QU_PER_RECIPE));
 
     @Override
     public void tick(MachineBehaviorContext context) {
@@ -56,34 +63,10 @@ public final class QuantumRelay extends BehaviorBase {
         RELAYS.put(self, new RelayEntry(partnerPos, euStored), now);
 
         if (partnerPos == null || !isPaired(self, partnerPos, now)) {
-            context.working(false);
-            context.progress(0);
+            runner.idle(context);
             return;
         }
-        AddonRecipes.Line line = AddonRecipes.map(RecipeMaps.QUANTUM_COMMUNICATION).find(
-                List.of(context.item(0)),
-                List.of(),
-                true, 1, 0);
-        if (line == null) {
-            context.state().setLong("progress", 0);
-            context.progress(0);
-            context.working(false);
-            return;
-        }
-        long duration = Math.max(1L, line.duration());
-        long progress = context.state().getLong("progress");
-        long eu = Math.max(1L, line.euPerTick());
-        if (progress >= duration) {
-            if (finish(context, line)) progress = 0;
-        } else if (context.energy("EU") >= eu && context.consume("EU", eu)) {
-            progress++;
-            if (progress >= duration && finish(context, line)) progress = 0;
-            context.working(true);
-        } else {
-            context.working(false);
-        }
-        context.state().setLong("progress", progress);
-        context.progress(Math.min(1.0F, progress / (float) duration));
+        runner.tick(context);
     }
 
     @Override
@@ -131,45 +114,6 @@ public final class QuantumRelay extends BehaviorBase {
         if (partner == null) return false;
         return self.pos().equals(partner.partner());
 
-    }
-
-    private static boolean finish(MachineBehaviorContext context, AddonRecipes.Line line) {
-        ItemStack[] inItems = line.itemInputs();
-        if (inItems != null && inItems.length > 0 && inItems[0] != null && !inItems[0].isEmpty()) {
-            ItemStack have = context.item(0);
-            if (have.isEmpty() || !ItemStack.isSameItemSameComponents(have, inItems[0])
-                    || have.getCount() < inItems[0].getCount()) {
-                return false;
-            }
-        }
-        ItemStack[] outItems = line.itemOutputs();
-        if (outItems != null && outItems.length > 0 && outItems[0] != null && !outItems[0].isEmpty()) {
-            ItemStack have = context.item(1);
-            if (!have.isEmpty() && (!ItemStack.isSameItemSameComponents(have, outItems[0])
-                    || have.getCount() + outItems[0].getCount() > have.getMaxStackSize())) {
-                return false;
-            }
-        }
-        if (inItems != null && inItems.length > 0 && inItems[0] != null && !inItems[0].isEmpty() && !kept(line, 0)) {
-            ItemStack have = context.item(0).copy();
-            have.shrink(inItems[0].getCount());
-            context.setItem(0, have.isEmpty() ? ItemStack.EMPTY : have);
-        }
-        if (outItems != null && outItems.length > 0 && outItems[0] != null && !outItems[0].isEmpty()) {
-            ItemStack out = outItems[0].copy();
-            ItemStack have = context.item(1);
-            if (!have.isEmpty()) out.grow(have.getCount());
-            context.setItem(1, out);
-        }
-        context.generate(QU_PER_RECIPE);
-        return true;
-    }
-
-    private static boolean kept(AddonRecipes.Line line, int index) {
-        int[] kept = line.keptInputs();
-        if (kept == null) return false;
-        for (int k : kept) if (k == index) return true;
-        return false;
     }
 
     private static String formatPos(BlockPos pos) { return PosCodec.format(pos); }

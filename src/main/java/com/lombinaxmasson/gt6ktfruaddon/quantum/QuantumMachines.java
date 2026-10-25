@@ -99,8 +99,8 @@ public final class QuantumMachines implements Feature {
                         .build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
                 .progress(76, 26)
-                .item(44, 26, BehaviorMachine.SlotRole.INPUT)
-                .item(112, 26, BehaviorMachine.SlotRole.OUTPUT)
+                .item(44, 26, QuantumRelay.SLOTS.itemRole(0))
+                .item(112, 26, QuantumRelay.SLOTS.itemRole(1))
                 .recipeMaps(RecipeMaps.QUANTUM_COMMUNICATION)
                 .build();
     }
