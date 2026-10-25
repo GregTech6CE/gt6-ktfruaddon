@@ -5,8 +5,8 @@ import java.util.List;
 import com.gregtech.gregtech.api.addon.platform.AddonItems;
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.network.chat.Component;
@@ -22,7 +22,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * Progress for the tick is {@code EU * temperature factor}, and one completion spends the
  * circuit and the fluids.
  */
-public final class FuelDeburner implements MachineBehavior {
+public final class FuelDeburner extends BehaviorBase {
     static final long MASS = 81920;
     static final long AMBIENT_MILLI = 293_000;
     static final long MAX_MILLI = 4_000_000;

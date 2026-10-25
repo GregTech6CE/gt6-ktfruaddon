@@ -1,18 +1,17 @@
 package com.lombinaxmasson.gt6ktfruaddon.kinetic;
 
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 
 /**
  * Hand crank. A click adds 8 ticks, up to the tier cap, and exhausts the player.
  * While time remains, one positive packet leaves the front. KU sign alternation
  * is not available on {@code emit}.
  */
-public final class ManualMotor implements MachineBehavior {
+public final class ManualMotor extends BehaviorBase {
     private static final long GAIN = 8;
     /** output min, output max, max time. Tiers: wood RU, bronze RU, wood KU, bronze KU. */
     private static final long[][] TIER = {
@@ -39,16 +38,6 @@ public final class ManualMotor implements MachineBehavior {
         }
         context.working(time > 0);
         context.progress(tier[2] <= 0 ? 0 : time / (float) tier[2]);
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, net.neoforged.neoforge.fluids.FluidStack stack) {
-        return false;
     }
 
     @Override

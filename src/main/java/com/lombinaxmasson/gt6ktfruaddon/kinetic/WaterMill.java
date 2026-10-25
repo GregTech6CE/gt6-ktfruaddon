@@ -1,7 +1,7 @@
 package com.lombinaxmasson.gt6ktfruaddon.kinetic;
 
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
  * Water mill. Torque is the sum of neighbor flow crossed with the facing.
  * Packets are positive and try the front, then the back.
  */
-public final class WaterMill implements MachineBehavior {
+public final class WaterMill extends BehaviorBase {
     private static final int ROT_LIMIT = 9600;
     private static final int PACKET = 2;
 
@@ -42,16 +42,6 @@ public final class WaterMill implements MachineBehavior {
         if (context.energy() < need) context.generate(need - context.energy());
         if (context.energy() >= need) context.emit(PACKET, amount);
         context.working(true);
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, net.neoforged.neoforge.fluids.FluidStack stack) {
-        return false;
     }
 
     @Override

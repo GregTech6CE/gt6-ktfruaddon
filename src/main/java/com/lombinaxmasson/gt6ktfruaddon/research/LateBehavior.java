@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon.research;
 
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
 import com.lombinaxmasson.gt6ktfruaddon.network.Compute;
@@ -11,8 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
  * Centrifugal microgravity controller (30102) and the three AI research centers (30106–30108).
@@ -20,7 +18,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * Each AI center allocates 67,108,864 Normal compute/tick from its bound compute controller and adds
  * its points/tick (8, 4 or 2) to the bound or adjacent {@code research_monitor}.
  */
-public final class LateBehavior implements MachineBehavior {
+public final class LateBehavior extends BehaviorBase {
     public static final long AI_COMPUTE_PER_TICK = 67_108_864L;
     public static final String STATUS_IDLE = "idle";
     public static final String STATUS_UNBOUND = "unbound";
@@ -51,16 +49,6 @@ public final class LateBehavior implements MachineBehavior {
         if (room) {
             Rooms.updateRoom(context.level(), context.pos(), false);
         }
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, FluidStack stack) {
-        return false;
     }
 
     @Override

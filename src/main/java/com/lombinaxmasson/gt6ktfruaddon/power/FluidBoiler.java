@@ -4,10 +4,9 @@ import java.util.List;
 
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
@@ -15,7 +14,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * Each 80 heat turns 1 mB of distilled water into 160 mB of steam.
  * The middle structure slice is fixed at one; the source allows eight.
  */
-public final class FluidBoiler implements MachineBehavior {
+public final class FluidBoiler extends BehaviorBase {
     static final long RATE = 4096;
     private static final String HOT = "gt.recipe.fuels.hot";
     private static final int FUEL = 0;
@@ -32,11 +31,6 @@ public final class FluidBoiler implements MachineBehavior {
         burn(context);
         boil(context);
         context.working(context.state().getLong("heat") > 0 || !context.fluid(STEAM).isEmpty());
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return false;
     }
 
     @Override

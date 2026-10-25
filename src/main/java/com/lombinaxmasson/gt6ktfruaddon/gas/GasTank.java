@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon.gas;
 
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -14,7 +14,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * accepts nothing from {@code pushCompressedGas}; pipes can still pull because
  * the tanks are {@code ANY}.
  */
-public final class GasTank implements MachineBehavior {
+public final class GasTank extends BehaviorBase {
     @Override
     public void tick(MachineBehaviorContext context) {
         if (!context.structureFormed()) {
@@ -26,11 +26,6 @@ public final class GasTank implements MachineBehavior {
         boolean pushed = pushFront(context);
         context.working(pushed);
         context.progress(fillFraction(context));
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, net.minecraft.world.item.ItemStack stack) {
-        return false;
     }
 
     @Override

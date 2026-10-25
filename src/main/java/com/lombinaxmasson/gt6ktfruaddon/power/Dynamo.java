@@ -1,10 +1,7 @@
 package com.lombinaxmasson.gt6ktfruaddon.power;
 
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
-
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.fluids.FluidStack;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 /**
  * RU to EU. Efficiency is {@code outputMax * 10000 / inputMax}, the same fallback
@@ -12,7 +9,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * A separate-excite dynamo spends {@code floor(inputMin * 0.02)} EU before that conversion.
  * Waste is off, so RU left in the buffer stays.
  */
-public final class Dynamo implements MachineBehavior {
+public final class Dynamo extends BehaviorBase {
     private final long outputMax;
     private final long efficiency;
     private final int ampere;
@@ -52,16 +49,6 @@ public final class Dynamo implements MachineBehavior {
         long extra = spent - voltage * sent;
         if (extra > 0) context.consume(Math.min(extra, context.energy()));
         context.working(true);
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, FluidStack stack) {
-        return false;
     }
 
     private boolean excited(MachineBehaviorContext context) {

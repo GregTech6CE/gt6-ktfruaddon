@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.network.chat.Component;
@@ -21,7 +21,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * Industrial (30072): 72 arrays x 40M = 3,019,898,880 LU peak, 8 stores x 128M = 1,073,741,824 LU pulse capacity,
  * 2,097,152 LU max packet, 80 tick cooldown.
  */
-public final class LaserFusion implements MachineBehavior {
+public final class LaserFusion extends BehaviorBase {
     public static final int STATE_IDLE = 0;
     public static final int STATE_CHARGING = 1;
     public static final int STATE_COOLING = 2;

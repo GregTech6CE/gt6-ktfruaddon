@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
 
@@ -24,7 +24,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * two blocks behind the controller ({@code pos.relative(facing.getOpposite(), 2)}) or a bound
  * monitor, and only runs a recipe when its first item output is unlocked in that database.
  */
-public final class ResearchAssembler implements MachineBehavior {
+public final class ResearchAssembler extends BehaviorBase {
     static final int ITEM_IN_COUNT = 6;
     static final int ITEM_OUT_START = 6;
     static final int ITEM_OUT_COUNT = 2;

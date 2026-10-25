@@ -1,10 +1,9 @@
 package com.lombinaxmasson.gt6ktfruaddon.power;
 
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
@@ -14,7 +13,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * registered minimum and maximum. Loss runs on the same 200-tick phase
  * as the other batteries, and only while the buffer is above the midpoint.
  */
-public final class LiquidBattery implements MachineBehavior {
+public final class LiquidBattery extends BehaviorBase {
     static final int TANK = 8_000;
     private static final int HOT = 573;
 
@@ -45,11 +44,6 @@ public final class LiquidBattery implements MachineBehavior {
         long cap = context.capacity();
         context.progress(cap <= 0 ? 0 : Math.min(1.0F, context.energy() / (float) cap));
         context.working(active && computed > 0);
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return false;
     }
 
     @Override

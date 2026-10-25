@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon.kinetic;
 
 import com.gregtech.gregtech.api.addon.BehaviorRangeRules;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * and collects drops with an empty hand, so the tool in slot 0 only decides
  * whether a block is eligible.
  */
-public final class Miner implements MachineBehavior {
+public final class Miner extends BehaviorBase {
     private static final int NOT_INIT = 0;
     private static final int IDLE = 1;
     private static final int FINDING = 2;
@@ -56,11 +56,6 @@ public final class Miner implements MachineBehavior {
     @Override
     public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
         return slot == 0;
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, net.neoforged.neoforge.fluids.FluidStack stack) {
-        return false;
     }
 
     @Override

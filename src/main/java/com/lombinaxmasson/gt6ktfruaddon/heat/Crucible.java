@@ -2,20 +2,18 @@ package com.lombinaxmasson.gt6ktfruaddon.heat;
 
 import com.gregtech.gregtech.api.addon.GregTechMaterials;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
  * Electromagnetic crucible heat. A known iron charge can melt.
  * Arbitrary item contents stay unread.
  */
-public final class Crucible implements MachineBehavior {
+public final class Crucible extends BehaviorBase {
     /** {@code CrucibleSpec.KG_PER_ENERGY} in this GT6CE checkout. */
     static final long KG_PER_ENERGY = 100;
     static final long MASS = 3200;
@@ -53,16 +51,6 @@ public final class Crucible implements MachineBehavior {
         temp = Math.max(AMBIENT, temp - COOL);
         state.setLong("temp", temp);
         context.working(iron && state.getBoolean("molten"));
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, FluidStack stack) {
-        return false;
     }
 
     @Override

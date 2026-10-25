@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 
 import net.minecraft.core.BlockPos;
@@ -17,9 +17,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
  * Research blocks and the addon-side monitor index ({@code ResearchTreeMonitor}, 9818).
@@ -27,7 +25,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * AI centers add minigame progress points to their bound or adjacent monitor.
  * The research assembler and research reactor check the monitor two blocks behind the controller.
  */
-public final class Research implements MachineBehavior {
+public final class Research extends BehaviorBase {
     static final String TREE = "minecraft:paper,minecraft:glass,minecraft:iron_ingot";
     private static final long EXPIRY_TICKS = 20L;
     private static final Direction[] HORIZONTAL = {
@@ -138,16 +136,6 @@ public final class Research implements MachineBehavior {
         synchronized (Research.class) {
             MONITORS.remove(new DimPos(dim, context.pos().immutable()));
         }
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, FluidStack stack) {
-        return false;
     }
 
     @Override

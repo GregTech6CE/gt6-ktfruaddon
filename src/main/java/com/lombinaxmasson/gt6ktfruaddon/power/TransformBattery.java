@@ -2,12 +2,11 @@ package com.lombinaxmasson.gt6ktfruaddon.power;
 
 import java.util.Map;
 
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
  * Transform battery. EU capacity is the filled cells in the eight slots.
@@ -16,7 +15,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * crystal capacity and is always sealed. A sealed machine does not take
  * items. Nothing here can push that buffer into a card 10 transformer part.
  */
-public final class TransformBattery implements MachineBehavior {
+public final class TransformBattery extends BehaviorBase {
     static final long LIGHT_CAPACITY = 367_001_600_000L;
     private static final Map<String, Long> CELLS = Map.of(
             "lead_acid_cell_filled", 512_000L,
@@ -52,11 +51,6 @@ public final class TransformBattery implements MachineBehavior {
     public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
         if (alwaysSealed) return false;
         return !context.toggle(0);
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, FluidStack stack) {
-        return false;
     }
 
     private long capacity(MachineBehaviorContext context) {

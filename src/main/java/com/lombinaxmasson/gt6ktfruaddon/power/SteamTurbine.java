@@ -1,10 +1,9 @@
 package com.lombinaxmasson.gt6ktfruaddon.power;
 
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
@@ -13,7 +12,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * packet that does not leave is dropped. The gulp is capped at {@code rate * 2}
  * because the declared output is one packet of {@code rate}.
  */
-public final class SteamTurbine implements MachineBehavior {
+public final class SteamTurbine extends BehaviorBase {
     static final int STEAM_PER_WATER = 170;
     private final long rate;
 
@@ -45,11 +44,6 @@ public final class SteamTurbine implements MachineBehavior {
         long sent = context.energy() >= ru ? context.emit(ru, 1) : 0;
         if (sent == 0 && context.energy() > 0) context.consume(context.energy());
         context.working(sent > 0);
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return false;
     }
 
     @Override

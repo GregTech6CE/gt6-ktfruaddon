@@ -1,14 +1,12 @@
 package com.lombinaxmasson.gt6ktfruaddon.heat;
 
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
  * Mantle heater. An RU packet whose energy is above 128 raises progress by
@@ -16,7 +14,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * The source emits that heat from five blocks above the top; this buffer only stores it.
  * The drill column down to bedrock is not part of the fixed layout.
  */
-public final class MantleHeater implements MachineBehavior {
+public final class MantleHeater extends BehaviorBase {
     static final long HEAT_CAPACITY = 5_000_000;
 
     @Override
@@ -39,16 +37,6 @@ public final class MantleHeater implements MachineBehavior {
             if (add > 0) state.setLong("heat", Math.min(HEAT_CAPACITY, heat + add));
         }
         context.working(progress > 16384);
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, FluidStack stack) {
-        return false;
     }
 
     @Override

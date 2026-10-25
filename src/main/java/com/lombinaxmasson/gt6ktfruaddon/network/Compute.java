@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
 
@@ -21,7 +21,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
  * Addon-side compute cluster topology.
@@ -30,7 +29,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * Biology, quantum and spacetime arrays can bind an upstream controller and expose their converted compute.
  * AI centers and downstream arrays allocate compute per server tick from their bound controller.
  */
-public final class Compute implements MachineBehavior {
+public final class Compute extends BehaviorBase {
     static final long REACH = 512L;
     private static final long EXPIRY_TICKS = 20L;
 
@@ -159,11 +158,6 @@ public final class Compute implements MachineBehavior {
     @Override
     public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
         return kind == Kind.CLUSTER;
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, FluidStack stack) {
-        return false;
     }
 
     @Override

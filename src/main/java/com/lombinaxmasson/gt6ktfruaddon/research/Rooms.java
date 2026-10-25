@@ -7,8 +7,8 @@ import java.util.Map;
 
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -24,7 +24,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * The 9x9x9 shell has radius 4, height 8 and wall thickness 1, so the interior box is
  * {@code [cx - 3..cx + 3, cy + 1..cy + 7, cz - 3..cz + 3]}.
  */
-public final class Rooms implements MachineBehavior {
+public final class Rooms extends BehaviorBase {
     public static final int SHELL_RADIUS = 4;
     public static final int SHELL_HEIGHT = 8;
     private static final long EXPIRY_TICKS = 20L;

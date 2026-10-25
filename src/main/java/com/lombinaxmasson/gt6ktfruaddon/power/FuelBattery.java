@@ -5,8 +5,8 @@ import java.util.List;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.core.Direction;
@@ -25,7 +25,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * and the recipe does not use it up.
  * Toggle 0 stops processing. Toggle 1 opens the electrolyte tank and closes the fuel tanks.
  */
-public final class FuelBattery implements MachineBehavior {
+public final class FuelBattery extends BehaviorBase {
     private static final int FUEL_A = 0;
     private static final int FUEL_B = 1;
     private static final int OUT_A = 2;

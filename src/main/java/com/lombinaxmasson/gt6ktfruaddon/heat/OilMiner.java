@@ -1,14 +1,13 @@
 package com.lombinaxmasson.gt6ktfruaddon.heat;
 
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -19,7 +18,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * copies that gas. Other liquids are copied. The six drills are the structure's
  * {@code A} cells; the spring is the block under each drill.
  */
-public final class OilMiner implements MachineBehavior {
+public final class OilMiner extends BehaviorBase {
     private static final int IN = 0;
     private static final int OUT = 1;
     private static final int[][] DRILLS = {
@@ -36,11 +35,6 @@ public final class OilMiner implements MachineBehavior {
         pushUp(context);
         context.consume(context.energy());
         context.working(true);
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return false;
     }
 
     @Override

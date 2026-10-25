@@ -29,6 +29,8 @@ import com.gregtech.gregtech.api.addon.LayoutPart;
 import com.gregtech.gregtech.api.addon.RecipeMachine;
 import com.gregtech.gregtech.api.addon.RecipeTable;
 import com.gregtech.gregtech.api.addon.StructureLayout;
+import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.registry.Features;
 
 /**
@@ -102,6 +104,17 @@ class MachineContractTest {
             }
         }
         assertEquals(List.of(), failures);
+    }
+
+    /** The base answers the two checks that most behaviors leave out, so a behavior without it is a slip. */
+    @Test
+    void everyBehaviorExtendsTheAddonBase() {
+        List<String> others = new ArrayList<>();
+        for (String type : new TreeSet<>(Declarations.machineContributor().machineTypes())) {
+            MachineBehavior behavior = Declarations.machineContributor().create(type);
+            if (!(behavior instanceof BehaviorBase)) others.add(type + ": " + behavior.getClass().getName());
+        }
+        assertEquals(List.of(), others);
     }
 
     @Test

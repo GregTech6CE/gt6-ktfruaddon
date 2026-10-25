@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon.gas;
 
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -11,7 +11,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * ten millibuckets per KU to the compressed drum on the back face.
  * The packet is spent even when the drum accepts nothing.
  */
-public final class GasCompressor implements MachineBehavior {
+public final class GasCompressor extends BehaviorBase {
     @Override
     public void tick(MachineBehaviorContext context) {
         voidNonGas(context);
@@ -20,11 +20,6 @@ public final class GasCompressor implements MachineBehavior {
         if (ku > 0) context.consume(ku);
         context.working(accepted > 0);
         context.progress(fillFraction(context));
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, net.minecraft.world.item.ItemStack stack) {
-        return false;
     }
 
     @Override

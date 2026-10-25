@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon.kinetic;
 
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
  * or tool speed, and the flywheel prefix is not registered. A right click can
  * still park an item whose id contains {@code flywheel}.
  */
-public final class Flywheel implements MachineBehavior {
+public final class Flywheel extends BehaviorBase {
     private static final long[] VMAX = {8, 32, 128, 512, 2048, 8192};
 
     private final int ampere;
@@ -36,16 +36,6 @@ public final class Flywheel implements MachineBehavior {
             if (packets >= 1) context.emit(size, packets);
         }
         context.working(context.energy() > 0);
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, net.neoforged.neoforge.fluids.FluidStack stack) {
-        return false;
     }
 
     @Override

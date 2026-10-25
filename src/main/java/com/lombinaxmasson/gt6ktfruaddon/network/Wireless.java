@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,16 +20,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
  * Inductive links stay in one dimension, within 64 blocks, and lose energy with distance.
  * Quantum links cross dimensions, ignore distance, and only talk to the quantum receiver.
  * The hub stores EU. The source can lock another energy type; this port does not.
  */
-public final class Wireless implements MachineBehavior {
+public final class Wireless extends BehaviorBase {
     static final long INDUCTIVE_CAPACITY = 367_001_600_000L;
     static final long QUANTUM_CAPACITY = 1_468_006_400_000L;
 
@@ -45,16 +43,6 @@ public final class Wireless implements MachineBehavior {
     public void tick(MachineBehaviorContext context) {
         if (kind == Kind.INDUCTIVE || kind == Kind.QUANTUM) tickTower(context);
         else tickReceiver(context);
-    }
-
-    @Override
-    public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, FluidStack stack) {
-        return false;
     }
 
     @Override

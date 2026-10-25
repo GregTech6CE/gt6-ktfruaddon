@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon.research;
 
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
 
@@ -12,14 +12,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
  * Optical microscope (256 EU/item) and electron microscope (4096 EU/item).
  * Consumes items from slot 0 while the structure is formed, unlocking the item in the bound
  * or adjacent {@code research_monitor} and placing any remainder into slot 1.
  */
-public final class Microscope implements MachineBehavior {
+public final class Microscope extends BehaviorBase {
     private final long perItem;
 
     public Microscope(long perItem) {
@@ -70,11 +69,6 @@ public final class Microscope implements MachineBehavior {
     @Override
     public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
         return slot == 0 && stack != null && !stack.isEmpty();
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, FluidStack stack) {
-        return false;
     }
 
     @Override

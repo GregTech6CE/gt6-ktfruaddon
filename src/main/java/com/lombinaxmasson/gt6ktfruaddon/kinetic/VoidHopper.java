@@ -1,8 +1,8 @@
 package com.lombinaxmasson.gt6ktfruaddon.kinetic;
 
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
-import com.gregtech.gregtech.api.addon.platform.MachineBehavior;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -16,7 +16,7 @@ import net.minecraft.world.phys.AABB;
  * A screwdriver and a soft hammer are not in {@link AddonTools}, so the blacklist
  * and the clear action are gui toggles.
  */
-public final class VoidHopper implements MachineBehavior {
+public final class VoidHopper extends BehaviorBase {
     private static final int FILTER = 0;
     private static final int BLACKLIST = 0;
     private static final int CLEAR = 1;
@@ -43,11 +43,6 @@ public final class VoidHopper implements MachineBehavior {
     @Override
     public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
         return slot == FILTER;
-    }
-
-    @Override
-    public boolean canFill(MachineBehaviorContext context, int tank, net.neoforged.neoforge.fluids.FluidStack stack) {
-        return false;
     }
 
     @Override
