@@ -15,7 +15,7 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
 /**
  * The casing layer uses tint index 0. GT only paints its own machines, so the
- * material color comes from the public material catalog.
+ * material color is resolved once per handler registration from the public catalog.
  */
 @EventBusSubscriber(modid = Ktfru.MODID, value = Dist.CLIENT)
 public final class MachineColors {
@@ -38,12 +38,16 @@ public final class MachineColors {
 
     private static void paint(RegisterColorHandlersEvent.Block event, String id, String material) {
         Block block = block(id);
-        if (block != null) event.register((state, level, pos, index) -> color(material), block);
+        if (block == null) return;
+        int tint = color(material);
+        event.register((state, level, pos, index) -> tint, block);
     }
 
     private static void paint(RegisterColorHandlersEvent.Item event, String id, String material) {
         Block block = block(id);
-        if (block != null) event.register((stack, index) -> color(material), block);
+        if (block == null) return;
+        int tint = color(material);
+        event.register((stack, index) -> tint, block);
     }
 
     private static Block block(String id) {
