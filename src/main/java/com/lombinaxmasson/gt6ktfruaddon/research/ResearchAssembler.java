@@ -1,6 +1,5 @@
 package com.lombinaxmasson.gt6ktfruaddon.research;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
@@ -10,6 +9,10 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
+
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.RecipeRunner;
+
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Slots;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -32,41 +35,19 @@ public final class ResearchAssembler extends BehaviorBase {
     static final int FLUID_IN_COUNT = 2;
     static final int FLUID_OUT_TANK = 2;
 
-    private final List<String> maps;
+    static final Slots SLOTS = new Slots(Slots.range(0, ITEM_IN_COUNT), Slots.range(ITEM_OUT_START, ITEM_OUT_COUNT),
+            Slots.range(0, FLUID_IN_COUNT), List.of(FLUID_OUT_TANK));
+    private final RecipeRunner runner;
 
     public ResearchAssembler(String... maps) {
-        this.maps = List.of(maps);
+        this.runner = new RecipeRunner(SLOTS, List.of(maps)).requires(ResearchAssembler::unlocked);
     }
 
     @Override
     public void tick(MachineBehaviorContext context) {
         EnergyBridge.pull(context, "EU");
-        if (!context.structureFormed()) {
-            context.working(false);
-            context.progress(0);
-            return;
-        }
-        AddonRecipes.Line line = find(context);
-        if (line == null || !unlocked(context, line)) {
-            context.state().setLong("progress", 0);
-            context.progress(0);
-            context.working(false);
-            return;
-        }
-        long duration = Math.max(1L, line.duration());
-        long progress = context.state().getLong("progress");
-        long eu = Math.max(1L, line.euPerTick());
-        if (progress >= duration) {
-            if (finish(context, line)) progress = 0;
-        } else if (context.energy() >= eu && context.consume(eu)) {
-            progress++;
-            if (progress >= duration && finish(context, line)) progress = 0;
-            context.working(true);
-        } else {
-            context.working(false);
-        }
-        context.state().setLong("progress", progress);
-        context.progress(Math.min(1.0F, progress / (float) duration));
+        if (!context.structureFormed()) { runner.idle(context); return; }
+        runner.tick(context);
     }
 
     @Override
@@ -96,16 +77,7 @@ public final class ResearchAssembler extends BehaviorBase {
         return true;
     }
 
-    private AddonRecipes.Line find(MachineBehaviorContext context) {
-        List<ItemStack> items = new ArrayList<>(ITEM_IN_COUNT);
-        for (int i = 0; i < ITEM_IN_COUNT; i++) items.add(context.item(i));
-        List<FluidStack> fluids = List.of(context.fluid(0), context.fluid(1));
-        for (String map : maps) {
-            AddonRecipes.Line found = AddonRecipes.map(map).find(items, fluids, true, ITEM_IN_COUNT, FLUID_IN_COUNT);
-            if (found != null) return found;
-        }
-        return null;
-    }
+
 
     private static boolean unlocked(MachineBehaviorContext context, AddonRecipes.Line line) {
         ItemStack[] outputs = line.itemOutputs();
@@ -124,108 +96,4 @@ public final class ResearchAssembler extends BehaviorBase {
         return saved != null ? saved : behindTwo;
     }
 
-    private static boolean finish(MachineBehaviorContext context, AddonRecipes.Line line) {
-        if (!pays(context, line) || !fits(context, line)) return false;
-        ItemStack[] items = line.itemInputs();
-        if (items != null) {
-            for (int i = 0; i < items.length; i++) {
-                ItemStack need = items[i];
-                if (need == null || need.isEmpty() || kept(line, i)) continue;
-                int slot = itemSlotHolding(context, need);
-                if (slot >= 0) {
-                    ItemStack have = context.item(slot).copy();
-                    have.shrink(need.getCount());
-                    context.setItem(slot, have.isEmpty() ? ItemStack.EMPTY : have);
-                }
-            }
-        }
-        FluidStack[] fluids = line.fluidInputs();
-        if (fluids != null) {
-            for (FluidStack need : fluids) {
-                if (need == null || need.isEmpty()) continue;
-                int tank = fluidTankHolding(context, need);
-                if (tank >= 0) context.drain(tank, need.getAmount(), false);
-            }
-        }
-        FluidStack[] outFluids = line.fluidOutputs();
-        if (outFluids != null && outFluids.length > 0 && outFluids[0] != null && !outFluids[0].isEmpty()) {
-            context.fill(FLUID_OUT_TANK, outFluids[0].copy(), false);
-        }
-        ItemStack[] outputs = line.itemOutputs();
-        if (outputs != null) {
-            for (ItemStack out : outputs) {
-                if (out != null && !out.isEmpty()) context.insertOutput(out.copy());
-            }
-        }
-        return true;
-    }
-
-    private static boolean kept(AddonRecipes.Line line, int index) {
-        int[] indexes = line.keptInputs();
-        if (indexes == null) return false;
-        for (int k : indexes) if (k == index) return true;
-        return false;
-    }
-
-    private static boolean pays(MachineBehaviorContext context, AddonRecipes.Line line) {
-        ItemStack[] items = line.itemInputs();
-        if (items != null) {
-            for (ItemStack need : items) {
-                if (need == null || need.isEmpty()) continue;
-                if (itemSlotHolding(context, need) < 0) return false;
-            }
-        }
-        FluidStack[] fluids = line.fluidInputs();
-        if (fluids != null) {
-            for (FluidStack need : fluids) {
-                if (need == null || need.isEmpty()) continue;
-                if (fluidTankHolding(context, need) < 0) return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean fits(MachineBehaviorContext context, AddonRecipes.Line line) {
-        FluidStack[] outFluids = line.fluidOutputs();
-        if (outFluids != null && outFluids.length > 0 && outFluids[0] != null && !outFluids[0].isEmpty()) {
-            FluidStack have = context.fluid(FLUID_OUT_TANK);
-            if (!have.isEmpty() && (!FluidStack.isSameFluidSameComponents(have, outFluids[0])
-                    || have.getAmount() + outFluids[0].getAmount() > context.capacity(FLUID_OUT_TANK))) {
-                return false;
-            }
-        }
-        ItemStack[] outputs = line.itemOutputs();
-        if (outputs == null || outputs.length == 0 || outputs[0] == null || outputs[0].isEmpty()) return true;
-        for (int s = ITEM_OUT_START; s < ITEM_OUT_START + ITEM_OUT_COUNT; s++) {
-            ItemStack have = context.item(s);
-            if (have.isEmpty()) return true;
-            if (ItemStack.isSameItemSameComponents(have, outputs[0])
-                    && have.getCount() + outputs[0].getCount() <= have.getMaxStackSize()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static int itemSlotHolding(MachineBehaviorContext context, ItemStack need) {
-        for (int s = 0; s < ITEM_IN_COUNT; s++) {
-            ItemStack have = context.item(s);
-            if (!have.isEmpty() && ItemStack.isSameItemSameComponents(have, need)
-                    && have.getCount() >= need.getCount()) {
-                return s;
-            }
-        }
-        return -1;
-    }
-
-    private static int fluidTankHolding(MachineBehaviorContext context, FluidStack need) {
-        for (int t = 0; t < FLUID_IN_COUNT; t++) {
-            FluidStack have = context.fluid(t);
-            if (!have.isEmpty() && FluidStack.isSameFluidSameComponents(have, need)
-                    && have.getAmount() >= need.getAmount()) {
-                return t;
-            }
-        }
-        return -1;
-    }
 }
