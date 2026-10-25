@@ -6,9 +6,7 @@ import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
-
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.RecipeRunner;
-
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Slots;
 
 import net.minecraft.network.chat.Component;

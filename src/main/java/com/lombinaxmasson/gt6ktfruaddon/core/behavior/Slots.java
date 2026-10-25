@@ -1,8 +1,10 @@
 package com.lombinaxmasson.gt6ktfruaddon.core.behavior;
 
-import java.util.List;
 import java.util.HashSet;
+import java.util.List;
 import java.util.stream.IntStream;
+
+import com.gregtech.gregtech.api.addon.BehaviorMachine.SlotRole;
 
 /** Inventory indexes shared by declarations and behavior; inputs and outputs must be disjoint. */
 public record Slots(List<Integer> itemsIn, List<Integer> itemsOut, List<Integer> fluidsIn, List<Integer> fluidsOut) {
@@ -17,15 +19,15 @@ public record Slots(List<Integer> itemsIn, List<Integer> itemsOut, List<Integer>
             if (index < 0 || !unique.add(index)) throw new IllegalArgumentException("duplicate or negative slot: " + index);
         }
     }
-    public com.gregtech.gregtech.api.addon.BehaviorMachine.SlotRole itemRole(int slot) {
+    public SlotRole itemRole(int slot) {
         return role(itemsIn, itemsOut, slot);
     }
-    public com.gregtech.gregtech.api.addon.BehaviorMachine.SlotRole fluidRole(int tank) {
+    public SlotRole fluidRole(int tank) {
         return role(fluidsIn, fluidsOut, tank);
     }
-    private static com.gregtech.gregtech.api.addon.BehaviorMachine.SlotRole role(List<Integer> in, List<Integer> out, int index) {
-        if (in.contains(index)) return com.gregtech.gregtech.api.addon.BehaviorMachine.SlotRole.INPUT;
-        if (out.contains(index)) return com.gregtech.gregtech.api.addon.BehaviorMachine.SlotRole.OUTPUT;
+    private static SlotRole role(List<Integer> in, List<Integer> out, int index) {
+        if (in.contains(index)) return SlotRole.INPUT;
+        if (out.contains(index)) return SlotRole.OUTPUT;
         throw new IllegalArgumentException("undeclared slot: " + index);
     }
     public static List<Integer> range(int first, int count) {

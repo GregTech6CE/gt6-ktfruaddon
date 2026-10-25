@@ -5,9 +5,8 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
-import com.lombinaxmasson.gt6ktfruaddon.network.ComputeNetwork;
-
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+import com.lombinaxmasson.gt6ktfruaddon.network.ComputeNetwork;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

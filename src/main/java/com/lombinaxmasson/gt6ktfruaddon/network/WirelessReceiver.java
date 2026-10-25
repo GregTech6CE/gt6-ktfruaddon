@@ -3,10 +3,8 @@ package com.lombinaxmasson.gt6ktfruaddon.network;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
-
-import com.lombinaxmasson.gt6ktfruaddon.network.WirelessInbox.Mark;
-
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
+import com.lombinaxmasson.gt6ktfruaddon.network.WirelessInbox.Mark;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;

@@ -3,6 +3,7 @@ package com.lombinaxmasson.gt6ktfruaddon.core.behavior;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 

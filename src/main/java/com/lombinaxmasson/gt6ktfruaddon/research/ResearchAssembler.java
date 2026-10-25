@@ -9,11 +9,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
-
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.RecipeRunner;
-
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Slots;
-
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
 
 import net.minecraft.core.BlockPos;

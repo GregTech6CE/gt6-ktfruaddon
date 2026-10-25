@@ -6,17 +6,13 @@ import java.util.UUID;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
-import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
-import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PlayerMemory;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
-
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PlayerMemory;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
-
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.RecipeRunner;
-
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Slots;
-
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

@@ -1,9 +1,9 @@
 package com.lombinaxmasson.gt6ktfruaddon.core.behavior;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** Live values expire after 20 ticks; dimensions use independent clocks. Server thread only. */
 public final class TtlRegistry<V> implements BehaviorLifecycle.Memory {

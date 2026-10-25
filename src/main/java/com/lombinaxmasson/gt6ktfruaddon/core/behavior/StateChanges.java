@@ -1,6 +1,7 @@
 package com.lombinaxmasson.gt6ktfruaddon.core.behavior;
 
 import java.util.Objects;
+
 import com.gregtech.gregtech.api.addon.platform.BehaviorState;
 
 /** The host marks a block dirty on every setter call; write only actual changes. */

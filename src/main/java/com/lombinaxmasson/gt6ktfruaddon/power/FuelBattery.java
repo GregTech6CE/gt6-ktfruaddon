@@ -7,11 +7,9 @@ import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
-import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
-
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.RecipeRunner;
-
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Slots;
+import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;

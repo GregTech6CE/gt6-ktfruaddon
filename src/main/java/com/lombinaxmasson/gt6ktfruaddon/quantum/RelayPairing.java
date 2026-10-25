@@ -1,9 +1,11 @@
 package com.lombinaxmasson.gt6ktfruaddon.quantum;
 
 import java.util.function.Predicate;
+
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
-import com.lombinaxmasson.gt6ktfruaddon.core.behavior.TtlRegistry;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.RevisionClock;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.TtlRegistry;
+
 import net.minecraft.core.BlockPos;
 
 /** Live endpoints are a view of persisted links, never the only copy of a handshake. Server thread only. */

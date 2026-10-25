@@ -3,14 +3,16 @@ package com.lombinaxmasson.gt6ktfruaddon.core.behavior;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.mojang.logging.LogUtils;
+
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.server.ServerStoppedEvent;
-import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 
 /** Owns transient machine indexes. All access is on the server thread. */
 @EventBusSubscriber(modid = Ktfru.MODID)

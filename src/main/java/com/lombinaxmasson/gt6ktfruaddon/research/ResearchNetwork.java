@@ -7,10 +7,9 @@ import java.util.UUID;
 
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
-import com.lombinaxmasson.gt6ktfruaddon.core.behavior.TtlRegistry;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PlayerMemory;
-
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.TtlRegistry;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -3,10 +3,11 @@ package com.lombinaxmasson.gt6ktfruaddon.network;
 import java.util.UUID;
 import java.util.function.LongPredicate;
 import java.util.function.LongUnaryOperator;
-import com.lombinaxmasson.gt6ktfruaddon.core.behavior.TtlRegistry;
-import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PlayerMemory;
-import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimensionMemory;
+
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimensionMemory;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PlayerMemory;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.TtlRegistry;
 
 import net.minecraft.core.BlockPos;
 

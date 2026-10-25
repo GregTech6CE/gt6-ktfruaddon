@@ -2,10 +2,12 @@ package com.lombinaxmasson.gt6ktfruaddon.core.behavior;
 
 import java.util.List;
 import java.util.function.BiPredicate;
-import java.util.function.ToLongBiFunction;
 import java.util.function.Consumer;
+import java.util.function.ToLongBiFunction;
+
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
+
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 

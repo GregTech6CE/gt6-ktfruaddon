@@ -1,7 +1,7 @@
 package com.lombinaxmasson.gt6ktfruaddon.research;
 
-import com.lombinaxmasson.gt6ktfruaddon.core.behavior.TtlRegistry;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.TtlRegistry;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

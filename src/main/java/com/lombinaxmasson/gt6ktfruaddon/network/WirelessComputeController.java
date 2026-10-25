@@ -7,10 +7,8 @@ import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
-
-import com.lombinaxmasson.gt6ktfruaddon.core.behavior.LinkList;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
-
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.LinkList;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
 
 import net.minecraft.core.BlockPos;
