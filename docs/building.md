@@ -26,4 +26,4 @@ python tools/regenerate.py --check --full
 
 冒烟脚本加载模组到 recipes-ready，按日志确认注册成功；没有 GameTest 的提示是预期情况。完整生成检查还需额外输入，见 [重新生成](regenerating.md)。日常 Java 构建不需要 kTFRUAddon 或原版 GT6 源码副本。
 
-当前机器已多次构建与冒烟通过；全新远端克隆、自动下载 JDK 和展示前正式服务器检查属于 WP8，不能用本机缓存构建代替。
+本轮干净克隆、构建和实际专用服务器验证的证据与边界见 [展示前自检记录](verification.md)。干净克隆复用已安装的 JDK 与用户级 Gradle/NeoForm 依赖与变换缓存；远端零缓存环境及自动下载 JDK 分支仍未验证。

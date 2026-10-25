@@ -8,6 +8,7 @@
 
 - [构建与运行](docs/building.md)、[架构与新增机器](docs/adding-a-machine.md)、[重新生成](docs/regenerating.md)
 - [范围清单](docs/ktfruaddon-gt6-surface.md)、[阶段卡](docs/card-plans/README.md)、[唯一缺口账本](docs/card-plans/prep/05-api-gaps.md)
+- [展示前自检记录](docs/verification.md)
 - [未验收玩法](docs/unverified-gameplay.md)、[生存配方产物](docs/survival-availability.md)、[中文待核对](docs/untranslated-zh-cn.md)
 - 本地整改计划：[quality-audit.md](docs/quality-audit.md)（按维护决定不入库，公开克隆中此链接不可用；公共现状以以上指南与账本为准）。
 
