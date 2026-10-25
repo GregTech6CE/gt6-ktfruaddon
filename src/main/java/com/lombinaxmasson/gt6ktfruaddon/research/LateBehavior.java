@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 
 /**
  * Centrifugal microgravity controller (30102) and the three AI research centers (30106–30108).
- * After spinning for 600 ticks at 2048 EU/tick, the room registers its 9x9x9 interior in {@link Rooms}.
+ * After spinning for 600 ticks at 2048 EU/tick, the room registers its 9x9x9 interior in {@link MicrogravityRooms}.
  * Each AI center allocates 67,108,864 Normal compute/tick from its bound compute controller and adds
  * its points/tick (8, 4 or 2) to the bound or adjacent {@code research_monitor}.
  */
@@ -47,7 +47,7 @@ public final class LateBehavior extends BehaviorBase {
     @Override
     public void beforeBreak(MachineBehaviorContext context) {
         if (room) {
-            Rooms.updateRoom(context.level(), context.pos(), false);
+            MicrogravityRooms.updateRoom(context.level(), context.pos(), false);
         }
     }
 
@@ -81,7 +81,7 @@ public final class LateBehavior extends BehaviorBase {
             context.state().setInt("spin", 0);
             context.working(false);
             context.progress(0);
-            Rooms.updateRoom(context.level(), context.pos(), false);
+            MicrogravityRooms.updateRoom(context.level(), context.pos(), false);
             return;
         }
         int spin = Math.min(600, context.state().getInt("spin") + 1);
@@ -89,7 +89,7 @@ public final class LateBehavior extends BehaviorBase {
         context.progress(spin / 600.0F);
         boolean active = spin >= 600;
         context.working(active);
-        Rooms.updateRoom(context.level(), context.pos(), active);
+        MicrogravityRooms.updateRoom(context.level(), context.pos(), active);
     }
 
     private void tickAi(MachineBehaviorContext context) {

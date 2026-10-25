@@ -1,9 +1,6 @@
 package com.lombinaxmasson.gt6ktfruaddon.research;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
@@ -11,73 +8,28 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-/**
- * Addon-side room index for {@code CentrifugalMicrogravityController} (30102) and the
- * microgravity machines (30103 crystal growth, 30105 microgravity assembler).
- * The 9x9x9 shell has radius 4, height 8 and wall thickness 1, so the interior box is
- * {@code [cx - 3..cx + 3, cy + 1..cy + 7, cz - 3..cz + 3]}.
- */
-public final class Rooms extends BehaviorBase {
-    public static final int SHELL_RADIUS = 4;
-    public static final int SHELL_HEIGHT = 8;
-    private static final long EXPIRY_TICKS = 20L;
-    private static final Map<Key, Long> ACTIVE_ROOMS = new HashMap<>();
-
+/** Crystal growth and microgravity assembler recipe behavior; requires a live microgravity room. */
+public final class MicrogravityMachine extends BehaviorBase {
     private final String recipeMap;
     private final boolean multiblock;
     private final int fluidInputs;
 
-    public Rooms(String recipeMap, boolean multiblock, int fluidInputs) {
+    public MicrogravityMachine(String recipeMap, boolean multiblock, int fluidInputs) {
         this.recipeMap = recipeMap;
         this.multiblock = multiblock;
         this.fluidInputs = fluidInputs;
     }
 
-    public static synchronized void updateRoom(Level level, BlockPos controller, boolean active) {
-        if (level == null || controller == null) return;
-        Key key = new Key(level.dimension().location().toString(), controller.immutable());
-        if (active) {
-            ACTIVE_ROOMS.put(key, level.getGameTime());
-        } else {
-            ACTIVE_ROOMS.remove(key);
-        }
-    }
-
-    public static synchronized boolean hasMicrogravity(Level level, BlockPos pos) {
-        if (level == null || pos == null) return false;
-        String dim = level.dimension().location().toString();
-        long now = level.getGameTime();
-        Iterator<Map.Entry<Key, Long>> it = ACTIVE_ROOMS.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<Key, Long> entry = it.next();
-            if (now - entry.getValue() > EXPIRY_TICKS) {
-                it.remove();
-                continue;
-            }
-            if (!dim.equals(entry.getKey().dim())) continue;
-            if (insideInterior(entry.getKey().pos(), pos)) return true;
-        }
-        return false;
-    }
-
-    private static boolean insideInterior(BlockPos c, BlockPos p) {
-        return p.getX() >= c.getX() - (SHELL_RADIUS - 1) && p.getX() <= c.getX() + (SHELL_RADIUS - 1)
-                && p.getY() >= c.getY() + 1 && p.getY() <= c.getY() + (SHELL_HEIGHT - 1)
-                && p.getZ() >= c.getZ() - (SHELL_RADIUS - 1) && p.getZ() <= c.getZ() + (SHELL_RADIUS - 1);
-    }
-
     @Override
     public void tick(MachineBehaviorContext context) {
         EnergyBridge.pull(context, "EU");
-        if ((multiblock && !context.structureFormed()) || !hasMicrogravity(context.level(), context.pos())) {
+        if ((multiblock && !context.structureFormed()) || !MicrogravityRooms.hasMicrogravity(context.level(), context.pos())) {
             context.working(false);
             context.progress(0);
             return;
@@ -118,7 +70,7 @@ public final class Rooms extends BehaviorBase {
     @Override
     public boolean onUse(MachineBehaviorContext context, Player player, InteractionHand hand) {
         if (!AddonTools.isMagnifyingGlass(player.getItemInHand(hand))) return false;
-        boolean microgravity = hasMicrogravity(context.level(), context.pos());
+        boolean microgravity = MicrogravityRooms.hasMicrogravity(context.level(), context.pos());
         player.displayClientMessage(Component.translatable("gt6ktfruaddon.microgravity.status",
                 microgravity ? 1 : 0, (!multiblock || context.structureFormed()) ? 1 : 0), false);
         return true;
@@ -220,6 +172,4 @@ public final class Rooms extends BehaviorBase {
         for (int k : kept) if (k == index) return true;
         return false;
     }
-
-    private record Key(String dim, BlockPos pos) {}
 }
