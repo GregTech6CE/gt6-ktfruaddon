@@ -19,7 +19,7 @@ jobs:
         python-version: '3.11'
 
     - name: Test generation checks
-      run: python -m unittest discover -s tools -p test_generated.py
+      run: python -m unittest discover -s tools -p 'test_*.py'
 
     - name: Check generated sources
       run: python tools/regenerate.py --check
@@ -116,8 +116,13 @@ jobs:
       working-directory: libs/gt6ce
       run: |
         if ! sha256sum --check --status gt6ce-1.21.1-neoforge.jar.sha256; then
-          echo "::warning::GT6CE jar built from $GT6CE_COMMIT differs from the recorded checksum."
+          echo "::warning::GT6CE jar built from $GT6CE_COMMIT differs from the recorded checksum. This checksum records one local build; byte-identical jar archives are not guaranteed across build environments. The source commit remains pinned."
         fi
 
     - name: Build with Gradle
       run: chmod +x gradlew && ./gradlew build
+
+    - name: Check documentation inventories
+      run: |
+        ./gradlew documentationInventory
+        python tools/documentation_reports.py --check
