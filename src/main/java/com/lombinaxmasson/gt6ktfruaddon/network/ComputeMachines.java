@@ -26,13 +26,13 @@ public final class ComputeMachines implements Feature {
     static final String QUANTUM_NODE = "quantum_compute_node_naquadah";
 
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
-            .add("compute_user", () -> new Compute(Compute.Kind.PLAIN, 512, 0, ""))
-            .add("dream_brain", () -> new Compute(Compute.Kind.PLAIN, 512, 0, ""))
-            .add("compute_cluster", () -> new Compute(Compute.Kind.CLUSTER, 0, 0, ""))
-            .add("compute_cluster_simple", () -> new Compute(Compute.Kind.CLUSTER, 0, 0, ""))
-            .add(WIRELESS, () -> new Compute(Compute.Kind.WIRELESS, 0, 0, ""))
-            .add("wireless_compute_controller_large", () -> new Compute(Compute.Kind.WIRELESS, 0, 0, ""))
-            .add("wireless_compute_controller_huge", () -> new Compute(Compute.Kind.WIRELESS, 0, 0, ""))
+            .add("compute_user", () -> new ComputeUser(512))
+            .add("dream_brain", () -> new ComputeUser(512))
+            .add("compute_cluster", () -> new ComputeCluster())
+            .add("compute_cluster_simple", () -> new ComputeCluster())
+            .add(WIRELESS, () -> new WirelessComputeController())
+            .add("wireless_compute_controller_large", () -> new WirelessComputeController())
+            .add("wireless_compute_controller_huge", () -> new WirelessComputeController())
             .add("biology_compute_t1", () -> arrayBehavior(262144, 65536, "Biology"))
             .add("biology_compute_t2", () -> arrayBehavior(2_097_152, 524288, "Biology"))
             .add("biology_compute_t3", () -> arrayBehavior(16_777_216, 4_194_304, "Biology"))
@@ -44,14 +44,14 @@ public final class ComputeMachines implements Feature {
             .add("spacetime_compute_t1", () -> arrayBehavior(2_097_152, 2000, "Spacetime"))
             .add("spacetime_compute_t2", () -> arrayBehavior(67_108_864, 200000, "Spacetime"))
             .add("quantum_compute_center", () -> arrayBehavior(0, 0, "Quantum"))
-            .add(NODE, () -> new Compute(Compute.Kind.NODE, 2000, 0, "Normal"))
-            .add("wireless_compute_node_stainless", () -> new Compute(Compute.Kind.NODE, 20000, 0, "Normal"))
-            .add("wireless_compute_node_chromium", () -> new Compute(Compute.Kind.NODE, 200000, 0, "Normal"))
-            .add("wireless_compute_node_titanium", () -> new Compute(Compute.Kind.NODE, 2000000, 0, "Normal"))
-            .add(QUANTUM_NODE, () -> new Compute(Compute.Kind.NODE, 65536, 0, "Quantum"))
-            .add("quantum_compute_node_naquadria", () -> new Compute(Compute.Kind.NODE, 262144, 0, "Quantum"))
-            .add("quantum_compute_node_enriched", () -> new Compute(Compute.Kind.NODE, 1048576, 0, "Quantum"))
-            .add("quantum_compute_node_trinaquadalloy", () -> new Compute(Compute.Kind.NODE, 16777216, 0, "Quantum"))
+            .add(NODE, () -> new ComputeNode(2000, "Normal"))
+            .add("wireless_compute_node_stainless", () -> new ComputeNode(20000, "Normal"))
+            .add("wireless_compute_node_chromium", () -> new ComputeNode(200000, "Normal"))
+            .add("wireless_compute_node_titanium", () -> new ComputeNode(2000000, "Normal"))
+            .add(QUANTUM_NODE, () -> new ComputeNode(65536, "Quantum"))
+            .add("quantum_compute_node_naquadria", () -> new ComputeNode(262144, "Quantum"))
+            .add("quantum_compute_node_enriched", () -> new ComputeNode(1048576, "Quantum"))
+            .add("quantum_compute_node_trinaquadalloy", () -> new ComputeNode(16777216, "Quantum"))
             .build();
 
     @Override
@@ -92,7 +92,7 @@ public final class ComputeMachines implements Feature {
     }
 
     private static MachineBehavior arrayBehavior(long required, long provided, String unit) {
-        return new Compute(Compute.Kind.ARRAY, provided, required, unit);
+        return new ComputeArray(provided, required, unit);
     }
 
     private static void emitter(List<AddonMachine> machines, String id) {

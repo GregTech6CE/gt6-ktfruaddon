@@ -5,7 +5,7 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
-import com.lombinaxmasson.gt6ktfruaddon.network.Compute;
+import com.lombinaxmasson.gt6ktfruaddon.network.ComputeNetwork;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -61,7 +61,7 @@ public final class LateBehavior extends BehaviorBase {
             return true;
         }
         String dim = context.level().dimension().location().toString();
-        DimPos pendingController = Compute.takePendingController(player.getUUID(), dim);
+        DimPos pendingController = ComputeNetwork.takePendingController(player.getUUID(), dim);
         if (pendingController != null) {
             context.state().setString("controller", PosCodec.format(pendingController.pos()));
         }
@@ -110,12 +110,12 @@ public final class LateBehavior extends BehaviorBase {
             context.working(false);
             return;
         }
-        if (!Compute.isControllerOnline(context.level(), controller)) {
+        if (!ComputeNetwork.isControllerOnline(context.level(), controller)) {
             context.state().setString("status", STATUS_OFFLINE);
             context.working(false);
             return;
         }
-        if (!Compute.allocate(context.level(), controller, "Normal", AI_COMPUTE_PER_TICK)) {
+        if (!ComputeNetwork.allocate(context.level(), controller, "Normal", AI_COMPUTE_PER_TICK)) {
             context.state().setString("status", STATUS_INSUFFICIENT);
             context.working(false);
             return;
