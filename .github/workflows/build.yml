@@ -13,6 +13,17 @@ jobs:
         fetch-depth: 0
         fetch-tags: true
 
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Test generation checks
+      run: python -m unittest discover -s tools -p test_generated.py
+
+    - name: Check generated sources
+      run: python tools/regenerate.py --check
+
     - name: Read pinned GT6CE commit
       run: echo "GT6CE_COMMIT=$(tr -d '[:space:]' < libs/gt6ce/build-commit.txt)" >> "$GITHUB_ENV"
 
