@@ -12,6 +12,7 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Slots;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -54,7 +55,8 @@ public final class FuelBattery extends BehaviorBase {
 
     @Override
     public boolean canInsert(MachineBehaviorContext context, int slot, ItemStack stack) {
-        return context.item(slot).isEmpty() && stack.getDescriptionId().contains("ktfru.item.battery.pole");
+        return (slot == 0 || slot == 1) && !stack.isEmpty()
+                && context.item(slot).isEmpty() && pole(stack) != null;
     }
 
     @Override
@@ -86,19 +88,14 @@ public final class FuelBattery extends BehaviorBase {
                 && electrolyteMatches(context);
     }
 
-    /** The pole pair names the electrolyte. Either order is the same pair. */
+    /** Either order of the same registered electrode pair uses the same electrolyte. */
     private static boolean electrolyteMatches(MachineBehaviorContext context) {
-        String left = context.item(0).getDescriptionId();
-        String right = context.item(1).getDescriptionId();
-        if (pair(left, right, "ktfru.item.battery.pole.nickel", "ktfru.item.battery.pole.catio3"))
-            return sameFluid(context.fluid(ELECTROLYTE), "GenLiquid_YttriumZirconiumOxide");
-        if (pair(left, right, "ktfru.item.battery.pole.carbon", "ktfru.item.battery.pole.platinum"))
-            return sameFluid(context.fluid(ELECTROLYTE), "GenLiquid_SulfuricAcid");
-        return false;
+        String field = Electrode.electrolyte(pole(context.item(0)), pole(context.item(1)));
+        return !field.isEmpty() && sameFluid(context.fluid(ELECTROLYTE), field);
     }
 
-    private static boolean pair(String left, String right, String a, String b) {
-        return (left.contains(a) && right.contains(b)) || (left.contains(b) && right.contains(a));
+    private static Electrode pole(ItemStack stack) {
+        return stack.isEmpty() ? null : Electrode.find(BuiltInRegistries.ITEM.getKey(stack.getItem()));
     }
 
     private static boolean sameFluid(FluidStack tank, String field) {
