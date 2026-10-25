@@ -9,6 +9,10 @@ import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.RecipeRunner;
+
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Slots;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -26,38 +30,19 @@ public final class FuelDeburner extends BehaviorBase {
     static final long MASS = 81920;
     static final long AMBIENT_MILLI = 293_000;
     static final long MAX_MILLI = 4_000_000;
-    private static final int OUT = 3;
+    static final int OUT = 3;
+    static final Slots SLOTS = new Slots(List.of(0), List.of(), Slots.range(0, OUT), List.of(OUT));
+    private final RecipeRunner runner = new RecipeRunner(SLOTS, List.of(RecipeMaps.FUEL_DEBURN))
+            .step((context, line) -> Math.round(Math.max(1, line.euPerTick()) * factor(context.state().getLong("temp"), line)));
 
     @Override
     public void tick(MachineBehaviorContext context) {
         heat(context);
-        long temp = context.state().getLong("temp");
-        if (!context.structureFormed() || temp > MAX_MILLI) {
-            context.working(false);
-            context.progress(0);
+        if (!context.structureFormed() || context.state().getLong("temp") > MAX_MILLI) {
+            runner.idle(context);
             return;
         }
-        AddonRecipes.Line line = find(context);
-        if (line == null) {
-            context.state().setLong("progress", 0);
-            context.progress(0);
-            context.working(false);
-            return;
-        }
-        long duration = Math.max(1, line.duration());
-        long progress = context.state().getLong("progress");
-        long eu = Math.max(1, line.euPerTick());
-        if (progress >= duration) {
-            if (finish(context, line)) progress = 0;
-        } else if (context.energy() >= eu && context.consume(eu)) {
-            progress = Math.max(0, progress + Math.round(eu * factor(temp, line)));
-            if (progress >= duration && finish(context, line)) progress = 0;
-            context.working(true);
-        } else {
-            context.working(false);
-        }
-        context.state().setLong("progress", progress);
-        context.progress(Math.min(1.0F, progress / (float) duration));
+        runner.tick(context);
     }
 
     @Override
@@ -99,56 +84,6 @@ public final class FuelDeburner extends BehaviorBase {
         if (delta < 1.0e-6) return 128;
         double value = (256.0 * recipeFactor / Math.sqrt(delta) - Math.pow(delta, 1.5) / recipeFactor) / recipeFactor;
         return Math.min(128.0, value);
-    }
-
-    private static AddonRecipes.Line find(MachineBehaviorContext context) {
-        if (context.item(0).isEmpty()) return null;
-        return AddonRecipes.map(RecipeMaps.FUEL_DEBURN).find(
-                List.of(context.item(0)),
-                List.of(context.fluid(0), context.fluid(1), context.fluid(2)),
-                true, 1, 0);
-    }
-
-    private static boolean finish(MachineBehaviorContext context, AddonRecipes.Line line) {
-        FluidStack[] inputs = line.fluidInputs();
-        FluidStack[] outputs = line.fluidOutputs();
-        if (outputs == null || outputs.length != 1 || outputs[0] == null || outputs[0].isEmpty()) return false;
-        if (!fits(context, outputs[0]) || !holds(context, inputs) || context.item(0).isEmpty()) return false;
-        for (FluidStack need : inputs) {
-            if (need == null || need.isEmpty()) continue;
-            context.drain(tankHolding(context, need), need.getAmount(), false);
-        }
-        ItemStack circuit = context.item(0).copy();
-        circuit.shrink(1);
-        context.setItem(0, circuit.isEmpty() ? ItemStack.EMPTY : circuit);
-        context.fill(OUT, outputs[0], false);
-        return true;
-    }
-
-    private static boolean holds(MachineBehaviorContext context, FluidStack[] inputs) {
-        if (inputs == null) return true;
-        for (FluidStack need : inputs) {
-            if (need == null || need.isEmpty()) continue;
-            int tank = tankHolding(context, need);
-            if (tank < 0) return false;
-            FluidStack preview = context.drain(tank, need.getAmount(), true);
-            if (preview.getAmount() < need.getAmount()) return false;
-        }
-        return true;
-    }
-
-    private static int tankHolding(MachineBehaviorContext context, FluidStack need) {
-        for (int tank = 0; tank < OUT; tank++) {
-            FluidStack here = context.fluid(tank);
-            if (!here.isEmpty() && FluidStack.isSameFluidSameComponents(here, need)) return tank;
-        }
-        return -1;
-    }
-
-    private static boolean fits(MachineBehaviorContext context, FluidStack stack) {
-        FluidStack here = context.fluid(OUT);
-        if (!here.isEmpty() && !FluidStack.isSameFluidSameComponents(here, stack)) return false;
-        return here.getAmount() + stack.getAmount() <= context.capacity(OUT);
     }
 
     static int circuit(ItemStack stack) {

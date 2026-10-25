@@ -171,11 +171,11 @@ public final class HeatMachines implements Feature {
                         .faces(MachineFace.TOP).capacity(1_000_000_000L).build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
                 .progress(126, 8)
-                .item(26, 8, BehaviorMachine.SlotRole.INPUT)
-                .fluid(64000, 48, 8, BehaviorMachine.SlotRole.INPUT)
-                .fluid(64000, 66, 8, BehaviorMachine.SlotRole.INPUT)
-                .fluid(64000, 84, 8, BehaviorMachine.SlotRole.INPUT)
-                .fluid(16000, 102, 8, BehaviorMachine.SlotRole.OUTPUT)
+                .item(26, 8, FuelDeburner.SLOTS.itemRole(0))
+                .fluid(64000, 48, 8, FuelDeburner.SLOTS.fluidRole(0))
+                .fluid(64000, 66, 8, FuelDeburner.SLOTS.fluidRole(1))
+                .fluid(64000, 84, 8, FuelDeburner.SLOTS.fluidRole(2))
+                .fluid(16000, 102, 8, FuelDeburner.SLOTS.fluidRole(3))
                 .recipeMaps(RecipeMaps.FUEL_DEBURN)
                 .build();
     }
