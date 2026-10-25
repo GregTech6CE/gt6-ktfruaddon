@@ -68,10 +68,10 @@ public final class MicrogravityMachines implements Feature {
                         .build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
                 .progress(66, 26)
-                .item(36, 26, BehaviorMachine.SlotRole.INPUT)
-                .item(102, 26, BehaviorMachine.SlotRole.OUTPUT)
-                .item(120, 26, BehaviorMachine.SlotRole.OUTPUT)
-                .item(138, 26, BehaviorMachine.SlotRole.OUTPUT)
+                .item(36, 26, MicrogravityMachine.ASSEMBLER_SLOTS.itemRole(0))
+                .item(102, 26, MicrogravityMachine.ASSEMBLER_SLOTS.itemRole(1))
+                .item(120, 26, MicrogravityMachine.ASSEMBLER_SLOTS.itemRole(2))
+                .item(138, 26, MicrogravityMachine.ASSEMBLER_SLOTS.itemRole(3))
                 .recipeMaps(RecipeMaps.COSMIC_RADIATION)
                 .build();
     }
@@ -87,10 +87,10 @@ public final class MicrogravityMachines implements Feature {
                         .build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
                 .progress(92, 26)
-                .item(26, 26, BehaviorMachine.SlotRole.INPUT)
-                .item(124, 26, BehaviorMachine.SlotRole.OUTPUT)
-                .fluid(64_000, 48, 8, BehaviorMachine.SlotRole.INPUT)
-                .fluid(64_000, 68, 8, BehaviorMachine.SlotRole.INPUT)
+                .item(26, 26, MicrogravityMachine.CRYSTAL_SLOTS.itemRole(0))
+                .item(124, 26, MicrogravityMachine.CRYSTAL_SLOTS.itemRole(1))
+                .fluid(64_000, 48, 8, MicrogravityMachine.CRYSTAL_SLOTS.fluidRole(0))
+                .fluid(64_000, 68, 8, MicrogravityMachine.CRYSTAL_SLOTS.fluidRole(1))
                 .recipeMaps(RecipeMaps.MICROGRAVITY_CRYSTAL)
                 .build();
     }
