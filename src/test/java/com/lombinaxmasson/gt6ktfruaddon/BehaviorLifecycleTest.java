@@ -54,4 +54,11 @@ class BehaviorLifecycleTest {
         bus.post(new net.neoforged.neoforge.event.server.ServerStoppedEvent(null));
         assertNull(messages.get(pos("a")));
     }
+    @Test void mutablePositionsCannotChangeARegistryKey() {
+        var mutable=new BlockPos.MutableBlockPos(1,2,3);
+        var key=new DimPos("a",mutable);var registry=new TtlRegistry<String>();registry.put(key,"value",1);
+        mutable.set(9,9,9);
+        assertEquals(new BlockPos(1,2,3),key.pos());
+        assertEquals("value",registry.get(pos("a"),1));
+    }
 }
