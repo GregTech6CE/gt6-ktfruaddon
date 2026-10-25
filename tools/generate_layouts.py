@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 import paths
+import generated
 
 ROOT = paths.ROOT
 SRC = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon"
@@ -386,7 +387,7 @@ def main():
             continue
         title, material, hardness = registered[ident]
         parts[names[ident]] = (material, hardness, title)
-    lines = []
+    lines = [generated.header("generate_layouts.py").rstrip()]
     a = lines.append
     a("package com.lombinaxmasson.gt6ktfruaddon.generated;")
     a("")
@@ -450,11 +451,13 @@ def main():
         a("")
     a("}")
     a("")
-    OUT.write_text("\n".join(lines), encoding="utf-8")
+    OUT.write_text("\n".join(lines), encoding="utf-8", newline="\n")
     print(f"wrote {OUT} parts={len(parts)}")
-    (ROOT / "tools" / "card20-parts.txt").write_text(
+    parts_file = ROOT / "build" / "generated" / "structure-parts.txt"
+    parts_file.parent.mkdir(parents=True, exist_ok=True)
+    parts_file.write_text(
         "\n".join(f"{name}\t{title}" for name, (_, _, title) in sorted(parts.items())),
-        encoding="utf-8")
+        encoding="utf-8", newline="\n")
 
 
 if __name__ == "__main__":

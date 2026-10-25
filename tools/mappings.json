@@ -1,0 +1,39 @@
+{
+  "block_aliases": {
+    "laser_focusing_array": "laser_fusion_focusing_array",
+    "laser_target_injector": "laser_fusion_target_injector",
+    "laser_pulse_storage": "laser_fusion_pulse_storage_module",
+    "laser_product_collector": "laser_fusion_neutron_product_collector",
+    "sun_heater_top_layer": "heat_pipe_top",
+    "ai_memory_bank": "ai_high_bandwidth_memory_bank",
+    "room_energy_port": "room_energy_and_status_port",
+    "quantum_coherence_casing": "quantum_coherence_chamber_wall",
+    "quantum_coherence_casing_iridium": "quantum_coherence_chamber_wall_31111",
+    "stainless_turbine_shell": "turbine_shell_stainless",
+    "titanium_turbine_shell": "turbine_shell_titanium",
+    "tungstensteel_turbine_shell": "turbine_shell_tungstensteel",
+    "adamantium_turbine_shell": "turbine_shell_adamantium",
+    "trinaquadalloy_turbine_shell": "turbine_shell_trinaquadalloy"
+  },
+  "gt_substitutions": {
+    "casing_machine_naquadria": "casing_machine_trinaquadalloy",
+    "casing_machine_double_naquadria": "casing_machine_double_tungstensteel"
+  },
+  "form_substitutions": [
+    {
+      "prefix": "plate",
+      "material": "Paper",
+      "item": "PAPER"
+    },
+    {
+      "prefix": "plate",
+      "material": "Glass",
+      "item": "GLASS"
+    },
+    {
+      "prefix": "paneGlass",
+      "material": "Black",
+      "item": "BLACK_STAINED_GLASS_PANE"
+    }
+  ]
+}

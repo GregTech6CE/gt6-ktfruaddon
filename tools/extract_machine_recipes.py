@@ -14,6 +14,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 import paths
+import generated
 
 ROOT = paths.ROOT
 SOURCE = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "recipe" / "recipe"
@@ -1763,7 +1764,8 @@ def emit(rows: list[dict]) -> str:
             )
         body.append("    }")
         methods.append("\n".join(body))
-    return """package com.lombinaxmasson.gt6ktfruaddon.generated;
+    mappings = generated.load_mappings()
+    return generated.header("extract_machine_recipes.py", mappings) + """package com.lombinaxmasson.gt6ktfruaddon.generated;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -1852,11 +1854,7 @@ public final class SourceRecipes {{
     }}
 
     private static ItemStack form(String prefix, String material, int count) {{
-        // GT6CE does not generate these source forms; the vanilla item keeps the row usable.
-        if ("plate".equals(prefix) && "Paper".equals(material)) return new ItemStack(Items.PAPER, count);
-        if ("plate".equals(prefix) && "Glass".equals(material)) return new ItemStack(Items.GLASS, count);
-        if ("paneGlass".equals(prefix) && "Black".equals(material))
-            return new ItemStack(Items.BLACK_STAINED_GLASS_PANE, count);
+{form_substitutions}
         ItemStack stack = AddonItems.stack(prefix, material, count);
         if (stack == null || stack.isEmpty()) {{
             PROBLEMS.add(prefix + " " + material);
@@ -1880,20 +1878,7 @@ public final class SourceRecipes {{
 
     private static ItemStack block(String path, int count) {{
         String id = switch (path) {{
-            case "laser_focusing_array" -> "laser_fusion_focusing_array";
-            case "laser_target_injector" -> "laser_fusion_target_injector";
-            case "laser_pulse_storage" -> "laser_fusion_pulse_storage_module";
-            case "laser_product_collector" -> "laser_fusion_neutron_product_collector";
-            case "sun_heater_top_layer" -> "heat_pipe_top";
-            case "ai_memory_bank" -> "ai_high_bandwidth_memory_bank";
-            case "room_energy_port" -> "room_energy_and_status_port";
-            case "quantum_coherence_casing" -> "quantum_coherence_chamber_wall";
-            case "quantum_coherence_casing_iridium" -> "quantum_coherence_chamber_wall_31111";
-            case "stainless_turbine_shell" -> "turbine_shell_stainless";
-            case "titanium_turbine_shell" -> "turbine_shell_titanium";
-            case "tungstensteel_turbine_shell" -> "turbine_shell_tungstensteel";
-            case "adamantium_turbine_shell" -> "turbine_shell_adamantium";
-            case "trinaquadalloy_turbine_shell" -> "turbine_shell_trinaquadalloy";
+{block_aliases}
             default -> path;
         }};
         Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(Ktfru.MODID, id));
@@ -1905,10 +1890,8 @@ public final class SourceRecipes {{
     }}
 
     private static ItemStack gt(String path, int count) {{
-        // GT6CE gives Naquadria no casing form; use the alloy that carries the same chain.
         String id = switch (path) {{
-            case "casing_machine_naquadria" -> "casing_machine_trinaquadalloy";
-            case "casing_machine_double_naquadria" -> "casing_machine_double_tungstensteel";
+{gt_substitutions}
             default -> path;
         }};
         Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("gt6ce", id));
@@ -1945,7 +1928,7 @@ public final class SourceRecipes {{
         return stack;
     }}
 }}
-""".format(calls="\n".join(calls), methods="\n\n".join(methods))
+""".format(calls="\n".join(calls), methods="\n\n".join(methods), **generated.java_mappings(mappings))
 
 
 def recipe_text(row: dict) -> str:
@@ -2042,7 +2025,7 @@ def main():
     for map_name, file_name, line, reason, raw in skips:
         lines.append(f"  {file_name}:{line} {map_name} {reason} :: {raw}")
     REPORT.parent.mkdir(parents=True, exist_ok=True)
-    REPORT.write_text("\n".join(lines), encoding="utf-8")
+    REPORT.write_text("\n".join(lines), encoding="utf-8", newline="\n")
     print("\n".join(lines[:80]))
     print(f"... report {REPORT}")
     sulfur = [row for row in rows if row["file"] == "HeatMixer.java" and row["line"] == 28]
@@ -2059,7 +2042,7 @@ def main():
     graphene = [row for row in rows if row["file"] == "Chemistry.java" and any(stack[2] == "Graphene" for stack in row["items_in"] if stack[0] == "item")]
     if not graphene:
         raise SystemExit("graphene row missing")
-    OUT_JAVA.write_text(emit(rows), encoding="utf-8")
+    OUT_JAVA.write_text(emit(rows), encoding="utf-8", newline="\n")
     print(f"wrote {OUT_JAVA}")
 
 

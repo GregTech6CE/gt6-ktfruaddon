@@ -1,4 +1,4 @@
-"""Count how many of this repo's textures are byte-identical to files in the kTFRUAddon checkout or in GT6CE core.
+"""Count texture matches against kTFRUAddon and GT6CE (PNG bytes; LF-normalized metadata).
 
 The numbers in NOTICE come from here. Read-only: it prints a table and the files that match neither source.
 """
@@ -18,7 +18,10 @@ GT6CE_ASSETS = paths.GT6_ROOT / "core" / "src" / "main" / "resources" / "assets"
 
 
 def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    data = path.read_bytes()
+    if path.suffix == ".mcmeta":
+        data = data.replace(b"\r\n", b"\n")
+    return hashlib.sha256(data).hexdigest()
 
 
 def texture_files(root: Path) -> list[Path]:

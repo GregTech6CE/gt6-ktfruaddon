@@ -1,9 +1,10 @@
-# Writes blockstates, item models and lang lines for the card 20 machines and parts.
+# Writes structure language entries and fallback models not owned by the texture porter.
 
 import json
 from pathlib import Path
 
 import paths
+import port_block_textures
 
 ROOT = paths.ROOT
 ASSETS = ROOT / "src" / "main" / "resources" / "assets" / "gt6ktfruaddon"
@@ -134,8 +135,10 @@ OBSOLETE = [
 
 
 def write_block(name):
-    (ASSETS / "blockstates" / f"{name}.json").write_text(TEMPLATE, encoding="utf-8")
-    (ASSETS / "models" / "item" / f"{name}.json").write_text(ITEM, encoding="utf-8")
+    if port_block_textures.owns(name):
+        return
+    (ASSETS / "blockstates" / f"{name}.json").write_text(TEMPLATE, encoding="utf-8", newline="\n")
+    (ASSETS / "models" / "item" / f"{name}.json").write_text(ITEM, encoding="utf-8", newline="\n")
 
 
 def append(path, pairs):
@@ -155,7 +158,7 @@ def append(path, pairs):
     if body.endswith(","):
         body = body[:-1]
     extra = ",\n" + ",\n".join(added) + "\n}\n"
-    path.write_text(body + extra, encoding="utf-8")
+    path.write_text(body + extra, encoding="utf-8", newline="\n")
 
 
 def main():
@@ -174,7 +177,7 @@ def main():
     for name, (english, chinese) in STRUCTURES.items():
         en.append((f"gt6ktfruaddon.structure.{name}.1", english))
         zh.append((f"gt6ktfruaddon.structure.{name}.1", chinese))
-    parts = (ROOT / "tools" / "card20-parts.txt").read_text(encoding="utf-8").splitlines()
+    parts = (ROOT / "build" / "generated" / "structure-parts.txt").read_text(encoding="utf-8").splitlines()
     for line in parts:
         name, title = line.split("\t", 1)
         en.append((f"block.gt6ktfruaddon.{name}", title))
@@ -188,4 +191,5 @@ def main():
 
 
 if __name__ == "__main__":
+    paths.require_inputs(upstream=True, gt6=True)
     main()

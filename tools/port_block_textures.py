@@ -28,6 +28,7 @@ FACES = ("down", "up", "north", "south", "west", "east")
 SIX = {"down": "bottom", "up": "top", "north": "front", "south": "back", "west": "right", "east": "left"}
 COPIED: dict[str, str] = {}
 MISSING: list[str] = []
+PROBE = False
 
 
 def use(rel: str) -> str | None:
@@ -38,13 +39,15 @@ def use(rel: str) -> str | None:
     if not src.is_file():
         MISSING.append(rel)
         return None
+    if PROBE:
+        return f"gt6ktfruaddon:block/machines/{rel}"
     if rel not in COPIED:
         dest = DEST / f"{rel}.png"
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(src, dest)
         meta = src.with_name(src.name + ".mcmeta")
         if meta.is_file():
-            shutil.copyfile(meta, dest.with_name(dest.name + ".mcmeta"))
+            dest.with_name(dest.name + ".mcmeta").write_text(meta.read_text(encoding="utf-8"), encoding="utf-8", newline="\n")
         COPIED[rel] = f"gt6ktfruaddon:block/machines/{rel}"
     return COPIED[rel]
 
@@ -458,7 +461,7 @@ def blockstate(stem: str) -> dict:
 
 def write_json(path: Path, data: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
 def retarget_item(stem: str, parent: str) -> None:
@@ -492,6 +495,19 @@ def copy_gui() -> None:
     shutil.copyfile(ASSETS / "textures" / "gui" / "machines" / "gascompressor.png", RECIPES / "gascompressor.png")
 
 
+def owns(stem: str) -> bool:
+    """Resolve ownership without copying textures or changing the missing ledger."""
+    global PROBE
+    before = len(MISSING)
+    PROBE = True
+    try:
+        states = spec_for(stem)
+        return states is not None and not any(state is None for state in states) and len(MISSING) == before
+    finally:
+        PROBE = False
+        del MISSING[before:]
+
+
 def main() -> None:
     placeholder_file = MODELS / "sun_heater_placeholder.json"
     if placeholder_file.is_file():
@@ -519,7 +535,7 @@ def main() -> None:
     lines = [f"mapped {len(mapped)}", *("  " + stem for stem in mapped), f"left {len(skipped)}", *("  " + stem for stem in skipped)]
     lines.append(f"textures {len(COPIED)}")
     REPORT.parent.mkdir(parents=True, exist_ok=True)
-    REPORT.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    REPORT.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
     print("\n".join(lines[:40]))
     print(f"... report {REPORT}")
 

@@ -12,6 +12,7 @@ import re
 from pathlib import Path
 
 import paths
+import generated
 
 ROOT = paths.ROOT
 ENUM = paths.UPSTREAM / "src" / "main" / "java" / "cn" / "kuzuanpa" / "ktfruaddon" / "api" / "item" / "ItemList.java"
@@ -132,13 +133,13 @@ def upsert_lang(path: Path, pairs: list[tuple[str, str]]) -> None:
         lines[-1] = lines[-1][:-1]
         lines.append("}")
         text = "\n".join(lines) + "\n"
-    path.write_text(text, encoding="utf-8")
+    path.write_text(text, encoding="utf-8", newline="\n")
     json.loads(path.read_text(encoding="utf-8"))
 
 
 def write_java(extra: list[str]) -> None:
     rows = ",\n".join(f'            "{path}"' for path in extra)
-    JAVA.write_text(f"""package com.lombinaxmasson.gt6ktfruaddon.generated;
+    JAVA.write_text(generated.header("generate_items.py") + f"""package com.lombinaxmasson.gt6ktfruaddon.generated;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -205,7 +206,7 @@ public final class KtfruItems {{
         return ITEMS.register(path, () -> new Item(new Item.Properties()));
     }}
 }}
-""", encoding="utf-8")
+""", encoding="utf-8", newline="\n")
 
 
 def main() -> None:
@@ -226,7 +227,7 @@ def main() -> None:
             extra.append(path)
     if len(extra) != len(set(extra)):
         raise SystemExit("duplicate extra path")
-    MAP_JSON.write_text(json.dumps(mapping, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    MAP_JSON.write_text(json.dumps(mapping, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     write_java(extra)
     en_pairs = []
     zh_pairs = []
@@ -243,7 +244,7 @@ def main() -> None:
     upsert_lang(LANGS[0], en_pairs)
     upsert_lang(LANGS[1], zh_pairs)
     MODELS.mkdir(parents=True, exist_ok=True)
-    item_tex_src = ROOT / "kTFRUAddon" / "src" / "main" / "resources" / "assets" / "ktfruaddon" / "textures" / "items"
+    item_tex_src = paths.UPSTREAM / "src" / "main" / "resources" / "assets" / "ktfruaddon" / "textures" / "items"
     item_tex_dest = ROOT / "src" / "main" / "resources" / "assets" / "gt6ktfruaddon" / "textures" / "item"
     textured = 0
     for name, path in mapping.items():
@@ -259,13 +260,13 @@ def main() -> None:
                 dest_png.write_bytes(src_png.read_bytes())
                 src_meta = src_png.with_name(src_png.name + ".mcmeta")
                 if src_meta.is_file():
-                    dest_png.with_name(dest_png.name + ".mcmeta").write_bytes(src_meta.read_bytes())
+                    dest_png.with_name(dest_png.name + ".mcmeta").write_text(src_meta.read_text(encoding="utf-8"), encoding="utf-8", newline="\n")
                 layer0 = f"gt6ktfruaddon:item/{group_dir}/{meta}"
                 textured += 1
         model = MODELS / f"{path}.json"
         model.write_text(
             f'{{\n  "parent": "minecraft:item/generated",\n  "textures": {{ "layer0": "{layer0}" }}\n}}\n',
-            encoding="utf-8",
+            encoding="utf-8", newline="\n",
         )
     ICONS.mkdir(parents=True, exist_ok=True)
     for source_name, dest_name in PREFIX_TEXTURES.items():

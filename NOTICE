@@ -23,20 +23,20 @@ META-INF/licenses/AGPL-3.0.txt。
               tools/extract_machine_recipes.py
   物品        KtfruItems、物品模型、语言名。上游 api/item/ItemList.java 里的普通物品，504 个，不含
               集成类物品；显示名取自 addItem 的标签。
-              tools/gen_card22_items.py
+              tools/generate_items.py
   材料        Materials，230 个声明。大部分由脚本从上游 api/material/materialPreInit.java 生成，
               中文名取自上游 zh_CN.lang；生成之后手改过，所以不再由脚本重新生成。
-              tools/gen_materials.py
+              tools/gen_materials.py（已退役；当前声明和材料语言条目由人工维护）
   多方块布局  GeneratedLayouts，31 个布局，每个的注释写着上游类和偏移。
-              tools/gen_card20_layouts.py
+              tools/generate_layouts.py
   贴图        assets/gt6ktfruaddon/textures/ 下的 974 个文件（含 .mcmeta）：940 个与上游检出里的文件
-              逐字节相同，其中 384 个同时也与 GT6CE core 里的文件相同；28 个只与 GT6CE core 里的文件
+              相同（PNG 按字节，.mcmeta 统一 LF 后比较），其中 384 个同时也与 GT6CE core 里的文件相同；28 个只与 GT6CE core 里的文件
               相同；6 个两边都找不到（wafertester 的两张覆盖层，gascompressor 和 gastank 的界面图），
               来源没有记录。
-              tools/port_block_textures.py、tools/gen_card22_items.py；数字由
+              tools/port_block_textures.py、tools/generate_items.py；数字由
               tools/texture_provenance.py 复算。
   语言        物品名和材料的中文名见上。其余机器名、零件名是移植时手写的（一部分写在
-              tools/gen_card20_assets.py 里），没有逐条核对是否与上游一致。
+              tools/generate_structure_assets.py 里），没有逐条核对是否与上游一致。
 
 没有逐项记录来源的部分：
 

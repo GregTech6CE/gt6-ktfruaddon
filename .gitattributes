@@ -1,0 +1,5 @@
+# Generated text has LF bytes on every host; leave binary assets untouched.
+src/main/java/com/lombinaxmasson/gt6ktfruaddon/generated/*.java text eol=lf
+src/main/resources/**/*.json text eol=lf
+src/main/resources/**/*.mcmeta text eol=lf
+tools/own_items.json text eol=lf

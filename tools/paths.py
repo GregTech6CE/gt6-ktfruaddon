@@ -45,6 +45,7 @@ def _default_gt6_ref() -> Path:
 
 
 GT6_REF = _from_env("GT6_REF", _default_gt6_ref())
+GT6_REF_LOADER = Path("gregtech6/src/main/java/gregtech/loaders/b/Loader_MultiTileEntities.java")
 RUNTIME_JAR = ROOT / "libs" / "gt6ce" / "gt6ce-1.21.1-neoforge.jar"
 
 
@@ -59,10 +60,10 @@ def _head(checkout: Path) -> str | None:
 
 def _check_commit(what: str, checkout: Path, expected: str, problems: list[str]) -> None:
     head = _head(checkout)
-    if head is None or head == expected or os.environ.get("ALLOW_INPUT_MISMATCH") == "1":
+    if head == expected or os.environ.get("ALLOW_INPUT_MISMATCH") == "1":
         return
     problems.append(
-        f"{what} at {checkout} is at {head[:12]}, but the generated files were taken from {expected[:12]}.\n"
+        f"{what} at {checkout} is at {head[:12] if head else 'an unreadable Git revision'}, but the generated files were taken from {expected[:12]}.\n"
         f"    Check out {expected}, or set ALLOW_INPUT_MISMATCH=1 to run anyway.")
 
 
@@ -86,7 +87,7 @@ def require_inputs(*, upstream: bool = False, gt6: bool = False, gt6_ref: bool =
                 "or set GT6CE_SOURCE.")
         elif PIN_FILE.is_file():
             _check_commit("GT6CE source tree", GT6_ROOT, PIN_FILE.read_text(encoding="utf-8").strip(), problems)
-    if gt6_ref and not GT6_REF.is_dir():
+    if gt6_ref and not (GT6_REF / GT6_REF_LOADER).is_file():
         problems.append(
             f"original GregTech 6 sources not found at {GT6_REF}.\n"
             "    The extractor reads gregtech/loaders/b/Loader_MultiTileEntities.java from a local copy of the "
