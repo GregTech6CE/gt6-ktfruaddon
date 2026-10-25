@@ -27,17 +27,22 @@ public final class WirelessReceiver extends BehaviorBase {
         long packet = quantum ? 32768 : 8192;
         long amps = quantum ? 16 : 4;
         boolean stopped = context.toggle(0);
-        long room = Math.max(0, context.capacity() - context.energy());
-        WirelessInbox.setRoom(key, stopped ? 0 : room);
+        long now = context.level().getGameTime();
         if (stopped) {
+            WirelessInbox.setRoom(key, 0L, now);
             context.working(false);
             return;
         }
-        long incoming = WirelessInbox.pull(key);
-        if (incoming > 0) context.generate(incoming);
+        WirelessInbox.receive(key, context::generate);
         long packets = Math.min(amps, context.energy() / packet);
         if (packets > 0) context.emit(packet, packets);
+        WirelessInbox.setRoom(key, Math.max(0L, context.capacity() - context.energy()), now);
         context.working(packets > 0);
+    }
+
+    @Override
+    public void beforeBreak(MachineBehaviorContext context) {
+        WirelessInbox.remove(new DimPos(context.level().dimension().location().toString(), context.pos().immutable()));
     }
 
     @Override

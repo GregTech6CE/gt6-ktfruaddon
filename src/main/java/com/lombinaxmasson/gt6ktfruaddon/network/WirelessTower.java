@@ -66,13 +66,9 @@ public final class WirelessTower extends BehaviorBase {
             if (world == null || !world.hasChunkAt(link.pos()) || !receiverBlock(world, link.pos(), quantum)) continue;
             if (!quantum && !inRange(context.pos(), link.pos())) continue;
             var key = new DimPos(link.dim(), link.pos().immutable());
-            long room = WirelessInbox.room(key);
-            long sentAmps = Math.min(amps, room / packet);
-            if (sentAmps < 1) continue;
             long each = quantum ? packet : lossy(packet, context.pos(), link.pos());
-            long cost = each * sentAmps;
-            if (context.energy() < cost || !context.consume(cost)) continue;
-            WirelessInbox.give(key, packet * sentAmps);
+            long affordable = Math.min(amps, context.energy() / each);
+            WirelessInbox.send(key, packet, affordable, world.getGameTime(), sent -> context.consume(each * sent));
         }
     }
 
