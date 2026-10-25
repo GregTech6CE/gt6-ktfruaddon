@@ -1,8 +1,6 @@
 package com.lombinaxmasson.gt6ktfruaddon.quantum;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
@@ -10,6 +8,10 @@ import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.TtlRegistry;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PlayerMemory;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimensionMemory;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -26,11 +28,10 @@ public final class QuantumRelay extends BehaviorBase {
     public static final long QU_PER_TICK = 128L;
     public static final long QU_PER_RECIPE = 65_536L;
     public static final long ENERGY_CAPACITY = 32_768_000L;
-    private static final long EXPIRY_TICKS = 20L;
 
-    private static final Map<Key, RelayEntry> RELAYS = new HashMap<>();
-    private static final Map<UUID, Key> PENDING = new HashMap<>();
-    private static final Map<Key, BlockPos> NEW_PARTNERS = new HashMap<>();
+    private static final TtlRegistry<RelayEntry> RELAYS = new TtlRegistry<>();
+    private static final PlayerMemory<DimPos> PENDING = new PlayerMemory<>(DimPos::dim);
+    private static final DimensionMemory<BlockPos> NEW_PARTNERS = new DimensionMemory<>();
 
     @Override
     public void tick(MachineBehaviorContext context) {
@@ -38,22 +39,20 @@ public final class QuantumRelay extends BehaviorBase {
             context.setCapacity(ENERGY_CAPACITY);
         }
         String dim = context.level().dimension().location().toString();
-        Key self = new Key(dim, context.pos().immutable());
-        synchronized (RELAYS) {
-            BlockPos newlyLinked = NEW_PARTNERS.remove(self);
-            if (newlyLinked != null) {
-                context.state().setString("partner", formatPos(newlyLinked));
-            }
+        DimPos self = new DimPos(dim, context.pos().immutable());
+                BlockPos newlyLinked = NEW_PARTNERS.remove(self);
+        if (newlyLinked != null) {
+            context.state().setString("partner", formatPos(newlyLinked));
         }
+
         if (context.energy() >= QU_PER_TICK) {
             context.emit(QU_PER_TICK, 1);
         }
         BlockPos partnerPos = parsePos(context.state().getString("partner"));
         long now = context.level().getGameTime();
         long euStored = context.energy("EU");
-        synchronized (RELAYS) {
-            RELAYS.put(self, new RelayEntry(partnerPos, euStored, now));
-        }
+                RELAYS.put(self, new RelayEntry(partnerPos, euStored), now);
+
         if (partnerPos == null || !isPaired(self, partnerPos, now)) {
             context.working(false);
             context.progress(0);
@@ -88,9 +87,8 @@ public final class QuantumRelay extends BehaviorBase {
     @Override
     public void beforeBreak(MachineBehaviorContext context) {
         String dim = context.level().dimension().location().toString();
-        synchronized (RELAYS) {
-            RELAYS.remove(new Key(dim, context.pos().immutable()));
-        }
+                RELAYS.remove(new DimPos(dim, context.pos().immutable()));
+
     }
 
     @Override
@@ -103,36 +101,34 @@ public final class QuantumRelay extends BehaviorBase {
         if (!AddonTools.isMagnifyingGlass(player.getItemInHand(hand))) return false;
         String dim = context.level().dimension().location().toString();
         BlockPos here = context.pos().immutable();
-        Key self = new Key(dim, here);
-        synchronized (RELAYS) {
-            Key pending = PENDING.get(player.getUUID());
-            if (player.isShiftKeyDown() || pending == null || pending.pos().equals(here)) {
-                PENDING.put(player.getUUID(), self);
-                player.displayClientMessage(Component.translatable("gt6ktfruaddon.quantum_relay.recorded",
-                        here.getX(), here.getY(), here.getZ()), false);
-                return true;
-            }
-            if (!dim.equals(pending.dim())) {
-                PENDING.remove(player.getUUID());
-                player.displayClientMessage(Component.translatable("gt6ktfruaddon.quantum_relay.same_dimension"), false);
-                return true;
-            }
-            PENDING.remove(player.getUUID());
-            context.state().setString("partner", formatPos(pending.pos()));
-            NEW_PARTNERS.put(pending, here);
-            player.displayClientMessage(Component.translatable("gt6ktfruaddon.quantum_relay.linked",
-                    pending.pos().getX(), pending.pos().getY(), pending.pos().getZ(),
-                    context.energy(), ENERGY_CAPACITY), false);
+        DimPos self = new DimPos(dim, here);
+                DimPos pending = PENDING.get(player.getUUID());
+        if (player.isShiftKeyDown() || pending == null || pending.pos().equals(here)) {
+            PENDING.put(player.getUUID(), self);
+            player.displayClientMessage(Component.translatable("gt6ktfruaddon.quantum_relay.recorded",
+                    here.getX(), here.getY(), here.getZ()), false);
             return true;
         }
+        if (!dim.equals(pending.dim())) {
+            PENDING.remove(player.getUUID());
+            player.displayClientMessage(Component.translatable("gt6ktfruaddon.quantum_relay.same_dimension"), false);
+            return true;
+        }
+        PENDING.remove(player.getUUID());
+        context.state().setString("partner", formatPos(pending.pos()));
+        NEW_PARTNERS.put(pending, here);
+        player.displayClientMessage(Component.translatable("gt6ktfruaddon.quantum_relay.linked",
+                pending.pos().getX(), pending.pos().getY(), pending.pos().getZ(),
+                context.energy(), ENERGY_CAPACITY), false);
+        return true;
+
     }
 
-    private static boolean isPaired(Key self, BlockPos partnerPos, long now) {
-        synchronized (RELAYS) {
-            RelayEntry partner = RELAYS.get(new Key(self.dim(), partnerPos));
-            if (partner == null || now - partner.lastTick() > EXPIRY_TICKS) return false;
-            return self.pos().equals(partner.partner());
-        }
+    private static boolean isPaired(DimPos self, BlockPos partnerPos, long now) {
+                RelayEntry partner = RELAYS.get(new DimPos(self.dim(), partnerPos), now);
+        if (partner == null) return false;
+        return self.pos().equals(partner.partner());
+
     }
 
     private static boolean finish(MachineBehaviorContext context, AddonRecipes.Line line) {
@@ -189,6 +185,5 @@ public final class QuantumRelay extends BehaviorBase {
         }
     }
 
-    private record Key(String dim, BlockPos pos) {}
-    private record RelayEntry(BlockPos partner, long euStored, long lastTick) {}
+    private record RelayEntry(BlockPos partner, long euStored) {}
 }
