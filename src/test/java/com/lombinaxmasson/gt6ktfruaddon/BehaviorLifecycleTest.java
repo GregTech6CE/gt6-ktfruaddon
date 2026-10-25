@@ -47,4 +47,11 @@ class BehaviorLifecycleTest {
         live.put(pos("a"),"old",1); live.put(other,"new",100);
         assertEquals(java.util.List.of(other),live.keys("a",100));
     }
+    @Test void serverStopListenerRunsThroughTheEventBus() {
+        var messages=new DimensionMemory<String>();messages.put(pos("a"),"old world");
+        var bus=net.neoforged.bus.api.BusBuilder.builder().build();
+        bus.register(BehaviorLifecycle.class);
+        bus.post(new net.neoforged.neoforge.event.server.ServerStoppedEvent(null));
+        assertNull(messages.get(pos("a")));
+    }
 }

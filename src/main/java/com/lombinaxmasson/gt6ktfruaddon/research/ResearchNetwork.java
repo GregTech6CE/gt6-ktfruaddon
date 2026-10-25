@@ -10,6 +10,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.TtlRegistry;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PlayerMemory;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -88,7 +90,7 @@ public final class ResearchNetwork {
         String raw = context.state().getString("tree");
         if (raw.isEmpty()) {
             raw = TREE;
-            context.state().setString("tree", raw);
+            StateChanges.setString(context.state(), "tree", raw);
         }
         String dim = context.level().dimension().location().toString();
         DimPos key = new DimPos(dim, context.pos().immutable());
@@ -101,8 +103,8 @@ public final class ResearchNetwork {
             entry.unlocked.addAll(parseSet(raw));
             MONITORS.put(key, entry, now);
             if (entry.dirty) {
-                context.state().setString("tree", String.join(",", entry.unlocked));
-                context.state().setLong("points", entry.points);
+                StateChanges.setString(context.state(), "tree", String.join(",", entry.unlocked));
+                StateChanges.setLong(context.state(), "points", entry.points);
                 entry.dirty = false;
             }
         }

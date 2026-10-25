@@ -32,15 +32,22 @@ final class FakeMachine {
     /** The last value given to {@code working(boolean)}, or null before any. */
     Boolean working;
 
+    final Map<String, String> strings = new HashMap<>();
+    int stateWrites;
     final MachineBehaviorContext context;
 
     FakeMachine() {
         BehaviorState state = proxy(BehaviorState.class, (self, method, args) -> switch (method.getName()) {
             case "getLong" -> longs.getOrDefault((String) args[0], 0L);
             case "setLong" -> {
+                stateWrites++;
                 longs.put((String) args[0], (Long) args[1]);
                 yield null;
             }
+            case "getInt" -> longs.getOrDefault((String) args[0], 0L).intValue();
+            case "setInt" -> { stateWrites++; longs.put((String) args[0], ((Integer)args[1]).longValue()); yield null; }
+            case "getString" -> strings.getOrDefault((String) args[0], "");
+            case "setString" -> { stateWrites++; strings.put((String) args[0], (String)args[1]); yield null; }
             default -> throw new UnsupportedOperationException("state." + method.getName());
         });
         context = proxy(MachineBehaviorContext.class, (self, method, args) -> {

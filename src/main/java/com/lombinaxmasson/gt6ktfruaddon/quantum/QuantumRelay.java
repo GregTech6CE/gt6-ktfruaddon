@@ -16,6 +16,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.RecipeRunner;
 
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Slots;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -40,8 +42,8 @@ public final class QuantumRelay extends BehaviorBase {
         public BlockPos partner() { return PosCodec.parse(state.getString("partner")); }
         public long revision() { return state.getLong("partner_revision"); }
         public void link(BlockPos partner, long revision) {
-            state.setString("partner", PosCodec.format(partner));
-            state.setLong("partner_revision", revision);
+            StateChanges.setString(state, "partner", PosCodec.format(partner));
+            StateChanges.setLong(state, "partner_revision", revision);
         }
     }
 

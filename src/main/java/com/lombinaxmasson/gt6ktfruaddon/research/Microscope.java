@@ -7,6 +7,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -74,7 +76,7 @@ public final class Microscope extends BehaviorBase {
         String dim = context.level().dimension().location().toString();
         DimPos pending = ResearchNetwork.takePendingMonitor(player.getUUID(), dim);
         if (pending != null) {
-            context.state().setString("monitor", PosCodec.format(pending.pos()));
+            StateChanges.setString(context.state(), "monitor", PosCodec.format(pending.pos()));
         }
         BlockPos monitor = resolveMonitor(context);
         String label = monitor == null ? "none" : PosCodec.format(monitor);
@@ -90,7 +92,7 @@ public final class Microscope extends BehaviorBase {
         }
         BlockPos adjacent = ResearchNetwork.findAdjacentMonitor(context.level(), context.pos());
         if (adjacent != null) {
-            context.state().setString("monitor", PosCodec.format(adjacent));
+            StateChanges.setString(context.state(), "monitor", PosCodec.format(adjacent));
             return adjacent;
         }
         return saved;

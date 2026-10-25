@@ -7,6 +7,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
 import com.lombinaxmasson.gt6ktfruaddon.network.ComputeNetwork;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -39,11 +41,11 @@ public final class AiCenter extends BehaviorBase {
         String dim = context.level().dimension().location().toString();
         DimPos pendingController = ComputeNetwork.takePendingController(player.getUUID(), dim);
         if (pendingController != null) {
-            context.state().setString("controller", PosCodec.format(pendingController.pos()));
+            StateChanges.setString(context.state(), "controller", PosCodec.format(pendingController.pos()));
         }
         DimPos pendingMonitor = ResearchNetwork.takePendingMonitor(player.getUUID(), dim);
         if (pendingMonitor != null) {
-            context.state().setString("monitor", PosCodec.format(pendingMonitor.pos()));
+            StateChanges.setString(context.state(), "monitor", PosCodec.format(pendingMonitor.pos()));
         }
         String status = context.state().getString("status");
         if (status.isEmpty()) status = STATUS_IDLE;
@@ -54,34 +56,34 @@ public final class AiCenter extends BehaviorBase {
 
     private void tickAi(MachineBehaviorContext context) {
         if (!context.structureFormed()) {
-            context.state().setString("status", STATUS_OFFLINE);
+            StateChanges.setString(context.state(), "status", STATUS_OFFLINE);
             context.working(false);
             return;
         }
         BlockPos monitor = resolveMonitor(context);
         if (monitor == null || !ResearchNetwork.isMonitorOnline(context.level(), monitor)) {
-            context.state().setString("status", STATUS_NO_MONITOR);
+            StateChanges.setString(context.state(), "status", STATUS_NO_MONITOR);
             context.working(false);
             return;
         }
         BlockPos controller = PosCodec.parse(context.state().getString("controller"));
         if (controller == null) {
-            context.state().setString("status", STATUS_UNBOUND);
+            StateChanges.setString(context.state(), "status", STATUS_UNBOUND);
             context.working(false);
             return;
         }
         if (!ComputeNetwork.isControllerOnline(context.level(), controller)) {
-            context.state().setString("status", STATUS_OFFLINE);
+            StateChanges.setString(context.state(), "status", STATUS_OFFLINE);
             context.working(false);
             return;
         }
         if (!ComputeNetwork.allocate(context.level(), controller, "Normal", AI_COMPUTE_PER_TICK)) {
-            context.state().setString("status", STATUS_INSUFFICIENT);
+            StateChanges.setString(context.state(), "status", STATUS_INSUFFICIENT);
             context.working(false);
             return;
         }
         ResearchNetwork.addPoints(context.level(), monitor, points);
-        context.state().setString("status", STATUS_RUNNING);
+        StateChanges.setString(context.state(), "status", STATUS_RUNNING);
         context.working(true);
     }
 
@@ -92,7 +94,7 @@ public final class AiCenter extends BehaviorBase {
         }
         BlockPos adjacent = ResearchNetwork.findAdjacentMonitor(context.level(), context.pos());
         if (adjacent != null) {
-            context.state().setString("monitor", PosCodec.format(adjacent));
+            StateChanges.setString(context.state(), "monitor", PosCodec.format(adjacent));
             return adjacent;
         }
         return saved;

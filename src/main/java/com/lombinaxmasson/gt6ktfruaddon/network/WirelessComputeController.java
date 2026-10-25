@@ -11,6 +11,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.LinkList;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -26,7 +28,7 @@ public final class WirelessComputeController extends BehaviorBase {
     public void tick(MachineBehaviorContext context) {
         boolean formed = context.structureFormed();
         long total = ComputeNetwork.wirelessOutput(context, formed ? links(context) : List.of());
-        context.state().setLong("available", total);
+        StateChanges.setLong(context.state(), "available", total);
         context.working(formed && total > 0);
     }
 
@@ -69,6 +71,6 @@ public final class WirelessComputeController extends BehaviorBase {
 
     private static void write(MachineBehaviorContext context, List<BlockPos> links) {
         String dim = context.level().dimension().location().toString();
-        context.state().setString("links", LinkList.write(links.stream().map(pos -> new DimPos(dim, pos)).toList()));
+        StateChanges.setString(context.state(), "links", LinkList.write(links.stream().map(pos -> new DimPos(dim, pos)).toList()));
     }
 }

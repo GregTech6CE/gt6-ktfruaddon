@@ -15,6 +15,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.LinkList;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -115,7 +117,7 @@ public final class WirelessTower extends BehaviorBase {
     }
 
     private static void write(MachineBehaviorContext context, List<Mark> links) {
-        context.state().setString("links", LinkList.write(links.stream()
+        StateChanges.setString(context.state(), "links", LinkList.write(links.stream()
                 .map(mark -> new DimPos(mark.dim(), mark.pos())).toList()));
     }
 }

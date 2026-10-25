@@ -40,4 +40,13 @@ class RecipeRunnerTest {
         assertTrue(new RecipeRunner(EMPTY,c->null).after(c->count[0]++).complete(machine.context,line(2,3)));
         assertEquals(1,count[0]);assertEquals(0,machine.energy);
     }
+    @Test void unchangedInputsCacheBothMatchesAndMisses() {
+        for(boolean found:new boolean[]{true,false}) {
+            int[] queries={0};var machine=new FakeMachine();
+            var runner=new RecipeRunner(EMPTY,c->{queries[0]++;return found?line(10,3):null;});
+            runner.tick(machine.context);runner.tick(machine.context);
+            assertEquals(1,queries[0]);assertEquals(0,machine.stateWrites);
+            runner.invalidate();runner.tick(machine.context);assertEquals(2,queries[0]);
+        }
+    }
 }

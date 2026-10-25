@@ -14,6 +14,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.RecipeRunner;
 
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Slots;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -66,7 +68,7 @@ public final class ResearchAssembler extends BehaviorBase {
         String dim = context.level().dimension().location().toString();
         DimPos pending = ResearchNetwork.takePendingMonitor(player.getUUID(), dim);
         if (pending != null) {
-            context.state().setString("monitor", PosCodec.format(pending.pos()));
+            StateChanges.setString(context.state(), "monitor", PosCodec.format(pending.pos()));
         }
         BlockPos db = databasePos(context);
         boolean online = ResearchNetwork.isMonitorOnline(context.level(), db);

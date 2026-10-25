@@ -4,6 +4,8 @@ import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -31,14 +33,14 @@ public final class MicrogravityController extends BehaviorBase {
 
     private static void tickRoom(MachineBehaviorContext context) {
         if (!context.structureFormed() || !context.consume(2048)) {
-            context.state().setInt("spin", 0);
+            StateChanges.setInt(context.state(), "spin", 0);
             context.working(false);
             context.progress(0);
             MicrogravityRooms.updateRoom(context.level(), context.pos(), false);
             return;
         }
         int spin = Math.min(600, context.state().getInt("spin") + 1);
-        context.state().setInt("spin", spin);
+        StateChanges.setInt(context.state(), "spin", spin);
         context.progress(spin / 600.0F);
         boolean active = spin >= 600;
         context.working(active);

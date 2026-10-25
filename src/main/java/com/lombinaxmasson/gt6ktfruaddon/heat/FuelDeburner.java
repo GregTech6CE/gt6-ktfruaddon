@@ -13,6 +13,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.RecipeRunner;
 
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Slots;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -73,7 +75,7 @@ public final class FuelDeburner extends BehaviorBase {
         long cool = Math.min(10L * delta / MASS, delta);
         if (temp > AMBIENT_MILLI) temp -= cool;
         else temp += cool;
-        state.setLong("temp", temp);
+        StateChanges.setLong(state, "temp", temp);
     }
 
     /** Source {@code getTempFactor}. A zero difference is the cap, 128. */

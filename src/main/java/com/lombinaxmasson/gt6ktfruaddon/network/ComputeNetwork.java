@@ -9,6 +9,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.TtlRegistry;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PlayerMemory;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
@@ -59,7 +61,6 @@ public final class ComputeNetwork {
         ControllerEntry entry = CONTROLLERS.get(key, now);
         if (entry == null) {
             entry = new ControllerEntry();
-            CONTROLLERS.put(key, entry, now);
         }
         entry.formed = formed;
         entry.unit = unit;
@@ -114,7 +115,7 @@ public final class ComputeNetwork {
         DimPos upstream = PENDING_CONTROLLER.get(player);
         if (upstream != null && self.dim().equals(upstream.dim()) && !upstream.pos().equals(self.pos())) {
             PENDING_CONTROLLER.remove(player);
-            context.state().setString("controller", PosCodec.format(upstream.pos()));
+            StateChanges.setString(context.state(), "controller", PosCodec.format(upstream.pos()));
         } else {
             PENDING_CONTROLLER.put(player, self);
         }

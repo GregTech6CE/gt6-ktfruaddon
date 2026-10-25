@@ -12,6 +12,8 @@ import com.lombinaxmasson.gt6ktfruaddon.core.behavior.RecipeRunner;
 
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Slots;
 
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.StateChanges;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -59,7 +61,7 @@ public final class LaserFusion extends BehaviorBase {
             if (buffer > 0) context.consume(buffer);
             long aux = context.energy("LU");
             if (aux > 0) context.consume("LU", aux);
-            state.setInt("state", STATE_ERROR);
+            StateChanges.setInt(state, "state", STATE_ERROR);
             context.working(false);
             context.progress(0);
             return;
@@ -71,8 +73,8 @@ public final class LaserFusion extends BehaviorBase {
             long aux = context.energy("LU");
             if (aux > 0) context.consume("LU", aux);
             cooldown--;
-            state.setInt("cooldown", cooldown);
-            state.setInt("state", STATE_COOLING);
+            StateChanges.setInt(state, "cooldown", cooldown);
+            StateChanges.setInt(state, "state", STATE_COOLING);
             context.working(true);
             context.progress(cooldown / (float) Math.max(1, cooldownTicks));
             return;
@@ -101,8 +103,8 @@ public final class LaserFusion extends BehaviorBase {
         if (tryFirePulse(context, pulse)) {
             return;
         }
-        state.setLong("pulse", pulse);
-        state.setInt("state", pulse > 0 ? STATE_CHARGING : STATE_IDLE);
+        StateChanges.setLong(state, "pulse", pulse);
+        StateChanges.setInt(state, "state", pulse > 0 ? STATE_CHARGING : STATE_IDLE);
         context.working(pulse > 0);
         context.progress(Math.min(1.0F, pulse / (float) Math.max(1L, pulseCapacity)));
     }
@@ -137,9 +139,9 @@ public final class LaserFusion extends BehaviorBase {
         if (pulse < requiredPulse || peakEnergy < requiredPulse) return false;
         if (!runner.complete(context, line)) return false;
 
-        context.state().setLong("pulse", pulse - requiredPulse);
-        context.state().setInt("cooldown", cooldownTicks);
-        context.state().setInt("state", STATE_COOLING);
+        StateChanges.setLong(context.state(), "pulse", pulse - requiredPulse);
+        StateChanges.setInt(context.state(), "cooldown", cooldownTicks);
+        StateChanges.setInt(context.state(), "state", STATE_COOLING);
         context.working(true);
         context.progress(1.0F);
         return true;

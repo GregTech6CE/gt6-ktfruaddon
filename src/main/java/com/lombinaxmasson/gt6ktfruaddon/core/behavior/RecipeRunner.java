@@ -37,7 +37,33 @@ public final class RecipeRunner {
     public RecipeRunner step(ToLongBiFunction<MachineBehaviorContext, AddonRecipes.Line> progress) { step = progress; return this; }
     public RecipeRunner after(Consumer<MachineBehaviorContext> effect) { finished = effect; return this; }
 
-    public AddonRecipes.Line find(MachineBehaviorContext context) { return finder.find(context); }
+    private boolean searched;
+    private List<ItemStack> previousItems = List.of();
+    private List<FluidStack> previousFluids = List.of();
+    private AddonRecipes.Line cached;
+
+    public AddonRecipes.Line find(MachineBehaviorContext context) {
+        // Output items participate because the SDK supports rows requiring empty output slots.
+        var items = java.util.stream.Stream.concat(slots.itemsIn().stream(), slots.itemsOut().stream())
+                .map(context::item).toList();
+        var fluids = slots.fluidsIn().stream().map(context::fluid).toList();
+        boolean same = searched && items.size() == previousItems.size() && fluids.size() == previousFluids.size();
+        for (int i = 0; same && i < items.size(); i++) same = ItemStack.matches(items.get(i), previousItems.get(i));
+        for (int i = 0; same && i < fluids.size(); i++) {
+            FluidStack a = fluids.get(i), b = previousFluids.get(i);
+            same = a.getAmount() == b.getAmount() && (a.isEmpty() && b.isEmpty() || FluidStack.isSameFluidSameComponents(a, b));
+        }
+        if (!same) {
+            cached = finder.find(context);
+            previousItems = items.stream().map(ItemStack::copy).toList();
+            previousFluids = fluids.stream().map(FluidStack::copy).toList();
+            searched = true;
+        }
+        return cached;
+    }
+
+    public void invalidate() { searched = false; }
+    public Slots slots() { return slots; }
 
     public void tick(MachineBehaviorContext context) {
         context.working(false);
@@ -61,7 +87,7 @@ public final class RecipeRunner {
                 context.working(true);
             }
         }
-        context.state().setLong("progress", progress);
+        StateChanges.setLong(context.state(), "progress", progress);
         context.progress(Math.min(1.0F, progress / (float) duration));
     }
 
@@ -87,7 +113,7 @@ public final class RecipeRunner {
     }
     public void idle(MachineBehaviorContext context) {
         context.working(false);
-        context.state().setLong("progress", 0L);
+        StateChanges.setLong(context.state(), "progress", 0L);
         context.progress(0);
     }
 }
