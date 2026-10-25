@@ -24,10 +24,10 @@ public final class WirelessMachines implements Feature {
     static final String QUANTUM_RECEIVER = "wireless_receiver_quantum";
 
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
-            .add(INDUCTIVE, () -> new Wireless(Wireless.Kind.INDUCTIVE))
-            .add(QUANTUM, () -> new Wireless(Wireless.Kind.QUANTUM))
-            .add(INDUCTIVE_RECEIVER, () -> new Wireless(Wireless.Kind.INDUCTIVE_RECEIVER))
-            .add(QUANTUM_RECEIVER, () -> new Wireless(Wireless.Kind.QUANTUM_RECEIVER))
+            .add(INDUCTIVE, () -> new WirelessTower(false))
+            .add(QUANTUM, () -> new WirelessTower(true))
+            .add(INDUCTIVE_RECEIVER, () -> new WirelessReceiver(false))
+            .add(QUANTUM_RECEIVER, () -> new WirelessReceiver(true))
             .build();
 
     @Override
@@ -48,7 +48,7 @@ public final class WirelessMachines implements Feature {
     /** Nominal 4096 accepts 2048–8192 on the main input. */
     private static BehaviorMachine inductiveTower() {
         return BehaviorMachine.builder(MachineCasing.builder(INDUCTIVE, "Tungstensteel").machineType(INDUCTIVE).build())
-                .energy(EnergyInput.builder("EU", 4096).faces(MachineFace.BOTTOM).capacity(Wireless.INDUCTIVE_CAPACITY).build())
+                .energy(EnergyInput.builder("EU", 4096).faces(MachineFace.BOTTOM).capacity(WirelessTower.INDUCTIVE_CAPACITY).build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
                 .toggle("gt6ktfruaddon.wireless_battery.sealed", 152, 64, true)
                 .build();
@@ -61,11 +61,11 @@ public final class WirelessMachines implements Feature {
     private static BehaviorMachine quantumTower() {
         return BehaviorMachine.builder(MachineCasing.builder(QUANTUM, "Naquadria").machineType(QUANTUM).build())
                 .energy(EnergyInput.builder("EU", 16384).anyType().faces(MachineFace.BOTTOM)
-                        .capacity(Wireless.QUANTUM_CAPACITY).build())
+                        .capacity(WirelessTower.QUANTUM_CAPACITY).build())
                 .auxiliaryEnergy(EnergyInput.builder("EU", 16384)
                         .range(1, 32768)
                         .faces(MachineFace.BACK, MachineFace.LEFT, MachineFace.RIGHT, MachineFace.TOP)
-                        .capacity(Wireless.QUANTUM_CAPACITY)
+                        .capacity(WirelessTower.QUANTUM_CAPACITY)
                         .build())
                 .gui(Ktfru.PLACEHOLDER_GUI)
                 .toggle("gt6ktfruaddon.wireless_battery.sealed", 152, 64, true)
