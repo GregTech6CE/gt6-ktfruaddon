@@ -72,6 +72,15 @@ public final class RecipeRunner {
         if (!allowed.test(context, line)) return false;
         RecipeTransaction transaction = RecipeTransaction.plan(context, slots, line);
         if (transaction == null) return false;
+        var selected = new java.util.ArrayList<ItemStack>();
+        ItemStack[] outputs = line.itemOutputs();
+        int[] chances = line.outputChances();
+        for (int i = 0; i < outputs.length; i++) {
+            if (outputs[i] == null || outputs[i].isEmpty()) continue;
+            if (OutputRolls.succeeds(chances[i], () -> context.level().getRandom().nextInt(10000))) selected.add(outputs[i]);
+        }
+        transaction = RecipeTransaction.plan(context, slots, line, selected.toArray(ItemStack[]::new));
+        if (transaction == null) throw new IllegalStateException("Output subset did not fit after full preflight");
         transaction.apply(context);
         finished.accept(context);
         return true;

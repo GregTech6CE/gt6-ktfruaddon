@@ -23,6 +23,10 @@ final class RecipeTransaction {
     }
 
     static RecipeTransaction plan(MachineBehaviorContext context, Slots slots, AddonRecipes.Line line) {
+        return plan(context, slots, line, line.itemOutputs());
+    }
+
+    static RecipeTransaction plan(MachineBehaviorContext context, Slots slots, AddonRecipes.Line line, ItemStack[] outputs) {
         var items = new Ledger<>(RecipeStacks.ITEMS);
         var fluids = new Ledger<>(RecipeStacks.FLUIDS);
         var itemsIn = items.consume(slots.itemsIn().stream().map(context::item).toList(),
@@ -30,7 +34,7 @@ final class RecipeTransaction {
         var fluidsIn = fluids.consume(slots.fluidsIn().stream().map(context::fluid).toList(),
                 needs(line.fluidInputs(), line.keptFluidInputs()), RecipeStacks.FLUIDS::same);
         var itemsOut = items.produce(slots.itemsOut().stream().map(context::item).toList(),
-                Arrays.asList(line.itemOutputs()), (slot, stack) -> stack.getMaxStackSize());
+                Arrays.asList(outputs), (slot, stack) -> stack.getMaxStackSize());
         var fluidsOut = fluids.produce(slots.fluidsOut().stream().map(context::fluid).toList(),
                 Arrays.asList(line.fluidOutputs()), (slot, stack) -> context.capacity(slots.fluidsOut().get(slot)));
         if (itemsIn == null || fluidsIn == null || itemsOut == null || fluidsOut == null) return null;
