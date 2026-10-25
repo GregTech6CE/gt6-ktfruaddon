@@ -24,6 +24,7 @@ public final class VoidHopper extends BehaviorBase {
     private static final int EXAMINED_PER_TICK = 64;
     private static final int TAKEN_PER_TICK = 16;
 
+    // Source tileEntityInit0, ids 21010-21013: wood really takes more than bronze (D9).
     private static final long[] INPUT = {64, 32, 128, 512};
     private static final int[] RANGE = {4, 8, 16, 24};
 

@@ -44,6 +44,7 @@ public final class Materials implements AddonMaterialContributor {
                 MaterialDeclaration.builder("OilScarp").displayName("Oil Scarp").color(0x0C0902).chemicalFormula("").meltingPointKelvin(363).boilingPointKelvin(504).density(1F).dust().build(),
                 MaterialDeclaration.builder("Methanol").displayName("Methanol").color(0x5A50D2).chemicalFormula("CH₃OH").meltingPointKelvin(175).boilingPointKelvin(337).density(1F).liquid().build(),
                 MaterialDeclaration.builder("Propanol").displayName("Propanol").color(0x3C3C96).chemicalFormula("CH₂CH₂CH₃OH").meltingPointKelvin(146).boilingPointKelvin(370).density(1F).liquid().build(),
+                // Source materialPreInit.java:49 repeats Propanol's formula; preserved pending upstream correction (D9).
                 MaterialDeclaration.builder("Propanediol").displayName("Propanediol").color(0x3C3C96).chemicalFormula("CH₂CH₂CH₃OH").meltingPointKelvin(213).boilingPointKelvin(460).density(1F).liquid().build(),
                 MaterialDeclaration.builder("Ethane").displayName("Ethane").color(0x3C3C96).chemicalFormula("CH₃CH₃").meltingPointKelvin(101).boilingPointKelvin(185).density(1F).liquid().build(),
                 MaterialDeclaration.builder("Acetone").displayName("Acetone").color(0xD2D2D2).chemicalFormula("C₃H₆O").meltingPointKelvin(143).boilingPointKelvin(293).density(1F).liquid().build(),
@@ -73,9 +74,11 @@ public final class Materials implements AddonMaterialContributor {
                 MaterialDeclaration.builder("BPA").displayName("BPA").color(0xFFFFFF).chemicalFormula("CH₃C(PhOH)₂CH₃").meltingPointKelvin(431).boilingPointKelvin(499).density(1F).dust().build(),
                 MaterialDeclaration.builder("DiphenylCarbonate").displayName("Diphenyl Carbonate").color(0xFFFFFF).chemicalFormula("PhOCOOPh").meltingPointKelvin(355).boilingPointKelvin(574).density(1F).dust().build(),
                 MaterialDeclaration.builder("Tetrafluoroethylene").displayName("Tetrafluoroethylene").color(0xFFFFFF).chemicalFormula("CF₂CF₂").meltingPointKelvin(131).boilingPointKelvin(197).density(1F).gas().build(),
+                // Source :138-139 requests INGOT_BASED, dust, plates and foils; metal() enables those forms (D9).
                 MaterialDeclaration.builder("EpoxyResin").displayName("Epoxy Resin").color(0xFFFFFF).chemicalFormula("(C₃H₅ClO)").meltingPointKelvin(388).boilingPointKelvin(525).density(1F).metal().build(),
                 MaterialDeclaration.builder("VinylAcetate").displayName("VinylAcetate").color(0xFFFFFF).chemicalFormula("CH₃CHOOCH=CH₂").meltingPointKelvin(180).boilingPointKelvin(345).density(1F).dust().liquid().build(),
                 MaterialDeclaration.builder("PolyVinylAcetate").displayName("PolyVinylAcetate").color(0xFFFFFF).chemicalFormula("(C₄H₆O₂)").meltingPointKelvin(333).boilingPointKelvin(416).density(1F).dust().build(),
+                // Source materialPreInit.java:147 spells the last group CH2 + subscript 2; preserved (D9).
                 MaterialDeclaration.builder("Butadiene").displayName("Butadiene").color(0xFFFFFF).chemicalFormula("CH₂=CHCH=CH2₂").meltingPointKelvin(164).boilingPointKelvin(269).density(1F).gas().build(),
                 MaterialDeclaration.builder("MethylmagnesiumChloride").displayName("MethylmagnesiumChloride").color(0xFFFFFF).chemicalFormula("CH₃ClMg").meltingPointKelvin(243).boilingPointKelvin(339).density(1F).liquid().build(),
                 MaterialDeclaration.builder("Methyltrichlorosilane").displayName("Methyltrichlorosilane").color(0xFFFFFF).chemicalFormula("CH₃Cl₃Si").meltingPointKelvin(196).boilingPointKelvin(339).density(1F).liquid().build(),
