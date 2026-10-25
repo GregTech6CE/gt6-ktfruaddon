@@ -39,13 +39,11 @@ public final class GasMachines implements Feature {
     public static final String NETHERITE_GAS_DRUM = "netherite_gas_drum";
     public static final String TUNGSTENSTEEL_GAS_DRUM = "tungstensteel_gas_drum";
     /** PipeSpec.PipeSize names, lower case. */
-    public static final String[] FLUID_PIPE_SIZES = {
-            "tiny", "small", "medium", "large", "huge", "quadruple", "nonuple"
-    };
+    public static final List<String> FLUID_PIPE_SIZES = List.of(
+            "tiny", "small", "medium", "large", "huge", "quadruple", "nonuple");
     /** ItemPipeSpec.ItemPipeSize names, lower case. */
-    public static final String[] ITEM_PIPE_SIZES = {
-            "medium", "large", "huge", "restrictive_medium", "restrictive_large", "restrictive_huge"
-    };
+    public static final List<String> ITEM_PIPE_SIZES = List.of(
+            "medium", "large", "huge", "restrictive_medium", "restrictive_large", "restrictive_huge");
     public static final String TEFLON_PIPE = "teflon";
     public static final String PVC_PIPE = "pvc";
     /**
@@ -53,6 +51,9 @@ public final class GasMachines implements Feature {
      * 1,024,000,000 mB, so the valve splits this across seven tanks.
      */
     public static final long GAS_TANK_CAPACITY = 6_912_000_000L;
+
+    /** Source gas valve input ceiling; this is not its fluid capacity. */
+    private static final long GAS_VALVE_INPUT = 1_000_000_000_000L;
 
     private static final Map<String, Supplier<MachineBehavior>> BEHAVIORS = new Behaviors()
             .add(STEEL_GAS_TANK, GasTank::new)
@@ -155,7 +156,7 @@ public final class GasMachines implements Feature {
                 1_024_000_000, 1_024_000_000, 768_000_000
         };
         var builder = BehaviorMachine.builder(MachineCasing.builder(id, material).machineType(id).tier(1).build())
-                .energy(EnergyInput.builder("EU", 1_000_000_000_000L).faces(MachineFace.BOTTOM).build())
+                .energy(EnergyInput.builder("EU", GAS_VALVE_INPUT).faces(MachineFace.BOTTOM).build())
                 .gui("gt6ktfruaddon:textures/gui/machines/gastank.png")
                 .energyGauge(8, 8)
                 .progress(148, 64);

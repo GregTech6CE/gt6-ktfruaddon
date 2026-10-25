@@ -22,6 +22,12 @@ import com.lombinaxmasson.gt6ktfruaddon.recipe.RecipeMaps;
  * The four mask aligners and the CNC machine with their structures and structure parts.
  */
 public final class SemiconductorMachines implements Feature {
+    // Source layout ids: the two unregistered cells are intentionally omitted.
+    private static final int SOURCE_SUNLIGHT_ABSORBER = 31002;
+    private static final int SOURCE_REACTOR_CASING = 31200;
+    private static final int SOURCE_UNREGISTERED_DUV = 31110;
+    private static final int SOURCE_UNREGISTERED_EUV = 31120;
+
     public static final String MASK_ALIGNER_UV = "mask_aligner_uv";
     public static final String MASK_ALIGNER_UV_PLUS = "mask_aligner_uv_plus";
     public static final String MASK_ALIGNER_DUV = "mask_aligner_duv";
@@ -162,15 +168,15 @@ public final class SemiconductorMachines implements Feature {
     private static StructureLayout maskAlignerDuvLayout(String type) {
         var layout = StructureLayout.builder(type);
         int[][][] ids = {
-                {{31002, 0, 31002}, {31002, 31200, 31002}},
-                {{31002, 31110, 31002}, {31002, 31120, 31002}}
+                {{SOURCE_SUNLIGHT_ABSORBER, 0, SOURCE_SUNLIGHT_ABSORBER}, {SOURCE_SUNLIGHT_ABSORBER, SOURCE_REACTOR_CASING, SOURCE_SUNLIGHT_ABSORBER}},
+                {{SOURCE_SUNLIGHT_ABSORBER, SOURCE_UNREGISTERED_DUV, SOURCE_SUNLIGHT_ABSORBER}, {SOURCE_SUNLIGHT_ABSORBER, SOURCE_UNREGISTERED_EUV, SOURCE_SUNLIGHT_ABSORBER}}
         };
         for (int up = 0; up < ids.length; up++) {
             for (int back = 0; back < ids[up].length; back++) {
                 for (int mapX = 0; mapX < ids[up][back].length; mapX++) {
                     int id = ids[up][back][mapX];
-                    if (id == 0 || id == 31110 || id == 31120) continue;
-                    String part = id == 31200 ? "catalytic_reactor_casing" : "sunlight_absorber";
+                    if (id == 0 || id == SOURCE_UNREGISTERED_DUV || id == SOURCE_UNREGISTERED_EUV) continue;
+                    String part = id == SOURCE_REACTOR_CASING ? "catalytic_reactor_casing" : "sunlight_absorber";
                     layout.cell(1 - mapX, up, back, CellMatch.part(part), StructureRole.ITEM_FLUID_INPUT);
                 }
             }

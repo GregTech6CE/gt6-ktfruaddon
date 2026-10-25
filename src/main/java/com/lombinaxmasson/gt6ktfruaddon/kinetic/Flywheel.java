@@ -3,6 +3,7 @@ package com.lombinaxmasson.gt6ktfruaddon.kinetic;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Tiers;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.LossTimer;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -86,8 +87,6 @@ public final class Flywheel extends BehaviorBase {
     }
 
     private static long vmax(MachineBehaviorContext context) {
-        int index = context.tier() - 1;
-        if (index < 0 || index >= VMAX.length) return VMAX[0];
-        return VMAX[index];
+        return VMAX[Tiers.index("Flywheel", context.tier(), VMAX.length)];
     }
 }

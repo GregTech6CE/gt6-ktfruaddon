@@ -3,6 +3,7 @@ package com.lombinaxmasson.gt6ktfruaddon.kinetic;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Tiers;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -116,8 +117,6 @@ public final class VoidHopper extends BehaviorBase {
     }
 
     private static int index(MachineBehaviorContext context) {
-        int index = context.tier() - 1;
-        if (index < 0 || index >= INPUT.length) return 0;
-        return index;
+        return Tiers.index("VoidHopper", context.tier(), INPUT.length);
     }
 }

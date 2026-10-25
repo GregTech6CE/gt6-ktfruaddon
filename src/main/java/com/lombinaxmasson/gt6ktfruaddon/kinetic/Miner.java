@@ -3,6 +3,7 @@ package com.lombinaxmasson.gt6ktfruaddon.kinetic;
 import com.gregtech.gregtech.api.addon.BehaviorRangeRules;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.Tiers;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -156,9 +157,7 @@ public final class Miner extends BehaviorBase {
     }
 
     private static int index(MachineBehaviorContext context) {
-        int index = context.tier() - 1;
-        if (index < 0 || index >= INPUT.length) return 0;
-        return index;
+        return Tiers.index("Miner", context.tier(), INPUT.length);
     }
 
     private static long input(MachineBehaviorContext context) { return INPUT[index(context)]; }
