@@ -1,8 +1,7 @@
 package com.lombinaxmasson.gt6ktfruaddon.research;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.TtlRegistry;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -11,34 +10,26 @@ import net.minecraft.world.level.Level;
 public final class MicrogravityRooms {
     public static final int SHELL_RADIUS = 4;
     public static final int SHELL_HEIGHT = 8;
-    private static final long EXPIRY_TICKS = 20L;
-    private static final Map<Key, Long> ACTIVE_ROOMS = new HashMap<>();
+    private static final TtlRegistry<Boolean> ACTIVE_ROOMS = new TtlRegistry<>();
 
     private MicrogravityRooms() {}
 
-    public static synchronized void updateRoom(Level level, BlockPos controller, boolean active) {
+    public static void updateRoom(Level level, BlockPos controller, boolean active) {
         if (level == null || controller == null) return;
-        Key key = new Key(level.dimension().location().toString(), controller.immutable());
+        DimPos key = new DimPos(level.dimension().location().toString(), controller.immutable());
         if (active) {
-            ACTIVE_ROOMS.put(key, level.getGameTime());
+            ACTIVE_ROOMS.put(key, true, level.getGameTime());
         } else {
             ACTIVE_ROOMS.remove(key);
         }
     }
 
-    public static synchronized boolean hasMicrogravity(Level level, BlockPos pos) {
+    public static boolean hasMicrogravity(Level level, BlockPos pos) {
         if (level == null || pos == null) return false;
         String dim = level.dimension().location().toString();
         long now = level.getGameTime();
-        Iterator<Map.Entry<Key, Long>> it = ACTIVE_ROOMS.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<Key, Long> entry = it.next();
-            if (now - entry.getValue() > EXPIRY_TICKS) {
-                it.remove();
-                continue;
-            }
-            if (!dim.equals(entry.getKey().dim())) continue;
-            if (insideInterior(entry.getKey().pos(), pos)) return true;
+        for (DimPos key : ACTIVE_ROOMS.keys(dim, now)) {
+            if (insideInterior(key.pos(), pos)) return true;
         }
         return false;
     }
@@ -49,5 +40,4 @@ public final class MicrogravityRooms {
                 && p.getZ() >= c.getZ() - (SHELL_RADIUS - 1) && p.getZ() <= c.getZ() + (SHELL_RADIUS - 1);
     }
 
-    private record Key(String dim, BlockPos pos) {}
 }
