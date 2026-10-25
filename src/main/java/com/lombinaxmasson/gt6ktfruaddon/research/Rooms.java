@@ -9,6 +9,7 @@ import com.gregtech.gregtech.api.addon.platform.AddonRecipes;
 import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -75,11 +76,7 @@ public final class Rooms extends BehaviorBase {
 
     @Override
     public void tick(MachineBehaviorContext context) {
-        long aux = context.energy("EU");
-        if (aux > 0) {
-            long move = Math.min(aux, Math.max(0L, context.capacity() - context.energy()));
-            if (move > 0 && context.consume("EU", move)) context.generate(move);
-        }
+        EnergyBridge.pull(context, "EU");
         if ((multiblock && !context.structureFormed()) || !hasMicrogravity(context.level(), context.pos())) {
             context.working(false);
             context.progress(0);

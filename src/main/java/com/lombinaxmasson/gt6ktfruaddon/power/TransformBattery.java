@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
@@ -39,7 +40,7 @@ public final class TransformBattery extends BehaviorBase {
         long computed = capacity(context);
         long stored = context.energy();
         context.setCapacity(computed > 0 ? computed : Math.max(stored, 1));
-        takeAuxiliary(context);
+        EnergyBridge.pull(context, energy);
         stored = context.energy();
         if (stored > 0) lose(context);
         long cap = context.capacity();
@@ -63,13 +64,6 @@ public final class TransformBattery extends BehaviorBase {
             if ("RU".equals(energy) && flywheel(stack)) cap += flywheelStorage() * stack.getCount();
         }
         return cap;
-    }
-
-    private void takeAuxiliary(MachineBehaviorContext context) {
-        long available = context.energy(energy);
-        if (available <= 0) return;
-        long moved = context.generate(available);
-        if (moved > 0) context.consume(energy, moved);
     }
 
     /** Keep {@code 1 - percent/100} when the local timer is 5 mod 200. */

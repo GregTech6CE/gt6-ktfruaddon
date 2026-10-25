@@ -10,6 +10,7 @@ import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.Ktfru;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -69,11 +70,7 @@ public final class Wireless extends BehaviorBase {
     }
 
     private void tickTower(MachineBehaviorContext context) {
-        long aux = context.energy("EU");
-        if (aux > 0) {
-            long move = Math.min(aux, Math.max(0L, context.capacity() - context.energy()));
-            if (move > 0 && context.consume("EU", move)) context.generate(move);
-        }
+        EnergyBridge.pull(context, "EU");
         boolean sealed = context.toggle(0);
         boolean quantum = kind == Kind.QUANTUM;
         context.working(sealed && context.structureFormed());

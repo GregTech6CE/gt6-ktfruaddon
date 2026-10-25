@@ -3,6 +3,7 @@ package com.lombinaxmasson.gt6ktfruaddon.power;
 import com.gregtech.gregtech.api.addon.platform.AddonFluids;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
 
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -35,7 +36,7 @@ public final class LiquidBattery extends BehaviorBase {
         long computed = context.structureFormed() ? capacity(context) : 0;
         long stored = context.energy();
         context.setCapacity(computed > 0 ? computed : Math.max(stored, 1));
-        takeAuxiliary(context);
+        EnergyBridge.pull(context, "RU");
         stored = context.energy();
         long midpoint = (outputMin + outputMax) / 2;
         boolean active = stored > midpoint;
@@ -80,13 +81,6 @@ public final class LiquidBattery extends BehaviorBase {
         int density = fluid.getFluid().getFluidType().getDensity(fluid);
         double factor = density <= 10 ? 0.01D : density / 1000.0D;
         return (long) (fluid.getAmount() * factor);
-    }
-
-    private void takeAuxiliary(MachineBehaviorContext context) {
-        long available = context.energy("RU");
-        if (available <= 0) return;
-        long moved = context.generate(available);
-        if (moved > 0) context.consume("RU", moved);
     }
 
     private void emit(MachineBehaviorContext context, long cap) {

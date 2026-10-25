@@ -8,6 +8,7 @@ import com.gregtech.gregtech.api.addon.platform.AddonTools;
 import com.gregtech.gregtech.api.addon.platform.MachineBehaviorContext;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.BehaviorBase;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.DimPos;
+import com.lombinaxmasson.gt6ktfruaddon.core.behavior.EnergyBridge;
 import com.lombinaxmasson.gt6ktfruaddon.core.behavior.PosCodec;
 
 import net.minecraft.core.BlockPos;
@@ -39,11 +40,7 @@ public final class ResearchAssembler extends BehaviorBase {
 
     @Override
     public void tick(MachineBehaviorContext context) {
-        long aux = context.energy("EU");
-        if (aux > 0) {
-            long move = Math.min(aux, Math.max(0L, context.capacity() - context.energy()));
-            if (move > 0 && context.consume("EU", move)) context.generate(move);
-        }
+        EnergyBridge.pull(context, "EU");
         if (!context.structureFormed()) {
             context.working(false);
             context.progress(0);
